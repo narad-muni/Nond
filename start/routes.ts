@@ -26,13 +26,142 @@ import loadAssets from 'App/Utils/loadAssets';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
+/*
+| API route group
+*/
+
 Route.group(() => {
-  Route.post('/auth/login', 'AuthController.login');
-  Route.get('health', () => {
-    return {
-      status: 'OK',
-    };
-  });
+  
+
+  /*
+  | auth routes
+  */
+
+  Route.group(() => {
+
+    // Route.post('/login')
+
+  }).prefix('/auth');
+
+
+  /*
+  | client routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/client');
+
+
+  /*
+  | user routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/user');
+
+
+  /*
+  | template routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/template');
+
+
+  /*
+  | master_client routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/master_client');
+
+
+  /*
+  | register routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/register');
+
+
+  /*
+  | entry routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/entry');
+
+
+  /*
+  | task routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/task');
+
+
+  /*
+  | role routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/role');
+
+
+  /*
+  | scheduler routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/scheduler');
+
+
+  /*
+  | company routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/company');
+
+
+  /*
+  | lead routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/lead');
+
+
+  /*
+  | invoice routes
+  */
+
+  Route.group(() => {
+
+  }).prefix('/invoice');
+
+  /*
+  | Handle Invalid API Routes
+  */
+
+  Route.any('*',({ response }) => {
+    response.send({
+      'status': 'error',
+      'message': 'Invalid API endpoint'
+    });
+  })
+
 }).prefix('/api');
 
 // Serve vite resources on dev mode
@@ -43,10 +172,32 @@ if (isDevEnv) {
   });
 }
 
-Route.get('*', async ({ view }) => {
+
+/*
+| Redirect all routes to index page, spa
+*/
+
+Route.get('/', async ({ view }) => {
   const assetsData = await loadAssets();
   return view.render('index', {
     isDev: !assetsData.found && isDevEnv,
     assetsData,
   });
+});
+
+/*
+|
+| Below is to handle invalid page and api
+|
+*/
+
+Route.get('*', ({ response }) => {
+  response.redirect().toPath('/#/404');
+});
+
+Route.route('*',['POST','PUT','DELETE'], ({ response }) => {
+  response.send({
+    'status': 'error',
+    'message': 'Invalid url'
+  })
 });
