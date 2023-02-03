@@ -4,10 +4,12 @@
   import Clients from "./Clients.svelte";
   import Dashboard from "./Dashboard.svelte";
   import Error from "./Error.svelte";
+  import Users from "./Users.svelte";
 
   let routes = {
     '/': Dashboard,
     '/clients':Clients,
+    '/users':Users,
     '*':Error
   }
 

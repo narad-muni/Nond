@@ -1,0 +1,436 @@
+<script>
+    //Imports
+
+    import {
+        Button,
+        Modal,
+        Table,
+        TableBody,
+        TableBodyCell,
+        TableBodyRow,
+        Checkbox,
+        A,
+        Label,
+        Helper,
+        Input,
+        Toggle,
+        Alert,
+        Textarea,
+        Select
+    } from "flowbite-svelte";
+
+    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import Th from "../component/Th.svelte";
+    import ThSearch from "../component/ThSearch.svelte";
+    import DataTable from "../component/DataTable.svelte";
+    import utils from '../utils';
+
+    // Intialization
+
+    let createModal, createTasksModal, actionsModals, deleteModal, uploadModal;
+    let selectedRows = new Set();
+
+    let columns, data, createdObject={}, actionsIndex, actionsObject, templateFile;
+    let handler, rows;
+    let automaticAssign = [
+        {name:"Divide",value:"Divide"},
+        {name:"By Client",value:"By Client"}
+    ]
+    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+
+    // fetch data
+
+    (async ()=>{
+        columns = await utils.get('/api/user/columns');
+        data = await utils.get('/api/user/');
+        if(data.status != 'success' || columns.status != 'success'){
+            error = String(data.status != 'success' ? data.message : columns.message);
+            return;
+        }
+        data = data.data;
+        handler = new DataHandler(
+            data,
+            {
+                rowsPerPage:50
+            }
+        )
+
+        rows = handler.getRows();
+
+        $rows.forEach((v) => {
+            v["_selected"] = 0;
+        });
+    })()
+
+    //Reactive variables
+
+    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => i.id))); // $rows||[] is used to wait and not fail
+    $: indeterminate = selectedRows.size > 0 && !checked;
+    $: buttonDisabled = selectedRows.size == 0;
+
+    //Functions
+
+    function addSelection(e){
+        
+        let id = e.target.getAttribute('oid');// get object id, which is primary key in db
+
+        if(id){ // if oid is passed, then element is column
+            if(e.target.checked){
+                selectedRows.add(parseInt(id));
+            }else{
+                selectedRows.delete(parseInt(id));
+            }
+
+        }else{//element is column, global checkbox
+            if(e.target.checked){
+
+                $rows.forEach((r) => {
+                    r._selected = true;
+                    selectedRows.add(r.id);
+                });
+
+            }else{
+
+                $rows.forEach((r) => {
+                    r._selected = false;
+                    selectedRows.delete(r.id);
+                });
+
+            }
+        }
+
+        selectedRows = selectedRows;
+        handler.setRows($rows);
+    }
+
+    async function openActionsModal(e){
+        let oid = e.target.innerText;
+        $rows.every((el,i) => {
+            if(el.id == oid){
+                actionsIndex = i;
+                return false;
+            }
+            return true;
+        });
+
+        actionsObject = await utils.get('/api/user/'+$rows[actionsIndex].id);
+
+        if(actionsObject.status != 'success'){
+            error = actionsObject.message;
+            return;
+        }
+
+        actionsObject = actionsObject.data;
+        
+        actionsModals = true;
+    }
+
+    async function updateData(){
+        await utils.put_form('/api/client/update',utils.getFormData(actionsObject));
+    }
+
+    async function loadTemplateData(){
+        if(templateFile){
+            let resp = await utils.post_form('/api/client/load_template_data',utils.getFormData({"template":templateFile}));
+            if(resp.status != "success"){
+                error=resp.message;
+            }else{
+                success=resp.message;
+                uploadModal = false;
+            }
+        }else{
+            error="Please select a file";
+        }
+    }
+    
+    async function download(){
+        let downloadData;
+
+        //check if all columns are fetched to avoid api call
+        if(allColumns){
+            downloadData = data;
+        }else{
+            downloadData = await utils.get('/api/client/read_full');
+        }
+
+        //download selected rows if selected, else if everything or nothing is selected, download full
+        if(indeterminate){
+            downloadData = downloadData.filter((i) => {
+                return selectedRows.has(i.id);
+            });
+        }
+
+        utils.downloadCSVFile(Object.keys(columns.data),downloadData,'ClientMaster');
+    }
+
+    async function deleteSelected(){
+        for (let i = 0; i < $rows.length; i++) {
+            if (selectedRows.has($rows[i].id)) {
+                $rows.splice(i, 1);
+                i--;
+            }
+        }
+        selectedRows.clear();
+        handler.setRows($rows);
+        selectedRows = selectedRows;
+    }
+
+    async function createData(){
+
+    }
+
+</script>
+
+<main class="flex flex-col w-full min-w-0 max-h-full p-2">
+    <div class="pl-4 flex gap-x-4 my-2">
+        <Button gradient color="blue" on:click={()=> createModal = true}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>                        
+            &nbsp;
+            Create
+        </Button>
+
+        <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> createTasksModal = true}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
+              </svg>                                 
+            &nbsp;
+            Create Tasks
+        </Button>
+        
+        <Button gradient color="green" on:click={download}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+            </svg>                          
+            &nbsp;
+            Download
+        </Button>
+
+        <Button gradient color="cyan" on:click={()=> uploadModal = true}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+              </svg>                         
+            &nbsp;
+            Upload
+        </Button>
+        
+        <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+            </svg>              
+            &nbsp;
+            Delete
+        </Button>
+    </div>
+
+    <div class="min-h-0 pl-4">
+        {#if data && columns && handler}
+            <DataTable {handler}>
+                <Table>
+                    <thead>
+                        <tr>
+                            <th>
+                                <Checkbox on:change={addSelection} {checked} {indeterminate}/>
+                            </th>
+                            <Th {handler} orderBy="id">id</Th>
+                            {#each Object.entries(columns.data) as [column,obj]}
+                                {#if column != "_selected" && column != "id"}
+                                    <Th {handler} orderBy={column}>{column}</Th>
+                                {/if}
+                            {/each}
+                        </tr>
+                        <tr>
+                            <ThSearch {handler} filterBy="_selected"></ThSearch>
+                            <ThSearch {handler} filterBy="id"/>
+                            {#each Object.entries(columns.data) as [column,obj]}
+                                {#if column != "_selected" && column != "id"}
+                                    <ThSearch {handler} filterBy={column}/>
+                                {/if}
+                            {/each}
+                        </tr>
+                    </thead>
+                    <TableBody>
+                    {#each $rows as row, index}
+                        <TableBodyRow>
+                            <TableBodyCell>
+                                <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                            </TableBodyCell>
+                            <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                            {#each Object.entries(row) as [k,v]}
+                                {#if k != "id" && k != "_selected"}
+                                    <TableBodyCell>
+                                        {#if columns.data[k]['type'] == 'File' && v}
+                                            <A target="_blank" href={v}>
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                </svg>                                                  
+                                                &nbsp;{k}
+                                            </A>
+                                        {:else if columns.data[k]['type'] == 'Checkbox'}
+                                            <Checkbox disabled checked={v}/>
+                                        {:else}
+                                            {v}
+                                        {/if}
+                                    </TableBodyCell>
+                                {/if}
+                            {/each}
+                        </TableBodyRow>
+                    {/each}
+                    </TableBody>
+                </Table>
+            </DataTable>
+        {/if}
+    </div>
+</main>
+
+<!-- Modal -->
+
+<!-- Modals -->
+
+<Modal bind:open={deleteModal} size="xs" autoclose>
+    <div class="text-center">
+        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
+        <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
+<Modal bind:open={createModal} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
+        {#each Object.entries(columns.data) as [column,obj]}
+            {#if column!="id"}
+                <Label class="space-y-2">
+                    {#if obj.type=="Text"}
+                        <span>{column.toUpperCase()}</span>
+                        <Input bind:value={createdObject[column]}/>
+                    {:else if obj.type=="Date"}
+                        <span>{column.toUpperCase()}</span>
+                        <Input type="date" bind:value={createdObject[column]}/>
+                    {:else if obj.type=="Checkbox"}
+                        <span>&nbsp;</span>
+                        <Toggle bind:value={createdObject[column]}>{column}</Toggle>
+                    {:else}
+                        <p>{column.toUpperCase()}</p>
+                        <input type="file" accept=".csv, .CSV" on:input={event => createdObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                    {/if}
+                </Label>
+            {/if}
+        {/each}
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button type="submit" class="w-full">Create</Button>
+            <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
+        </div>
+    </form>
+</Modal>
+
+<Modal bind:open={createTasksModal} size="md">
+    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
+        <Label class="flex  flex-col gap-y-1">
+            <span class="mb-2">Client Id's</span>
+            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
+        </Label>
+        <Label class="flex  flex-col gap-y-1">
+            <span class="mb-2">Assign To</span>
+            <Select items={users} bind:value={assignedUser}/>
+        </Label>
+        {#if assignedUser < 0}
+            <Label class="flex  flex-col gap-y-1">
+                <span class="mb-2">Assign By</span>
+                <Select items={automaticAssign} bind:value={autoAssignType}/>
+            </Label>
+        {/if}
+        <Label class="flex  flex-col gap-y-1">
+            <span class="mb-2">Description</span>
+            <Textarea rows=8></Textarea>
+        </Label>
+    </form>
+</Modal>
+
+<Modal bind:open={actionsModals} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
+        {#each Object.entries(columns.data) as [column,obj]}
+            <Label class="space-y-2">    
+                {#if column!="id"}
+                    {#if obj.type=="Text"}
+                        <span>{column.toUpperCase()}</span>
+                        <Input value={actionsObject[column]}/>
+                    {:else if obj.type=="Date"}
+                        <span>{column.toUpperCase()}</span>
+                        <Input value={actionsObject[column]} type="date"/>
+                    {:else if obj.type=="Checkbox"}
+                        <span>&nbsp;</span>
+                        <Toggle checked={actionsObject[column]} >{column}</Toggle>
+                    {:else}
+                        {#if actionsObject[column]}
+                            <span>{column.toUpperCase()}</span>
+                            <div class="flex gap-3">
+                                <A target="_blank" href={actionsObject[column]}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                    </svg>                                                  
+                                    &nbsp;{column}
+                                </A>
+                                <Button class="!p-0" gradient color="red">
+                                    <Label class="px-4 py-3 text-white" for={column}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                                        </svg>                                                                        
+                                    </Label>
+                                </Button>
+                                <input on:input={event => actionsObject[column]=event.target.files[0]} id={column} class="hidden" type="file" />   
+                            </div>
+                        {:else}
+                            <p>{column.toUpperCase()}</p>
+                            <input type="file" accept=".csv, .CSV" on:input={event => actionsObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                        {/if}
+                    {/if}
+                {:else}
+                    <span>{column.toUpperCase()}</span>
+                    <Input value={actionsObject.id} readonly/>
+                {/if}
+            </Label>
+        {/each}
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button on:click={updateData} type="submit" class="w-full">Create</Button>
+            <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
+        </div>
+    </form>
+</Modal>
+
+<Modal bind:open={uploadModal} size="xs">
+    <form class="flex flex-col space-y-4" on:submit|preventDefault={loadTemplateData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0">Upload template file</h3>
+        <Label for="with_helper" class="pb-2">Upload file</Label>
+        <input type="file" accept=".csv .CSV" on:input={event => templateFile=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+        <Helper>Templated CSV file.</Helper>
+        
+        <Button type="submit" class="w-full1">Upload</Button>
+    </form>
+</Modal>
+
+<!--Alerts-->
+
+{#if error.length > 0}
+    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
+        <Alert class="mx-auto mt-4 h-fit" color="red" dismissable on:close={()=>error=""}>
+            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            </span>
+            <span class="font-medium">Error!</span> {error}
+        </Alert>
+    </div>
+{/if}
+
+{#if success.length > 0}
+    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
+        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
+            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            </span>
+            <span class="font-medium">success!</span> {success}
+        </Alert>
+    </div>
+{/if}

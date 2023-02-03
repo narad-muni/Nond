@@ -59,6 +59,14 @@ Route.group(() => {
 
   Route.group(() => {
 
+    Route.get('/','UsersController.index');
+    Route.get('/:id','UsersController.get').where('id',/^[0-9]+$/);
+    Route.get('/columns','UsersController.columns');
+    Route.put('/','UsersController.update');
+    Route.post('/','UsersController.create');
+    Route.delete('/','UsersController.destroy');
+    Route.delete('/:id','UsersController.destroy');
+
   }).prefix('/user');
 
 

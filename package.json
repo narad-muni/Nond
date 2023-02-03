@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "setup": "npm install && cd ui && npm install",
-    "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently --kill-others \"cd ui && vite\" \"node ace serve --watch\"",
-    "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && vite build && cd.. && node ace build --production && cp .env build/.env",
+    "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently --kill-others \"cd ui && npx vite\" \"node ace serve --watch\"",
+    "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd.. && node ace build --production && cp .env build/.env",
     "start": "node server.js"
   },
   "devDependencies": {
@@ -22,11 +22,14 @@
   },
   "dependencies": {
     "@adonisjs/core": "^5.9.0",
+    "@adonisjs/lucid": "^18.3.0",
     "@adonisjs/repl": "^3.1.11",
     "@adonisjs/session": "^6.4.0",
     "@adonisjs/shield": "^7.1.0",
     "@adonisjs/view": "^6.2.0",
     "concurrently": "^7.6.0",
+    "luxon": "^3.2.1",
+    "pg": "^8.9.0",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21"
