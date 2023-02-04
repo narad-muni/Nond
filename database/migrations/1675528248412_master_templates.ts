@@ -1,17 +1,11 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'tasks'
+  protected tableName = 'master_templates'
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('assigned_to');
-      table.string('title')
-      table.string('description')
-      table.string('status')
-      table.date('started')
-      table.date('ended')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

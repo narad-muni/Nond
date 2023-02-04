@@ -23,20 +23,13 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
-import Employee from 'App/Models/Employee';
+
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
-Route.any('/initialize',async ({ response }) => {
-    await Employee.create({
-        id: 0,
-        username: 'admin',
-        password: 'admin123',
-        role_id: 0,
-    })
+Route.any('/init','InitializersController.initialize');
 
-    response.send("Success");
-})
+Route.any('/deinit','InitializersController.de_initialize');
 
 /*
 | API route group
@@ -52,9 +45,11 @@ Route.group(() => {
     Route.group(() => {
 
         Route.post('/login','AuthController.login');
+        Route.post('/logout','AuthController.logout');
+        Route.get('/is_logged_in','AuthController.isLoggedIn');
 
     })
-        .prefix('/auth');
+    .prefix('/auth');
 
     /*
     | Auth and role protected clients
@@ -67,9 +62,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','ClientsController.index');
+            Route.get('/:id','ClientsController.get')
+            Route.get('/as_options/:id','ClientsController.get');
 
+            Route.get('/columns','ClientsController.columns');
+
+            Route.post('/','ClientsController.create');
+
+            Route.put('/','ClientsController.update');
+
+            Route.delete('/','ClientsController.destroy');
+            Route.delete('/:id','ClientsController.destroy');
         })
-            .prefix('/client');
+        .prefix('/client');
 
 
         /*
@@ -79,7 +85,8 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','EmployeesController.index');
-            Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
+            Route.get('/:id','EmployeesController.get');
+            Route.get('/as_options/:id','EmployeesController.columns');
 
             Route.get('/columns','EmployeesController.columns');
 
@@ -94,7 +101,7 @@ Route.group(() => {
             Route.delete('/destroy/:id','EmployeesController.destroy');
 
         })
-            .prefix('/employee');
+        .prefix('/employee');
 
 
         /*
@@ -102,9 +109,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','TemplatesController.index');
+            Route.get('/:id','TemplatesController.get')
+            Route.get('/as_options/:id','TemplatesController.get');
 
+            Route.get('/columns','TemplatesController.columns');
+
+            Route.post('/','TemplatesController.create');
+
+            Route.put('/','TemplatesController.update');
+
+            Route.delete('/','TemplatesController.destroy');
+            Route.delete('/:id','TemplatesController.destroy');
         })
-            .prefix('/template');
+        .prefix('/template');
 
 
         /*
@@ -112,9 +130,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','MasterTemplatesController.index');
+            Route.get('/:id','MasterTemplatesController.get')
+            Route.get('/as_options/:id','MasterTemplatesController.get');
 
+            Route.get('/columns','MasterTemplatesController.columns');
+
+            Route.post('/','MasterTemplatesController.create');
+
+            Route.put('/','MasterTemplatesController.update');
+
+            Route.delete('/','MasterTemplatesController.destroy');
+            Route.delete('/:id','MasterTemplatesController.destroy');
         })
-            .prefix('/master_client');
+        .prefix('/master_template');
 
 
         /*
@@ -122,9 +151,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','RegistersController.index');
+            Route.get('/:id','RegistersController.get')
+            Route.get('/as_options/:id','RegistersController.get');
 
+            Route.get('/columns','RegistersController.columns');
+
+            Route.post('/','RegistersController.create');
+
+            Route.put('/','RegistersController.update');
+
+            Route.delete('/','RegistersController.destroy');
+            Route.delete('/:id','RegistersController.destroy');
         })
-            .prefix('/register');
+        .prefix('/register');
 
 
         /*
@@ -132,9 +172,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','CompaniesController.index');
+            Route.get('/:id','CompaniesController.get')
+            Route.get('/as_options/:id','CompaniesController.get');
 
+            Route.get('/columns','CompaniesController.columns');
+
+            Route.post('/','CompaniesController.create');
+
+            Route.put('/','CompaniesController.update');
+
+            Route.delete('/','CompaniesController.destroy');
+            Route.delete('/:id','CompaniesController.destroy');
         })
-            .prefix('/entry');
+        .prefix('/entry');
 
 
         /*
@@ -142,9 +193,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','TasksController.index');
+            Route.get('/:id','TasksController.get')
+            Route.get('/as_options/:id','TasksController.get');
 
+            Route.get('/columns','TasksController.columns');
+
+            Route.post('/','TasksController.create');
+
+            Route.put('/','TasksController.update');
+
+            Route.delete('/','TasksController.destroy');
+            Route.delete('/:id','TasksController.destroy');
         })
-            .prefix('/task');
+        .prefix('/task');
 
 
         /*
@@ -153,20 +215,20 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','RolesCOntroller.');
-            Route.get('/:id','RolesCOntroller.');
+            Route.get('/','RolesController.');
+            Route.get('/:id','RolesController.');
 
-            Route.get('/columns','RolesCOntroller.');
+            Route.get('/columns','RolesController.');
 
-            Route.put('/','RolesCOntroller.');
+            Route.put('/','RolesController.');
 
-            Route.post('/','RolesCOntroller.');
+            Route.post('/','RolesController.');
 
-            Route.delete('/','RolesCOntroller.');
-            Route.delete('/:id','RolesCOntroller.');
+            Route.delete('/','RolesController.');
+            Route.delete('/:id','RolesController.');
 
         })
-            .prefix('/role');
+        .prefix('/role');
 
 
         /*
@@ -174,9 +236,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','SchedulersController.index');
+            Route.get('/:id','SchedulersController.get')
+            Route.get('/as_options/:id','SchedulersController.get');
 
+            Route.get('/columns','SchedulersController.columns');
+
+            Route.post('/','SchedulersController.create');
+
+            Route.put('/','SchedulersController.update');
+
+            Route.delete('/','SchedulersController.destroy');
+            Route.delete('/:id','SchedulersController.destroy');
         })
-            .prefix('/scheduler');
+        .prefix('/scheduler');
 
 
         /*
@@ -184,9 +257,22 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            
+            Route.get('/','CompaniesController.index');
+            Route.get('/:id','CompaniesController.get')
+            Route.get('/as_options/:id','CompaniesController.get');
+
+            Route.get('/columns','CompaniesController.columns');
+
+            Route.post('/','CompaniesController.create');
+
+            Route.put('/','CompaniesController.update');
+
+            Route.delete('/','CompaniesController.destroy');
+            Route.delete('/:id','CompaniesController.destroy');
 
         })
-            .prefix('/company');
+        .prefix('/company');
 
 
         /*
@@ -194,9 +280,20 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','LeadsController.index');
+            Route.get('/:id','LeadsController.get')
+            Route.get('/as_options/:id','LeadsController.get');
 
+            Route.get('/columns','LeadsController.columns');
+
+            Route.post('/','LeadsController.create');
+
+            Route.put('/','LeadsController.update');
+
+            Route.delete('/','LeadsController.destroy');
+            Route.delete('/:id','LeadsController.destroy');
         })
-            .prefix('/lead');
+        .prefix('/lead');
 
 
         /*
@@ -204,13 +301,24 @@ Route.group(() => {
         */
 
         Route.group(() => {
+            Route.get('/','InvoicesController.index');
+            Route.get('/:id','InvoicesController.get')
+            Route.get('/as_options/:id','InvoicesController.get');
 
+            Route.get('/columns','InvoicesController.columns');
+
+            Route.post('/','InvoicesController.create');
+
+            Route.put('/','InvoicesController.update');
+
+            Route.delete('/','InvoicesController.destroy');
+            Route.delete('/:id','InvoicesController.destroy');
         })
-            .prefix('/invoice');
+        .prefix('/invoice');
 
     })
-        .middleware('auth')
-        .middleware('acl');
+    .middleware('auth')
+    .middleware('acl');
 
     /*
     | Handle Invalid API Routes
@@ -224,7 +332,7 @@ Route.group(() => {
     })
 
 })
-    .prefix('/api');
+.prefix('/api');
 
 // Serve vite resources on dev mode
 if (isDevEnv) {

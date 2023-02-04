@@ -12,6 +12,9 @@ export default class Role extends BaseModel {
   public read: Array<string>
 
   @column()
+  public read_self: Array<string>
+
+  @column()
   public create: Array<string>
 
   @column()
