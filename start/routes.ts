@@ -23,8 +23,20 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
+import Employee from 'App/Models/Employee';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
+
+Route.any('/initialize',async ({ response }) => {
+    await Employee.create({
+        id: 0,
+        username: 'admin',
+        password: 'admin123',
+        role_id: 0,
+    })
+
+    response.send("Success");
+})
 
 /*
 | API route group
@@ -33,151 +45,193 @@ const isDevEnv = Env.get('NODE_ENV') === 'development';
 Route.group(() => {
   
 
-  /*
-  | auth routes
-  */
+    /*
+    | auth routes
+    */
 
-  Route.group(() => {
+    Route.group(() => {
 
-    // Route.post('/login')
+        Route.post('/login','AuthController.login');
 
-  }).prefix('/auth');
+    })
+        .prefix('/auth');
 
+    /*
+    | Auth and role protected clients
+    */
 
-  /*
-  | client routes
-  */
+    Route.group(() => {
 
-  Route.group(() => {
+        /*
+        | client routes
+        */
 
-  }).prefix('/client');
+        Route.group(() => {
 
-
-  /*
-  | user routes
-  */
-
-  Route.group(() => {
-
-    Route.get('/','UsersController.index');
-    Route.get('/:id','UsersController.get').where('id',/^[0-9]+$/);
-    Route.get('/columns','UsersController.columns');
-    Route.put('/','UsersController.update');
-    Route.post('/','UsersController.create');
-    Route.delete('/','UsersController.destroy');
-    Route.delete('/:id','UsersController.destroy');
-
-  }).prefix('/user');
+        })
+            .prefix('/client');
 
 
-  /*
-  | template routes
-  */
+        /*
+        | user routes
+        */
 
-  Route.group(() => {
+        Route.group(() => {
 
-  }).prefix('/template');
+            Route.get('/','EmployeesController.index');
+            Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
 
+            Route.get('/columns','EmployeesController.columns');
 
-  /*
-  | master_client routes
-  */
+            Route.put('/','EmployeesController.update');
 
-  Route.group(() => {
+            Route.post('/','EmployeesController.create');
 
-  }).prefix('/master_client');
+            Route.delete('/','EmployeesController.remove');
+            Route.delete('/:id','EmployeesController.remove');
 
+            Route.delete('/destroy/','EmployeesController.destroy');
+            Route.delete('/destroy/:id','EmployeesController.destroy');
 
-  /*
-  | register routes
-  */
-
-  Route.group(() => {
-
-  }).prefix('/register');
+        })
+            .prefix('/employee');
 
 
-  /*
-  | entry routes
-  */
+        /*
+        | template routes
+        */
 
-  Route.group(() => {
+        Route.group(() => {
 
-  }).prefix('/entry');
-
-
-  /*
-  | task routes
-  */
-
-  Route.group(() => {
-
-  }).prefix('/task');
+        })
+            .prefix('/template');
 
 
-  /*
-  | role routes
-  */
+        /*
+        | master_client routes
+        */
 
-  Route.group(() => {
+        Route.group(() => {
 
-  }).prefix('/role');
-
-
-  /*
-  | scheduler routes
-  */
-
-  Route.group(() => {
-
-  }).prefix('/scheduler');
+        })
+            .prefix('/master_client');
 
 
-  /*
-  | company routes
-  */
+        /*
+        | register routes
+        */
 
-  Route.group(() => {
+        Route.group(() => {
 
-  }).prefix('/company');
-
-
-  /*
-  | lead routes
-  */
-
-  Route.group(() => {
-
-  }).prefix('/lead');
+        })
+            .prefix('/register');
 
 
-  /*
-  | invoice routes
-  */
+        /*
+        | entry routes
+        */
 
-  Route.group(() => {
+        Route.group(() => {
 
-  }).prefix('/invoice');
+        })
+            .prefix('/entry');
 
-  /*
-  | Handle Invalid API Routes
-  */
 
-  Route.any('*',({ response }) => {
-    response.send({
-      'status': 'error',
-      'message': 'Invalid API endpoint'
-    });
-  })
+        /*
+        | task routes
+        */
 
-}).prefix('/api');
+        Route.group(() => {
+
+        })
+            .prefix('/task');
+
+
+        /*
+        | role routes
+        */
+
+        Route.group(() => {
+
+            Route.get('/','RolesCOntroller.');
+            Route.get('/:id','RolesCOntroller.');
+
+            Route.get('/columns','RolesCOntroller.');
+
+            Route.put('/','RolesCOntroller.');
+
+            Route.post('/','RolesCOntroller.');
+
+            Route.delete('/','RolesCOntroller.');
+            Route.delete('/:id','RolesCOntroller.');
+
+        })
+            .prefix('/role');
+
+
+        /*
+        | scheduler routes
+        */
+
+        Route.group(() => {
+
+        })
+            .prefix('/scheduler');
+
+
+        /*
+        | company routes
+        */
+
+        Route.group(() => {
+
+        })
+            .prefix('/company');
+
+
+        /*
+        | lead routes
+        */
+
+        Route.group(() => {
+
+        })
+            .prefix('/lead');
+
+
+        /*
+        | invoice routes
+        */
+
+        Route.group(() => {
+
+        })
+            .prefix('/invoice');
+
+    })
+        .middleware('auth')
+        .middleware('acl');
+
+    /*
+    | Handle Invalid API Routes
+    */
+
+    Route.any('*',({ response }) => {
+        response.send({
+            'status': 'error',
+            'message': 'Invalid API endpoint'
+        });
+    })
+
+})
+    .prefix('/api');
 
 // Serve vite resources on dev mode
 if (isDevEnv) {
-  Route.get('/src/*', async ({ request, response }) => {
-    const file = path.resolve(`./ui/${request.url()}`);
-    response.attachment(file, path.basename(file), 'inline');
-  });
+    Route.get('/src/*', async ({ request, response }) => {
+        const file = path.resolve(`./ui/${request.url()}`);
+        response.attachment(file, path.basename(file), 'inline');
+    });
 }
 
 
@@ -186,11 +240,11 @@ if (isDevEnv) {
 */
 
 Route.get('/', async ({ view }) => {
-  const assetsData = await loadAssets();
-  return view.render('index', {
-    isDev: !assetsData.found && isDevEnv,
-    assetsData,
-  });
+    const assetsData = await loadAssets();
+    return view.render('index', {
+        isDev: !assetsData.found && isDevEnv,
+        assetsData,
+    });
 });
 
 /*
@@ -200,12 +254,12 @@ Route.get('/', async ({ view }) => {
 */
 
 Route.get('*', ({ response }) => {
-  response.redirect().toPath('/#/404');
+    response.redirect().toPath('/#/404');
 });
 
 Route.route('*',['POST','PUT','DELETE'], ({ response }) => {
-  response.send({
-    'status': 'error',
-    'message': 'Invalid url'
-  })
+    response.send({
+        'status': 'error',
+        'message': 'Invalid url'
+    })
 });
