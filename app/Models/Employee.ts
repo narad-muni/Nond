@@ -23,15 +23,9 @@ export default class Employee extends BaseModel {
     public deleted: boolean
 
     @belongsTo(() => Role,{
-        foreignKey: 'role_id'
+        foreignKey: 'role_id',
     })
     public role: BelongsTo<typeof Role>
-
-    @column.dateTime({ autoCreate: true })
-    public createdAt: DateTime
-
-    @column.dateTime({ autoCreate: true, autoUpdate: true })
-    public updatedAt: DateTime
 
     @beforeSave()
     public static async hashPassword(user: Employee) {

@@ -1,19 +1,22 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Employee from 'App/Models/Employee';
 
 export default class EmployeesController {
     public async index({response}: HttpContextContract) {
-        response.send({
-            status: 'success',
-            data: [{
-                    id: 0,
-                    username: 'admin'
-                },
-                {
-                    id: 1,
-                    username: 'saumil'
-                },
-            ]
+        const data = await Employee
+            .query()
+            .preload('role',(query) => {
+                query.select('name')
+            })
+            .where('deleted',false)
+
+        const serilizedData = data.map(e => e.serialize());
+        
+        serilizedData.forEach(e => {
+            e.role = e.role.name;
         });
+
+        response.send(serilizedData);
     }
 
     public async get({}: HttpContextContract) {
@@ -32,6 +35,12 @@ export default class EmployeesController {
                 username: {
                     type: 'Text'
                 },
+                role: {
+                    type: 'Text'
+                },
+                is_admin: {
+                    type: 'Checkbox'
+                }
             }
         });
     }

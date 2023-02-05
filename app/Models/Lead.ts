@@ -16,10 +16,4 @@ export default class Lead extends BaseModel {
 
     @column()
     public assigned_to: number
-
-    @column.dateTime({ autoCreate: true })
-    public createdAt: DateTime
-
-    @column.dateTime({ autoCreate: true, autoUpdate: true })
-    public updatedAt: DateTime
 }

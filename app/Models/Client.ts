@@ -16,10 +16,4 @@ export default class Client extends BaseModel {
 
     @column()
     public deleted: boolean
-
-    @column.dateTime({ autoCreate: true })
-    public createdAt: DateTime
-
-    @column.dateTime({ autoCreate: true, autoUpdate: true })
-    public updatedAt: DateTime
 }
