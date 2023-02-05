@@ -8,6 +8,26 @@
       "commandPath": "./commands/CreateValidator",
       "commandName": "create:validator",
       "description": "",
+      "args": [
+        {
+          "type": "string",
+          "propertyName": "name",
+          "name": "name",
+          "required": true,
+          "description": "Validator Name"
+        }
+      ],
+      "aliases": [],
+      "flags": []
+    },
+    "reseed": {
+      "settings": {
+        "loadApp": true,
+        "stayAlive": false
+      },
+      "commandPath": "./commands/Reseed",
+      "commandName": "reseed",
+      "description": "",
       "args": [],
       "aliases": [],
       "flags": []

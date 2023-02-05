@@ -12,22 +12,13 @@ export default class Role extends BaseModel {
   public read: Array<string>
 
   @column()
-  public read_self: Array<string>
-
-  @column()
   public create: Array<string>
 
   @column()
   public update: Array<string>
 
   @column()
-  public update_self: Array<string>
-
-  @column()
   public remove: Array<string>
-
-  @column()
-  public remove_self: Array<string>
 
   @column()
   public destroy: Array<string>

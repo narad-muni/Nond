@@ -8,12 +8,9 @@ export default class extends BaseSchema {
         table.increments('id')
         table.string('name')
         table.json('read')
-        table.json('read_self')
         table.json('create')
         table.json('update')
-        table.json('update_self')
         table.json('remove')
-        table.json('remove_self')
         table.json('destroy')
 
         /**
