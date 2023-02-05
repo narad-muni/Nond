@@ -39,6 +39,7 @@ export default class Reseed extends BaseCommand {
             id: 0,
             username: 'admin',
             password: 'admin123',
+            is_admin: true,
             role_id: 0,
         })
 

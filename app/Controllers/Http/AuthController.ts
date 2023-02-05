@@ -73,4 +73,23 @@ export default class AuthController {
 
         }
     }
+
+    public async user({ session,response }: HttpContextContract){
+        if(session.has('user')){
+            
+            response.send({
+                status: "success",
+                data: session.get('user')
+            });
+
+        }else{
+
+            response.send({
+                status: "error",
+                message: "User not logged in",
+                data: null
+            });
+
+        }
+    }
 }

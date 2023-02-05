@@ -47,6 +47,7 @@ Route.group(() => {
         Route.post('/login','AuthController.login');
         Route.post('/logout','AuthController.logout');
         Route.get('/is_logged_in','AuthController.isLoggedIn');
+        Route.get('/get_user','AuthController.user');
 
     })
     .prefix('/auth');
@@ -65,6 +66,10 @@ Route.group(() => {
             
             Route.get('/','ClientsController.index');
             Route.get('/:id','ClientsController.get')
+
+            Route.get('/master/','ClientsController.indexMaster');
+            Route.get('/master/:id','ClientsController.getMaster')
+
             Route.get('/as_options','ClientsController.options');
 
             Route.get('/columns','ClientsController.columns');
@@ -75,6 +80,9 @@ Route.group(() => {
 
             Route.delete('/','ClientsController.destroy');
             Route.delete('/:id','ClientsController.destroy');
+
+            Route.delete('/destroy/','ClientsController.destroy');
+            Route.delete('/destroy/:id','ClientsController.destroy');
 
         })
         .prefix('/client');

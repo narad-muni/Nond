@@ -28,7 +28,6 @@ export default class Company extends BaseModel {
     public static async process(company: Company){
         if(company.$dirty.signature != null){
             company.signature = '/file/company/'+company.id+'/signature'+company.signature;
-            console.log(company.signature)
         }
     }
 
