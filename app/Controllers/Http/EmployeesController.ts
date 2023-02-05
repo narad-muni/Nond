@@ -25,6 +25,26 @@ export default class EmployeesController {
 
     }
 
+    public async options({response}: HttpContextContract) {
+        const data = await Employee
+            .query()
+            .select('id','username')
+            .where('deleted',false)
+
+        const serilizedData = data.map(e => e.serialize())
+
+        serilizedData.map(e => {
+            e.value = e.id;
+            e.name = e.username;
+
+            delete e.id;
+            delete e.username;
+        });
+
+        response.send(serilizedData);
+
+    }
+
     public async columns({response}: HttpContextContract) {
         response.send({
             status: 'success',

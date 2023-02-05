@@ -69,7 +69,7 @@ Route.group(() => {
 
             Route.get('/master/','ClientsController.indexMaster');
 
-            Route.get('/as_options','ClientsController.options');
+            Route.get('/options','ClientsController.options');
 
             Route.get('/columns','ClientsController.columns');
 
@@ -96,7 +96,7 @@ Route.group(() => {
             Route.get('/','EmployeesController.index');
             Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
 
-            Route.get('/as_options','EmployeesController.options');
+            Route.get('/options','EmployeesController.options');
 
             Route.get('/columns','EmployeesController.columns');
 
@@ -228,7 +228,7 @@ Route.group(() => {
 
             Route.get('/','RolesController.');
             Route.get('/:id','RolesController.').where('id',/^[0-9]+$/);
-            Route.get('/as_options','RolesController.options');
+            Route.get('/options','RolesController.options');
 
             Route.get('/columns','RolesController.');
 
@@ -273,7 +273,7 @@ Route.group(() => {
             
             Route.get('/','CompaniesController.index');
             Route.get('/:id','CompaniesController.get').where('id',/^[0-9]+$/);
-            Route.get('/as_options','CompaniesController.options');
+            Route.get('/options','CompaniesController.options');
 
             Route.get('/columns','CompaniesController.columns');
 
