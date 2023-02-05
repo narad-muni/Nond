@@ -8,6 +8,12 @@ export default class Client extends BaseModel {
   @column()
   public name: string
 
+  @column()
+  public email: string
+
+  @column()
+  public gstin: string
+
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime
 
