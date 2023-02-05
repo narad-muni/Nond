@@ -19,6 +19,9 @@ export default class Employee extends BaseModel {
     @column()
     public is_admin: boolean
 
+    @column()
+    public deleted: boolean
+
     @belongsTo(() => Role,{
         foreignKey: 'role_id'
     })

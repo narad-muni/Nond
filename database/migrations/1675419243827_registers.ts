@@ -9,6 +9,7 @@ export default class extends BaseSchema {
         table.string('name');
         table.integer('template_id');
         table.boolean('is_active');
+        table.boolean('deleted').defaultTo(false)
 
         /**
          * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL

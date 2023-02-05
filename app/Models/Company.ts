@@ -17,6 +17,9 @@ export default class Company extends BaseModel {
     @column()
     public signature: string
 
+    @column()
+    public deleted: boolean
+
     @column.dateTime({ autoCreate: true })
     public createdAt: DateTime
 

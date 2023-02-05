@@ -10,6 +10,7 @@ export default class extends BaseSchema {
             table.string('password');
             table.integer('role_id');
             table.boolean('is_admin');
+            table.boolean('deleted').defaultTo(false)
 
             /**
              * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
