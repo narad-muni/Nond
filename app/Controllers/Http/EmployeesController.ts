@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Employee from 'App/Models/Employee';
+import Crypto from 'crypto';
 
 export default class EmployeesController {
     public async index({response}: HttpContextContract) {
@@ -14,14 +15,43 @@ export default class EmployeesController {
         
         serilizedData.forEach(e => {
             e.role = e.role.name;
+            delete e.role_id;
         });
 
-        response.send(serilizedData);
+        response.send({
+            status: 'success',
+            message: null,
+            data: serilizedData
+        });
     }
 
-    public async get({}: HttpContextContract) {
+    public async get({response,request}: HttpContextContract) {
 
-        // console.log(payload);
+        const data = await Employee
+            .query()
+            .where('deleted',false)
+            .where('id',request.param('id'))
+            .first()
+
+        if(data){
+
+            const serilizedData = data.serialize()
+
+            serilizedData.role = serilizedData.role_id;
+            delete serilizedData.role_id;
+
+            response.send({
+                status: 'success',
+                message: null,
+                data: serilizedData
+            });
+        }else{
+            response.send({
+                status: 'error',
+                message: 'User not found',
+                data: null
+            });
+        }
 
     }
 
@@ -65,9 +95,48 @@ export default class EmployeesController {
         });
     }
 
-    public async create({}: HttpContextContract) {}
+    public async create({request,response}: HttpContextContract) {
+        const data = request.all()
+        const emp = await Employee.create(data);
 
-    public async update({}: HttpContextContract) {}
+        data.id = emp.id;
+
+        response.send({
+            status: 'success',
+            message: null,
+            data: data
+        })
+    }
+
+    public async update({request,response}: HttpContextContract) {
+        const data = request.all()
+        data.role_id = data.role;
+        delete data.role;
+
+        if(data.password == null){
+            delete data.password
+        }else{
+            data.password = Crypto.createHash('sha256').update(data.password).digest('hex');
+        }
+
+        if(data.hasOwnProperty('id')){
+            await Employee
+                .query()
+                .where('id',data.id)
+                .update(data)
+
+            response.send({
+                status: 'success',
+                data: data,
+                message: null
+            })
+        }else{
+            response.send({
+                status: 'error',
+                message: 'Id field is required'
+            })
+        }
+    }
 
     public async remove({}: HttpContextContract) {}
     

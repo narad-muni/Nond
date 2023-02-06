@@ -24,13 +24,14 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+    import { types } from "joi";
 
     // Intialization
 
     let createModal, createTasksModal, actionsModals, deleteModal, uploadModal;
     let selectedRows = new Set();
 
-    let columns, data, createdObject={}, actionsIndex, actionsObject, templateFile;
+    let columns, data, createdObject={}, actionsIndex, actionsObject, templateFile, role_options;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
@@ -41,10 +42,11 @@
     // fetch data
 
     (async ()=>{
-        columns = await utils.get('/api/user/columns');
-        data = await utils.get('/api/user/');
+        columns = await utils.get('/api/employee/columns');
+        data = await utils.get('/api/employee/');
+        role_options = await utils.get('/api/role/options');
         if(data.status != 'success' || columns.status != 'success'){
-            error = String(data.status != 'success' ? data.message : columns.message);
+            error = String(data.message | columns.message);
             return;
         }
         data = data.data;
@@ -113,7 +115,7 @@
             return true;
         });
 
-        actionsObject = await utils.get('/api/user/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/employee/'+$rows[actionsIndex].id);
 
         if(actionsObject.status != 'success'){
             error = actionsObject.message;
@@ -126,7 +128,23 @@
     }
 
     async function updateData(){
-        await utils.put_form('/api/client/update',utils.getFormData(actionsObject));
+        const resp = await utils.put_form('/api/employee/',utils.getFormData(actionsObject));
+
+        const role = role_options.filter(e => {
+            if(e.value == actionsObject.role){
+                return true
+            }
+        });
+        actionsObject.role = role[0].name;
+
+        if(resp.status == 'success'){
+            data[0] = actionsObject;
+            handler.setRows(data);
+            actionsModals = false;
+        }else{
+            error = resp.message | "";
+        }
+        
     }
 
     async function loadTemplateData(){
@@ -176,7 +194,15 @@
     }
 
     async function createData(){
+        let resp = await utils.post_json('/api/employee/',createdObject);
 
+        if(resp.status == 'success'){
+            data.push(resp.data);
+            handler.setRows(data);
+            createModal = false;
+        }else{
+            error = resp.message | "";
+        }
     }
 
 </script>
@@ -251,32 +277,33 @@
                         </tr>
                     </thead>
                     <TableBody>
-                    {#each $rows as row, index}
-                        <TableBodyRow>
-                            <TableBodyCell>
-                                <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                            </TableBodyCell>
-                            <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                            {#each Object.entries(row) as [k,v]}
-                                {#if k != "id" && k != "_selected"}
-                                    <TableBodyCell>
-                                        {#if columns.data[k]['type'] == 'File' && v}
-                                            <A target="_blank" href={v}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                </svg>                                                  
-                                                &nbsp;{k}
-                                            </A>
-                                        {:else if columns.data[k]['type'] == 'Checkbox'}
-                                            <Checkbox disabled checked={v}/>
-                                        {:else}
-                                            {v}
-                                        {/if}
-                                    </TableBodyCell>
-                                {/if}
-                            {/each}
-                        </TableBodyRow>
-                    {/each}
+                        {#each $rows as row, index}
+                            <TableBodyRow>
+                                <TableBodyCell>
+                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                </TableBodyCell>
+                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                
+                                {#each Object.entries(columns.data) as [column,obj]}
+                                    {#if column != "id" && column != "_selected"}
+                                        <TableBodyCell>
+                                            {#if obj.type == 'File' && row[column]}
+                                                <A target="_blank" href={row[column]}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                    </svg>                                                  
+                                                    &nbsp;{column}
+                                                </A>
+                                            {:else if obj.type == 'Checkbox'}
+                                                <Checkbox disabled checked={row[column]}/>
+                                            {:else}
+                                                {row[column]}
+                                            {/if}
+                                        </TableBodyCell>
+                                    {/if}
+                                {/each}
+                            </TableBodyRow>
+                        {/each}
                     </TableBody>
                 </Table>
             </DataTable>
@@ -301,7 +328,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
         {#each Object.entries(columns.data) as [column,obj]}
-            {#if column!="id"}
+            {#if column!="id" && column != 'role'}
                 <Label class="space-y-2">
                     {#if obj.type=="Text"}
                         <span>{column.toUpperCase()}</span>
@@ -311,7 +338,7 @@
                         <Input type="date" bind:value={createdObject[column]}/>
                     {:else if obj.type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[column]}>{column}</Toggle>
+                        <Toggle bind:checked={createdObject[column]}>{column}</Toggle>
                     {:else}
                         <p>{column.toUpperCase()}</p>
                         <input type="file" accept=".csv, .CSV" on:input={event => createdObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
@@ -319,6 +346,14 @@
                 </Label>
             {/if}
         {/each}
+        <Label>
+            <span>Role</span>
+            <Select required items={role_options} bind:value={createdObject['role_id']}></Select>
+        </Label>
+        <Label>
+            <span>Password</span>
+            <Input autocomplete="off" type="password" bind:value={createdObject['password']}/>
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
@@ -355,16 +390,21 @@
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         {#each Object.entries(columns.data) as [column,obj]}
             <Label class="space-y-2">    
-                {#if column!="id"}
+                {#if column == "id"}
+                    <span>{column.toUpperCase()}</span>
+                    <Input bind:value={actionsObject.id} readonly/>
+                {:else if column == 'role'}
+                    <Select items={role_options} bind:value={actionsObject.role}></Select>
+                {:else}
                     {#if obj.type=="Text"}
                         <span>{column.toUpperCase()}</span>
-                        <Input value={actionsObject[column]}/>
+                        <Input bind:value={actionsObject[column]}/>
                     {:else if obj.type=="Date"}
                         <span>{column.toUpperCase()}</span>
-                        <Input value={actionsObject[column]} type="date"/>
+                        <Input bind:value={actionsObject[column]} type="date"/>
                     {:else if obj.type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle checked={actionsObject[column]} >{column}</Toggle>
+                        <Toggle bind:checked={actionsObject[column]} >{column}</Toggle>
                     {:else}
                         {#if actionsObject[column]}
                             <span>{column.toUpperCase()}</span>
@@ -389,14 +429,15 @@
                             <input type="file" accept=".csv, .CSV" on:input={event => actionsObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
                         {/if}
                     {/if}
-                {:else}
-                    <span>{column.toUpperCase()}</span>
-                    <Input value={actionsObject.id} readonly/>
                 {/if}
             </Label>
         {/each}
+        <Label>
+            <span>Password</span>
+            <Input autocomplete="off" type="password" bind:value={actionsObject.password}/>
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Create</Button>
+            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

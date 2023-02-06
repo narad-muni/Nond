@@ -2,7 +2,13 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
 
 export default class ClientsController {
-    public async index({}: HttpContextContract){}
+    public async index({response}: HttpContextContract){
+        const data = await Client
+            .query()
+            .where('deleted',false)
+
+        response.send(data);
+    }
 
     public async indexMaster({}: HttpContextContract){}
 

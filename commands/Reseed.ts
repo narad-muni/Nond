@@ -53,6 +53,16 @@ export default class Reseed extends BaseCommand {
             destroy: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
         })
 
+        await Role.create({
+            id: 1,
+            name: 'normal',
+            read: JSON.stringify(["client","template","master_template","register","task","scheduler","lead","invoice"]),
+            create: JSON.stringify([]),
+            update: JSON.stringify([]),
+            remove: JSON.stringify([]),
+            destroy: JSON.stringify([]),
+        })
+
         await Company.create({
             id: 0,
             name: 'JJ Industries',
@@ -80,12 +90,14 @@ export default class Reseed extends BaseCommand {
         const { default: Task } = await import('App/Models/Task')
             
         const user = await Employee.findBy('id',0)
-        const role = await Role.findBy('id',0);
+        const role1 = await Role.findBy('id',0);
+        const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
         const task = await Task.findBy('id',0);
 
         await user?.delete()
-        await role?.delete()
+        await role1?.delete()
+        await role2?.delete()
         await company?.delete()
         await task?.delete()
 

@@ -11,16 +11,13 @@ export default class RolesController {
         const data = await Role
             .query()
             .select('id','name')
-            .where('deleted',false)
 
         const serilizedData = data.map(e => e.serialize())
 
         serilizedData.map(e => {
             e.value = e.id;
-            e.name = e.name;
 
             delete e.id;
-            delete e.name;
         });
 
         response.send(serilizedData);

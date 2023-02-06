@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { BaseModel, beforeSave, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import Crypto from 'crypto';
@@ -19,7 +18,9 @@ export default class Employee extends BaseModel {
     @column()
     public is_admin: boolean
 
-    @column()
+    @column({
+        serializeAs: null
+    })
     public deleted: boolean
 
     @belongsTo(() => Role,{
