@@ -98,8 +98,6 @@ Route.group(() => {
 
             Route.get('/options','EmployeesController.options');
 
-            Route.get('/columns','EmployeesController.columns');
-
             Route.put('/','EmployeesController.update');
 
             Route.post('/','EmployeesController.create');
@@ -122,8 +120,6 @@ Route.group(() => {
             Route.get('/','TemplatesController.index');
             Route.get('/:id','TemplatesController.get').where('id',/^[0-9]+$/);
 
-            Route.get('/columns','TemplatesController.columns');
-
             Route.post('/','TemplatesController.create');
 
             Route.put('/','TemplatesController.update');
@@ -141,8 +137,6 @@ Route.group(() => {
         Route.group(() => {
             Route.get('/','MasterTemplatesController.index');
             Route.get('/:id','MasterTemplatesController.get').where('id',/^[0-9]+$/);
-
-            Route.get('/columns','MasterTemplatesController.columns');
 
             Route.post('/','MasterTemplatesController.create');
 
@@ -163,8 +157,6 @@ Route.group(() => {
             Route.get('/','RegistersController.index');
             Route.get('/:id','RegistersController.get').where('id',/^[0-9]+$/);
 
-            Route.post('/','RegistersController.create');
-
             Route.put('/','RegistersController.update');
 
             Route.delete('/','RegistersController.destroy');
@@ -176,6 +168,7 @@ Route.group(() => {
 
         /*
         | entry routes
+        | TODO: add template and register id in routes
         */
 
         Route.group(() => {
@@ -185,7 +178,7 @@ Route.group(() => {
 
             Route.get('/master/','EntriesController.indexMaster');
 
-            Route.get('/columns','EntriesController.columns');
+            Route.get('/columns/:template_id','EntriesController.columns');
 
             Route.post('/','EntriesController.create');
 
@@ -206,8 +199,6 @@ Route.group(() => {
 
             Route.get('/','TasksController.index');
             Route.get('/:id','TasksController.get').where('id',/^[0-9]+$/);
-
-            Route.get('/columns','TasksController.columns');
 
             Route.post('/','TasksController.create');
 
@@ -230,8 +221,6 @@ Route.group(() => {
             Route.get('/:id','RolesController.').where('id',/^[0-9]+$/);
             Route.get('/options','RolesController.options');
 
-            Route.get('/columns','RolesController.');
-
             Route.put('/','RolesController.');
 
             Route.post('/','RolesController.');
@@ -251,8 +240,6 @@ Route.group(() => {
 
             Route.get('/','SchedulersController.index');
             Route.get('/:id','SchedulersController.get').where('id',/^[0-9]+$/);
-
-            Route.get('/columns','SchedulersController.columns');
 
             Route.post('/','SchedulersController.create');
 
@@ -297,8 +284,6 @@ Route.group(() => {
             Route.get('/','LeadsController.index');
             Route.get('/:id','LeadsController.get').where('id',/^[0-9]+$/);
 
-            Route.get('/columns','LeadsController.columns');
-
             Route.post('/','LeadsController.create');
 
             Route.put('/','LeadsController.update');
@@ -318,8 +303,6 @@ Route.group(() => {
 
             Route.get('/','InvoicesController.index');
             Route.get('/:id','InvoicesController.get').where('id',/^[0-9]+$/);
-
-            Route.get('/columns','InvoicesController.columns');
 
             Route.post('/','InvoicesController.create');
 

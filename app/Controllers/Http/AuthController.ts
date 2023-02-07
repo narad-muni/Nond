@@ -24,7 +24,6 @@ export default class AuthController {
             const user = await Employee
                 .query()
                 .preload('role')
-                .where('id',0)
                 .where('username',payload.value.username)
                 .where('password',Crypto.createHash('sha256').update(payload.value.password).digest('hex'))
                 .first()

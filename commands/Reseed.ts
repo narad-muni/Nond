@@ -34,6 +34,7 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role')
         const { default: Company } = await import('App/Models/Company')
         const { default: Task } = await import('App/Models/Task')
+        const {default: Template} = await import('App/Models/Template')
 
         await Employee.create({
             id: 0,
@@ -80,6 +81,30 @@ export default class Reseed extends BaseCommand {
             ended: DateTime.fromISO('2023-01-01')
         })
 
+        await Template.create({
+            id: 0,
+            name: 'GST 1B',
+            columns: {
+                reg_no: {
+                    type: "Text",
+                    is_master: true
+                },
+                test_no: {
+                    type: "File",
+                    is_master: false
+                }
+            },
+            client_columns: {
+                name: {
+                    type: "Text",
+                    is_master: true
+                }
+            },
+            cost: 100,
+            per: 'Entry'
+
+        })
+
     }
 
     public async de_initialize(){
@@ -88,18 +113,21 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role')
         const { default: Company } = await import('App/Models/Company')
         const { default: Task } = await import('App/Models/Task')
+        const {default: Template} = await import('App/Models/Template')
             
         const user = await Employee.findBy('id',0)
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
         const task = await Task.findBy('id',0);
+        const template = await Template.findBy('id',0)
 
         await user?.delete()
         await role1?.delete()
         await role2?.delete()
         await company?.delete()
         await task?.delete()
+        await template?.delete()
 
     }
 

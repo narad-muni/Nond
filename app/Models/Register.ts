@@ -16,6 +16,9 @@ export default class Register extends BaseModel {
     public is_active: boolean
 
     @column()
+    public columns: object
+
+    @column()
     public deleted: boolean
 
     @belongsTo(() => Template,{

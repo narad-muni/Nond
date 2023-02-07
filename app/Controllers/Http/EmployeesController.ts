@@ -11,17 +11,10 @@ export default class EmployeesController {
             })
             .where('deleted',false)
 
-        const serilizedData = data.map(e => e.serialize());
-        
-        serilizedData.forEach(e => {
-            e.role = e.role.name;
-            delete e.role_id;
-        });
-
         response.send({
             status: 'success',
             message: null,
-            data: serilizedData
+            data: data
         });
     }
 
@@ -34,16 +27,10 @@ export default class EmployeesController {
             .first()
 
         if(data){
-
-            const serilizedData = data.serialize()
-
-            serilizedData.role = serilizedData.role_id;
-            delete serilizedData.role_id;
-
             response.send({
                 status: 'success',
                 message: null,
-                data: serilizedData
+                data: data
             });
         }else{
             response.send({
@@ -58,20 +45,16 @@ export default class EmployeesController {
     public async options({response}: HttpContextContract) {
         const data = await Employee
             .query()
-            .select('id','username')
+            .select({
+                key: 'username',
+                value: 'id'
+            })
             .where('deleted',false)
 
-        const serilizedData = data.map(e => e.serialize())
-
-        serilizedData.map(e => {
-            e.value = e.id;
-            e.name = e.username;
-
-            delete e.id;
-            delete e.username;
+        response.send({
+            status: 'success',
+            data: data
         });
-
-        response.send(serilizedData);
 
     }
 

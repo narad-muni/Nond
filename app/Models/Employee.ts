@@ -1,4 +1,4 @@
-import { BaseModel, beforeSave, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm'
+import { afterFetch, BaseModel, beforeSave, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import Crypto from 'crypto';
 
