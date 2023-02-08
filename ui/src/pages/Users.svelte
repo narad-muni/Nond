@@ -28,10 +28,10 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, uploadModal;
+    let createModal, createTasksModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let columns, data, createdObject={}, actionsIndex, actionsObject, templateFile, role_options;
+    let data, createdObject={}, actionsIndex, actionsObject, templateFile, role_options;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
@@ -42,11 +42,10 @@
     // fetch data
 
     (async ()=>{
-        columns = await utils.get('/api/employee/columns');
         data = await utils.get('/api/employee/');
         role_options = await utils.get('/api/role/options');
-        if(data.status != 'success' || columns.status != 'success'){
-            error = String(data.message | columns.message);
+        if(data.status != 'success'){
+            error = String(data.message);
             return;
         }
         data = data.data;
@@ -107,12 +106,11 @@
 
     async function openActionsModal(e){
         let oid = e.target.innerText;
-        $rows.every((el,i) => {
-            if(el.id == oid){
+        $rows.find((e,i) => {
+            if(e.id == oid){
                 actionsIndex = i;
-                return false;
+                return true;
             }
-            return true;
         });
 
         actionsObject = await utils.get('/api/employee/'+$rows[actionsIndex].id);
@@ -130,15 +128,12 @@
     async function updateData(){
         const resp = await utils.put_form('/api/employee/',utils.getFormData(actionsObject));
 
-        const role = role_options.filter(e => {
-            if(e.value == actionsObject.role){
-                return true
-            }
-        });
-        actionsObject.role = role[0].name;
+        const role = role_options.find(e => e.value == actionsObject.role_id);
+
+        actionsObject.role = role;
 
         if(resp.status == 'success'){
-            data[0] = actionsObject;
+            data[actionsIndex] = actionsObject;
             handler.setRows(data);
             actionsModals = false;
         }else{
@@ -146,30 +141,11 @@
         }
         
     }
-
-    async function loadTemplateData(){
-        if(templateFile){
-            let resp = await utils.post_form('/api/client/load_template_data',utils.getFormData({"template":templateFile}));
-            if(resp.status != "success"){
-                error=resp.message;
-            }else{
-                success=resp.message;
-                uploadModal = false;
-            }
-        }else{
-            error="Please select a file";
-        }
-    }
     
     async function download(){
         let downloadData;
 
-        //check if all columns are fetched to avoid api call
-        if(allColumns){
-            downloadData = data;
-        }else{
-            downloadData = await utils.get('/api/client/read_full');
-        }
+        downloadData = data;
 
         //download selected rows if selected, else if everything or nothing is selected, download full
         if(indeterminate){
@@ -178,25 +154,40 @@
             });
         }
 
-        utils.downloadCSVFile(Object.keys(columns.data),downloadData,'ClientMaster');
+        downloadData.forEach(e => {
+            e.role = e.role.name;
+            e.is_admin = e.is_admin?'admin':''
+
+            delete e.role_id;
+            delete e._selected;
+        })
+
+        utils.downloadCSVFile(['id','username','is admin','role'],downloadData,'Employee Master');
     }
 
     async function deleteSelected(){
-        for (let i = 0; i < $rows.length; i++) {
-            if (selectedRows.has($rows[i].id)) {
-                $rows.splice(i, 1);
-                i--;
+        const resp = await utils._delete('/api/employee/',{id:Array.from(selectedRows)});
+
+        if(resp.status == 'success'){
+            for (let i = 0; i < $rows.length; i++) {
+                if (selectedRows.has($rows[i].id)) {
+                    $rows.splice(i, 1);
+                    i--;
+                }
             }
+            selectedRows.clear();
+            handler.setRows($rows);
+            selectedRows = selectedRows;
+        }else{
+            error = resp.message;
         }
-        selectedRows.clear();
-        handler.setRows($rows);
-        selectedRows = selectedRows;
     }
 
     async function createData(){
         let resp = await utils.post_json('/api/employee/',createdObject);
 
         if(resp.status == 'success'){
+            resp.data._selected = false;
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
@@ -232,14 +223,6 @@
             &nbsp;
             Download
         </Button>
-
-        <Button gradient color="cyan" on:click={()=> uploadModal = true}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-              </svg>                         
-            &nbsp;
-            Upload
-        </Button>
         
         <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -251,7 +234,7 @@
     </div>
 
     <div class="min-h-0 pl-4">
-        {#if data && columns && handler}
+        {#if data && handler}
             <DataTable {handler}>
                 <Table>
                     <thead>
@@ -260,20 +243,16 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">id</Th>
-                            {#each Object.entries(columns.data) as [column,obj]}
-                                {#if column != "_selected" && column != "id"}
-                                    <Th {handler} orderBy={column}>{column}</Th>
-                                {/if}
-                            {/each}
+                            <Th {handler} orderBy="username">username</Th>
+                            <Th {handler} orderBy="role">role</Th>
+                            <Th {handler} orderBy="is_admin">admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"></ThSearch>
                             <ThSearch {handler} filterBy="id"/>
-                            {#each Object.entries(columns.data) as [column,obj]}
-                                {#if column != "_selected" && column != "id"}
-                                    <ThSearch {handler} filterBy={column}/>
-                                {/if}
-                            {/each}
+                            <ThSearch {handler} filterBy="username"/>
+                            <ThSearch {handler} filterBy="role"/>
+                            <ThSearch {handler} filterBy="is_admin"/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -283,25 +262,15 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                
-                                {#each Object.entries(columns.data) as [column,obj]}
-                                    {#if column != "id" && column != "_selected"}
-                                        <TableBodyCell>
-                                            {#if obj.type == 'File' && row[column]}
-                                                <A target="_blank" href={row[column]}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                    </svg>                                                  
-                                                    &nbsp;{column}
-                                                </A>
-                                            {:else if obj.type == 'Checkbox'}
-                                                <Checkbox disabled checked={row[column]}/>
-                                            {:else}
-                                                {row[column]}
-                                            {/if}
-                                        </TableBodyCell>
-                                    {/if}
-                                {/each}
+                                <TableBodyCell>
+                                    {row.username}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.role.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    <Checkbox disabled checked={row.is_admin}/>
+                                </TableBodyCell>
                             </TableBodyRow>
                         {/each}
                     </TableBody>
@@ -326,34 +295,23 @@
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
-        {#each Object.entries(columns.data) as [column,obj]}
-            {#if column!="id" && column != 'role'}
-                <Label class="space-y-2">
-                    {#if obj.type=="Text"}
-                        <span>{column.toUpperCase()}</span>
-                        <Input bind:value={createdObject[column]}/>
-                    {:else if obj.type=="Date"}
-                        <span>{column.toUpperCase()}</span>
-                        <Input type="date" bind:value={createdObject[column]}/>
-                    {:else if obj.type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:checked={createdObject[column]}>{column}</Toggle>
-                    {:else}
-                        <p>{column.toUpperCase()}</p>
-                        <input type="file" accept=".csv, .CSV" on:input={event => createdObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
+        <Label class="space-y-2">
+            <span>Username</span>
+            <Input required bind:value={createdObject.username}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Password</span>
+            <Input type="password" required bind:value={createdObject.password}/>
+        </Label>
         <Label>
             <span>Role</span>
-            <Select required items={role_options} bind:value={createdObject['role_id']}></Select>
+            <Select required items={role_options} bind:value={createdObject.role_id}></Select>
         </Label>
-        <Label>
-            <span>Password</span>
-            <Input autocomplete="off" type="password" bind:value={createdObject['password']}/>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={createdObject.is_admin}>Admin</Toggle>
         </Label>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
@@ -388,69 +346,30 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        {#each Object.entries(columns.data) as [column,obj]}
-            <Label class="space-y-2">    
-                {#if column == "id"}
-                    <span>{column.toUpperCase()}</span>
-                    <Input bind:value={actionsObject.id} readonly/>
-                {:else if column == 'role'}
-                    <Select items={role_options} bind:value={actionsObject.role}></Select>
-                {:else}
-                    {#if obj.type=="Text"}
-                        <span>{column.toUpperCase()}</span>
-                        <Input bind:value={actionsObject[column]}/>
-                    {:else if obj.type=="Date"}
-                        <span>{column.toUpperCase()}</span>
-                        <Input bind:value={actionsObject[column]} type="date"/>
-                    {:else if obj.type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:checked={actionsObject[column]} >{column}</Toggle>
-                    {:else}
-                        {#if actionsObject[column]}
-                            <span>{column.toUpperCase()}</span>
-                            <div class="flex gap-3">
-                                <A target="_blank" href={actionsObject[column]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                    </svg>                                                  
-                                    &nbsp;{column}
-                                </A>
-                                <Button class="!p-0" gradient color="red">
-                                    <Label class="px-4 py-3 text-white" for={column}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>                                                                        
-                                    </Label>
-                                </Button>
-                                <input on:input={event => actionsObject[column]=event.target.files[0]} id={column} class="hidden" type="file" />   
-                            </div>
-                        {:else}
-                            <p>{column.toUpperCase()}</p>
-                            <input type="file" accept=".csv, .CSV" on:input={event => actionsObject[column]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                        {/if}
-                    {/if}
-                {/if}
-            </Label>
-        {/each}
-        <Label>
+        <Label class="space-y-2">
+            <span>ID</span>
+            <Input value={actionsObject.id} readonly/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Username</span>
+            <Input required bind:value={actionsObject.username}/>
+        </Label>
+        <Label class="space-y-2">
             <span>Password</span>
-            <Input autocomplete="off" type="password" bind:value={actionsObject.password}/>
+            <Input type="password" bind:value={actionsObject.password}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Role</span>
+            <Select required items={role_options} bind:value={actionsObject.role_id}></Select>
+        </Label>
+        <Label class="space-y-2">
+            <span>&nbsp</span>
+            <Toggle bind:checked={actionsObject.is_admin} >Admin</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
-    </form>
-</Modal>
-
-<Modal bind:open={uploadModal} size="xs">
-    <form class="flex flex-col space-y-4" on:submit|preventDefault={loadTemplateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0">Upload template file</h3>
-        <Label for="with_helper" class="pb-2">Upload file</Label>
-        <input type="file" accept=".csv .CSV" on:input={event => templateFile=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        <Helper>Templated CSV file.</Helper>
-        
-        <Button type="submit" class="w-full1">Upload</Button>
     </form>
 </Modal>
 

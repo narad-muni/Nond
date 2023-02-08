@@ -125,9 +125,11 @@ class utils{
     }
 
     // prefixed with underscored because delete is a reserved word in javascript
-    static async _delete(url){
+    static async _delete(url,body){
         const requestOptions = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(body)
         };
 
         const resp = await fetch(url, requestOptions);

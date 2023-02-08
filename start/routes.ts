@@ -77,8 +77,8 @@ Route.group(() => {
 
             Route.put('/','ClientsController.update');
 
-            Route.delete('/','ClientsController.destroy');
-            Route.delete('/:id','ClientsController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/','ClientsController.remove');
+            Route.delete('/:id','ClientsController.remove').where('id',/^[0-9]+$/);
 
             Route.delete('/destroy/','ClientsController.destroy');
             Route.delete('/destroy/:id','ClientsController.destroy').where('id',/^[0-9]+$/);
@@ -96,6 +96,8 @@ Route.group(() => {
             Route.get('/','EmployeesController.index');
             Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
 
+            Route.get('/columns','EmployeesController.columns');
+
             Route.get('/options','EmployeesController.options');
 
             Route.put('/','EmployeesController.update');
@@ -105,8 +107,13 @@ Route.group(() => {
             Route.delete('/','EmployeesController.remove');
             Route.delete('/:id','EmployeesController.remove').where('id',/^[0-9]+$/);
 
-            Route.delete('/destroy/','EmployeesController.destroy');
-            Route.delete('/destroy/:id','EmployeesController.destroy').where('id',/^[0-9]+$/);
+            Route.group(() => {
+                Route.get('/','EmployeesController.index_deleted');
+
+                Route.delete('/','EmployeesController.destroy');
+                Route.delete('/:id','EmployeesController.destroy').where('id',/^[0-9]+$/);
+            })
+            .prefix('/deleted')
 
         })
         .prefix('/employee');
