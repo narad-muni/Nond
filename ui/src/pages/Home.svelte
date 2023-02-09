@@ -10,6 +10,7 @@
     import {wrap} from 'svelte-spa-router/wrap'
 
     import {user} from '../global/user.js'
+  import Role from "./Role.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -20,6 +21,7 @@
     let routes = {
         '/': Dashboard,
         '/clients':Clients,
+        '/role':Role,
         '/users':Users,
         '*':Error
     }

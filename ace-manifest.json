@@ -11,10 +11,9 @@
       "args": [
         {
           "type": "string",
-          "propertyName": "name",
-          "name": "name",
-          "required": true,
-          "description": "Validator Name"
+          "propertyName": "v_name",
+          "name": "v_name",
+          "required": true
         }
       ],
       "aliases": [],

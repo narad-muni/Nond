@@ -43,6 +43,7 @@
     (async ()=>{
         headers = await utils.get('/api/master_template/read/:id');
         data = await utils.get('/api/client/read_master/');
+        
         handler = new DataHandler(
             data,
             {

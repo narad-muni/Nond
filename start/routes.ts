@@ -96,8 +96,6 @@ Route.group(() => {
             Route.get('/','EmployeesController.index');
             Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
 
-            Route.get('/columns','EmployeesController.columns');
-
             Route.get('/options','EmployeesController.options');
 
             Route.put('/','EmployeesController.update');
@@ -224,16 +222,16 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','RolesController.');
-            Route.get('/:id','RolesController.').where('id',/^[0-9]+$/);
+            Route.get('/','RolesController.index');
+            Route.get('/:id','RolesController.get').where('id',/^[0-9]+$/);
             Route.get('/options','RolesController.options');
 
-            Route.put('/','RolesController.');
+            Route.put('/','RolesController.update');
 
-            Route.post('/','RolesController.');
+            Route.post('/','RolesController.create');
 
-            Route.delete('/','RolesController.');
-            Route.delete('/:id','RolesController.').where('id',/^[0-9]+$/);
+            Route.delete('/','RolesController.destroy');
+            Route.delete('/:id','RolesController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/role');

@@ -41,27 +41,27 @@ export default class Reseed extends BaseCommand {
             username: 'admin',
             password: 'admin123',
             is_admin: true,
-            role_id: 0,
+            role_id: 1,
         })
 
         await Role.create({
             id: 0,
-            name: 'admin',
-            read: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
-            create: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
-            update: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
-            remove: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
-            destroy: JSON.stringify(["client","company","employee","template","master_template","register","role","task","scheduler","lead","invoice"]),
+            name: 'viewer',
+            read: {"task":true},
+            create: {},
+            update: {},
+            remove: {},
+            destroy: {},
         })
 
         await Role.create({
             id: 1,
-            name: 'normal',
-            read: JSON.stringify(["client","template","master_template","register","task","scheduler","lead","invoice"]),
-            create: JSON.stringify([]),
-            update: JSON.stringify([]),
-            remove: JSON.stringify([]),
-            destroy: JSON.stringify([]),
+            name: 'admin',
+            read: {"client":true,"company":true,"employee":true,"template":true,"master_template":true,"register":true,"role":true,"task":true,"scheduler":true,"lead":true,"invoice":true},
+            create: {"client":true,"company":true,"employee":true,"template":true,"master_template":true,"register":true,"role":true,"task":true,"scheduler":true,"lead":true,"invoice":true},
+            update: {"client":true,"company":true,"employee":true,"template":true,"master_template":true,"register":true,"role":true,"task":true,"scheduler":true,"lead":true,"invoice":true},
+            remove: {"client":true,"company":true,"employee":true,"template":true,"master_template":true,"register":true,"role":true,"task":true,"scheduler":true,"lead":true,"invoice":true},
+            destroy: {"client":true,"company":true,"employee":true,"template":true,"master_template":true,"register":true,"role":true,"task":true,"scheduler":true,"lead":true,"invoice":true},
         })
 
         await Company.create({

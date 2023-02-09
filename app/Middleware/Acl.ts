@@ -14,21 +14,21 @@ export default class Acl {
 
         if(method == 'GET'){// Read Operation
 
-            if(!role.read.includes(part)){
+            if(!role.read[part]){
                 response.send(not_permitted_err);
                 return;
             }
 
         }else if(method == 'POST'){// Create Operation
 
-            if(!role.create.includes(part)){
+            if(!role.create[part]){
                 response.send(not_permitted_err);
                 return;
             }
 
         }else if(method == 'PUT'){// Update Operation
 
-            if(!role.update.includes(part)){
+            if(!role.update[part]){
                 response.send(not_permitted_err);
                 return;
             }
@@ -36,12 +36,12 @@ export default class Acl {
         }else if(method == 'DELETE'){// Delete Operation
 
             if(part.includes('destroy')){
-                if(!role.destroy.includes(part)){
+                if(!role.destroy[part]){
                     response.send(not_permitted_err);
                     return;
                 }
             }else{
-                if(!role.remove.includes(part)){
+                if(!role.remove[part]){
                     response.send(not_permitted_err);
                     return;
                 }

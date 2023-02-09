@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Role extends BaseModel {
@@ -9,17 +8,17 @@ export default class Role extends BaseModel {
     public name: string
 
     @column()
-    public read: Array<string>
+    public read: object
 
     @column()
-    public create: Array<string>
+    public create: object
 
     @column()
-    public update: Array<string>
+    public update: object
 
     @column()
-    public remove: Array<string>
+    public remove: object
 
     @column()
-    public destroy: Array<string>
+    public destroy: object
 }

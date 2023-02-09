@@ -73,26 +73,6 @@ export default class EmployeesController {
 
     }
 
-    public async columns({response}: HttpContextContract) {
-        response.send({
-            status: 'success',
-            data: {
-                id: {
-                    type: 'Text'
-                },
-                username: {
-                    type: 'Text'
-                },
-                role: {
-                    type: 'Text'
-                },
-                is_admin: {
-                    type: 'Checkbox'
-                }
-            }
-        });
-    }
-
     public async create({request,response}: HttpContextContract) {
         const data = request.all()
         const emp = await Employee.create(data);

@@ -266,7 +266,7 @@
                                     {row.username}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role.name}
+                                    {row.role?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_admin}/>
