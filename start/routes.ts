@@ -203,14 +203,18 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TasksController.index');
+            Route.get('/all','TasksController.indexAll');
             Route.get('/:id','TasksController.get').where('id',/^[0-9]+$/);
 
             Route.post('/','TasksController.create');
 
             Route.put('/','TasksController.update');
 
-            Route.delete('/','TasksController.destroy');
-            Route.delete('/:id','TasksController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/','TasksController.remove');
+            Route.delete('/:id','TasksController.remove').where('id',/^[0-9]+$/);
+
+            Route.delete('/destroy','TasksController.destroy');
+            Route.delete('//destroy/:id','TasksController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/task');

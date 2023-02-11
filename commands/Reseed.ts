@@ -76,10 +76,12 @@ export default class Reseed extends BaseCommand {
         await Task.create({
             id: 0,
             assigned_to: 0,
+            client_id: 0,
             title: 'Please complete this asap',
             description: 'Very bad\nVery Late',
-            started: DateTime.fromISO('2022-12-01').toISODate(),
-            ended: DateTime.fromISO('2023-01-01').toISODate()
+            status: 'Pending',
+            started: DateTime.fromISO('2022-12-01'),
+            ended: DateTime.fromISO('2023-01-01')
         })
 
         await Lead.create({
@@ -88,7 +90,7 @@ export default class Reseed extends BaseCommand {
             assigned_to: 0,
             description: 'Wan\'t to arrange meeting',
             status: 'On boarding',
-            started: DateTime.fromISO('2022-12-12').toISODate()
+            started: DateTime.fromISO('2022-12-12')
         })
 
         await Template.create({

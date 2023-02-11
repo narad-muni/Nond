@@ -31,7 +31,7 @@
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, userList;
+    let data, createdObject={}, actionsIndex, actionsObject, userList, clientList;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
@@ -51,8 +51,12 @@
 
     (async ()=>{
         data = await utils.get('/api/lead/');
+
         userList = await utils.get('/api/employee/options');
         userList = userList.data;
+
+        // clientList = await utils.get('/api/client/options');
+        // clientList = clientList.data;
 
         if(data.status != 'success'){
             error = String(data.message);
@@ -216,18 +220,21 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">id</Th>
+                            <Th {handler} orderBy="Title">Title</Th>
                             <Th {handler} orderBy="client">Client</Th>
-                            <Th {handler} orderBy="assigned_user.username">Assigned To</Th>
+                            <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="started">Started</Th>
+                            <Th {handler} orderBy="ended">Ended</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="client"/>
-                            <ThSearch {handler} filterBy="assigned_user.username"/>
-                            <ThSearch {handler} filterBy="status"/>
+                            <ThSearch {handler} filterBy="title"/>
+                            <ThSearch {handler} filterBy="id"/>
+                            <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="started"/>
+                            <ThSearch {handler} filterBy="ended"/>
                         </tr>
                     </thead>
                     <TableBody>

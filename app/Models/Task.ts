@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import Client from './Client'
+import Employee from './Employee'
 
 export default class Task extends BaseModel {
     @column({ isPrimary: true })
@@ -10,6 +12,9 @@ export default class Task extends BaseModel {
     
     @column()
     public title: string
+
+    @column()
+    public client_id: number
     
     @column()
     public description: string
@@ -22,4 +27,14 @@ export default class Task extends BaseModel {
     
     @column.date()
     public ended: DateTime
+
+    @belongsTo(() => Client,{
+        foreignKey: 'client_id'
+    })
+    public client: BelongsTo<typeof Client>
+
+    @belongsTo(() => Employee,{
+        foreignKey: 'assigned_to'
+    })
+    public assigned_user: BelongsTo<typeof Employee>
 }
