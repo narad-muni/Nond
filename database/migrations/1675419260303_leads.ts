@@ -10,7 +10,7 @@ export default class extends BaseSchema {
         table.string('status');
         table.integer('assigned_to');
         table.string('description');
-        table.date('started')
+        table.date('started');
         })
     }
 

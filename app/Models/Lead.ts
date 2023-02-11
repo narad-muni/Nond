@@ -23,6 +23,6 @@ export default class Lead extends BaseModel {
     })
     public assigned_user: BelongsTo<typeof Employee>
 
-    @column()
+    @column.date()
     public started: DateTime
 }
