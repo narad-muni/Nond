@@ -12,6 +12,11 @@ export default class Acl {
             message: 'Permission denied'
         }
 
+        if(method == 'GET' && url.includes('options')){
+            await next();
+            return;
+        }
+
         if(method == 'GET'){// Read Operation
 
             if(!role.read[part]){
@@ -35,7 +40,7 @@ export default class Acl {
 
         }else if(method == 'DELETE'){// Delete Operation
 
-            if(part.includes('destroy')){
+            if(url.includes('destroy')){
                 if(!role.destroy[part]){
                     response.send(not_permitted_err);
                     return;

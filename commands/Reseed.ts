@@ -35,6 +35,7 @@ export default class Reseed extends BaseCommand {
         const { default: Company } = await import('App/Models/Company')
         const { default: Task } = await import('App/Models/Task')
         const {default: Template} = await import('App/Models/Template')
+        const {default: Lead} = await import('App/Models/Lead')
 
         await Employee.create({
             id: 0,
@@ -77,8 +78,17 @@ export default class Reseed extends BaseCommand {
             assigned_to: 0,
             title: 'Please complete this asap',
             description: 'Very bad\nVery Late',
-            started: DateTime.fromISO('2022-12-01'),
-            ended: DateTime.fromISO('2023-01-01')
+            started: DateTime.fromISO('2022-12-01').toISODate(),
+            ended: DateTime.fromISO('2023-01-01').toISODate()
+        })
+
+        await Lead.create({
+            id: 0,
+            client: 'SS Industries',
+            assigned_to: 0,
+            description: 'Wan\'t to arrange meeting',
+            status: 'On boarding',
+            started: DateTime.fromISO('2022-12-12').toISODate()
         })
 
         await Template.create({
@@ -114,13 +124,15 @@ export default class Reseed extends BaseCommand {
         const { default: Company } = await import('App/Models/Company')
         const { default: Task } = await import('App/Models/Task')
         const {default: Template} = await import('App/Models/Template')
+        const {default: Lead} = await import('App/Models/Lead')
             
         const user = await Employee.findBy('id',0)
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
         const task = await Task.findBy('id',0);
-        const template = await Template.findBy('id',0)
+        const template = await Template.findBy('id',0);
+        const lead = await Lead.findBy('id',0);
 
         await user?.delete()
         await role1?.delete()
@@ -128,6 +140,7 @@ export default class Reseed extends BaseCommand {
         await company?.delete()
         await task?.delete()
         await template?.delete()
+        await lead?.delete()
 
     }
 

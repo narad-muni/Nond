@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database';
 import Employee from 'App/Models/Employee';
 import Crypto from 'crypto';
 
@@ -58,10 +59,10 @@ export default class EmployeesController {
     }
 
     public async options({response}: HttpContextContract) {
-        const data = await Employee
-            .query()
+        const data = await Database
+            .from('employees')
             .select({
-                key: 'username',
+                name: 'username',
                 value: 'id'
             })
             .where('deleted',false)

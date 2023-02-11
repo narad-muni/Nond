@@ -1,23 +1,78 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Lead from 'App/Models/Lead'
 
 export default class LeadsController {
-    public async index({}: HttpContextContract){}
+    public async index({response}: HttpContextContract){
+        const data = await Lead
+            .query()
+            .preload('assigned_user',(query) => {
+                query.select('username')
+            })
 
-    public async indexMaster({}: HttpContextContract){}
+        response.send({
+            status: 'success',
+            data: data
+        })
+    }
 
-    public async get({}: HttpContextContract){}
+    public async get({request,response}: HttpContextContract){
+        const payload = request.param('id');
 
-    public async getMaster({}: HttpContextContract){}
+        const data = await Lead
+            .query()
+            .where('id',payload)
+            .first()
 
-    public async options({}: HttpContextContract){}
+        if(data){
+            response.send({
+                status: 'success',
+                data: data
+            })
+        }else{
+            response.send({
+                status: 'error',
+                data: null,
+                message: 'Lead not found'
+            })
+        }
+    }
 
-    public async columns({}: HttpContextContract){}
+    public async create({request,response}: HttpContextContract){
+        const payload = request.all();
+        const data = await Lead.create(payload);
 
-    public async create({}: HttpContextContract){}
+        payload.id = data.id;
 
-    public async update({}: HttpContextContract){}
+        response.send({
+            status: 'success',
+            data: payload
+        })
+    }
 
-    public async remove({}: HttpContextContract){}
+    public async update({request,response}: HttpContextContract){
+        const payload = request.all()
 
-    public async destroy({}: HttpContextContract){}
+        await Lead
+            .query()
+            .where('id',payload.id)
+            .update(payload)
+
+        response.send({
+            status: 'success',
+            data: payload
+        })
+    }
+
+    public async destroy({request,response}: HttpContextContract){
+        const payload = Object.values(request.all())[0];
+
+        await Lead
+            .query()
+            .whereIn('id',payload)
+            .delete()
+
+        response.send({
+            status: 'success'
+        })
+    }
 }

@@ -11,6 +11,7 @@
 
     import {user} from '../global/user.js'
   import Role from "./Role.svelte";
+  import Lead from "./Lead.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -22,6 +23,7 @@
         '/': Dashboard,
         '/clients':Clients,
         '/role':Role,
+        '/lead':Lead,
         '/users':Users,
         '*':Error
     }

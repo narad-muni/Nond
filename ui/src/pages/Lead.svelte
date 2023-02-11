@@ -28,22 +28,32 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, templateFile, role_options;
+    let data, createdObject={}, actionsIndex, actionsObject, userList;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
         {name:"By Client",value:"By Client"}
+    ]
+    const leadStatus = [
+        {name:'Pending',value:'Pending'},
+        {name:'In Process',value:'In Process'},
+        {name:'Meeting',value:'Meeting'},
+        {name:'Client Onboarding',value:'Client Onboarding'},
+        {name:'Deal Closed',value:'Deal Closed'},
+        {name:'Deal Failed',value:'Deal Failed'}
     ]
     let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
 
     // fetch data
 
     (async ()=>{
-        data = await utils.get('/api/employee/');
-        role_options = await utils.get('/api/role/options');
+        data = await utils.get('/api/lead/');
+        userList = await utils.get('/api/employee/options');
+        userList = userList.data;
+
         if(data.status != 'success'){
             error = String(data.message);
             return;
@@ -113,7 +123,7 @@
             }
         });
 
-        actionsObject = await utils.get('/api/employee/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/lead/'+$rows[actionsIndex].id);
 
         if(actionsObject.status != 'success'){
             error = actionsObject.message;
@@ -126,47 +136,23 @@
     }
 
     async function updateData(){
-        const resp = await utils.put_form('/api/employee/',utils.getFormData(actionsObject));
+        const resp = await utils.put_json('/api/lead/',actionsObject);
 
-        const role = role_options.find(e => e.value == actionsObject.role_id);
-
-        actionsObject.role = role;
+        actionsObject.assigned_user = userList.find(e => e.value == actionsObject.assigned_to);
+        actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
 
         if(resp.status == 'success'){
             $rows.splice(actionsIndex,1,actionsObject);
             handler.setRows($rows);
             actionsModals = false;
         }else{
-            error = resp.message | "";
+            error = resp.message || "";
         }
         
     }
-    
-    async function download(){
-        let downloadData;
-
-        downloadData = data;
-
-        //download selected rows if selected, else if everything or nothing is selected, download full
-        if(indeterminate){
-            downloadData = downloadData.filter((i) => {
-                return selectedRows.has(i.id);
-            });
-        }
-
-        downloadData.forEach(e => {
-            e.role = e.role.name;
-            e.is_admin = e.is_admin?'admin':''
-
-            delete e.role_id;
-            delete e._selected;
-        })
-
-        utils.downloadCSVFile(['id','username','is admin','role'],downloadData,'Employee Master');
-    }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/employee/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/lead/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < $rows.length; i++) {
@@ -184,19 +170,18 @@
     }
 
     async function createData(){
-        let resp = await utils.post_json('/api/employee/',createdObject);
+        let resp = await utils.post_json('/api/lead/',createdObject);
 
         if(resp.status == 'success'){
             resp.data._selected = false;
-
-            resp.data.role = role_options.find(e => e.value == resp.data.role_id);
-            console.log(role_options,resp)
+            resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
+            resp.data.assigned_user.username = resp.data.assigned_user.name;
 
             $rows.push(resp.data);
             handler.setRows($rows);
             createModal = false;
         }else{
-            error = resp.message | "";
+            error = resp.message || "";
         }
     }
 
@@ -212,22 +197,6 @@
             Create
         </Button>
 
-        <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> createTasksModal = true}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
-              </svg>                                 
-            &nbsp;
-            Create Tasks
-        </Button>
-        
-        <Button gradient color="green" on:click={download}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-            </svg>                          
-            &nbsp;
-            Download
-        </Button>
-        
         <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -247,16 +216,18 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="username">username</Th>
-                            <Th {handler} orderBy="role">role</Th>
-                            <Th {handler} orderBy="is_admin">admin</Th>
+                            <Th {handler} orderBy="name">Client</Th>
+                            <Th {handler} orderBy="name">Assigned To</Th>
+                            <Th {handler} orderBy="name">Status</Th>
+                            <Th {handler} orderBy="name">Started</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"></ThSearch>
+                            <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="username"/>
-                            <ThSearch {handler} filterBy="role"/>
-                            <ThSearch {handler} filterBy="is_admin"/>
+                            <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="id"/>
+                            <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="id"/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -267,13 +238,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.username}
+                                    {row.client}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role?.name}
+                                    {row.assigned_user.username}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    <Checkbox disabled checked={row.is_admin}/>
+                                    {row.status}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.started}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -299,23 +273,27 @@
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         <Label class="space-y-2">
-            <span>Username</span>
-            <Input required bind:value={createdObject.username}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Password</span>
-            <Input type="password" required bind:value={createdObject.password}/>
-        </Label>
-        <Label>
-            <span>Role</span>
-            <Select required items={role_options} bind:value={createdObject.role_id}></Select>
+            <span>Client Name</span>
+            <Input required bind:value={createdObject.client}/>
         </Label>
         <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.is_admin}>Admin</Toggle>
+            <span>Start date</span>
+            <Input required type="date" bind:value={createdObject.started}/>
         </Label>
-
+        <Label class="space-y-2">
+            <span>Assigned To</span>
+            <Select required items={userList} bind:value={createdObject.assigned_to} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Status</span>
+            <Select required items={leadStatus} bind:value={createdObject.status}/>
+        </Label>
+        <Label class="space-y-2 col-span-2">
+            <span>Description</span>
+            <Textarea placeholder="Description" rows="4" bind:value={createdObject.description}/>
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
@@ -323,52 +301,28 @@
     </form>
 </Modal>
 
-<Modal bind:open={createTasksModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Client Id's</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={assignedUser}/>
-        </Label>
-        {#if assignedUser < 0}
-            <Label class="flex  flex-col gap-y-1">
-                <span class="mb-2">Assign By</span>
-                <Select items={automaticAssign} bind:value={autoAssignType}/>
-            </Label>
-        {/if}
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Description</span>
-            <Textarea rows=8></Textarea>
-        </Label>
-    </form>
-</Modal>
-
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
-            <span>ID</span>
-            <Input value={actionsObject.id} readonly/>
+            <span>Client Name</span>
+            <Input required bind:value={actionsObject.client}/>
         </Label>
         <Label class="space-y-2">
-            <span>Username</span>
-            <Input required bind:value={actionsObject.username}/>
+            <span>Start date</span>
+            <Input type="date" bind:value={actionsObject.started}/>
         </Label>
         <Label class="space-y-2">
-            <span>Password</span>
-            <Input type="password" bind:value={actionsObject.password}/>
+            <span>Assigned To</span>
+            <Select items={userList} bind:value={actionsObject.assigned_to} />
         </Label>
         <Label class="space-y-2">
-            <span>Role</span>
-            <Select required items={role_options} bind:value={actionsObject.role_id}></Select>
+            <span>Status</span>
+            <Select items={leadStatus} bind:value={actionsObject.status}/>
         </Label>
-        <Label class="space-y-2">
-            <span>&nbsp</span>
-            <Toggle bind:checked={actionsObject.is_admin} >Admin</Toggle>
+        <Label class="space-y-2 col-span-2">
+            <span>Description</span>
+            <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>

@@ -27,7 +27,7 @@ export default class Employee extends BaseModel {
         foreignKey: 'role_id',
     })
     public role: BelongsTo<typeof Role>
-
+    
     @beforeSave()
     public static async hashPassword(user: Employee) {
         if (user.$dirty.password) {
