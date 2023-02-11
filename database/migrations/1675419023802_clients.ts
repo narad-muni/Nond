@@ -9,6 +9,7 @@ export default class extends BaseSchema {
         table.string('name')
         table.string('email')
         table.string('gstin')
+        table.string('test')
         table.boolean('deleted').defaultTo(false)
 
         /**

@@ -36,6 +36,7 @@ export default class Reseed extends BaseCommand {
         const { default: Task } = await import('App/Models/Task')
         const {default: Template} = await import('App/Models/Template')
         const {default: Lead} = await import('App/Models/Lead')
+        const {default: Client} = await import('App/Models/Client')
 
         await Employee.create({
             id: 0,
@@ -71,6 +72,17 @@ export default class Reseed extends BaseCommand {
             gstin: '27GAHJAKS',
             email: 'jjind2011@gmail.com',
             signature: '.jpg'
+        })
+
+        Client.$addColumn('test',{})
+
+        await Client.create({
+            id: 0,
+            name: 'JJ Industries',
+            email: 'jjind2011@gmail.com',
+            gstin: '27aafh',
+            test: 'aa',
+            deleted: false
         })
 
         await Task.create({
@@ -127,6 +139,7 @@ export default class Reseed extends BaseCommand {
         const { default: Task } = await import('App/Models/Task')
         const {default: Template} = await import('App/Models/Template')
         const {default: Lead} = await import('App/Models/Lead')
+        const {default: Client} = await import('App/Models/Client')
             
         const user = await Employee.findBy('id',0)
         const role1 = await Role.findBy('id',0);
@@ -135,6 +148,7 @@ export default class Reseed extends BaseCommand {
         const task = await Task.findBy('id',0);
         const template = await Template.findBy('id',0);
         const lead = await Lead.findBy('id',0);
+        const client = await Client.findBy('id',0)
 
         await user?.delete()
         await role1?.delete()
@@ -143,6 +157,7 @@ export default class Reseed extends BaseCommand {
         await task?.delete()
         await template?.delete()
         await lead?.delete()
+        await client?.delete()
 
     }
 

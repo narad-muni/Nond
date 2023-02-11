@@ -22,7 +22,7 @@
 
     let routes = {
         '/': Dashboard,
-        '/clients':Clients,
+        '/client':Clients,
         '/role':Role,
         '/lead':Lead,
         '/users':Users,
