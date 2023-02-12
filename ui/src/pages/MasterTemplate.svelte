@@ -42,8 +42,8 @@
         {name: 'Checkbox',value: 'Checkbox'},
     ];
     const table_name = [
-        {name: 'client',value: 'client'},
-        {name: 'company',value: 'company'}
+        {name: 'clients',value: 'clients'},
+        {name: 'companies',value: 'companies'}
     ];
     // fetch data
 
@@ -170,6 +170,7 @@
             $rows.push(resp.data);
             handler.setRows($rows);
             createModal = false;
+            createdObject = {};
         }else{
             error = resp.message || "";
         }
