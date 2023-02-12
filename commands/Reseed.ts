@@ -37,6 +37,7 @@ export default class Reseed extends BaseCommand {
         const {default: Template} = await import('App/Models/Template')
         const {default: Lead} = await import('App/Models/Lead')
         const {default: Client} = await import('App/Models/Client')
+        const {default: MasterTemplate} = await import('App/Models/MasterTemplate')
 
         await Employee.create({
             id: 0,
@@ -74,14 +75,19 @@ export default class Reseed extends BaseCommand {
             signature: '.jpg'
         })
 
-        Client.$addColumn('test',{})
+        await MasterTemplate.create({
+            id: 0,
+            table_name: 'client',
+            column_name: 'test',
+            column_type: 'File',
+            is_master: false
+        })
 
         await Client.create({
             id: 0,
             name: 'JJ Industries',
             email: 'jjind2011@gmail.com',
             gstin: '27aafh',
-            test: 'aa',
             deleted: false
         })
 

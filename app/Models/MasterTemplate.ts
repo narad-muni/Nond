@@ -1,19 +1,18 @@
-import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class MasterTemplate extends BaseModel {
-  @column({ isPrimary: true })
-  public id: number
+    @column({ isPrimary: true })
+    public id: number
 
-  @column()
-  public name: string
+    @column()
+    public table_name: 'client' | 'company'
 
-  @column()
-  public columns: object
+    @column()
+    public column_name: string
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+    @column()
+    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox'
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+    @column()
+    public is_master: boolean
 }

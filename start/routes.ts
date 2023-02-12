@@ -148,7 +148,6 @@ Route.group(() => {
             Route.put('/','MasterTemplatesController.update');
 
             Route.delete('/','MasterTemplatesController.destroy');
-            Route.delete('/:id','MasterTemplatesController.destroy').where('id',/^[0-9]+$/);
         })
         .prefix('/master_template');
 

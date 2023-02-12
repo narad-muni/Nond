@@ -5,13 +5,11 @@ export default class extends BaseSchema {
 
     public async up () {
         this.schema.createTable(this.tableName, (table) => {
-        table.increments('id')
-        table.string('name')
-        table.json('columns')
-
-        /**
-         * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-         */
+            table.increments('id');
+            table.string('table_name');
+            table.string('column_name');
+            table.string('column_type');
+            table.boolean('is_master');
        })
     }
 

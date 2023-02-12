@@ -13,6 +13,7 @@
   import Role from "./Role.svelte";
   import Lead from "./Lead.svelte";
   import Task from "./Task.svelte";
+  import MasterTemplate from "./MasterTemplate.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -27,6 +28,7 @@
         '/lead':Lead,
         '/users':Users,
         '/task':Task,
+        '/master_template':MasterTemplate,
         '*':Error
     }
 
