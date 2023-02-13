@@ -27,7 +27,7 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, uploadModal, allColumns = false;
+    let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
     let headers, data, createdObject={}, actionsIndex, actionsObject, templateFile;
@@ -110,9 +110,14 @@
             return true;
         });
 
-        actionsObject = await utils.get('/api/client/read_by_id/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/client/'+$rows[actionsIndex].id);
 
-        actionsModals = true;
+        if(actionsObject.status == 'success'){
+            actionsObject = actionsObject.data;
+            actionsModals = true;
+        }else{
+            error = actionsObject.message || "";
+        }
     }
 
     async function updateData(){
@@ -135,9 +140,9 @@
 
     async function reloadData(){
         if(allColumns){
-            data = await utils.get('/api/client/read_full/');
+            data = await utils.get('/api/client/');
         }else{
-            data = await utils.get('/api/client/read_master/');
+            data = await utils.get('/api/client/master/');
         }
 
         selectedRows.clear();
@@ -147,7 +152,7 @@
 
     async function viewAllColumns(){
         allColumns = true;
-        data = await utils.get('/api/client/read_full/');
+        data = await utils.get('/api/client/');
 
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
@@ -193,7 +198,12 @@
     }
 
     async function createData(){
+        const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
+        if(data.status == 'success'){
 
+        }else{
+            error = resp.message || "";
+        }
     }
 
 </script>
@@ -222,14 +232,6 @@
             </svg>                          
             &nbsp;
             Download
-        </Button>
-
-        <Button gradient color="cyan" on:click={()=> uploadModal = true}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-              </svg>                         
-            &nbsp;
-            Upload
         </Button>
         
         <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -348,21 +350,36 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
-        {#each Object.entries(headers.columns) as [header,obj]}
+        <Label class="space-y-2">
+            <span>Name</span>
+            <Input required type="text" bind:value={createdObject.name} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Email</span>
+            <Input required type="email" bind:value={createdObject.email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>GSTIN</span>
+            <Input required type="text" bind:value={createdObject.gstin} />
+        </Label>
+
+        {#each headers.data as header}
             {#if header!="id"}
                 <Label class="space-y-2">
-                    {#if obj.type=="Text"}
-                        <span>{header.toUpperCase()}</span>
-                        <Input bind:value={createdObject[header]}/>
-                    {:else if obj.type=="Date"}
-                        <span>{header.toUpperCase()}</span>
-                        <Input type="date" bind:value={createdObject[header]}/>
-                    {:else if obj.type=="Checkbox"}
+                    {#if header.column_type=="Text"}
+                        <span>{header.display_name}</span>
+                        <Input type="text" bind:value={createdObject[header.column_name]}/>
+                    {:else if header.column_type=="Date"}
+                        <span>{header.display_name}</span>
+                        <Input type="date" bind:value={createdObject[header.column_name]}/>
+                    {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header]}>{header}</Toggle>
+                        <Toggle bind:value={createdObject[header.column_name]}>{header.display_name}</Toggle>
                     {:else}
-                        <p>{header.toUpperCase()}</p>
-                        <input type="file" accept=".csv, .CSV" on:input={event => createdObject[header]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                        <p>{header.display_name}</p>
+                        <input type="file" accept=".csv, .CSV" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
                     {/if}
                 </Label>
             {/if}
@@ -400,64 +417,50 @@
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        {#each Object.entries(headers.columns) as [header,obj]}
-            <Label class="space-y-2">    
-                {#if header!="id"}
-                    {#if obj.type=="Text"}
-                        <span>{header.toUpperCase()}</span>
-                        <Input value={actionsObject[header]}/>
-                    {:else if obj.type=="Date"}
-                        <span>{header.toUpperCase()}</span>
-                        <Input value={actionsObject[header]} type="date"/>
-                    {:else if obj.type=="Checkbox"}
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Client</h3>
+        <Label class="space-y-2">
+            <span>ID</span>
+            <Input readonly type="text" bind:value={actionsObject.id} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Name</span>
+            <Input type="text" bind:value={actionsObject.name} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Email</span>
+            <Input type="email" bind:value={actionsObject.email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>GSTIN</span>
+            <Input type="text" bind:value={actionsObject.gstin} />
+        </Label>
+
+        {#each headers.data as header}
+            {#if header!="id"}
+                <Label class="space-y-2">
+                    {#if header.column_type=="Text"}
+                        <span>{header.display_name}</span>
+                        <Input bind:value={actionsObject[header.column_name]}/>
+                    {:else if header.column_type=="Date"}
+                        <span>{header.display_name}</span>
+                        <Input type="date" bind:value={actionsObject[header.column_name]}/>
+                    {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle checked={actionsObject[header]} >{header}</Toggle>
+                        <Toggle bind:value={actionsObject[header.column_name]}>{header.display_name}</Toggle>
                     {:else}
-                        {#if actionsObject[header]}
-                            <span>{header.toUpperCase()}</span>
-                            <div class="flex gap-3">
-                                <A target="_blank" href={actionsObject[header]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                    </svg>                                                  
-                                    &nbsp;{header}
-                                </A>
-                                <Button class="!p-0" gradient color="red">
-                                    <Label class="px-4 py-3 text-white" for={header}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                                        </svg>                                                                        
-                                    </Label>
-                                </Button>
-                                <input on:input={event => actionsObject[header]=event.target.files[0]} id={header} class="hidden" type="file" />   
-                            </div>
-                        {:else}
-                            <p>{header.toUpperCase()}</p>
-                            <input type="file" accept=".csv, .CSV" on:input={event => actionsObject[header]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                        {/if}
+                        <p>{header.display_name}</p>
+                        <input type="file" accept=".csv, .CSV" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
                     {/if}
-                {:else}
-                    <span>{header.toUpperCase()}</span>
-                    <Input value={actionsObject.id} readonly/>
-                {/if}
-            </Label>
+                </Label>
+            {/if}
         {/each}
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Create</Button>
+            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
-    </form>
-</Modal>
-
-<Modal bind:open={uploadModal} size="xs">
-    <form class="flex flex-col space-y-4" on:submit|preventDefault={loadTemplateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0">Upload template file</h3>
-        <Label for="with_helper" class="pb-2">Upload file</Label>
-        <input type="file" accept=".csv .CSV" on:input={event => templateFile=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        <Helper>Templated CSV file.</Helper>
-        
-        <Button type="submit" class="w-full1">Upload</Button>
     </form>
 </Modal>
 

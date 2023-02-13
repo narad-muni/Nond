@@ -1,3 +1,4 @@
+import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
 import MasterTemplate from 'App/Models/MasterTemplate';
@@ -39,9 +40,26 @@ export default class ClientsController {
         response.send(data);
     }
 
-    public async get({}: HttpContextContract){}
+    public async get({request,response}: HttpContextContract){
+        const payload = request.params()
 
-    public async getMaster({}: HttpContextContract){}
+        const data = await Client
+            .query()
+            .where('id',payload.id)
+            .first()
+
+        if(data){
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }else{
+            response.send({
+                status: 'error',
+                message: 'No data found'
+            })
+        }
+    }
 
     public async options({response}: HttpContextContract) {
         const data = await Client
@@ -63,13 +81,49 @@ export default class ClientsController {
 
     }
 
-    public async columns({}: HttpContextContract){}
+    public async create({request,response}: HttpContextContract){
+        const payload = request.all();
+        const files = request.allFiles();
 
-    public async create({}: HttpContextContract){}
+        const headers = await MasterTemplate
+            .query()
+            .where('table_name','clients')
 
-    public async update({}: HttpContextContract){}
+        headers.forEach(header => {
+            Client.$addColumn(header.column_name,{});
+        });
 
-    public async remove({}: HttpContextContract){}
+        const inserted = await Client.create(payload);
 
-    public async destroy({}: HttpContextContract){}
+        payload.id = inserted.id;
+        
+        Object.values(files).forEach(file => {
+            const path = `/file/client/${inserted.id}/`;
+            const file_name = `${file.fieldName}.${file.extname}`
+            file.move(Application.makePath(path),{name:file_name});
+            payload[file.fieldName] = path+file_name;
+        });
+
+        await Client
+            .query()
+            .where('id',inserted.id)
+            .update(payload)
+
+        response.send({
+            status: 'success',
+            data: payload
+        })
+    }
+
+    public async update({request,response}: HttpContextContract){
+        const payload = request.all()
+    }
+
+    public async remove({request,response}: HttpContextContract){
+        const payload = request.all()
+    }
+
+    public async destroy({request,response}: HttpContextContract){
+        const payload = request.all()
+    }
 }
