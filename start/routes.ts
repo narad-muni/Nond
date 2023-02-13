@@ -78,10 +78,8 @@ Route.group(() => {
             Route.put('/','ClientsController.update');
 
             Route.delete('/','ClientsController.remove');
-            Route.delete('/:id','ClientsController.remove').where('id',/^[0-9]+$/);
 
             Route.delete('/destroy/','ClientsController.destroy');
-            Route.delete('/destroy/:id','ClientsController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/client');
