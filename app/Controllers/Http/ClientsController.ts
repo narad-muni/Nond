@@ -1,8 +1,18 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
+import MasterTemplate from 'App/Models/MasterTemplate';
 
 export default class ClientsController {
     public async index({response}: HttpContextContract){
+
+        const headers = await MasterTemplate
+            .query()
+            .where('table_name','clients')
+
+        headers.forEach(header => {
+            Client.$addColumn(header.column_name,{});      
+        });
+
         const data = await Client
             .query()
             .where('deleted',false)
@@ -10,7 +20,24 @@ export default class ClientsController {
         response.send(data);
     }
 
-    public async indexMaster({}: HttpContextContract){}
+    public async indexMaster({response}: HttpContextContract){
+
+        const headers = await MasterTemplate
+            .query()
+            .where('table_name','clients')
+
+        headers.forEach(header => {
+            if(header.is_master){
+                Client.$addColumn(header.column_name,{});
+            }            
+        });
+
+        const data = await Client
+            .query()
+            .where('deleted',false)
+
+        response.send(data);
+    }
 
     public async get({}: HttpContextContract){}
 

@@ -36,13 +36,14 @@
         {name:"Divide",value:"Divide"},
         {name:"By Client",value:"By Client"}
     ]
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+    let error="", success="", assignedUser, autoAssignType, users;
 
     // fetch data
 
     (async ()=>{
-        headers = await utils.get('/api/master_template/read/:id');
-        data = await utils.get('/api/client/read_master/');
+        headers = await utils.get('/api/master_template/options/clients');
+        users = await utils.get('/api/employee/options');
+        data = await utils.get('/api/client/master/');
         
         handler = new DataHandler(
             data,
@@ -265,53 +266,61 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">id</Th>
-                            {#each Object.entries(headers.columns) as [header,obj]}
-                                {#if header != "_selected" && header != "id"}
-                                    {#if allColumns || obj.master}
-                                        <Th {handler} orderBy={header}>{header}</Th>
-                                    {/if}
+                            <Th {handler} orderBy="name">name</Th>
+                            <Th {handler} orderBy="email">email</Th>
+                            <Th {handler} orderBy="gstin">gstin</Th>
+                            {#each headers.data as header}
+                                {#if allColumns || header.is_master}
+                                    <Th {handler} orderBy={header.column_name}>{header.column_name}</Th>
                                 {/if}
                             {/each}
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"></ThSearch>
                             <ThSearch {handler} filterBy="id"/>
-                            {#each Object.entries(headers.columns) as [header,obj]}
-                                {#if header != "_selected" && header != "id"}
-                                    {#if allColumns || obj.master}
-                                        <ThSearch {handler} filterBy={header}/>
-                                    {/if}
+                            <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="email"/>
+                            <ThSearch {handler} filterBy="gstin"/>
+                            {#each headers.data as header}
+                                {#if allColumns || header.is_master}
+                                    <ThSearch {handler} filterBy={header.column_name}/>
                                 {/if}
                             {/each}
                         </tr>
                     </thead>
                     <TableBody>
-                    {#each $rows as row, index}
-                        <TableBodyRow>
-                            <TableBodyCell>
-                                <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                            </TableBodyCell>
-                            <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                            {#each Object.entries(row) as [k,v]}
-                                {#if k != "id" && k != "_selected"}
-                                    <TableBodyCell>
-                                        {#if headers.columns[k]['type'] == 'File' && v}
-                                            <A target="_blank" href={v}>
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                </svg>                                                  
-                                                &nbsp;{k}
-                                            </A>
-                                        {:else if headers.columns[k]['type'] == 'Checkbox'}
-                                            <Checkbox disabled checked={v}/>
-                                        {:else}
-                                            {v}
-                                        {/if}
-                                    </TableBodyCell>
-                                {/if}
+                        {#each $rows as row, index}
+                            <TableBodyRow>
+                                <TableBodyCell>
+                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                </TableBodyCell>
+                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                <TableBodyCell>{row.name}</TableBodyCell>
+                                <TableBodyCell>{row.email}</TableBodyCell>
+                                <TableBodyCell>{row.gstin}</TableBodyCell>
+                                {#each headers.data as header}
+                                    {#if allColumns || header.is_master}
+                                        <TableBodyCell>
+                                            {#if header.column_type == 'Text'}
+                                                {row[header.column_name]}
+                                            {:else if header.column_type == 'File'}
+                                                <A target="_blank" href={row[header.column_name]}>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                    </svg>
+                                                    &nbsp;
+                                                    {header.column_name}
+                                                </A>                                                 
+                                            {:else if header.column_type == 'Date'}
+                                                {row[header.column_name]}
+                                            {:else}
+                                                <Checkbox disabled checked={row[header.column_name]}/>
+                                            {/if}
+                                        </TableBodyCell>
+                                    {/if}
                             {/each}
-                        </TableBodyRow>
-                    {/each}
+                            </TableBodyRow>
+                        {/each}
                     </TableBody>
                 </Table>
             </DataTable>
