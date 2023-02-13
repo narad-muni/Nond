@@ -2,8 +2,13 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class Acl {
     public async handle({request,response,session}: HttpContextContract, next: () => Promise<void>) {
-        const prefix_index = request.url().indexOf('/',2);
-        const url = request.url().substring(prefix_index+1);
+        let req_url = request.url();
+        if(!req_url.endsWith('/')){
+            req_url += '/'
+        }
+
+        const prefix_index = req_url.indexOf('/',2);
+        const url = req_url.substring(prefix_index+1);
         const part = url.substring(0,url.indexOf('/'));
         const method = request.method()
         const role = session.get('user').role;
