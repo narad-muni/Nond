@@ -75,14 +75,6 @@ export default class Reseed extends BaseCommand {
             signature: '.jpg'
         })
 
-        await MasterTemplate.create({
-            id: 0,
-            table_name: 'client',
-            column_name: 'test',
-            column_type: 'File',
-            is_master: false
-        })
-
         await Client.create({
             id: 0,
             name: 'JJ Industries',

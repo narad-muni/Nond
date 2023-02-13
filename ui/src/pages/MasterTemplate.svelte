@@ -208,7 +208,7 @@
                             </th>
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="table_name">Table</Th>
-                            <Th {handler} orderBy="column_name">Column Name</Th>
+                            <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
                             <Th {handler} orderBy="is_master">Is Master</Th>
                         </tr>
@@ -216,7 +216,7 @@
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="table_name"/>
-                            <ThSearch {handler} filterBy="column_name"/>
+                            <ThSearch {handler} filterBy="display_name"/>
                             <ThSearch {handler} filterBy="column_type"/>
                             <ThSearch {handler} filterBy="is_master"/>
                         </tr>
@@ -232,7 +232,7 @@
                                     {row.table_name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.column_name}
+                                    {row.display_name}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.column_type}
@@ -273,7 +273,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Column Name</span>
-            <Input required bind:value={createdObject.column_name}/>
+            <Input required bind:value={createdObject.display_name}/>
         </Label>
         <Label class="space-y-2">
             <span>Column Type</span>
@@ -303,7 +303,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Column Name</span>
-            <Input required bind:value={actionsObject.column_name}/>
+            <Input required bind:value={actionsObject.display_name}/>
         </Label>
         <Label class="space-y-2">
             <span>Column Type</span>

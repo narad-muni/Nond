@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import MasterTemplate from 'App/Models/MasterTemplate'
+import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class MasterTemplatesController {
     public async index({response}: HttpContextContract){
@@ -48,6 +49,7 @@ export default class MasterTemplatesController {
     public async create({request,response}: HttpContextContract){
         try{
             const payload = request.all()
+            payload.column_name = string.snakeCase(payload.display_name);
 
             const duplicate = await MasterTemplate
                 .query()
@@ -101,10 +103,11 @@ export default class MasterTemplatesController {
     public async update({request,response}: HttpContextContract){
         try{
             const payload = request.all();
+            payload.column_name = string.snakeCase(payload.display_name);
 
             const duplicate = await MasterTemplate
                 .query()
-                .where('column_name', payload.column_name)
+                .where('column_name', payload.display_name)
                 .where('table_name', payload.table_name)
                 .first()
 

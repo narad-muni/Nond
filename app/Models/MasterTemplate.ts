@@ -11,6 +11,9 @@ export default class MasterTemplate extends BaseModel {
     public column_name: string
 
     @column()
+    public display_name: string
+
+    @column()
     public column_type: 'Text' | 'File' | 'Date' | 'Checkbox'
 
     @column()

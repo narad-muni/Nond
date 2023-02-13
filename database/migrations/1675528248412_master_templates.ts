@@ -8,6 +8,7 @@ export default class extends BaseSchema {
             table.increments('id');
             table.string('table_name');
             table.string('column_name');
+            table.string('display_name');
             table.string('column_type');
             table.boolean('is_master');
        })
