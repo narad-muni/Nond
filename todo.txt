@@ -1,4 +1,11 @@
 client parent company
-show in table
-
 tasks
+register
+invoice
+deleted items
+scheduler
+
+services
+    -registers
+
+don't modify $rows, instead modify data
