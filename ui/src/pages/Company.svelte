@@ -41,9 +41,9 @@
     // fetch data
 
     (async ()=>{
-        headers = await utils.get('/api/master_template/options/clients');
+        headers = await utils.get('/api/master_template/options/companies');
         users = await utils.get('/api/employee/options');
-        data = await utils.get('/api/client/master/');
+        data = await utils.get('/api/company/master/');
         
         handler = new DataHandler(
             data,
@@ -110,7 +110,7 @@
             return true;
         });
 
-        actionsObject = await utils.get('/api/client/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/company/'+$rows[actionsIndex].id);
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
@@ -121,7 +121,7 @@
     }
 
     async function updateData(){
-        const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
+        const resp = await utils.put_form('/api/company/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
             $rows.splice(actionsIndex,1,resp.data);
@@ -134,7 +134,7 @@
 
     async function loadTemplateData(){
         if(templateFile){
-            let resp = await utils.post_form('/api/client/load_template_data',utils.getFormData({"template":templateFile}));
+            let resp = await utils.post_form('/api/company/load_template_data',utils.getFormData({"template":templateFile}));
             if(resp.status != "success"){
                 error=resp.message;
             }else{
@@ -148,9 +148,9 @@
 
     async function reloadData(){
         if(allColumns){
-            data = await utils.get('/api/client/');
+            data = await utils.get('/api/company/');
         }else{
-            data = await utils.get('/api/client/master/');
+            data = await utils.get('/api/company/master/');
         }
 
         selectedRows.clear();
@@ -160,7 +160,7 @@
 
     async function viewAllColumns(){
         allColumns = true;
-        data = await utils.get('/api/client/');
+        data = await utils.get('/api/company/');
 
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
@@ -180,7 +180,7 @@
         if(allColumns){
             downloadData = data;
         }else{
-            downloadData = await utils.get('/api/client/read_full');
+            downloadData = await utils.get('/api/company/read_full');
         }
 
         //download selected rows if selected, else if everything or nothing is selected, download full
@@ -201,7 +201,7 @@
             }
         }
 
-        await utils._delete('/api/client/',{id: Array.from(selectedRows)});
+        await utils._delete('/api/company/',{id: Array.from(selectedRows)});
 
         selectedRows.clear();
         handler.setRows($rows);
@@ -209,7 +209,7 @@
     }
 
     async function createData(){
-        const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
+        const resp = await utils.post_form('/api/company',utils.getFormData(createdObject));
         if(resp.status == 'success'){
             resp.data._selected = false;
             $rows.push(resp.data);
@@ -282,10 +282,11 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="name">name</Th>
-                            <Th {handler} orderBy="email">email</Th>
-                            <Th {handler} orderBy="gstin">gstin</Th>
+                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy="email">Email</Th>
+                            <Th {handler} orderBy="gstin">GSTIN</Th>
+                            <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
@@ -298,6 +299,7 @@
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="email"/>
                             <ThSearch {handler} filterBy="gstin"/>
+                            <ThSearch {handler} filterBy="signature"/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>
@@ -315,6 +317,19 @@
                                 <TableBodyCell>{row.name}</TableBodyCell>
                                 <TableBodyCell>{row.email}</TableBodyCell>
                                 <TableBodyCell>{row.gstin}</TableBodyCell>
+                                <TableBodyCell>
+                                    {#if row.signature}
+                                        <A target="_blank" href={row.signature}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                            &nbsp;
+                                            Signature
+                                        </A>
+                                    {:else}
+                                        null
+                                    {/if}
+                                </TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
@@ -380,6 +395,11 @@
             <Input required type="text" bind:value={createdObject.gstin} />
         </Label>
 
+        <Label class="space-y-2">
+            <p>Signature</p>
+            <input required type="file" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+        </Label>
+
         {#each headers.data as header}
             {#if header!="id"}
                 <Label class="space-y-2">
@@ -431,7 +451,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Client</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -451,6 +471,29 @@
         <Label class="space-y-2">
             <span>GSTIN</span>
             <Input type="text" bind:value={actionsObject.gstin} />
+        </Label>
+
+        <Label class="space-y-2">
+            {#if actionsObject.signature}
+                <span>Signature</span>
+                <div class="flex justify-between">
+                    <A target="_blank" href={actionsObject.signature}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        &nbsp;
+                        Signature
+                    </A>
+                    <Button on:click={() => {actionsObject.signature = null}} gradient color="red">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>                                  
+                    </Button>
+                </div>
+            {:else}
+                <p>Signature</p>
+                <input required type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+            {/if}
         </Label>
 
         {#each headers.data as header}
@@ -491,7 +534,7 @@
             {/if}
         {/each}
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

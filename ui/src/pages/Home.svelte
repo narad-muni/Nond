@@ -14,6 +14,7 @@
   import Lead from "./Lead.svelte";
   import Task from "./Task.svelte";
   import MasterTemplate from "./MasterTemplate.svelte";
+  import Company from "./Company.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -24,6 +25,7 @@
     let routes = {
         '/': Dashboard,
         '/client':Clients,
+        '/company':Company,
         '/role':Role,
         '/lead':Lead,
         '/users':Users,

@@ -267,6 +267,9 @@ Route.group(() => {
             
             Route.get('/','CompaniesController.index');
             Route.get('/:id','CompaniesController.get').where('id',/^[0-9]+$/);
+
+            Route.get('/master/','CompaniesController.indexMaster');
+
             Route.get('/options','CompaniesController.options');
 
             Route.get('/columns','CompaniesController.columns');
@@ -275,8 +278,9 @@ Route.group(() => {
 
             Route.put('/','CompaniesController.update');
 
-            Route.delete('/','CompaniesController.destroy');
-            Route.delete('/:id','CompaniesController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/','CompaniesController.remove');
+
+            Route.delete('/destroy/','CompaniesController.destroy');
 
         })
         .prefix('/company');

@@ -190,7 +190,6 @@
             resp.data._selected = false;
 
             resp.data.role = role_options.find(e => e.value == resp.data.role_id);
-            console.log(role_options,resp)
 
             $rows.push(resp.data);
             handler.setRows($rows);
