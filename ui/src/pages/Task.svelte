@@ -80,7 +80,7 @@
 
     //Reactive variables
 
-    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => i.id))); // $rows||[] is used to wait and not fail
+    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => parseInt(i.id)))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
 
@@ -102,14 +102,14 @@
 
                 $rows.forEach((r) => {
                     r._selected = true;
-                    selectedRows.add(r.id);
+                    selectedRows.add(parseInt(r.id));
                 });
 
             }else{
 
                 $rows.forEach((r) => {
                     r._selected = false;
-                    selectedRows.delete(r.id);
+                    selectedRows.delete(parseInt(r.id));
                 });
 
             }
