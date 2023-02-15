@@ -61,7 +61,7 @@
 
     //Reactive variables
 
-    $: checked = utils.compareSets(selectedRows,new Set((data||[]).map(i => i.id))); // data||[] is used to wait and not fail
+    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => i.id))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
 
@@ -124,7 +124,7 @@
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
-            data.splice(actionsIndex,1,resp.data);
+            data[actionsIndex] = data;
             handler.setRows(data);
             actionsModals = false;
         }else{

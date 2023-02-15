@@ -44,6 +44,10 @@
         headers = await utils.get('/api/master_template/options/companies');
         users = await utils.get('/api/employee/options');
         data = await utils.get('/api/company/master/');
+
+        data.forEach((v) => {
+            v["_selected"] = 0;
+        });
         
         handler = new DataHandler(
             data,
@@ -53,10 +57,6 @@
         )
 
         rows = handler.getRows();
-
-        $rows.forEach((v) => {
-            v["_selected"] = 0;
-        });
     })()
 
     //Reactive variables
@@ -81,14 +81,14 @@
         }else{//element is header, global checkbox
             if(e.target.checked){
 
-                $rows.forEach((r) => {
+                data.forEach((r) => {
                     r._selected = true;
                     selectedRows.add(r.id);
                 });
 
             }else{
 
-                $rows.forEach((r) => {
+                data.forEach((r) => {
                     r._selected = false;
                     selectedRows.delete(r.id);
                 });
@@ -97,12 +97,12 @@
         }
 
         selectedRows = selectedRows;
-        handler.setRows($rows);
+        handler.setRows(data);
     }
 
     async function openActionsModal(e){
         let oid = e.target.innerText;
-        $rows.every((el,i) => {
+        data.every((el,i) => {
             if(el.id == oid){
                 actionsIndex = i;
                 return false;
@@ -110,7 +110,7 @@
             return true;
         });
 
-        actionsObject = await utils.get('/api/company/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/company/'+data[actionsIndex].id);
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
@@ -124,8 +124,8 @@
         const resp = await utils.put_form('/api/company/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
-            $rows.splice(actionsIndex,1,resp.data);
-            handler.setRows($rows);
+            data[actionsIndex] = resp.data;
+            handler.setRows(data);
             actionsModals = false;
         }else{
             error = resp.message || "";
@@ -194,9 +194,9 @@
     }
 
     async function deleteSelected(){
-        for (let i = 0; i < $rows.length; i++) {
-            if (selectedRows.has($rows[i].id)) {
-                $rows.splice(i, 1);
+        for (let i = 0; i < data.length; i++) {
+            if (selectedRows.has(data[i].id)) {
+                data.splice(i, 1);
                 i--;
             }
         }
@@ -204,7 +204,7 @@
         await utils._delete('/api/company/',{id: Array.from(selectedRows)});
 
         selectedRows.clear();
-        handler.setRows($rows);
+        handler.setRows(data);
         selectedRows = selectedRows;
     }
 
@@ -212,8 +212,8 @@
         const resp = await utils.post_form('/api/company',utils.getFormData(createdObject));
         if(resp.status == 'success'){
             resp.data._selected = false;
-            $rows.push(resp.data);
-            handler.setRows($rows);
+            data.push(resp.data);
+            handler.setRows(data);
             createModal = false;
             createdObject = {};
         }else{

@@ -55,6 +55,11 @@
             return;
         }
         data = data.data;
+
+        data.forEach((v) => {
+            v["_selected"] = 0;
+        });
+
         handler = new DataHandler(
             data,
             {
@@ -63,10 +68,6 @@
         )
 
         rows = handler.getRows();
-
-        $rows.forEach((v) => {
-            v["_selected"] = 0;
-        });
     })()
 
     //Reactive variables
@@ -91,14 +92,14 @@
         }else{//element is column, global checkbox
             if(e.target.checked){
 
-                $rows.forEach((r) => {
+                data.forEach((r) => {
                     r._selected = true;
                     selectedRows.add(r.id);
                 });
 
             }else{
 
-                $rows.forEach((r) => {
+                data.forEach((r) => {
                     r._selected = false;
                     selectedRows.delete(r.id);
                 });
@@ -107,19 +108,19 @@
         }
 
         selectedRows = selectedRows;
-        handler.setRows($rows);
+        handler.setRows(data);
     }
 
     async function openActionsModal(e){
         let oid = e.target.innerText;
-        $rows.find((e,i) => {
+        data.find((e,i) => {
             if(e.id == oid){
                 actionsIndex = i;
                 return true;
             }
         });
 
-        actionsObject = await utils.get('/api/master_template/'+$rows[actionsIndex].id);
+        actionsObject = await utils.get('/api/master_template/'+data[actionsIndex].id);
 
         if(actionsObject.status != 'success'){
             error = actionsObject.message;
@@ -135,8 +136,8 @@
         const resp = await utils.put_json('/api/master_template/',actionsObject);
 
         if(resp.status == 'success'){
-            $rows.splice(actionsIndex,1,actionsObject);
-            handler.setRows($rows);
+            data.splice(actionsIndex,1,actionsObject);
+            handler.setRows(data);
             actionsModals = false;
         }else{
             error = resp.message || "";
@@ -148,14 +149,14 @@
         const resp = await utils._delete('/api/master_template/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
-            for (let i = 0; i < $rows.length; i++) {
-                if (selectedRows.has($rows[i].id)) {
-                    $rows.splice(i, 1);
+            for (let i = 0; i < data.length; i++) {
+                if (selectedRows.has(data[i].id)) {
+                    data.splice(i, 1);
                     i--;
                 }
             }
             selectedRows.clear();
-            handler.setRows($rows);
+            handler.setRows(data);
             selectedRows = selectedRows;
         }else{
             error = resp.message;
@@ -167,8 +168,8 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
-            $rows.push(resp.data);
-            handler.setRows($rows);
+            data.push(resp.data);
+            handler.setRows(data);
             createModal = false;
             createdObject = {};
         }else{
