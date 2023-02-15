@@ -81,14 +81,14 @@
         }else{//element is header, global checkbox
             if(e.target.checked){
 
-                data.forEach((r) => {
+                $rows.forEach((r) => {
                     r._selected = true;
                     selectedRows.add(r.id);
                 });
 
             }else{
 
-                data.forEach((r) => {
+                $rows.forEach((r) => {
                     r._selected = false;
                     selectedRows.delete(r.id);
                 });

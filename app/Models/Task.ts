@@ -21,6 +21,12 @@ export default class Task extends BaseModel {
     
     @column()
     public status: string
+
+    @column()
+    public service: string
+
+    @column()
+    public register: string
     
     @column.date()
     public started: DateTime

@@ -28,7 +28,7 @@
         '/company':Company,
         '/role':Role,
         '/lead':Lead,
-        '/users':Users,
+        '/employee':Users,
         '/task':Task,
         '/master_template':MasterTemplate,
         '*':Error

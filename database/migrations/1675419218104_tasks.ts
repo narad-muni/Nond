@@ -8,11 +8,13 @@ export default class extends BaseSchema {
         table.increments('id')
         table.integer('assigned_to');
         table.integer('client_id');
-        table.string('title')
-        table.string('description')
-        table.string('status')
-        table.date('started')
-        table.date('ended')
+        table.string('title');
+        table.string('description');
+        table.string('service');
+        table.string('register');
+        table.string('status');
+        table.date('started');
+        table.date('ended');
         })
     }
 
