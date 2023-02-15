@@ -11,3 +11,5 @@ services
 don't modify $rows, instead modify data
 
 add default columns to client
+
+data getting cleared when changing master columns

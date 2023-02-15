@@ -138,8 +138,10 @@ export default class MasterTemplatesController {
                         .rawQuery('alter table ?? rename column ?? to ??', [payload.table_name, old?.column_name, payload.column_name]);
                 }
 
-                await Database
-                    .rawQuery('alter table ?? alter column ?? type ' + c_type + ' using null', [payload.table_name, payload.column_name]);
+                if(old?.column_type !== payload.column_type){
+                    await Database
+                        .rawQuery('alter table ?? alter column ?? type ' + c_type + ' using null', [payload.table_name, payload.column_name]);
+                }
 
                 await MasterTemplate
                     .query()

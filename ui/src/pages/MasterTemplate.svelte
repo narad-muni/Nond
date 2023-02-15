@@ -136,7 +136,8 @@
         const resp = await utils.put_json('/api/master_template/',actionsObject);
 
         if(resp.status == 'success'){
-            data.splice(actionsIndex,1,actionsObject);
+            resp.data._selected = data[actionsIndex]._selected;
+            data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
         }else{

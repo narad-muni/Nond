@@ -129,7 +129,8 @@
         const resp = await utils.put_json('/api/role/',actionsObject);
 
         if(resp.status == 'success'){
-            data[actionsIndex] = actionsObject;
+            resp.data._selected = data[actionsIndex]._selected;
+            data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
         }else{

@@ -143,6 +143,7 @@
         actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
 
         if(resp.status == 'success'){
+            resp.data._selected = data[actionsIndex]._selected;
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;

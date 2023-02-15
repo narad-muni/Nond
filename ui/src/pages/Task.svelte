@@ -147,7 +147,8 @@
         actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
 
         if(resp.status == 'success'){
-            data.splice(actionsIndex,1,actionsObject);
+            resp.data._selected = data[actionsIndex]._selected;
+            data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
         }else{

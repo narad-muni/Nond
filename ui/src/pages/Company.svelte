@@ -124,6 +124,7 @@
         const resp = await utils.put_form('/api/company/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
+            resp.data._selected = data[actionsIndex]._selected;
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
