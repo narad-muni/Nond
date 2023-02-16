@@ -1,9 +1,16 @@
-subscribed services by client (dummy added)
-
-tasks
-register
-invoice
 deleted items
-scheduler
+
+add read_self and read_all to roles
+add archived and deleted items options
+
+/destroy to objects which are not restorable
 
 add default columns to client
+
+tasks
+
+register
+invoice
+scheduler
+
+subscribed services by client (dummy added)
