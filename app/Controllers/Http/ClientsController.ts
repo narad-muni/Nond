@@ -16,6 +16,12 @@ export default class ClientsController {
 
         const data = await Client
             .query()
+            .preload('parent', (query) => {
+                query.select('id','name')
+            })
+            .preload('child', (query) => {
+                query.select('id','name')
+            })
             .where('deleted',false)
 
         response.send(data);
@@ -35,6 +41,12 @@ export default class ClientsController {
 
         const data = await Client
             .query()
+            .preload('parent', (query) => {
+                query.select('id','name')
+            })
+            .preload('child', (query) => {
+                query.select('id','name')
+            })
             .where('deleted',false)
 
         response.send(data);
@@ -53,6 +65,12 @@ export default class ClientsController {
 
         const data = await Client
             .query()
+            .preload('parent', (query) => {
+                query.select('id','name')
+            })
+            .preload('child', (query) => {
+                query.select('id','name')
+            })
             .where('id',payload.id)
             .first()
 
@@ -79,16 +97,14 @@ export default class ClientsController {
 
         serilizedData.map(e => {
             e.value = e.id;
-            e.name = e.name;
 
             delete e.id;
-            delete e.name;
         });
 
         response.send(serilizedData);
 
     }
-
+    
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
@@ -132,6 +148,9 @@ export default class ClientsController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
+
+        delete payload.child;
+        delete payload.parent;
 
         const headers = await MasterTemplate
             .query()

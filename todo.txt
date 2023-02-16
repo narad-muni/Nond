@@ -5,9 +5,4 @@ invoice
 deleted items
 scheduler
 
-services
-    -registers
-
-don't modify $rows, instead modify data
-
 add default columns to client

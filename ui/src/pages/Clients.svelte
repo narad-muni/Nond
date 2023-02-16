@@ -11,26 +11,26 @@
         Checkbox,
         A,
         Label,
-        Helper,
         Input,
         Toggle,
         Alert,
         Textarea,
-        Select
+        Select,
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+  import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
     let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, data, createdObject={}, actionsIndex, actionsObject, templateFile;
+    let headers, client_list, data, createdObject={}, actionsIndex, actionsObject;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
@@ -41,9 +41,12 @@
     // fetch data
 
     (async ()=>{
+        client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
         users = await utils.get('/api/employee/options');
         data = await utils.get('/api/client/master/');
+
+        client_list.push({name:"null",value: null})
 
         data.forEach((v) => {
             v["_selected"] = 0;
@@ -101,7 +104,7 @@
     }
 
     async function openActionsModal(e){
-        let oid = e.target.innerText;
+        let oid = e.target.getAttribute('oid');
         data.every((el,i) => {
             if(el.id == oid){
                 actionsIndex = i;
@@ -125,25 +128,14 @@
         
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
+
+            resp.data.parent = client_list.find(e => e.value == resp.data.parent_id);
+
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
         }else{
             error = resp.message || "";
-        }
-    }
-
-    async function loadTemplateData(){
-        if(templateFile){
-            let resp = await utils.post_form('/api/client/load_template_data',utils.getFormData({"template":templateFile}));
-            if(resp.status != "success"){
-                error=resp.message;
-            }else{
-                success=resp.message;
-                uploadModal = false;
-            }
-        }else{
-            error="Please select a file";
         }
     }
 
@@ -213,6 +205,9 @@
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
         if(resp.status == 'success'){
             resp.data._selected = false;
+
+            resp.data.parent = client_list.find(e => e.value == resp.data.parent_id);
+
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
@@ -283,10 +278,11 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="name">name</Th>
-                            <Th {handler} orderBy="email">email</Th>
-                            <Th {handler} orderBy="gstin">gstin</Th>
+                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy="email">Email</Th>
+                            <Th {handler} orderBy="gstin">GSTIN</Th>
+                            <Th {handler} orderBy={(row => row.parent?.name || null)}>Parent</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
@@ -299,6 +295,7 @@
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="email"/>
                             <ThSearch {handler} filterBy="gstin"/>
+                            <ThSearch {handler} filterBy={(row => row.parent?.name || null)}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>
@@ -312,10 +309,11 @@
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
-                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>{row.name}</TableBodyCell>
                                 <TableBodyCell>{row.email}</TableBodyCell>
                                 <TableBodyCell>{row.gstin}</TableBodyCell>
+                                <TableBodyCell>{row.parent?.name || null}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
@@ -363,9 +361,9 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
+<Modal bind:open={createModal} placement="top-center" size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
             <Input required type="text" bind:value={createdObject.name} />
@@ -373,12 +371,17 @@
 
         <Label class="space-y-2">
             <span>Email</span>
-            <Input required type="email" bind:value={createdObject.email} />
+            <Input type="email" bind:value={createdObject.email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Parent</span>
+            <IdSelect items={client_list} bind:value={createdObject.parent_id}/>
         </Label>
 
         <Label class="space-y-2">
             <span>GSTIN</span>
-            <Input required type="text" bind:value={createdObject.gstin} />
+            <Input type="text" bind:value={createdObject.gstin} />
         </Label>
 
         {#each headers.data as header}
@@ -400,9 +403,9 @@
                 </Label>
             {/if}
         {/each}
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
@@ -431,9 +434,9 @@
     </form>
 </Modal>
 
-<Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Client</h3>
+<Modal bind:open={actionsModals} placement="top-center" size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input readonly type="text" bind:value={actionsObject.id} />
@@ -441,12 +444,17 @@
 
         <Label class="space-y-2">
             <span>Name</span>
-            <Input type="text" bind:value={actionsObject.name} />
+            <Input required type="text" bind:value={actionsObject.name} />
         </Label>
 
         <Label class="space-y-2">
             <span>Email</span>
             <Input type="email" bind:value={actionsObject.email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Parent</span>
+            <IdSelect items={client_list} bind:value={actionsObject.parent_id}/>
         </Label>
 
         <Label class="space-y-2">
@@ -491,7 +499,26 @@
                 </Label>
             {/if}
         {/each}
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+
+        {#if actionsObject.parent}
+            <hr class="col-span-3"/>
+
+            <h2 class="col-span-3">Parent Company</h2>
+            <Button oid={actionsObject.parent.id} on:click={openActionsModal}>{actionsObject.parent.name}</Button>
+        {/if}
+
+        {#if actionsObject.child.length > 0}
+            <hr class="col-span-3"/>
+
+            <h2 class="col-span-3">Child Companies</h2>
+            <div class="col-span-3 grid grid-cols-5 text-center gap-x-3">
+                {#each actionsObject.child as child}
+                <Button oid={child.id} on:click={openActionsModal}>{child.name}</Button>
+                {/each}
+            </div>
+        {/if}
+        
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>

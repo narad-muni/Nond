@@ -249,14 +249,14 @@
                             </th>
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="username">username</Th>
-                            <Th {handler} orderBy="role">role</Th>
+                            <Th {handler} orderBy={(row => row.role?.name || null)}>role</Th>
                             <Th {handler} orderBy="is_admin">admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"></ThSearch>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="username"/>
-                            <ThSearch {handler} filterBy="role"/>
+                            <ThSearch {handler} filterBy={(row => row.role?.name || null)}/>
                             <ThSearch {handler} filterBy="is_admin"/>
                         </tr>
                     </thead>
@@ -271,7 +271,7 @@
                                     {row.username}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role?.name}
+                                    {row.role?.name || null}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_admin}/>
@@ -319,7 +319,7 @@
 
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>

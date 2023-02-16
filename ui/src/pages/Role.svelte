@@ -331,7 +331,7 @@
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>createModal=false} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
