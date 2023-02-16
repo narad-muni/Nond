@@ -1,4 +1,5 @@
-client parent company
+subscribed services by client (dummy added)
+
 tasks
 register
 invoice

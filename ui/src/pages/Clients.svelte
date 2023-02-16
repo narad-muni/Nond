@@ -502,14 +502,12 @@
 
         {#if actionsObject.parent}
             <hr class="col-span-3"/>
-
             <h2 class="col-span-3">Parent Company</h2>
             <Button oid={actionsObject.parent.id} on:click={openActionsModal}>{actionsObject.parent.name}</Button>
         {/if}
 
         {#if actionsObject.child.length > 0}
             <hr class="col-span-3"/>
-
             <h2 class="col-span-3">Child Companies</h2>
             <div class="col-span-3 grid grid-cols-5 text-center gap-x-3">
                 {#each actionsObject.child as child}
@@ -517,6 +515,18 @@
                 {/each}
             </div>
         {/if}
+
+        <hr class="col-span-3"/>
+        <h2 class="col-span-3">Services</h2>
+        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
+            <Checkbox checked>GST 1</Checkbox>
+            <Checkbox>GST 3B</Checkbox>
+            <Checkbox checked>Income Tax</Checkbox>
+            <Checkbox checked>UIDAI</Checkbox>
+            <Checkbox checked>Load Filling</Checkbox>
+            <Checkbox>Advance Tax</Checkbox>
+            <Checkbox>Udyog</Checkbox>
+        </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
