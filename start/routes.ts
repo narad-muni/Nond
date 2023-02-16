@@ -64,16 +64,18 @@ Route.group(() => {
 
         Route.group(() => {
             
-            Route.get('/','ClientsController.index');
+            Route.get('/:deleted','ClientsController.index').where('deleted',/true|false/);
             Route.get('/:id','ClientsController.get').where('id',/^[0-9]+$/);
 
-            Route.get('/master/','ClientsController.indexMaster');
+            Route.get('/master/:deleted','ClientsController.indexMaster').where('deleted',/true|false/);
 
             Route.get('/options','ClientsController.options');
 
             Route.get('/columns','ClientsController.columns');
 
             Route.post('/','ClientsController.create');
+
+            Route.post('/restore','ClientsController.restore');
 
             Route.put('/','ClientsController.update');
 
@@ -91,7 +93,7 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','EmployeesController.index');
+            Route.get('/','EmployeesController.index').where('deleted',/true|false/);
             Route.get('/:id','EmployeesController.get').where('id',/^[0-9]+$/);
 
             Route.get('/options','EmployeesController.options');
@@ -181,7 +183,6 @@ Route.group(() => {
             Route.put('/','EntriesController.update');
 
             Route.delete('/','EntriesController.destroy');
-            Route.delete('/:id','EntriesController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/entry');
@@ -241,7 +242,6 @@ Route.group(() => {
             Route.put('/','SchedulersController.update');
 
             Route.delete('/','SchedulersController.destroy');
-            Route.delete('/:id','SchedulersController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/scheduler');
@@ -253,7 +253,7 @@ Route.group(() => {
 
         Route.group(() => {
             
-            Route.get('/','CompaniesController.index');
+            Route.get('/','CompaniesController.index').where('deleted',/true|false/);
             Route.get('/:id','CompaniesController.get').where('id',/^[0-9]+$/);
 
             Route.get('/master/','CompaniesController.indexMaster');
@@ -299,7 +299,7 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','InvoicesController.index');
+            Route.get('/','InvoicesController.index').where('deleted',/true|false/);
             Route.get('/:id','InvoicesController.get').where('id',/^[0-9]+$/);
 
             Route.post('/','InvoicesController.create');

@@ -23,7 +23,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-  import IdSelect from "../component/IdSelect.svelte";
+    import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
@@ -44,7 +44,7 @@
         client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
         users = await utils.get('/api/employee/options');
-        data = await utils.get('/api/client/master/false');
+        data = await utils.get('/api/client/master/true');
 
         client_list.push({name:"null",value: null})
 
@@ -141,9 +141,9 @@
 
     async function reloadData(){
         if(allColumns){
-            data = await utils.get('/api/client/false');
+            data = await utils.get('/api/client/true');
         }else{
-            data = await utils.get('/api/client/master/false');
+            data = await utils.get('/api/client/master/true');
         }
 
         selectedRows.clear();
@@ -153,7 +153,7 @@
 
     async function viewAllColumns(){
         allColumns = true;
-        data = await utils.get('/api/client/false');
+        data = await utils.get('/api/client/true');
 
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
@@ -173,7 +173,7 @@
         if(allColumns){
             downloadData = data;
         }else{
-            downloadData = await utils.get('/api/client/read_full');
+            downloadData = await utils.get('/api/client/master/true');
         }
 
         //download selected rows if selected, else if everything or nothing is selected, download full
@@ -201,32 +201,31 @@
         selectedRows = selectedRows;
     }
 
-    async function createData(){
-        const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
-        if(resp.status == 'success'){
-            resp.data._selected = false;
-
-            resp.data.parent = client_list.find(e => e.value == resp.data.parent_id);
-
-            data.push(resp.data);
-            handler.setRows(data);
-            createModal = false;
-            createdObject = {};
-        }else{
-            error = resp.message || "";
+    async function restoreData(){
+        for (let i = 0; i < data.length; i++) {
+            if (selectedRows.has(data[i].id)) {
+                data.splice(i, 1);
+                i--;
+            }
         }
+
+        await utils.post_json('/api/client/restore/',{id: Array.from(selectedRows)});
+
+        selectedRows.clear();
+        handler.setRows(data);
+        selectedRows = selectedRows;
     }
 
 </script>
 
 <main class="flex flex-col w-full min-w-0 max-h-full p-2">
     <div class="pl-4 flex gap-x-4 my-2">
-        <Button gradient color="blue" on:click={()=> createModal = true}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>                        
+        <Button gradient color="blue" on:click={restoreData}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>                                    
             &nbsp;
-            Create
+            Restore
         </Button>
 
         <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> createTasksModal = true}>

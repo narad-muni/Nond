@@ -1,15 +1,3 @@
-soft deletable items
-    Clients
-    Companies
-    invoice
-    Employees
-    register
-
-self actions
-    tasks
-    lead
-
-add read_self and read_all to roles
 add archived and deleted items options
 
 /destroy to objects which are not restorable

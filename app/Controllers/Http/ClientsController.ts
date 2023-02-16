@@ -5,7 +5,8 @@ import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
 
 export default class ClientsController {
-    public async index({response}: HttpContextContract){
+    public async index({request,response}: HttpContextContract){
+        const deleted = request.param('deleted');
         const headers = await MasterTemplate
             .query()
             .where('table_name','clients')
@@ -22,13 +23,13 @@ export default class ClientsController {
             .preload('child', (query) => {
                 query.select('id','name')
             })
-            .where('deleted',false)
+            .where('deleted',deleted)
 
         response.send(data);
     }
 
-    public async indexMaster({response}: HttpContextContract){
-
+    public async indexMaster({request,response}: HttpContextContract){
+        const deleted = request.param('deleted');
         const headers = await MasterTemplate
             .query()
             .where('table_name','clients')
@@ -47,7 +48,7 @@ export default class ClientsController {
             .preload('child', (query) => {
                 query.select('id','name')
             })
-            .where('deleted',false)
+            .where('deleted',deleted)
 
         response.send(data);
     }
@@ -215,6 +216,19 @@ export default class ClientsController {
             .query()
             .whereIn('id',payload.id)
             .update({deleted: true})
+
+        response.send({
+            status: 'success'
+        })
+    }
+
+    public async restore({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        await Client
+            .query()
+            .whereIn('id',payload.id)
+            .update({deleted: false})
 
         response.send({
             status: 'success'

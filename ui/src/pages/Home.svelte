@@ -15,6 +15,7 @@
   import Task from "./Task.svelte";
   import MasterTemplate from "./MasterTemplate.svelte";
   import Company from "./Company.svelte";
+  import DeletedClients from "./DeletedClients.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -31,6 +32,7 @@
         '/employee':Users,
         '/task':Task,
         '/master_template':MasterTemplate,
+        '/deleted/clients':DeletedClients,
         '*':Error
     }
 
