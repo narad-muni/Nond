@@ -453,7 +453,7 @@
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Client</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input readonly type="text" bind:value={actionsObject.id} />

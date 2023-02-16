@@ -79,7 +79,7 @@ Route.group(() => {
 
             Route.delete('/','ClientsController.remove');
 
-            Route.delete('/destroy/','ClientsController.destroy');
+            Route.delete('/destroy','ClientsController.destroy');
 
         })
         .prefix('/client');
@@ -101,15 +101,8 @@ Route.group(() => {
             Route.post('/','EmployeesController.create');
 
             Route.delete('/','EmployeesController.remove');
-            Route.delete('/:id','EmployeesController.remove').where('id',/^[0-9]+$/);
 
-            Route.group(() => {
-                Route.get('/','EmployeesController.index_deleted');
-
-                Route.delete('/','EmployeesController.destroy');
-                Route.delete('/:id','EmployeesController.destroy').where('id',/^[0-9]+$/);
-            })
-            .prefix('/deleted')
+            Route.delete('/destroy','EmployeesController.destroy');
 
         })
         .prefix('/employee');
@@ -127,8 +120,7 @@ Route.group(() => {
 
             Route.put('/','TemplatesController.update');
 
-            Route.delete('/','TemplatesController.destroy');
-            Route.delete('/:id','TemplatesController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/destroy','TemplatesController.destroy');
         })
         .prefix('/template');
 
@@ -146,7 +138,7 @@ Route.group(() => {
 
             Route.put('/','MasterTemplatesController.update');
 
-            Route.delete('/','MasterTemplatesController.destroy');
+            Route.delete('/destroy','MasterTemplatesController.destroy');
         })
         .prefix('/master_template');
 
@@ -162,8 +154,9 @@ Route.group(() => {
 
             Route.put('/','RegistersController.update');
 
-            Route.delete('/','RegistersController.destroy');
-            Route.delete('/:id','RegistersController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/','RegistersController.remove');
+
+            Route.delete('/destroy','RegistersController.destroy');
 
         })
         .prefix('/register');
@@ -208,11 +201,7 @@ Route.group(() => {
 
             Route.put('/','TasksController.update');
 
-            Route.delete('/','TasksController.remove');
-            Route.delete('/:id','TasksController.remove').where('id',/^[0-9]+$/);
-
             Route.delete('/destroy','TasksController.destroy');
-            Route.delete('//destroy/:id','TasksController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/task');
@@ -233,7 +222,6 @@ Route.group(() => {
             Route.post('/','RolesController.create');
 
             Route.delete('/','RolesController.destroy');
-            Route.delete('/:id','RolesController.destroy').where('id',/^[0-9]+$/);
 
         })
         .prefix('/role');
@@ -299,8 +287,7 @@ Route.group(() => {
 
             Route.put('/','LeadsController.update');
 
-            Route.delete('/','LeadsController.destroy');
-            Route.delete('/:id','LeadsController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/destroy','LeadsController.destroy');
 
         })
         .prefix('/lead');
@@ -319,8 +306,9 @@ Route.group(() => {
 
             Route.put('/','InvoicesController.update');
 
-            Route.delete('/','InvoicesController.destroy');
-            Route.delete('/:id','InvoicesController.destroy').where('id',/^[0-9]+$/);
+            Route.delete('/','InvoicesController.remove');
+
+            Route.delete('/destroy','InvoicesController.destroy');
 
         })
         .prefix('/invoice');
