@@ -249,6 +249,11 @@ export default class ClientsController {
             .query()
             .whereIn('id',payload.id)
             .delete();
+
+        await Client
+            .query()
+            .whereIn('parent_id',payload.id)
+            .update({'parent_id':null})
         
         response.send({
             status: 'success'

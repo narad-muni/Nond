@@ -105,15 +105,9 @@
 
     async function openActionsModal(e){
         let oid = e.target.getAttribute('oid');
-        data.every((el,i) => {
-            if(el.id == oid){
-                actionsIndex = i;
-                return false;
-            }
-            return true;
-        });
+        actionsIndex = data.findIndex(e => e.id == oid);
 
-        actionsObject = await utils.get('/api/client/'+data[actionsIndex].id);
+        actionsObject = await utils.get('/api/client/'+oid);
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
@@ -529,7 +523,7 @@
         </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button on:click={updateData} type="submit" disabled={actionsIndex < 0} class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

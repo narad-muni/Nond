@@ -105,15 +105,9 @@
 
     async function openActionsModal(e){
         let oid = e.target.getAttribute('oid');
-        data.every((el,i) => {
-            if(el.id == oid){
-                actionsIndex = i;
-                return false;
-            }
-            return true;
-        });
+        actionsIndex = data.findIndex(e => e.id == oid);
 
-        actionsObject = await utils.get('/api/client/'+data[actionsIndex].id);
+        actionsObject = await utils.get('/api/client/'+oid);
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
@@ -127,12 +121,6 @@
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
-            resp.data._selected = data[actionsIndex]._selected;
-
-            resp.data.parent = client_list.find(e => e.value == resp.data.parent_id);
-
-            data[actionsIndex] = resp.data;
-            handler.setRows(data);
             actionsModals = false;
         }else{
             error = resp.message || "";
@@ -194,7 +182,7 @@
             }
         }
 
-        await utils._delete('/api/client/',{id: Array.from(selectedRows)});
+        await utils._delete('/api/client/destroy/',{id: Array.from(selectedRows)});
 
         selectedRows.clear();
         handler.setRows(data);
@@ -228,14 +216,6 @@
             Restore
         </Button>
 
-        <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> createTasksModal = true}>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
-              </svg>                                 
-            &nbsp;
-            Create Tasks
-        </Button>
-        
         <Button gradient color="green" on:click={download}>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -360,82 +340,9 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required type="text" bind:value={createdObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={createdObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Parent</span>
-            <IdSelect items={client_list} bind:value={createdObject.parent_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GSTIN</span>
-            <Input type="text" bind:value={createdObject.gstin} />
-        </Label>
-
-        {#each headers.data as header}
-            {#if header!="id"}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input type="text" bind:value={createdObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <Input type="date" bind:value={createdObject[header.column_name]}/>
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else}
-                        <p>{header.display_name}</p>
-                        <input type="file" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
-        <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
-        </div>
-    </form>
-</Modal>
-
-<Modal bind:open={createTasksModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Client Id's</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={assignedUser}/>
-        </Label>
-        {#if assignedUser < 0}
-            <Label class="flex  flex-col gap-y-1">
-                <span class="mb-2">Assign By</span>
-                <Select items={automaticAssign} bind:value={autoAssignType}/>
-            </Label>
-        {/if}
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Description</span>
-            <Textarea rows=8></Textarea>
-        </Label>
-    </form>
-</Modal>
-
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View Client</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input readonly type="text" bind:value={actionsObject.id} />
@@ -528,7 +435,7 @@
         </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button on:click={updateData} disabled={actionsIndex>=0} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
