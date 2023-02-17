@@ -1,9 +1,5 @@
 add archived and deleted items options
 
-/destroy to objects which are not restorable
-
-add default columns to client
-
 tasks
 
 register
@@ -11,3 +7,5 @@ invoice
 scheduler
 
 subscribed services by client (dummy added)
+
+add default columns to client

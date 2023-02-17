@@ -135,6 +135,7 @@
 
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
+            resp.data.role = role_options.find(e => e.value == resp.data.role_id);
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
