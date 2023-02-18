@@ -41,4 +41,6 @@ billing page will include services, one time tasks, parent company
 
 billing will have option to transfer bill to another company
 
-rename parent to group
+rename parent to group v
+
+Tasks will be service based
