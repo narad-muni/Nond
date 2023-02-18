@@ -9,7 +9,7 @@ export default class extends BaseSchema {
             table.string('name')
             table.string('email')
             table.string('gstin')
-            table.integer('parent_id')
+            table.integer('group_id')
             table.boolean('deleted').defaultTo(false)
         })
     }

@@ -17,10 +17,10 @@ export default class ClientsController {
 
         const data = await Client
             .query()
-            .preload('parent', (query) => {
+            .preload('group', (query) => {
                 query.select('id','name')
             })
-            .preload('child', (query) => {
+            .preload('subsidiary', (query) => {
                 query.select('id','name')
             })
             .where('deleted',deleted)
@@ -42,10 +42,10 @@ export default class ClientsController {
 
         const data = await Client
             .query()
-            .preload('parent', (query) => {
+            .preload('group', (query) => {
                 query.select('id','name')
             })
-            .preload('child', (query) => {
+            .preload('subsidiary', (query) => {
                 query.select('id','name')
             })
             .where('deleted',deleted)
@@ -66,10 +66,10 @@ export default class ClientsController {
 
         const data = await Client
             .query()
-            .preload('parent', (query) => {
+            .preload('group', (query) => {
                 query.select('id','name')
             })
-            .preload('child', (query) => {
+            .preload('subsidiary', (query) => {
                 query.select('id','name')
             })
             .where('id',payload.id)
@@ -150,8 +150,8 @@ export default class ClientsController {
         const payload = request.all();
         const files = request.allFiles();
 
-        delete payload.child;
-        delete payload.parent;
+        delete payload.subsidiary;
+        delete payload.group;
 
         const headers = await MasterTemplate
             .query()
@@ -252,8 +252,8 @@ export default class ClientsController {
 
         await Client
             .query()
-            .whereIn('parent_id',payload.id)
-            .update({'parent_id':null})
+            .whereIn('group_id',payload.id)
+            .update({'group_id':null})
         
         response.send({
             status: 'success'

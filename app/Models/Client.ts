@@ -14,19 +14,19 @@ export default class Client extends BaseModel {
     public gstin: string
 
     @column()
-    public parent_id: number
+    public group_id: number
 
     @column()
     public deleted: boolean
 
     @belongsTo(() => Client,{
-        foreignKey: 'parent_id'
+        foreignKey: 'group_id'
     })
-    public parent: BelongsTo<typeof Client>
+    public group: BelongsTo<typeof Client>
 
     @hasMany(() => Client,{
         localKey: 'id',
-        foreignKey: 'parent_id'
+        foreignKey: 'group_id'
     })
-    public child: HasMany<typeof Client>
+    public subsidiary: HasMany<typeof Client>
 }

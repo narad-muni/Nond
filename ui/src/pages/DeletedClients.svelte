@@ -261,7 +261,7 @@
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="email">Email</Th>
                             <Th {handler} orderBy="gstin">GSTIN</Th>
-                            <Th {handler} orderBy={(row => row.parent?.name || null)}>Parent</Th>
+                            <Th {handler} orderBy={(row => row.group?.name || null)}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
@@ -274,7 +274,7 @@
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="email"/>
                             <ThSearch {handler} filterBy="gstin"/>
-                            <ThSearch {handler} filterBy={(row => row.parent?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => row.group?.name || null)}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>
@@ -292,7 +292,7 @@
                                 <TableBodyCell>{row.name}</TableBodyCell>
                                 <TableBodyCell>{row.email}</TableBodyCell>
                                 <TableBodyCell>{row.gstin}</TableBodyCell>
-                                <TableBodyCell>{row.parent?.name || null}</TableBodyCell>
+                                <TableBodyCell>{row.group?.name || null}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
@@ -359,8 +359,8 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>Parent</span>
-            <IdSelect items={client_list} bind:value={actionsObject.parent_id}/>
+            <span>Group</span>
+            <IdSelect items={client_list} bind:value={actionsObject.group_id}/>
         </Label>
 
         <Label class="space-y-2">
@@ -406,18 +406,18 @@
             {/if}
         {/each}
 
-        {#if actionsObject.parent}
+        {#if actionsObject.group}
             <hr class="col-span-3"/>
-            <h2 class="col-span-3">Parent Company</h2>
-            <Button oid={actionsObject.parent.id} on:click={openActionsModal}>{actionsObject.parent.name}</Button>
+            <h2 class="col-span-3">Group Company</h2>
+            <Button oid={actionsObject.group.id} on:click={openActionsModal}>{actionsObject.group.name}</Button>
         {/if}
 
-        {#if actionsObject.child.length > 0}
+        {#if actionsObject.subsidiary.length > 0}
             <hr class="col-span-3"/>
-            <h2 class="col-span-3">Child Companies</h2>
+            <h2 class="col-span-3">Subsidiary Companies</h2>
             <div class="col-span-3 grid grid-cols-5 text-center gap-x-3">
-                {#each actionsObject.child as child}
-                <Button oid={child.id} on:click={openActionsModal}>{child.name}</Button>
+                {#each actionsObject.subsidiary as subsidiary}
+                <Button oid={subsidiary.id} on:click={openActionsModal}>{subsidiary.name}</Button>
                 {/each}
             </div>
         {/if}
