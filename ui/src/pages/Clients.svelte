@@ -46,8 +46,6 @@
         users = await utils.get('/api/employee/options');
         data = await utils.get('/api/client/master/false');
 
-        client_list.push({name:"null",value: null})
-
         data.forEach((v) => {
             v["_selected"] = 0;
         });
