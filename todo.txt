@@ -1,5 +1,3 @@
-add archived and deleted items options
-
 tasks
 
 register
@@ -9,3 +7,9 @@ scheduler
 subscribed services by client (dummy added)
 
 add default columns to client
+
+doubts
+
+will one service only have one register.
+
+is narration in invoice auto generated.
