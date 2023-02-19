@@ -72,10 +72,10 @@ export default class RolesController {
 
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
-        if(data.id == 0){
+        if(data.id < 2){
             response.send({
                 status: 'error',
-                message: 'Cannot modify default role viewer',
+                message: 'Cannot modify default roles',
                 data: null
             })
         }else{
@@ -94,10 +94,10 @@ export default class RolesController {
 
     public async destroy({request,response}: HttpContextContract) {
         const id = request.input('id')
-        if(id.includes(0)){
+        if(id.includes(0) || id.includes(1)){
             response.send({
                 status: 'error',
-                message: 'Cannot remove default role viewer'
+                message: 'Cannot remove default roles'
             })
         }else{
             await Employee

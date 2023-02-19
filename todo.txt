@@ -1,15 +1,16 @@
-tasks
-
-register
+services
 invoice
+register
+tasks
 scheduler
+billing
+
+pre curated task templates
 
 subscribed services by client (dummy added)
 
 add default columns to client
-
-pre curated task templates
-
+---------------------
 doubts
 
 will one service only have one register. - narration
@@ -42,3 +43,9 @@ billing page will include services, one time tasks, parent company
 billing will have option to transfer bill to another company
 
 rename parent to group
+
+make admin role un editable, is_admin = admin role -> has all access
+
+-----------------------
+
+scheduler columns should have next date, so achieve only scheduled tasks, update when next date <= today.

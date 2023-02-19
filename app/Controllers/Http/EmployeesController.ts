@@ -75,7 +75,12 @@ export default class EmployeesController {
     }
 
     public async create({request,response}: HttpContextContract) {
-        const data = request.all()
+        const data = request.all();
+
+        if(data.is_master){
+            data.role_id = 1;
+        }
+
         const emp = await Employee.create(data);
 
         data.id = emp.id;
@@ -88,7 +93,11 @@ export default class EmployeesController {
     }
 
     public async update({request,response}: HttpContextContract) {
-        const data = request.all()
+        const data = request.all();
+
+        if(data.is_master){
+            data.role_id = 1;
+        }
 
         if(data.password == null){
             delete data.password
