@@ -10,12 +10,13 @@
     import {wrap} from 'svelte-spa-router/wrap'
 
     import {user} from '../global/user.js'
-  import Role from "./Role.svelte";
-  import Lead from "./Lead.svelte";
-  import Task from "./Task.svelte";
-  import MasterTemplate from "./MasterTemplate.svelte";
-  import Company from "./Company.svelte";
-  import DeletedClients from "./DeletedClients.svelte";
+    import Role from "./Role.svelte";
+    import Lead from "./Lead.svelte";
+    import Task from "./Task.svelte";
+    import MasterTemplate from "./MasterTemplate.svelte";
+    import Company from "./Company.svelte";
+    import DeletedClients from "./DeletedClients.svelte";
+    import Navbar from "../component/Navbar.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -38,9 +39,10 @@
 
 </script>
 
-<main class="flex max-h-[100vh]">
+<main class="flex max-h-[100vh] flex-col">
     <div>
-        <Sidebar></Sidebar>
+        <!-- <Sidebar></Sidebar> -->
+        <Navbar/>
     </div>
     <Router {routes}/>
 </main>

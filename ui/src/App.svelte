@@ -54,7 +54,7 @@
 
 </script>
 
-<body>
+<body class="min-h-[100vh]">
     {#if loaded}
         <Router {routes}/>
     {/if}
