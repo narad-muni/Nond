@@ -42,10 +42,12 @@ billing page will include services, one time tasks, parent company
 
 billing will have option to transfer bill to another company
 
-rename parent to group
-
 make admin role un editable, is_admin = admin role -> has all access
 
 -----------------------
 
 scheduler columns should have next date, so achieve only scheduled tasks, update when next date <= today.
+
+=======
+
+Tasks will be service based
