@@ -33,7 +33,7 @@
         '/employee':Users,
         '/task':Task,
         '/master_template':MasterTemplate,
-        '/deleted/clients':DeletedClients,
+        '/deleted/client':DeletedClients,
         '*':Error
     }
 

@@ -145,6 +145,13 @@ class utils{
         });
         return formData;
     }
+
+    static getArrIntersection(arr1,arr2){
+        var setA = new Set(arr1);
+        var setB = new Set(arr2);
+        var intersection = new Set([...setA].filter(x => setB.has(x)));
+        return Array.from(intersection);
+    }
 }
 
 export default utils;
