@@ -40,13 +40,27 @@
     </NavBrand>
     
     <NavUl {hidden} class="order-1">
-        <NavLi id="master" class="cursor-pointer"><Chevron aligned>Master</Chevron></NavLi>
-        <NavLi class="cursor-pointer" href="/#/task">Tasks</NavLi>
-        <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
-        <NavLi id="deleted" class="cursor-pointer"><Chevron aligned>Deleted</Chevron></NavLi>
-        <NavLi id="register" class="cursor-pointer"><Chevron aligned>Registers</Chevron></NavLi>
-        <NavLi id="template" class="cursor-pointer"><Chevron aligned>Templates</Chevron></NavLi>
-        <NavLi id="billing" class="cursor-pointer"><Chevron aligned>Billing</Chevron></NavLi>
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','service','role','lead','employee']).size}
+            <NavLi id="master" class="cursor-pointer"><Chevron aligned>Master</Chevron></NavLi>
+        {/if}
+        {#if $user.role.read.task}
+            <NavLi class="cursor-pointer" href="/#/task">Tasks</NavLi>
+        {/if}
+        {#if $user.role.read.register}
+            <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
+        {/if}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','register','invoice','employee']).size}
+            <NavLi id="deleted" class="cursor-pointer"><Chevron aligned>Deleted</Chevron></NavLi>
+        {/if}
+        {#if $user.role.read.register}
+            <NavLi id="register" class="cursor-pointer"><Chevron aligned>Registers</Chevron></NavLi>
+        {/if}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).size}
+            <NavLi id="template" class="cursor-pointer"><Chevron aligned>Templates</Chevron></NavLi>
+        {/if}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['invoice','billing']).size}
+            <NavLi id="billing" class="cursor-pointer"><Chevron aligned>Billing</Chevron></NavLi>
+        {/if}
 
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
             <DropdownItem href="/#/client">Client</DropdownItem>
