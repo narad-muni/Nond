@@ -124,7 +124,7 @@ Route.group(() => {
 
             Route.delete('/destroy','TemplatesController.destroy');
         })
-        .prefix('/template');
+        .prefix('/register_template');
 
 
         /*
