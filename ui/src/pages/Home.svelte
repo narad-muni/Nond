@@ -17,6 +17,7 @@
     import Company from "./Company.svelte";
     import DeletedClients from "./DeletedClients.svelte";
     import Navbar from "../component/Navbar.svelte";
+  import Service from "./Service.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -28,6 +29,7 @@
         '/': Dashboard,
         '/client':Clients,
         '/company':Company,
+        '/service':Service,
         '/role':Role,
         '/lead':Lead,
         '/employee':Users,

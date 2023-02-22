@@ -227,6 +227,21 @@ Route.group(() => {
         })
         .prefix('/role');
 
+        Route.group(() => {
+
+            Route.get('/','ServicesController.index');
+            Route.get('/:id','ServicesController.get').where('id',/^[0-9]+$/);
+            Route.get('/options','ServicesController.options');
+
+            Route.put('/','ServicesController.update');
+
+            Route.post('/','ServicesController.create');
+
+            Route.delete('/','ServicesController.destroy');
+
+        })
+        .prefix('/service');
+
 
         /*
         | scheduler routes
