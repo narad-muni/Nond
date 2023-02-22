@@ -25,7 +25,10 @@ export default class ClientsController {
             })
             .where('deleted',deleted)
 
-        response.send(data);
+        response.send({
+            status: 'success',
+            data: data
+        });
     }
 
     public async indexMaster({request,response}: HttpContextContract){
@@ -50,7 +53,10 @@ export default class ClientsController {
             })
             .where('deleted',deleted)
 
-        response.send(data);
+        response.send({
+            status: 'success',
+            data: data
+        });
     }
 
     public async get({request,response}: HttpContextContract){

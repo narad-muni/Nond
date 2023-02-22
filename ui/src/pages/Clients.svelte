@@ -23,7 +23,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-  import IdSelect from "../component/IdSelect.svelte";
+    import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
@@ -50,7 +50,7 @@
             error = data.message;
             data = null;
         }else{
-
+            data = data.data;
             data.forEach((v) => {
                 v["_selected"] = 0;
             });
@@ -217,7 +217,7 @@
 
 </script>
 
-{#if data && headers}
+{#if data && headers && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
         <div class="pl-4 flex gap-x-4 my-2">
             <Button gradient color="blue" on:click={()=> createModal = true}>

@@ -18,7 +18,10 @@ export default class CompaniesController {
             .query()
             .where('deleted',false)
 
-        response.send(data);
+        response.send({
+            status: 'success',
+            data: data
+        });
     }
 
     public async indexMaster({response}: HttpContextContract){
@@ -37,7 +40,10 @@ export default class CompaniesController {
             .query()
             .where('deleted',false)
 
-        response.send(data);
+        response.send({
+            status: 'success',
+            data: data
+        });
     }
 
     public async get({request,response}: HttpContextContract){

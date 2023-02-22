@@ -41,7 +41,6 @@
 
 <main class="flex max-h-[100vh] flex-col">
     <div>
-        <!-- <Sidebar></Sidebar> -->
         <Navbar/>
     </div>
     <Router {routes}/>
