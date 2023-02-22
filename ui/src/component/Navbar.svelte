@@ -40,7 +40,7 @@
     </NavBrand>
     
     <NavUl {hidden} class="order-1">
-        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','service','role','lead','employee']).size}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','service','role','lead','employee']).length}
             <NavLi id="master" class="cursor-pointer"><Chevron aligned>Master</Chevron></NavLi>
         {/if}
         {#if $user.role.read.task}
@@ -49,26 +49,38 @@
         {#if $user.role.read.register}
             <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
         {/if}
-        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','register','invoice','employee']).size}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','register','invoice','employee']).length}
             <NavLi id="deleted" class="cursor-pointer"><Chevron aligned>Deleted</Chevron></NavLi>
         {/if}
         {#if $user.role.read.register}
             <NavLi id="register" class="cursor-pointer"><Chevron aligned>Registers</Chevron></NavLi>
         {/if}
-        {#if utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).size}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).length}
             <NavLi id="template" class="cursor-pointer"><Chevron aligned>Templates</Chevron></NavLi>
         {/if}
-        {#if utils.getArrIntersection(Object.keys($user.role.read),['invoice','billing']).size}
+        {#if utils.getArrIntersection(Object.keys($user.role.read),['invoice','billing']).length}
             <NavLi id="billing" class="cursor-pointer"><Chevron aligned>Billing</Chevron></NavLi>
         {/if}
 
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
-            <DropdownItem href="/#/client">Client</DropdownItem>
-            <DropdownItem href="/#/company">Company</DropdownItem>
-            <DropdownItem href="/#/service">Service</DropdownItem>
-            <DropdownItem href="/#/role">Role</DropdownItem>
-            <DropdownItem href="/#/lead">Leads</DropdownItem>
-            <DropdownItem href="/#/employee">Employee</DropdownItem>
+            {#if $user.role.read.client}
+                <DropdownItem href="/#/client">Client</DropdownItem>
+            {/if}
+            {#if $user.role.read.company}
+                <DropdownItem href="/#/company">Company</DropdownItem>
+            {/if}
+            {#if $user.role.read.service}
+                <DropdownItem href="/#/service">Service</DropdownItem>
+            {/if}
+            {#if $user.role.read.role}
+                <DropdownItem href="/#/role">Role</DropdownItem>
+            {/if}
+            {#if $user.role.read.lead}
+                <DropdownItem href="/#/lead">Leads</DropdownItem>
+            {/if}
+            {#if $user.role.read.employee}
+                <DropdownItem href="/#/employee">Employee</DropdownItem>
+            {/if}
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#archived">
@@ -78,11 +90,21 @@
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#deleted">
-            <DropdownItem href="/#/deleted/client">Client</DropdownItem>
-            <DropdownItem href="/#/deleted/company">Company</DropdownItem>
-            <DropdownItem href="/#/deleted/employee">Employee</DropdownItem>
-            <DropdownItem href="/#/deleted/register">Register</DropdownItem>
-            <DropdownItem href="/#/deleted/invoice">Invoice</DropdownItem>
+            {#if $user.role.read.client}
+                <DropdownItem href="/#/deleted/client">Client</DropdownItem>
+            {/if}
+            {#if $user.role.read.company}
+                <DropdownItem href="/#/deleted/company">Company</DropdownItem>
+            {/if}
+            {#if $user.role.read.employee}
+                <DropdownItem href="/#/deleted/employee">Employee</DropdownItem>
+            {/if}
+            {#if $user.role.read.register}
+                <DropdownItem href="/#/deleted/register">Register</DropdownItem>
+            {/if}
+            {#if $user.role.read.invoice}
+                <DropdownItem href="/#/deleted/invoice">Invoice</DropdownItem>
+            {/if}
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#register">
@@ -92,28 +114,40 @@
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#template">
-            <DropdownItem href="/#/register_template">Register Template</DropdownItem>
-            <DropdownItem href="/#/master_template">Master Template</DropdownItem>
-            <DropdownItem href="/#/invoice_template">Invoice Template</DropdownItem>
+            {#if $user.role.read.template}
+                <DropdownItem href="/#/register_template">Register Template</DropdownItem>
+            {/if}
+            {#if $user.role.read.template}
+                <DropdownItem href="/#/master_template">Master Template</DropdownItem>
+            {/if}
+            {#if $user.role.read.template}
+                <DropdownItem href="/#/invoice_template">Invoice Template</DropdownItem>
+            {/if}
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#billing">
-            <DropdownItem href="/#/">Invoice</DropdownItem>
-            <DropdownItem href="/#/">Pending Invoice</DropdownItem>
-            <DropdownItem href="/#/">Generate Invoice</DropdownItem>
+            {#if $user.role.read.invoice}
+                <DropdownItem href="/#/">Invoice</DropdownItem>
+            {/if}
+            {#if $user.role.read.invoice}
+                <DropdownItem href="/#/">Pending Invoice</DropdownItem>
+            {/if}
+            {#if $user.role.read.invoice}
+                <DropdownItem href="/#/">Generate Invoice</DropdownItem>
+            {/if}
         </Dropdown>
     
     </NavUl>
 
     <div class="flex md:order-2">
-        <Avatar class="!bg-white cursor-pointer" id="avatar" >A</Avatar>
+        <Avatar class="!bg-white cursor-pointer" id="avatar" >{$user.username.charAt(0).toUpperCase()}</Avatar>
         <NavHamburger on:click={toggle} />
     </div>
     
     <Dropdown placement="bottom" triggeredBy="#avatar">
         <DropdownHeader>
-        <span class="block text-sm"> Admin </span>
-        <span class="block truncate text-sm font-light"> admin </span>
+        <span class="block text-sm"> {$user.username.charAt(0).toUpperCase() + $user.username.slice(1)} </span>
+        <span class="block truncate text-sm font-light"> {$user.role.name} </span>
         </DropdownHeader>
         <DropdownItem on:click={logout}>Sign out</DropdownItem>
     </Dropdown>
