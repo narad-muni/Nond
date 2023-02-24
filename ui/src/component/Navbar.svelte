@@ -28,7 +28,7 @@
 </script>
 
 <Navbar let:hidden let:toggle class="bg-slate-100">
-    <NavBrand href="/">
+    <NavBrand href="#">
         <img
         src="logo.png"
         class="mr-3 h-6 sm:h-9"
@@ -114,13 +114,13 @@
         </Dropdown>
     
         <Dropdown class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#template">
-            {#if $user.role.read.template}
+            {#if $user.role.read.register_template}
                 <DropdownItem href="/#/register_template">Register Template</DropdownItem>
             {/if}
-            {#if $user.role.read.template}
+            {#if $user.role.read.master_template}
                 <DropdownItem href="/#/master_template">Master Template</DropdownItem>
             {/if}
-            {#if $user.role.read.template}
+            {#if $user.role.read.invoice_template}
                 <DropdownItem href="/#/invoice_template">Invoice Template</DropdownItem>
             {/if}
         </Dropdown>

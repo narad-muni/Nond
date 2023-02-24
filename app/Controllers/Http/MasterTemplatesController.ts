@@ -51,6 +51,14 @@ export default class MasterTemplatesController {
             const payload = request.all()
             payload.column_name = string.snakeCase(payload.display_name);
 
+            if(payload.column_name == 'services' || payload.column_name == '_services'){
+                response.send({
+                    status: 'error',
+                    message: `${payload.column_name} is reserved column, please use another name`
+                });
+                return;
+            }
+
             const duplicate = await MasterTemplate
                 .query()
                 .where('column_name', payload.column_name)
@@ -104,6 +112,14 @@ export default class MasterTemplatesController {
         try{
             const payload = request.all();
             payload.column_name = string.snakeCase(payload.display_name);
+
+            if(payload.column_name == 'services' || payload.column_name == '_services'){
+                response.send({
+                    status: 'error',
+                    message: `${payload.column_name} is reserved column, please use another name`
+                });
+                return;
+            }
 
             const duplicate = await MasterTemplate
                 .query()

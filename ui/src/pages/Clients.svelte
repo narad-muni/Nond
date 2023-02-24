@@ -30,11 +30,20 @@
     let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, client_list, data, createdObject={}, actionsIndex, actionsObject;
+    let headers, services, client_list, data, createdObject={_services:{}}, actionsIndex, actionsObject;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
         {name:"By Client",value:"By Client"}
+    ]
+    let frequency = [
+        {name: "Daily", value:"1 day"},
+        {name: "Weekly", value:"1 week"},
+        {name: "Bi Weekly", value:"2 weeks"},
+        {name: "Monthly", value:"1 month"},
+        {name: "Quarterly", value:"3 months"},
+        {name: "Half Yearly", value:"6 months"},
+        {name: "Yearly", value:"1 year"}
     ]
     let error="", success="", assignedUser, autoAssignType, users;
 
@@ -44,6 +53,7 @@
         client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
         users = await utils.get('/api/employee/options');
+        services = await utils.get('/api/service/options');
         data = await utils.get('/api/client/master/false');
 
         if(data.status != 'success'){
@@ -53,6 +63,10 @@
             data = data.data;
             data.forEach((v) => {
                 v["_selected"] = 0;
+            });
+
+            services.forEach(service => {
+                createdObject._services[service.name] = {}
             });
             
             handler = new DataHandler(
@@ -200,7 +214,9 @@
     }
 
     async function createData(){
+        createdObject.services  = JSON.stringify(createdObject._services);
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
+
         if(resp.status == 'success'){
             resp.data._selected = false;
 
@@ -209,7 +225,10 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject = {};
+            createdObject={__services:{}}
+            services.forEach(service => {
+                createdObject._services[service.name] = {}
+            });
         }else{
             error = resp.message || "";
         }
@@ -401,6 +420,21 @@
                 </Label>
             {/if}
         {/each}
+
+        <hr class="col-span-3"/>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            <h2>Services</h2>
+            <h2>Frequency</h2>
+            <h2>Next Date</h2>
+        </div>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            {#each services as service}
+                <Checkbox bind:checked={createdObject._services[service.name].subscribed}>{service.name}</Checkbox>
+                <Select bind:value={createdObject._services[service.name].frequency} items={frequency}/>
+                <Input bind:value={createdObject._services[service.name].next} type="date"/>
+            {/each}
+        </div>
+
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -509,21 +543,23 @@
             <h2 class="col-span-3">Subsidiary Companies</h2>
             <div class="col-span-3 grid grid-cols-5 text-center gap-x-3">
                 {#each actionsObject.subsidiary as subsidiary}
-                <Button oid={subsidiary.id} on:click={openActionsModal}>{subsidiary.name}</Button>
+                    <Button oid={subsidiary.id} on:click={openActionsModal}>{subsidiary.name}</Button>
                 {/each}
             </div>
         {/if}
 
         <hr class="col-span-3"/>
-        <h2 class="col-span-3">Services</h2>
-        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
-            <Checkbox checked>GST 1</Checkbox>
-            <Checkbox>GST 3B</Checkbox>
-            <Checkbox checked>Income Tax</Checkbox>
-            <Checkbox checked>UIDAI</Checkbox>
-            <Checkbox checked>Load Filling</Checkbox>
-            <Checkbox>Advance Tax</Checkbox>
-            <Checkbox>Udyog</Checkbox>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            <h2>Services</h2>
+            <h2>Frequency</h2>
+            <h2>Next Date</h2>
+        </div>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            {#each services as service}
+                <Checkbox bind:checked={createdObject._services[service.name].subscribed}>{service.name}</Checkbox>
+                <Select bind:value={createdObject._services[service.name].frequency} items={frequency}/>
+                <Input bind:value={createdObject._services[service.name].next} type="date"/>
+            {/each}
         </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">

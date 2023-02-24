@@ -148,7 +148,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/master_template/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/master_template/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {

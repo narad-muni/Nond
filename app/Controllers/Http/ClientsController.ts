@@ -116,6 +116,9 @@ export default class ClientsController {
         const payload = request.all();
         const files = request.allFiles();
 
+        console.log(Object.keys(JSON.parse(payload.services)));
+        return;
+
         const headers = await MasterTemplate
             .query()
             .where('table_name','clients')

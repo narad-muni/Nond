@@ -14,6 +14,9 @@ export default class Client extends BaseModel {
     public gstin: string
 
     @column()
+    public services: object
+
+    @column()
     public group_id: number
 
     @column()
