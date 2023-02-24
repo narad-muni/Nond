@@ -129,6 +129,13 @@
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
+
+            services.forEach(service => {
+                if(!actionsObject.services[service.name]){
+                    actionsObject.services[service.name] = {}
+                }
+            });
+
             actionsModals = true;
         }else{
             error = actionsObject.message || "";
@@ -136,6 +143,7 @@
     }
 
     async function updateData(){
+        actionsObject._services  = JSON.stringify(actionsObject.services);
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
@@ -225,7 +233,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject={__services:{}}
+            createdObject={_services:{}}
             services.forEach(service => {
                 createdObject._services[service.name] = {}
             });
@@ -556,9 +564,9 @@
         </div>
         <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
             {#each services as service}
-                <Checkbox bind:checked={createdObject._services[service.name].subscribed}>{service.name}</Checkbox>
-                <Select bind:value={createdObject._services[service.name].frequency} items={frequency}/>
-                <Input bind:value={createdObject._services[service.name].next} type="date"/>
+                <Checkbox bind:checked={actionsObject.services[service.name].subscribed}>{service.name}</Checkbox>
+                <Select bind:value={actionsObject.services[service.name].frequency} items={frequency}/>
+                <Input bind:value={actionsObject.services[service.name].next} type="date"/>
             {/each}
         </div>
         

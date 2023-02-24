@@ -14,7 +14,6 @@
         Input,
         Toggle,
         Alert,
-        Textarea,
         Select,
     } from "flowbite-svelte";
 
@@ -27,16 +26,22 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
+    let actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, client_list, data, createdObject={}, actionsIndex, actionsObject;
+    let headers, client_list, services, data, actionsIndex, actionsObject;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
-    let error="", success="", assignedUser, autoAssignType, users;
+    let error="", success="", users;
+
+    let frequency = [
+        {name: "Daily", value:"1 day"},
+        {name: "Weekly", value:"1 week"},
+        {name: "Bi Weekly", value:"2 weeks"},
+        {name: "Monthly", value:"1 month"},
+        {name: "Quarterly", value:"3 months"},
+        {name: "Half Yearly", value:"6 months"},
+        {name: "Yearly", value:"1 year"}
+    ];
 
     // fetch data
 
@@ -44,6 +49,7 @@
         client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
         users = await utils.get('/api/employee/options');
+        services = await utils.get('/api/service/options');
         data = await utils.get('/api/client/master/true');
 
         if(data.status != 'success'){
@@ -115,6 +121,13 @@
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
+
+            services.forEach(service => {
+                if(!actionsObject.services[service.name]){
+                    actionsObject.services[service.name] = {}
+                }
+            });
+
             actionsModals = true;
         }else{
             error = actionsObject.message || "";
@@ -122,6 +135,7 @@
     }
 
     async function updateData(){
+        actionsObject._services  = JSON.stringify(actionsObject.services);
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
@@ -427,15 +441,17 @@
         {/if}
 
         <hr class="col-span-3"/>
-        <h2 class="col-span-3">Services</h2>
-        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
-            <Checkbox checked>GST 1</Checkbox>
-            <Checkbox>GST 3B</Checkbox>
-            <Checkbox checked>Income Tax</Checkbox>
-            <Checkbox checked>UIDAI</Checkbox>
-            <Checkbox checked>Load Filling</Checkbox>
-            <Checkbox>Advance Tax</Checkbox>
-            <Checkbox>Udyog</Checkbox>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            <h2>Services</h2>
+            <h2>Frequency</h2>
+            <h2>Next Date</h2>
+        </div>
+        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+            {#each services as service}
+                <Checkbox bind:checked={actionsObject.services[service.name].subscribed}>{service.name}</Checkbox>
+                <Select bind:value={actionsObject.services[service.name].frequency} items={frequency}/>
+                <Input bind:value={actionsObject.services[service.name].next} type="date"/>
+            {/each}
         </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">

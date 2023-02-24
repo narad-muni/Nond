@@ -82,6 +82,8 @@ export default class ClientsController {
             .first()
 
         if(data){
+            data.services = JSON.parse(data.services);
+
             response.send({
                 status: 'success',
                 data: data
@@ -116,8 +118,15 @@ export default class ClientsController {
         const payload = request.all();
         const files = request.allFiles();
 
-        console.log(Object.keys(JSON.parse(payload.services)));
-        return;
+        delete payload._services;
+
+        payload.services = JSON.parse(payload.services);
+
+        Object.keys(payload.services).forEach(service => {
+            if(!payload.services[service].subscribed){
+                delete payload.services[service];
+            }
+        });
 
         const headers = await MasterTemplate
             .query()
@@ -159,12 +168,15 @@ export default class ClientsController {
         const payload = request.all();
         const files = request.allFiles();
 
+        payload.services = payload._services;
+
         delete payload.subsidiary;
+        delete payload._services;
         delete payload.group;
 
         const headers = await MasterTemplate
             .query()
-            .where('table_name','clients')
+            .where('table_name','clients');
 
         headers.forEach(header => {
             Client.$addColumn(header.column_name,{});
@@ -205,6 +217,17 @@ export default class ClientsController {
                 }
             }
         });
+
+        payload.services = JSON.parse(payload.services);
+
+        Object.keys(payload.services).forEach(service => {
+            if(!payload.services[service].subscribed){
+                delete payload.services[service];
+            }
+        });
+
+        const current_services = Object.keys(old.services);
+        const incoming_services = Object.keys(payload.services);
 
         await Client
             .query()
