@@ -1,4 +1,3 @@
-services
 invoice
 register
 tasks
