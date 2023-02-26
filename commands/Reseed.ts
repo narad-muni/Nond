@@ -30,14 +30,15 @@ export default class Reseed extends BaseCommand {
 
     public async initialize(){
 
-        const { default: Employee } = await import('App/Models/Employee')
-        const { default: Role } = await import('App/Models/Role')
-        const { default: Company } = await import('App/Models/Company')
-        const { default: Task } = await import('App/Models/Task')
-        const {default: Template} = await import('App/Models/Template')
-        const {default: Lead} = await import('App/Models/Lead')
-        const {default: Client} = await import('App/Models/Client')
-        const {default: MasterTemplate} = await import('App/Models/MasterTemplate')
+        const { default: Employee } = await import('App/Models/Employee');
+        const { default: Role } = await import('App/Models/Role');
+        const { default: Company } = await import('App/Models/Company');
+        const { default: Task } = await import('App/Models/Task');
+        const {default: Template} = await import('App/Models/Template');
+        const {default: Lead} = await import('App/Models/Lead');
+        const {default: Client} = await import('App/Models/Client');
+        const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
+        const {default: Service} = await import('App/Models/Service');
 
         await Employee.create({
             id: 0,
@@ -45,7 +46,18 @@ export default class Reseed extends BaseCommand {
             password: 'admin123',
             is_admin: true,
             role_id: 1,
-        })
+        });
+
+        await Service.create({
+            id: 0,
+            name: 'GST'
+        });
+
+        await RegisterMaster.create({
+            id: 0,
+            name: 'GST 1',
+            service_id: 0
+        });
 
         await Role.create({
             id: 0,
@@ -55,17 +67,17 @@ export default class Reseed extends BaseCommand {
             update: {},
             remove: {},
             destroy: {},
-        })
+        });
 
         await Role.create({
             id: 1,
             name: 'admin',
-            read: {"client":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            create: {"client":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            update: {"client":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            remove: {"client":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            destroy: {"client":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-        })
+            read: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            create: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            update: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            remove: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            destroy: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+        });
 
         await Company.create({
             id: 0,
@@ -73,7 +85,7 @@ export default class Reseed extends BaseCommand {
             gstin: '27GAHJAKS',
             email: 'jjind2011@gmail.com',
             signature: '.jpg'
-        })
+        });
 
         await Client.create({
             id: 0,
@@ -81,7 +93,7 @@ export default class Reseed extends BaseCommand {
             email: 'jjind2011@gmail.com',
             gstin: '27aafh',
             deleted: false
-        })
+        });
 
         await Task.create({
             id: 0,
@@ -92,7 +104,7 @@ export default class Reseed extends BaseCommand {
             status: 'Pending',
             started: DateTime.fromISO('2022-12-01'),
             ended: DateTime.fromISO('2023-01-01')
-        })
+        });
 
         await Lead.create({
             id: 0,
@@ -101,7 +113,7 @@ export default class Reseed extends BaseCommand {
             description: 'Wan\'t to arrange meeting',
             status: 'On boarding',
             started: DateTime.fromISO('2022-12-12')
-        })
+        });
 
         await Template.create({
             id: 0,
@@ -125,19 +137,21 @@ export default class Reseed extends BaseCommand {
             cost: 100,
             per: 'Entry'
 
-        })
+        });
 
     }
 
     public async de_initialize(){
 
-        const { default: Employee } = await import('App/Models/Employee')
-        const { default: Role } = await import('App/Models/Role')
-        const { default: Company } = await import('App/Models/Company')
-        const { default: Task } = await import('App/Models/Task')
-        const {default: Template} = await import('App/Models/Template')
-        const {default: Lead} = await import('App/Models/Lead')
-        const {default: Client} = await import('App/Models/Client')
+        const { default: Employee } = await import('App/Models/Employee');
+        const { default: Role } = await import('App/Models/Role');
+        const { default: Company } = await import('App/Models/Company');
+        const { default: Task } = await import('App/Models/Task');
+        const {default: Template} = await import('App/Models/Template');
+        const {default: Lead} = await import('App/Models/Lead');
+        const {default: Client} = await import('App/Models/Client');
+        const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
+        const {default: Service} = await import('App/Models/Service');
             
         const user = await Employee.findBy('id',0)
         const role1 = await Role.findBy('id',0);
@@ -146,16 +160,20 @@ export default class Reseed extends BaseCommand {
         const task = await Task.findBy('id',0);
         const template = await Template.findBy('id',0);
         const lead = await Lead.findBy('id',0);
-        const client = await Client.findBy('id',0)
+        const client = await Client.findBy('id',0);
+        const register_master = await RegisterMaster.findBy('id',0);
+        const service = await Service.findBy('id',0);
 
-        await user?.delete()
-        await role1?.delete()
-        await role2?.delete()
-        await company?.delete()
-        await task?.delete()
-        await template?.delete()
-        await lead?.delete()
-        await client?.delete()
+        await user?.delete();
+        await role1?.delete();
+        await role2?.delete();
+        await company?.delete();
+        await task?.delete();
+        await template?.delete();
+        await lead?.delete();
+        await client?.delete();
+        await register_master?.delete();
+        await service?.delete();
 
     }
 

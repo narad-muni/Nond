@@ -9,14 +9,9 @@
         TableBodyCell,
         TableBodyRow,
         Checkbox,
-        A,
         Label,
-        Helper,
         Input,
-        Toggle,
         Alert,
-        Textarea,
-        Select
     } from "flowbite-svelte";
 
     import { DataHandler, ThFilter } from "@vincjo/datatables";
@@ -24,25 +19,21 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { types } from "joi";
 
     // Intialization
 
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={read:{},create:{},update:{},remove:{},destroy:{}}, actionsIndex, actionsObject, templateFile;
+    let data, emptyCreatedObject,createdObject={read:{},create:{},update:{},remove:{},destroy:{}}, actionsIndex, actionsObject, templateFile;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+    let error="", success="";
 
     // fetch data
 
     (async ()=>{
         data = await utils.get('/api/role/');
+        emptyCreatedObject = createdObject;
         if(data.status != 'success'){
             error = data.message;
             data = null;
@@ -167,7 +158,7 @@
             handler.setRows(data);
             createModal = false;
         }else{
-            error = resp.message | "";
+            error = resp.message || "";
         }
     }
 
@@ -255,12 +246,13 @@
                 <Checkbox bind:checked={createdObject.read.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.read.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.read.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.read.template} >Template</Checkbox>
+                <Checkbox bind:checked={createdObject.read.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
-                <Checkbox bind:checked={createdObject.read.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={createdObject.read.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.read.invoice} >Invoice</Checkbox>
             </div>
@@ -271,12 +263,13 @@
                 <Checkbox bind:checked={createdObject.create.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.create.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.create.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.create.template} >Template</Checkbox>
+                <Checkbox bind:checked={createdObject.create.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.create.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.create.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={createdObject.create.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.create.invoice} >Invoice</Checkbox>
             </div>
@@ -287,12 +280,13 @@
                 <Checkbox bind:checked={createdObject.update.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.update.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.update.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.update.template} >Template</Checkbox>
+                <Checkbox bind:checked={createdObject.update.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.update.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.update.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={createdObject.update.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.update.invoice} >Invoice</Checkbox>
             </div>
@@ -303,12 +297,13 @@
                 <Checkbox bind:checked={createdObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.template} >Template</Checkbox>
+                <Checkbox bind:checked={createdObject.remove.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.remove.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={createdObject.remove.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.invoice} >Invoice</Checkbox>
             </div>
@@ -319,19 +314,20 @@
                 <Checkbox bind:checked={createdObject.destroy.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.destroy.template} >Template</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.destroy.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.invoice} >Invoice</Checkbox>
             </div>
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
@@ -353,12 +349,13 @@
                 <Checkbox bind:checked={actionsObject.read.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.read.template} >Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.read.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.invoice} >Invoice</Checkbox>
             </div>
@@ -369,12 +366,13 @@
                 <Checkbox bind:checked={actionsObject.create.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.create.template} >Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.create.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.create.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={actionsObject.create.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.invoice} >Invoice</Checkbox>
             </div>
@@ -385,12 +383,13 @@
                 <Checkbox bind:checked={actionsObject.update.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.update.template} >Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.update.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.update.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={actionsObject.update.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.invoice} >Invoice</Checkbox>
             </div>
@@ -401,12 +400,13 @@
                 <Checkbox bind:checked={actionsObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.template} >Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.remove.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.remove.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={actionsObject.remove.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.invoice} >Invoice</Checkbox>
             </div>
@@ -417,12 +417,13 @@
                 <Checkbox bind:checked={actionsObject.destroy.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.destroy.template} >Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.destroy.scheduler} >Scheduler</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.invoice_template} >Invoice Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.invoice} >Invoice</Checkbox>
             </div>

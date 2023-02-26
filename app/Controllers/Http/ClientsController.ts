@@ -82,7 +82,7 @@ export default class ClientsController {
             .first()
 
         if(data){
-            data.services = JSON.parse(data.services);
+            data.services = JSON.parse(data.services) || {};
 
             response.send({
                 status: 'success',

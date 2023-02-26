@@ -1,12 +1,14 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Service from 'App/Models/Service'
+import RegisterMaster from 'App/Models/RegisterMaster'
 
-export default class RolesController {
-
+export default class RegistersController {
     public async index({response}: HttpContextContract) {
-        const data = await Service
+        const data = await RegisterMaster
             .query()
-            .select('id','name')
+            .preload('service',(query) => {
+                query.select('id','name')
+            })
+            .where('deleted',false);
 
         response.send({
             status: 'success',
@@ -17,7 +19,7 @@ export default class RolesController {
 
     public async get({request,response}: HttpContextContract) {
         const id = request.param('id')
-        const data = await Service
+        const data = await RegisterMaster
             .query()
             .where('id',id)
             .first()
@@ -32,13 +34,13 @@ export default class RolesController {
             response.send({
                 status: 'error',
                 data:null,
-                message: 'Role not found'
+                message: 'RegisterMaster not found'
             })
         }
     }
 
     public async options({response}: HttpContextContract) {
-        const data = await Service
+        const data = await RegisterMaster
             .all()
 
         const serilizedData = data.map(e => e.serialize())
@@ -56,7 +58,7 @@ export default class RolesController {
     public async create({request,response}: HttpContextContract) {
         const payload = request.all();
 
-        const data = await Service
+        const data = await RegisterMaster
             .create(payload)
 
         payload.id = data.id;
@@ -70,8 +72,7 @@ export default class RolesController {
 
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
-        
-        await Service
+        await RegisterMaster
             .query()
             .where('id',data.id)
             .update(data)
@@ -83,18 +84,29 @@ export default class RolesController {
         })
     }
 
-    public async destroy({request,response}: HttpContextContract) {
-        const id = request.input('id')
+    public async remove({request,response}: HttpContextContract) {
+        const id = request.input('id');
         
-        //TODO : update client services json, delete tasks and schedulers
-
-        await Service
+        await RegisterMaster
             .query()
             .whereIn('id',id)
-            .delete()
-            
-            response.send({
-                status: 'success'
-            })
+            .update({deleted:true});
+        
+        response.send({
+            status: 'success'
+        })
+    }
+    
+    public async destroy({request,response}: HttpContextContract) {
+        const id = request.input('id');
+        
+        await RegisterMaster
+            .query()
+            .whereIn('id',id)
+            .delete();
+        
+        response.send({
+            status: 'success'
+        })
     }
 }

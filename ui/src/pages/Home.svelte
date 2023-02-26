@@ -18,6 +18,7 @@
     import DeletedClients from "./DeletedClients.svelte";
     import Navbar from "../component/Navbar.svelte";
   import Service from "./Service.svelte";
+  import RegisterMaster from "./RegisterMaster.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -31,6 +32,7 @@
         '/company':Company,
         '/service':Service,
         '/role':Role,
+        '/register_master':RegisterMaster,
         '/lead':Lead,
         '/employee':Users,
         '/task':Task,

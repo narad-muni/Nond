@@ -75,6 +75,9 @@
             {#if $user.role.read.role}
                 <DropdownItem href="/#/role">Role</DropdownItem>
             {/if}
+            {#if $user.role.read.register_master}
+                <DropdownItem href="/#/register_master">Registers</DropdownItem>
+            {/if}
             {#if $user.role.read.lead}
                 <DropdownItem href="/#/lead">Leads</DropdownItem>
             {/if}

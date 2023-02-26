@@ -378,7 +378,7 @@
 
         <Label class="space-y-2">
             <span>Group</span>
-            <IdSelect items={client_list} bind:value={actionsObject.group_id}/>
+            <IdSelect required items={client_list} bind:value={actionsObject.group_id}/>
         </Label>
 
         <Label class="space-y-2">
@@ -426,7 +426,7 @@
 
         {#if actionsObject.group}
             <hr class="col-span-3"/>
-            <h2 class="col-span-3">Group Company</h2>
+            <h2 class="col-span-3">Parent Company</h2>
             <Button oid={actionsObject.group.id} on:click={openActionsModal}>{actionsObject.group.name}</Button>
         {/if}
 

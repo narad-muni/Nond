@@ -31,6 +31,7 @@
     let selectedRows = new Set();
 
     let headers, services, client_list, data, createdObject={_services:{}}, actionsIndex, actionsObject;
+    let emptyCreatedObject;
     let handler, rows;
     let automaticAssign = [
         {name:"Divide",value:"Divide"},
@@ -69,6 +70,8 @@
                 createdObject._services[service.name] = {}
             });
             
+            emptyCreatedObject = createdObject;
+
             handler = new DataHandler(
                 data,
                 {
@@ -401,7 +404,7 @@
 
         <Label class="space-y-2">
             <span>Group</span>
-            <IdSelect items={client_list} bind:value={createdObject.group_id}/>
+            <IdSelect required items={client_list} bind:value={createdObject.group_id}/>
         </Label>
 
         <Label class="space-y-2">
@@ -445,7 +448,7 @@
 
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
@@ -494,7 +497,7 @@
 
         <Label class="space-y-2">
             <span>Group</span>
-            <IdSelect items={client_list} bind:value={actionsObject.group_id}/>
+            <IdSelect required items={client_list} bind:value={actionsObject.group_id}/>
         </Label>
 
         <Label class="space-y-2">
@@ -542,7 +545,7 @@
 
         {#if actionsObject.group}
             <hr class="col-span-3"/>
-            <h2 class="col-span-3">Group Company</h2>
+            <h2 class="col-span-3">Parent Company</h2>
             <Button oid={actionsObject.group.id} on:click={openActionsModal}>{actionsObject.group.name}</Button>
         {/if}
 

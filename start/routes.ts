@@ -151,17 +151,19 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','RegistersController.index');
-            Route.get('/:id','RegistersController.get').where('id',/^[0-9]+$/);
+            Route.get('/','RegisterMasterController.index');
+            Route.get('/:id','RegisterMasterController.get').where('id',/^[0-9]+$/);
 
-            Route.put('/','RegistersController.update');
+            Route.post('/','RegisterMasterController.create');
 
-            Route.delete('/','RegistersController.remove');
+            Route.put('/','RegisterMasterController.update');
 
-            Route.delete('/destroy','RegistersController.destroy');
+            Route.delete('/','RegisterMasterController.remove');
+
+            Route.delete('/destroy','RegisterMasterController.destroy');
 
         })
-        .prefix('/register');
+        .prefix('/register_master');
 
 
         /*
