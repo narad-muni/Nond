@@ -72,11 +72,11 @@ export default class Reseed extends BaseCommand {
         await Role.create({
             id: 1,
             name: 'admin',
-            read: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            create: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            update: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            remove: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            destroy: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"invoice_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            read: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            create: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            update: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            remove: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            destroy: {"client":true,"register_master":true,"service":true,"billing":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
         });
 
         await Company.create({

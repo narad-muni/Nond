@@ -252,7 +252,7 @@
                 <Checkbox bind:checked={createdObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
-                <Checkbox bind:checked={createdObject.read.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={createdObject.read.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.read.invoice} >Invoice</Checkbox>
             </div>
@@ -269,7 +269,7 @@
                 <Checkbox bind:checked={createdObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.create.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.create.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={createdObject.create.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.create.invoice} >Invoice</Checkbox>
             </div>
@@ -286,7 +286,7 @@
                 <Checkbox bind:checked={createdObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.update.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.update.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={createdObject.update.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.update.invoice} >Invoice</Checkbox>
             </div>
@@ -303,7 +303,7 @@
                 <Checkbox bind:checked={createdObject.remove.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={createdObject.remove.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.invoice} >Invoice</Checkbox>
             </div>
@@ -320,7 +320,7 @@
                 <Checkbox bind:checked={createdObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.destroy.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.invoice} >Invoice</Checkbox>
             </div>
@@ -355,7 +355,7 @@
                 <Checkbox bind:checked={actionsObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.read.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.invoice} >Invoice</Checkbox>
             </div>
@@ -372,7 +372,7 @@
                 <Checkbox bind:checked={actionsObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.create.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.create.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.invoice} >Invoice</Checkbox>
             </div>
@@ -389,7 +389,7 @@
                 <Checkbox bind:checked={actionsObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.update.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.update.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.invoice} >Invoice</Checkbox>
             </div>
@@ -406,7 +406,7 @@
                 <Checkbox bind:checked={actionsObject.remove.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.remove.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.invoice} >Invoice</Checkbox>
             </div>
@@ -423,7 +423,7 @@
                 <Checkbox bind:checked={actionsObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.destroy.invoice_template} >Invoice Template</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.invoice} >Invoice</Checkbox>
             </div>

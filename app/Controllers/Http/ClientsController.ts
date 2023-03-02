@@ -226,8 +226,8 @@ export default class ClientsController {
             }
         });
 
-        const current_services = Object.keys(old.services);
-        const incoming_services = Object.keys(payload.services);
+        const current_services = Object.keys(old.services || {});
+        const incoming_services = Object.keys(payload.services || {});
 
         await Client
             .query()
