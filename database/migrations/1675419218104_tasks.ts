@@ -10,8 +10,9 @@ export default class extends BaseSchema {
         table.integer('client_id');
         table.string('title');
         table.string('description');
-        table.string('service');
-        table.string('status');
+        table.integer('service');
+        table.integer('status');
+        table.integer('priority');
         table.date('started');
         table.date('ended');
         })

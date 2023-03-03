@@ -20,10 +20,13 @@ export default class Task extends BaseModel {
     public description: string
     
     @column()
-    public status: string
+    public status: number
 
     @column()
-    public service: string
+    public priority: number
+
+    @column()
+    public service: number
     
     @column.date()
     public started: DateTime

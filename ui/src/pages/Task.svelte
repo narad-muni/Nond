@@ -9,54 +9,55 @@
         TableBodyCell,
         TableBodyRow,
         Checkbox,
-        A,
         Label,
-        Helper,
         Input,
-        Toggle,
         Alert,
         Textarea,
-        Select
+        Select,
+        Chevron,
+        Dropdown
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { types } from "joi";
+    import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, userList, clientList;
+    let data, createdObject={priority:1,status:0}, clients, actionsIndex, actionsObject, userList;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
-    const leadStatus = [
-        {name:'Pending',value:'Pending'},
-        {name:'In Process',value:'In Process'},
-        {name:'Meeting',value:'Meeting'},
-        {name:'Client Onboarding',value:'Client Onboarding'},
-        {name:'Deal Closed',value:'Deal Closed'},
-        {name:'Deal Failed',value:'Deal Failed'}
-    ]
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+
+    const task_status = [
+        {name:'Pending',value:0},
+        {name:'In Process',value:1},
+        {name:'Halted',value:2},
+        {name:'Raised',value:3},
+        {name:'Completed',value:4}
+    ];
+
+    const priority = [
+        {name:'Low',value:0},
+        {name:'Regular',value:1},
+        {name:'Urgent',value:2}
+    ];
+
+    let error="", success="";
 
     // fetch data
 
     (async ()=>{
-        data = await utils.get('/api/lead/');
-
+        clients = await utils.get('/api/client/options');
         userList = await utils.get('/api/employee/options');
-        userList = userList.data;
+        data = await utils.get('/api/task/');
 
-        // clientList = await utils.get('/api/client/options');
-        // clientList = clientList.data;
+        userList = userList.data;
+        clients = clients.data;
 
         if(data.status != 'success'){
             error = data.message;
@@ -129,20 +130,18 @@
             }
         });
 
-        actionsObject = await utils.get('/api/lead/'+data[actionsIndex].id);
+        actionsObject = await utils.get('/api/task/'+data[actionsIndex].id);
 
         if(actionsObject.status != 'success'){
             error = actionsObject.message;
-            return;
+        }else{
+            actionsObject = actionsObject.data;
+            actionsModals = true;
         }
-
-        actionsObject = actionsObject.data;
-        
-        actionsModals = true;
     }
 
     async function updateData(){
-        const resp = await utils.put_json('/api/lead/',actionsObject);
+        const resp = await utils.put_json('/api/task/',actionsObject);
 
         actionsObject.assigned_user = userList.find(e => e.value == actionsObject.assigned_to);
         actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
@@ -159,7 +158,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/lead/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/task/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -177,7 +176,7 @@
     }
 
     async function createData(){
-        let resp = await utils.post_json('/api/lead/',createdObject);
+        let resp = await utils.post_json('/api/task/',createdObject);
 
         if(resp.status == 'success'){
             resp.data._selected = false;
@@ -204,6 +203,14 @@
                 Create
             </Button>
 
+            <Button gradient color="green">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
+                </svg>                                                   
+                &nbsp;
+                Show Done
+            </Button>
+
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -226,6 +233,7 @@
                             <Th {handler} orderBy="client">Client</Th>
                             <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
+                            <Th {handler} orderBy="status">Priority</Th>
                             <Th {handler} orderBy="started">Started</Th>
                             <Th {handler} orderBy="ended">Ended</Th>
                         </tr>
@@ -233,27 +241,35 @@
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="title"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy={(row => row.client?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => row.assigned_user?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
+                            <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
                             <ThSearch {handler} filterBy="started"/>
                             <ThSearch {handler} filterBy="ended"/>
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row, index}
+                        {#each $rows as row}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client}
+                                    {row.title}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.assigned_user.username}
+                                    {row.client?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.status}
+                                    {row.assigned_user?.username}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {task_status[row.status].name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {priority[row.priority].name}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.started}
@@ -283,43 +299,59 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Client Name</span>
-            <Input required bind:value={createdObject.client}/>
+        <Label class="space-y-2 col-span-3">
+            <span>Template</span>
+            <Select items={task_status} bind:value={createdObject.status}/>
+        </Label>
+        <Label class="space-y-2 col-span-3">
+            <span>Title</span>
+            <Input type="text" placeholder="Title" bind:value={createdObject.title}/>
         </Label>
         <Label class="space-y-2">
-            <span>Start date</span>
-            <Input required type="date" bind:value={createdObject.started}/>
+            <span>Client</span>
+            <IdSelect items={clients} required bind:value={createdObject.client_id}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>
-            <Select required items={userList} bind:value={createdObject.assigned_to} />
+            <Select items={userList} bind:value={createdObject.assigned_to} />
         </Label>
         <Label class="space-y-2">
             <span>Status</span>
-            <Select required items={leadStatus} bind:value={createdObject.status}/>
+            <Select required items={task_status} bind:value={createdObject.status}/>
         </Label>
-        <Label class="space-y-2 col-span-2">
+        <Label class="space-y-2">
+            <span>Start date</span>
+            <Input type="date" bind:value={createdObject.started}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>End date</span>
+            <Input type="date" bind:value={createdObject.ended}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Priority</span>
+            <Select required items={priority} bind:value={createdObject.priority}/>
+        </Label>
+        <Label class="space-y-2 col-span-3">
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={createdObject.description}/>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
 
-<Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Client Name</span>
-            <Input required bind:value={actionsObject.client}/>
+<Modal bind:open={actionsModals} placement="top-center" size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Entry</h3>
+        <Label class="space-y-2 col-span-3">
+            <span>Title</span>
+            <Input type="text" placeholder="Title" bind:value={actionsObject.title}/>
         </Label>
         <Label class="space-y-2">
-            <span>Start date</span>
-            <Input type="date" bind:value={actionsObject.started}/>
+            <span>Client</span>
+            <IdSelect items={clients} required bind:value={actionsObject.client_id}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>
@@ -327,13 +359,25 @@
         </Label>
         <Label class="space-y-2">
             <span>Status</span>
-            <Select items={leadStatus} bind:value={actionsObject.status}/>
+            <Select required items={task_status} bind:value={actionsObject.status}/>
         </Label>
-        <Label class="space-y-2 col-span-2">
+        <Label class="space-y-2">
+            <span>Start date</span>
+            <Input type="date" bind:value={actionsObject.started}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>End date</span>
+            <Input type="date" bind:value={actionsObject.ended}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Priority</span>
+            <Select required items={priority} bind:value={actionsObject.priority}/>
+        </Label>
+        <Label class="space-y-2 col-span-3">
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
         </Label>
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>

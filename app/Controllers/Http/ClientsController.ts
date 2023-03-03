@@ -110,7 +110,10 @@ export default class ClientsController {
             delete e.id;
         });
 
-        response.send(serilizedData);
+        response.send({
+            status: 'success',
+            data: serilizedData
+        });
 
     }
     

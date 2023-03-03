@@ -14,11 +14,12 @@
     import Lead from "./Lead.svelte";
     import Task from "./Task.svelte";
     import MasterTemplate from "./MasterTemplate.svelte";
+    import TaskTemplate from "./TaskTemplate.svelte";
     import Company from "./Company.svelte";
     import DeletedClients from "./DeletedClients.svelte";
     import Navbar from "../component/Navbar.svelte";
-  import Service from "./Service.svelte";
-  import RegisterMaster from "./RegisterMaster.svelte";
+    import Service from "./Service.svelte";
+    import RegisterMaster from "./RegisterMaster.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -37,6 +38,7 @@
         '/employee':Users,
         '/task':Task,
         '/master_template':MasterTemplate,
+        '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,
         '*':Error
     }

@@ -101,7 +101,9 @@ export default class Reseed extends BaseCommand {
             client_id: 0,
             title: 'Please complete this asap',
             description: 'Very bad\nVery Late',
-            status: 'Pending',
+            status: 1,
+            priority: 0,
+            service: 0,
             started: DateTime.fromISO('2022-12-01'),
             ended: DateTime.fromISO('2023-01-01')
         });

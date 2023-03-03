@@ -11,7 +11,7 @@ export default class TasksController {
             .preload('assigned_user', (query) => {
                 query.select('username')
             })
-            .whereNot('status','Done')
+            .whereNot('status','4')
 
         response.send({
             status: 'success',
@@ -19,7 +19,7 @@ export default class TasksController {
         });
     }
 
-    public async indexALl({response}: HttpContextContract){
+    public async indexAll({response}: HttpContextContract){
         const data = await Task
             .query()
             .preload('client', (query) => {
@@ -35,16 +35,88 @@ export default class TasksController {
         });
     }
 
-    public async get({}: HttpContextContract){}
+    public async get({request,response}: HttpContextContract){
+        const payload = request.params()
+        const data = await Task
+            .query()
+            .where('id',payload.id)
+            .preload('client', (query) => {
+                query.select('name')
+            })
+            .preload('assigned_user', (query) => {
+                query.select('username')
+            })
+            .first();
 
-    public async create({}: HttpContextContract){}
+        if(data){
+            response.send({
+                status: 'success',
+                data: data
+            })
+        }else{
+            response.send({
+                status: 'error',
+                message: 'Task not found'
+            })
+        }
 
-    public async update({}: HttpContextContract){}
+    }
 
-    //TODO decide, confirm from CA
+    public async create({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        if(payload.started == ""){
+            payload.started = null;
+        }
+
+        if(payload.ended == ""){
+            payload.ended = null;
+        }
+
+        console.log(payload)
+
+        const data = await Task.create(payload);
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
+    public async update({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        if(payload.status == 4){
+            
+        }
+
+        delete payload.client;
+        delete payload.assigned_user;
+
+        await Task
+            .query()
+            .where('id',payload.id)
+            .update(payload)
+
+        response.send({
+            status: 'success',
+            data: payload
+        })
+    }
+
+    //TODO decided, once billed, archive task, keep task for last 2 years
     public async archive({}: HttpContextContract){}
 
-    public async remove({}: HttpContextContract){}
+    public async destroy({request,response}: HttpContextContract){
+        const payload = request.all();
 
-    public async destroy({}: HttpContextContract){}
+        await Task
+            .query()
+            .whereIn('id',payload.id)
+            .delete()
+
+        response.send({
+            status: 'success'
+        })
+    }
 }
