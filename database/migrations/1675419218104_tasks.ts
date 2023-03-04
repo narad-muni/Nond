@@ -5,16 +5,16 @@ export default class extends BaseSchema {
 
     public async up () {
         this.schema.createTable(this.tableName, (table) => {
-        table.increments('id')
-        table.integer('assigned_to');
-        table.integer('client_id');
-        table.string('title');
-        table.string('description');
-        table.integer('service');
-        table.integer('status');
-        table.integer('priority');
-        table.date('started');
-        table.date('ended');
+            table.increments('id')
+            table.integer('assigned_to');
+            table.integer('client_id');
+            table.string('title');
+            table.string('description');
+            table.integer('service');
+            table.integer('status');
+            table.integer('priority');
+            table.date('started');
+            table.date('ended');
         })
     }
 

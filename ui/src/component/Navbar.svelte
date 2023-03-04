@@ -124,7 +124,7 @@
                 <DropdownItem href="/#/master_template">Master Template</DropdownItem>
             {/if}
             {#if $user.role.read.task_template}
-                <DropdownItem href="/#/invoice_template">Task Template</DropdownItem>
+                <DropdownItem href="/#/task_template">Task Template</DropdownItem>
             {/if}
         </Dropdown>
     

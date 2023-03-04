@@ -209,6 +209,25 @@ Route.group(() => {
         })
         .prefix('/task');
 
+        /*
+        | task_template routes
+        */
+
+        Route.group(() => {
+
+            Route.get('/','TaskTemplatesController.index');
+            Route.get('/all','TaskTemplatesController.indexAll');
+            Route.get('/:id','TaskTemplatesController.get').where('id',/^[0-9]+$/);
+
+            Route.post('/','TaskTemplatesController.create');
+
+            Route.put('/','TaskTemplatesController.update');
+
+            Route.delete('/destroy','TaskTemplatesController.destroy');
+
+        })
+        .prefix('/task_template');
+
 
         /*
         | role routes
@@ -228,6 +247,10 @@ Route.group(() => {
 
         })
         .prefix('/role');
+
+        /*
+        | service routes
+        */
 
         Route.group(() => {
 

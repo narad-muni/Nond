@@ -1,3 +1,115 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import TaskTemplate from 'App/Models/TaskTemplate';
 
-export default class TaskTemplatesController {}
+export default class TaskTemplatesController {
+    public async index({response}: HttpContextContract){
+        const data = await TaskTemplate.all()
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
+    public async get({request,response}: HttpContextContract){
+        const payload = request.params()
+        const data = await TaskTemplate
+            .query()
+            .where('id',payload.id)
+            .first();
+
+        if(data){
+            response.send({
+                status: 'success',
+                data: data
+            })
+        }else{
+            response.send({
+                status: 'error',
+                message: 'TaskTemplate not found'
+            })
+        }
+
+    }
+
+    public async options({response}: HttpContextContract){
+        const data = await TaskTemplate.all()
+        
+        const serilizedData = data.map(e => e.serialize())
+
+        serilizedData.map(e => {
+            e.value = e.id;
+
+            delete e.id;
+        });
+
+        response.send(serilizedData);
+    }
+
+    public async create({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        if(payload.started == ""){
+            payload.started = null;
+        }
+
+        if(payload.ended == ""){
+            payload.ended = null;
+        }
+
+        console.log(payload)
+
+        const data = await TaskTemplate.create(payload);
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
+    public async update({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        if(payload.id == 0){
+            response.send({
+                status: 'error',
+                message: 'Cannot modify default template'
+            });
+            return
+        }
+
+        delete payload.client;
+        delete payload.assigned_user;
+
+        await TaskTemplate
+            .query()
+            .where('id',payload.id)
+            .update(payload)
+
+        response.send({
+            status: 'success',
+            data: payload
+        })
+    }
+
+    public async destroy({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        if(payload.id.includes(0)){
+            response.send({
+                status: 'error',
+                message: 'Cannot modify default template'
+            });
+            return
+        }
+
+        await TaskTemplate
+            .query()
+            .whereIn('id',payload.id)
+            .delete()
+
+        response.send({
+            status: 'success'
+        })
+    }
+}

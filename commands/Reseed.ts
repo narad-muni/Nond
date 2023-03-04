@@ -39,6 +39,7 @@ export default class Reseed extends BaseCommand {
         const {default: Client} = await import('App/Models/Client');
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
         const {default: Service} = await import('App/Models/Service');
+        const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
 
         await Employee.create({
             id: 0,
@@ -46,6 +47,16 @@ export default class Reseed extends BaseCommand {
             password: 'admin123',
             is_admin: true,
             role_id: 1,
+        });
+
+        await TaskTemplate.create({
+            id: 0,
+            name: 'Default',
+            title: '',
+            description: '',
+            service: -1,
+            status: 0,
+            priority: 1
         });
 
         await Service.create({
@@ -154,6 +165,7 @@ export default class Reseed extends BaseCommand {
         const {default: Client} = await import('App/Models/Client');
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
         const {default: Service} = await import('App/Models/Service');
+        const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
             
         const user = await Employee.findBy('id',0)
         const role1 = await Role.findBy('id',0);
@@ -165,6 +177,7 @@ export default class Reseed extends BaseCommand {
         const client = await Client.findBy('id',0);
         const register_master = await RegisterMaster.findBy('id',0);
         const service = await Service.findBy('id',0);
+        const task_template = await TaskTemplate.findBy('id',0);
 
         await user?.delete();
         await role1?.delete();
@@ -176,6 +189,7 @@ export default class Reseed extends BaseCommand {
         await client?.delete();
         await register_master?.delete();
         await service?.delete();
+        await task_template?.delete();
 
     }
 

@@ -1,21 +1,19 @@
 task & task templates
 create a table for schedulers.
 
+task update, create not working, task is completely out of place
+
 invoice
 register
 tasks
 scheduler
 billing
 
-pre curated task templates
-
-subscribed services by client (dummy added)
-
 add default columns to client
 ---------------------
 doubts
 
-will one service only have one register. - narration
+will one service only have one register. - no
 
 is narration in invoice auto generated. - yes, can be modified later on
 
