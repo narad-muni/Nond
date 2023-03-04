@@ -1,8 +1,6 @@
 task & task templates
 create a table for schedulers.
 
-task update, create not working, task is completely out of place
-
 invoice
 register
 tasks

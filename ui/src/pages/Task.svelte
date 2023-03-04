@@ -14,8 +14,6 @@
         Alert,
         Textarea,
         Select,
-        Chevron,
-        Dropdown
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -24,14 +22,15 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
+  import Service from "./Service.svelte";
 
     // Intialization
 
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={priority:1,status:0}, clients, actionsIndex, actionsObject, userList;
-    let handler, rows;
+    let data, createdObject={priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
+    let handler, rows, filterStatus=1;
 
     const task_status = [
         {name:'Pending',value:0},
@@ -52,6 +51,8 @@
     // fetch data
 
     (async ()=>{
+        taskTemplates = await utils.get('/api/task_template/options');
+        services = await utils.get('/api/service/options');
         clients = await utils.get('/api/client/options');
         userList = await utils.get('/api/employee/options');
         data = await utils.get('/api/task/');
@@ -121,6 +122,47 @@
         handler.setRows(data);
     }
 
+    async function loadTaskTemplate(e){
+        const template_id = e.target.value;
+        const template = await utils.get('/api/task_template/'+template_id);
+
+        if(template.status == 'success'){
+            delete template.data.name;
+            delete template.data.id;
+
+            createdObject = template.data;
+        }else{
+            error = template.message || "";
+        }
+
+    }
+
+    async function changeFilter(){
+        if(filterStatus==0){
+            const resp = await utils.get('/api/task');
+            if(resp.status=='success'){
+                data = resp.data;
+                filterStatus = 1;
+            }else{
+                error = resp.message || "";
+            }
+        }else{
+            const resp = await utils.get('/api/task/completed');
+            if(resp.status=='success'){
+                data = resp.data;
+                filterStatus = 0;
+            }else{
+                error = resp.message || "";
+            }
+        }
+
+        data.forEach((v) => {
+            v["_selected"] = 0;
+        });
+
+        handler.setRows(data);
+    }
+
     async function openActionsModal(e){
         let oid = e.target.innerText;
         data.find((e,i) => {
@@ -143,8 +185,12 @@
     async function updateData(){
         const resp = await utils.put_json('/api/task/',actionsObject);
 
-        actionsObject.assigned_user = userList.find(e => e.value == actionsObject.assigned_to);
-        actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
+        resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
+        resp.data.assigned_user.username = resp.data.assigned_user.name;
+
+        resp.data.client = clients.find(e => e.value == resp.data.client_id);
+
+        resp.data.service = services.find(e => e.value == resp.data.service_id);
 
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
@@ -180,8 +226,19 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
+
             resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
             resp.data.assigned_user.username = resp.data.assigned_user.name;
+
+            resp.data.client = clients.find(e => e.value == resp.data.client_id);
+
+            if(!resp.data.started){
+                resp.data.started = null;
+            }
+
+            if(!resp.data.ended){
+                resp.data.ended = null;
+            }
 
             data.push(resp.data);
             handler.setRows(data);
@@ -203,12 +260,16 @@
                 Create
             </Button>
 
-            <Button gradient color="green">
+            <Button gradient color="green" on:click={changeFilter}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                 </svg>                                                   
                 &nbsp;
-                Show Done
+                {#if filterStatus == 1}
+                    Show Completed
+                {:else}
+                    Show Active
+                {/if}
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -231,6 +292,7 @@
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="Title">Title</Th>
                             <Th {handler} orderBy="client">Client</Th>
+                            <Th {handler} orderBy="client">Service</Th>
                             <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="status">Priority</Th>
@@ -242,7 +304,8 @@
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="title"/>
                             <ThSearch {handler} filterBy={(row => row.client?.name || null)}/>
-                            <ThSearch {handler} filterBy={(row => row.assigned_user?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => row.service.name)}/>
+                            <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
                             <ThSearch {handler} filterBy="started"/>
@@ -263,7 +326,10 @@
                                     {row.client?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.assigned_user?.username}
+                                    {row.service?.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.assigned_user?.username || "Unassigned"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {task_status[row.status].name}
@@ -273,6 +339,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.started}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.ended}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -301,15 +370,19 @@
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         <Label class="space-y-2 col-span-3">
             <span>Template</span>
-            <Select items={task_status} bind:value={createdObject.status}/>
+            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
         </Label>
-        <Label class="space-y-2 col-span-3">
+        <Label class="space-y-2 col-span-2">
             <span>Title</span>
-            <Input type="text" placeholder="Title" bind:value={createdObject.title}/>
+            <Input required type="text" placeholder="Title" bind:value={createdObject.title}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={createdObject.service_id} />
         </Label>
         <Label class="space-y-2">
             <span>Client</span>
-            <IdSelect items={clients} required bind:value={createdObject.client_id}/>
+            <IdSelect required items={clients} bind:value={createdObject.client_id}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>
@@ -345,9 +418,13 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Entry</h3>
-        <Label class="space-y-2 col-span-3">
+        <Label class="space-y-2 col-span-2">
             <span>Title</span>
             <Input type="text" placeholder="Title" bind:value={actionsObject.title}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select items={services} bind:value={actionsObject.service_id} />
         </Label>
         <Label class="space-y-2">
             <span>Client</span>

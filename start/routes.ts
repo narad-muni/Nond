@@ -197,7 +197,7 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TasksController.index');
-            Route.get('/all','TasksController.indexAll');
+            Route.get('/completed','TasksController.indexCompleted');
             Route.get('/:id','TasksController.get').where('id',/^[0-9]+$/);
 
             Route.post('/','TasksController.create');
@@ -216,8 +216,9 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TaskTemplatesController.index');
-            Route.get('/all','TaskTemplatesController.indexAll');
             Route.get('/:id','TaskTemplatesController.get').where('id',/^[0-9]+$/);
+
+            Route.get('/options','TaskTemplatesController.options');
 
             Route.post('/','TaskTemplatesController.create');
 

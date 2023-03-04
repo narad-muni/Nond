@@ -5,6 +5,9 @@ export default class TasksController {
     public async index({response}: HttpContextContract){
         const data = await Task
             .query()
+            .preload('service', (query) => {
+                query.select('name')
+            })
             .preload('client', (query) => {
                 query.select('name')
             })
@@ -19,15 +22,19 @@ export default class TasksController {
         });
     }
 
-    public async indexAll({response}: HttpContextContract){
+    public async indexCompleted({response}: HttpContextContract){
         const data = await Task
             .query()
             .preload('client', (query) => {
                 query.select('name')
             })
+            .preload('service', (query) => {
+                query.select('name')
+            })
             .preload('assigned_user', (query) => {
                 query.select('username')
-            });
+            })
+            .where('status',4);
 
         response.send({
             status: 'success',
@@ -41,6 +48,9 @@ export default class TasksController {
             .query()
             .where('id',payload.id)
             .preload('client', (query) => {
+                query.select('name')
+            })
+            .preload('service', (query) => {
                 query.select('name')
             })
             .preload('assigned_user', (query) => {
@@ -73,8 +83,6 @@ export default class TasksController {
             payload.ended = null;
         }
 
-        console.log(payload)
-
         const data = await Task.create(payload);
 
         response.send({
@@ -86,12 +94,23 @@ export default class TasksController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
 
-        if(payload.status == 4){
-            
+        const old = await Task
+            .query()
+            .where('id',payload.id)
+            .first();
+
+        if(old?.status != payload.status){
+            if(payload.status == 1 && old?.status == 0){
+                payload.started = new Date().toJSON().slice(0, 10);
+            }else if(payload.status == 4){
+                payload.ended = new Date().toJSON().slice(0, 10);
+            }
         }
 
         delete payload.client;
         delete payload.assigned_user;
+        delete payload.service;
+
 
         await Task
             .query()

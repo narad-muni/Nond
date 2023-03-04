@@ -64,6 +64,11 @@ export default class Reseed extends BaseCommand {
             name: 'GST'
         });
 
+        await Service.create({
+            id: -1,
+            name: 'Others'
+        });
+
         await RegisterMaster.create({
             id: 0,
             name: 'GST 1',
@@ -114,7 +119,7 @@ export default class Reseed extends BaseCommand {
             description: 'Very bad\nVery Late',
             status: 1,
             priority: 0,
-            service: 0,
+            service_id: 0,
             started: DateTime.fromISO('2022-12-01'),
             ended: DateTime.fromISO('2023-01-01')
         });
@@ -177,6 +182,7 @@ export default class Reseed extends BaseCommand {
         const client = await Client.findBy('id',0);
         const register_master = await RegisterMaster.findBy('id',0);
         const service = await Service.findBy('id',0);
+        const service_others = await Service.findBy('id',0);
         const task_template = await TaskTemplate.findBy('id',0);
 
         await user?.delete();
@@ -189,6 +195,7 @@ export default class Reseed extends BaseCommand {
         await client?.delete();
         await register_master?.delete();
         await service?.delete();
+        await service_others?.delete();
         await task_template?.delete();
 
     }

@@ -2,6 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Client from './Client'
 import Employee from './Employee'
+import Service from './Service'
 
 export default class Task extends BaseModel {
     @column({ isPrimary: true })
@@ -26,13 +27,18 @@ export default class Task extends BaseModel {
     public priority: number
 
     @column()
-    public service: number
+    public service_id: number
     
     @column.date()
     public started: DateTime
     
     @column.date()
     public ended: DateTime
+
+    @belongsTo(() => Service,{
+        foreignKey: 'service_id'
+    })
+    public service: BelongsTo<typeof Service>
 
     @belongsTo(() => Client,{
         foreignKey: 'client_id'
