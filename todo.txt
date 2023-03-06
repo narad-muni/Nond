@@ -1,11 +1,16 @@
-task & task templates
+add schedulers from clients to scheduler tables.
+
+find a way of running schedulers on startup.
+
+run a scheduler on create or update if next date is todays date.
+
 create a table for schedulers.
+
+add invoice option inside task.
 
 invoice
 register
-tasks
 scheduler
-billing
 
 add default columns to client
 ---------------------

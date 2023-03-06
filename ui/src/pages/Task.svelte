@@ -22,7 +22,7 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
-  import Service from "./Service.svelte";
+    import Service from "./Service.svelte";
 
     // Intialization
 

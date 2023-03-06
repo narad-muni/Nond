@@ -1,23 +1,43 @@
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Scheduler from "App/Models/Scheduler";
 
 export default class SchedulersController {
-    public async index({}: HttpContextContract){}
+    public async index(){
+        const data = await Scheduler
+            .all()
 
-    public async indexMaster({}: HttpContextContract){}
+        return data;
+    }
 
-    public async get({}: HttpContextContract){}
+    public async get(id: number){
+        const data = await Scheduler
+            .query()
+            .where('id',id)
+            .first();
 
-    public async getMaster({}: HttpContextContract){}
+        return data;
+    }
 
-    public async options({}: HttpContextContract){}
+    public async create(scheduler: Scheduler){
+        const data = await Scheduler.create(scheduler);
 
-    public async columns({}: HttpContextContract){}
+        return data;
+    }
 
-    public async create({}: HttpContextContract){}
+    public async update(scheduler: Scheduler){
+        const data = await Scheduler
+            .query()
+            .where('id',scheduler.id)
+            .update(scheduler);
 
-    public async update({}: HttpContextContract){}
+        return data
+    }
 
-    public async remove({}: HttpContextContract){}
+    public async destroy(ids: number[]){
+        await Scheduler
+            .query()
+            .whereIn('id',ids)
+            .delete()
 
-    public async destroy({}: HttpContextContract){}
+        return;
+    }
 }

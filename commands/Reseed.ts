@@ -40,6 +40,7 @@ export default class Reseed extends BaseCommand {
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
+        const {default: Scheduler} = await import('App/Models/Scheduler');
 
         await Employee.create({
             id: 0,
@@ -47,6 +48,15 @@ export default class Reseed extends BaseCommand {
             password: 'admin123',
             is_admin: true,
             role_id: 1,
+        });
+
+        await Scheduler.create({
+            id: 0,
+            client_id: 0,
+            service_id: 0,
+            next: DateTime.fromISO('2022-12-01'),
+            frequency: '1 month',
+            type: 1
         });
 
         await TaskTemplate.create({
@@ -171,8 +181,10 @@ export default class Reseed extends BaseCommand {
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
+        const {default: Scheduler} = await import('App/Models/Scheduler');
             
-        const user = await Employee.findBy('id',0)
+        const user = await Employee.findBy('id',0);
+        const scheduler = await Scheduler.findBy('id',0);
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
@@ -182,10 +194,11 @@ export default class Reseed extends BaseCommand {
         const client = await Client.findBy('id',0);
         const register_master = await RegisterMaster.findBy('id',0);
         const service = await Service.findBy('id',0);
-        const service_others = await Service.findBy('id',0);
+        const service_others = await Service.findBy('id',-1);
         const task_template = await TaskTemplate.findBy('id',0);
 
         await user?.delete();
+        await scheduler?.delete();
         await role1?.delete();
         await role2?.delete();
         await company?.delete();

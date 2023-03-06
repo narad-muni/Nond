@@ -135,9 +135,6 @@
             {#if $user.role.read.invoice}
                 <DropdownItem href="/#/">Pending Invoice</DropdownItem>
             {/if}
-            {#if $user.role.read.invoice}
-                <DropdownItem href="/#/">Generate Invoice</DropdownItem>
-            {/if}
         </Dropdown>
     
     </NavUl>
