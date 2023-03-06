@@ -58,7 +58,6 @@
         data = await utils.get('/api/task/');
 
         userList = userList.data;
-        clients = clients.data;
 
         if(data.status != 'success'){
             error = data.message;

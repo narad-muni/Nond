@@ -10,7 +10,6 @@ export default class extends BaseSchema {
             table.string('email');
             table.string('gstin');
             table.integer('group_id');
-            table.string('services');
             table.boolean('deleted').defaultTo(false);
         })
     }

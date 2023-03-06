@@ -118,7 +118,8 @@ export default class Reseed extends BaseCommand {
             name: 'JJ Industries',
             email: 'jjind2011@gmail.com',
             gstin: '27aafh',
-            deleted: false
+            deleted: false,
+            group_id: 0
         });
 
         await Task.create({

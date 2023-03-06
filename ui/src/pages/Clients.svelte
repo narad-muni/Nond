@@ -48,6 +48,10 @@
     ]
     let error="", success="", assignedUser, autoAssignType, users;
 
+    let minNextDate = new Date();
+    minNextDate.setDate(minNextDate.getDate() + 1);
+    minNextDate = minNextDate.toJSON().slice(0, 10);
+
     // fetch data
 
     (async ()=>{
@@ -133,9 +137,19 @@
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
 
+            const tempService = {}
+
+            actionsObject.services.forEach(service => {
+                tempService[service.service_id] = service;
+            });
+
+            actionsObject.services = tempService;
+
             services.forEach(service => {
-                if(!actionsObject.services[service.name]){
-                    actionsObject.services[service.name] = {}
+                if(!actionsObject.services[service.value]){
+                    actionsObject.services[service.value] = {service_id:service.value}
+                }else{
+                    actionsObject.services[service.value].subscribed = true;
                 }
             });
 
@@ -478,7 +492,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -567,14 +581,14 @@
         </div>
         <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
             {#each services as service}
-                <Checkbox bind:checked={actionsObject.services[service.name].subscribed}>{service.name}</Checkbox>
-                <Select bind:value={actionsObject.services[service.name].frequency} items={frequency}/>
-                <Input bind:value={actionsObject.services[service.name].next} type="date"/>
+                <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
+                <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
+                <Input min={minNextDate} required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next} type="date"/>
             {/each}
         </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" disabled={actionsIndex < 0} class="w-full">Update</Button>
+            <Button type="submit" disabled={actionsIndex < 0} class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

@@ -2,6 +2,7 @@ import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
 import MasterTemplate from 'App/Models/MasterTemplate';
+import Scheduler from 'App/Models/Scheduler';
 import fs from 'fs';
 
 export default class ClientsController {
@@ -22,6 +23,9 @@ export default class ClientsController {
             })
             .preload('subsidiary', (query) => {
                 query.select('id','name')
+            })
+            .preload('services', (query) => {
+                query.select('id','next','frequency','service')
             })
             .where('deleted',deleted)
 
@@ -78,12 +82,13 @@ export default class ClientsController {
             .preload('subsidiary', (query) => {
                 query.select('id','name')
             })
+            .preload('services', (query) => {
+                query.select('id','next','frequency','service_id','client_id')
+            })
             .where('id',payload.id)
             .first()
 
         if(data){
-            data.services = JSON.parse(data.services) || {};
-
             response.send({
                 status: 'success',
                 data: data
@@ -110,10 +115,7 @@ export default class ClientsController {
             delete e.id;
         });
 
-        response.send({
-            status: 'success',
-            data: serilizedData
-        });
+        response.send(serilizedData);
 
     }
     
@@ -170,8 +172,47 @@ export default class ClientsController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
+        const deletedSchedulerIds = [];
+        const newSchedulersList = [];
+        const updateSchedulersList = [];
 
-        payload.services = payload._services;
+        payload.services = JSON.parse(payload._services);
+
+        //delete unchecked
+        Object.keys(payload.services).forEach(service_id => {
+            if(payload.services[service_id].id != null && !payload.services[service_id].subscribed){
+                deletedSchedulerIds.push(payload.services[service_id].id);
+            }
+        });
+
+        await Scheduler
+            .query()
+            .whereIn('id',deletedSchedulerIds)
+            .delete()
+        
+
+        //create new objects
+        Object.keys(payload.services).forEach(service_id => {
+            payload.services[service_id].type = 1;
+
+            if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
+                delete payload.services[service_id].subscribed;
+
+                //set client id on new schedulers
+                payload.services[service_id].client_id = payload.id;
+                
+                //push in array
+                newSchedulersList.push(payload.services[service_id]);
+            }else if(payload.services[service_id].subscribed){
+                delete payload.services[service_id].subscribed;
+                
+                //add in update data
+                updateSchedulersList.push(payload.services[service_id]);
+            }
+        });
+
+        await Scheduler.createMany(newSchedulersList);
+        await Scheduler.updateOrCreateMany('id',updateSchedulersList);
 
         delete payload.subsidiary;
         delete payload._services;
@@ -220,17 +261,6 @@ export default class ClientsController {
                 }
             }
         });
-
-        payload.services = JSON.parse(payload.services);
-
-        Object.keys(payload.services).forEach(service => {
-            if(!payload.services[service].subscribed){
-                delete payload.services[service];
-            }
-        });
-
-        const current_services = Object.keys(old.services || {});
-        const incoming_services = Object.keys(payload.services || {});
 
         await Client
             .query()

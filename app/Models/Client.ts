@@ -1,4 +1,5 @@
 import { BaseModel, BelongsTo, HasMany, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Scheduler from './Scheduler'
 
 export default class Client extends BaseModel {
     @column({ isPrimary: true })
@@ -14,13 +15,15 @@ export default class Client extends BaseModel {
     public gstin: string
 
     @column()
-    public services: object
-
-    @column()
     public group_id: number
 
     @column()
     public deleted: boolean
+
+    @hasMany(() => Scheduler,{
+        foreignKey: 'client_id'
+    })
+    public services: HasMany<typeof Scheduler>
 
     @belongsTo(() => Client,{
         foreignKey: 'group_id'

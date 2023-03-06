@@ -20,19 +20,22 @@ export default class AppProvider {
         const currentDate = new Date().toISOString().slice(0, 10);
         const schedulers = await Scheduler
             .query()
-            .where('next',currentDate);
+            .where('next','<=',currentDate);
 
         schedulers.forEach(scheduler => {
             switch(scheduler.type){
-                case 1:
+                case 1:// create task
                     break;
-                case 2:
+                case 2:// some other ??
                     break;
             }
         });
 
         //update the next date
-        await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" = current_date');
+        await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
+
+        //if multiple days dail-task not created, then set next date = tommorow
+        await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
         
     }
 

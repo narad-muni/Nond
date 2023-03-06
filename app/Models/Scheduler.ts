@@ -17,6 +17,6 @@ export default class Scheduler extends BaseModel {
     @column()
     public frequency: string
     
-    @column()
+    @column.date()
     public next: DateTime
 }
