@@ -34,7 +34,7 @@ export default class AppProvider {
         //update the next date
         await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
 
-        //if multiple days dail-task not created, then set next date = tommorow
+        //if multiple days task not created, then set next date = tommorow
         await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
         
     }
