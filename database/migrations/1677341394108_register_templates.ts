@@ -1,21 +1,21 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'register_templates'
+    protected tableName = 'register_templates'
 
-  public async up () {
-    this.schema.createTable(this.tableName, (table) => {
-      table.increments('id')
+    public async up () {
+        this.schema.createTable(this.tableName, (table) => {
+            table.increments('id');
 
-      /**
-       * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-       */
-      table.timestamp('created_at', { useTz: true })
-      table.timestamp('updated_at', { useTz: true })
-    })
-  }
+            table.string('name');
 
-  public async down () {
-    this.schema.dropTable(this.tableName)
-  }
+            table.json('columns');
+
+            table.json('client_columns');
+        })
+    }
+
+    public async down () {
+        this.schema.dropTable(this.tableName)
+    }
 }

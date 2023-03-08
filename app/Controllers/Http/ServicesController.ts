@@ -6,7 +6,9 @@ export default class RolesController {
     public async index({response}: HttpContextContract) {
         const data = await Service
             .query()
-            .select('id','name')
+            .preload('template', (query) => {
+                query.select('name')
+            })
 
         response.send({
             status: 'success',

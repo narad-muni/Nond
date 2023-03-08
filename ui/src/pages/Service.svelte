@@ -9,40 +9,33 @@
         TableBodyCell,
         TableBodyRow,
         Checkbox,
-        A,
         Label,
-        Helper,
         Input,
-        Toggle,
         Alert,
-        Textarea,
-        Select
+        Select,
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler} from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { types } from "joi";
 
     // Intialization
 
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, templateFile;
+    let data, createdObject={}, actionsIndex, actionsObject, taskTemplates;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+    let error="";
 
     // fetch data
 
     (async ()=>{
+        taskTemplates = await utils.get('/api/task_template/options');
         data = await utils.get('/api/service/');
+
         if(data.status != 'success'){
             error = data.message;
             data = null;
@@ -131,6 +124,8 @@
 
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
+            resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
+            
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
@@ -163,11 +158,14 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
+
+            resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
+
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
         }else{
-            error = resp.message | "";
+            error = resp.message || "";
         }
     }
 
@@ -200,13 +198,15 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="name">name</Th>
+                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy={(row => row.template?.name || null)}>Template</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy={(row => row.template?.name || null)}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -218,6 +218,9 @@
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
                                     {row.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.template?.name || "null"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -245,10 +248,14 @@
     <form class="grid gap-6 mb-6 md:grid-cols-1" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">Create Entry</h3>
         <Label class="space-y-2">
-            <span>name</span>
+            <span>Name</span>
             <Input required bind:value={createdObject.name}/>
         </Label>
-        <div class="col-span-1 grid grid-cols-2">
+        <Label class="space-y-2">
+            <span>Task Template</span>
+            <Select required items={taskTemplates} bind:value={createdObject.template_id} />
+        </Label>
+        <div class="col-span-1 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
@@ -263,8 +270,12 @@
             <Input value={actionsObject.id} readonly/>
         </Label>
         <Label class="space-y-2">
-            <span>name</span>
+            <span>Name</span>
             <Input required bind:value={actionsObject.name}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Task Template</span>
+            <Select required items={taskTemplates} bind:value={actionsObject.template_id} />
         </Label>
         <div class="col-span-1 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
@@ -281,16 +292,6 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
-        </Alert>
-    </div>
-{/if}
-
-{#if success.length > 0}
-    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
-        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
-            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-            </span>
-            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}

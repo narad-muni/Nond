@@ -34,7 +34,7 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role');
         const { default: Company } = await import('App/Models/Company');
         const { default: Task } = await import('App/Models/Task');
-        const {default: Template} = await import('App/Models/Template');
+        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
         const {default: Lead} = await import('App/Models/Lead');
         const {default: Client} = await import('App/Models/Client');
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
@@ -71,12 +71,14 @@ export default class Reseed extends BaseCommand {
 
         await Service.create({
             id: 0,
-            name: 'GST'
+            name: 'GST',
+            template_id:0
         });
 
         await Service.create({
             id: -1,
-            name: 'Others'
+            name: 'Others',
+            template_id:0
         });
 
         await RegisterMaster.create({
@@ -144,7 +146,7 @@ export default class Reseed extends BaseCommand {
             started: DateTime.fromISO('2022-12-12')
         });
 
-        await Template.create({
+        await RegisterTemplate.create({
             id: 0,
             name: 'GST 1B',
             columns: {
@@ -162,10 +164,7 @@ export default class Reseed extends BaseCommand {
                     type: "Text",
                     is_master: true
                 }
-            },
-            cost: 100,
-            per: 'Entry'
-
+            }
         });
 
     }
@@ -176,7 +175,7 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role');
         const { default: Company } = await import('App/Models/Company');
         const { default: Task } = await import('App/Models/Task');
-        const {default: Template} = await import('App/Models/Template');
+        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
         const {default: Lead} = await import('App/Models/Lead');
         const {default: Client} = await import('App/Models/Client');
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
@@ -190,7 +189,7 @@ export default class Reseed extends BaseCommand {
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
         const task = await Task.findBy('id',0);
-        const template = await Template.findBy('id',0);
+        const register_template = await RegisterTemplate.findBy('id',0);
         const lead = await Lead.findBy('id',0);
         const client = await Client.findBy('id',0);
         const register_master = await RegisterMaster.findBy('id',0);
@@ -204,7 +203,7 @@ export default class Reseed extends BaseCommand {
         await role2?.delete();
         await company?.delete();
         await task?.delete();
-        await template?.delete();
+        await register_template?.delete();
         await lead?.delete();
         await client?.delete();
         await register_master?.delete();
