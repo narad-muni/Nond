@@ -291,24 +291,24 @@
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="Title">Title</Th>
                             <Th {handler} orderBy="client">Client</Th>
+                            <Th {handler} orderBy="client">Group</Th>
                             <Th {handler} orderBy="client">Service</Th>
                             <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="status">Priority</Th>
                             <Th {handler} orderBy="started">Started</Th>
-                            <Th {handler} orderBy="ended">Ended</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="title"/>
                             <ThSearch {handler} filterBy={(row => row.client?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => row.client?.group?.name || null)}/>
                             <ThSearch {handler} filterBy={(row => row.service.name)}/>
                             <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
                             <ThSearch {handler} filterBy="started"/>
-                            <ThSearch {handler} filterBy="ended"/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -325,6 +325,9 @@
                                     {row.client?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
+                                    {row.client?.group?.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
                                     {row.service?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
@@ -338,9 +341,6 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.started}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.ended}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

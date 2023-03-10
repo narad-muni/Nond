@@ -122,14 +122,19 @@ export default class ClientsController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
+        const newSchedulersList = [];
 
-        delete payload._services;
+        payload.services = JSON.parse(payload._services);
 
-        payload.services = JSON.parse(payload.services);
+        //create new scheduler objects
+        Object.keys(payload.services).forEach(service_id => {
+            payload.services[service_id].type = 1;
 
-        Object.keys(payload.services).forEach(service => {
-            if(!payload.services[service].subscribed){
-                delete payload.services[service];
+            if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
+                delete payload.services[service_id].subscribed;
+                
+                //push in array
+                newSchedulersList.push(payload.services[service_id]);
             }
         });
 
@@ -141,9 +146,19 @@ export default class ClientsController {
             Client.$addColumn(header.column_name,{});
         });
 
+        delete payload.services;
+        delete payload._services;
+
         const inserted = await Client.create(payload);
 
         payload.id = inserted.id;
+
+        //set scheduler client id after inserting
+        newSchedulersList.forEach(e => {
+            e.client_id = inserted.id;
+        });
+
+        await Scheduler.createMany(newSchedulersList);
         
         Object.values(files).forEach(file => {
             const path = `/file/client/${inserted.id}/`;

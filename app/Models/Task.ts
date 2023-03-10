@@ -28,6 +28,9 @@ export default class Task extends BaseModel {
 
     @column()
     public service_id: number
+
+    @column()
+    public billed: boolean
     
     @column.date()
     public started: DateTime

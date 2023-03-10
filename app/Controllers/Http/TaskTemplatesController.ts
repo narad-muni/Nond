@@ -3,7 +3,11 @@ import TaskTemplate from 'App/Models/TaskTemplate';
 
 export default class TaskTemplatesController {
     public async index({response}: HttpContextContract){
-        const data = await TaskTemplate.all()
+        const data = await TaskTemplate
+            .query()
+            .preload('service',(query) => {
+                query.select('name')
+            });
 
         response.send({
             status: 'success',
@@ -57,7 +61,6 @@ export default class TaskTemplatesController {
             payload.ended = null;
         }
 
-        console.log(payload)
 
         const data = await TaskTemplate.create(payload);
 

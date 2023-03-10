@@ -9,7 +9,7 @@ export default class extends BaseSchema {
             table.string('name');
             table.string('title');
             table.string('description');
-            table.integer('service');
+            table.integer('service_id');
             table.integer('status');
             table.integer('priority');
         })

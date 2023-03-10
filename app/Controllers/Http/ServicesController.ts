@@ -41,7 +41,24 @@ export default class RolesController {
 
     public async options({response}: HttpContextContract) {
         const data = await Service
-            .all()
+            .query()
+            .where('id','>=',0);
+
+        const serilizedData = data.map(e => e.serialize())
+
+        serilizedData.map(e => {
+            e.value = e.id;
+
+            delete e.id;
+        });
+
+        response.send(serilizedData);
+
+    }
+
+    public async options_all({response}: HttpContextContract) {
+        const data = await Service
+            .query()
 
         const serilizedData = data.map(e => e.serialize())
 

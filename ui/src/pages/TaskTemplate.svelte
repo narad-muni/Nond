@@ -21,14 +21,13 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={priority:1,status:0}, actionsIndex, actionsObject;
+    let data, createdObject={priority:1,status:0}, actionsIndex, actionsObject, services;
     let handler, rows;
 
     const task_status = [
@@ -50,6 +49,7 @@
     // fetch data
 
     (async ()=>{
+        services = await utils.get('/api/service/options_all');
         data = await utils.get('/api/task_template/');
 
         if(data.status != 'success'){
@@ -138,6 +138,8 @@
 
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
+            resp.data.service = services.find(e => e.value == resp.data.service_id);
+
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
@@ -171,9 +173,12 @@
         if(resp.status == 'success'){
             resp.data._selected = false;
 
+            resp.data.service = services.find(e => e.value == resp.data.service_id);
+
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
+            createdObject={priority:1,status:0};
         }else{
             error = resp.message || "";
         }
@@ -219,14 +224,16 @@
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="title">Title</Th>
-                            <Th {handler} orderBy="status">Status</Th>
-                            <Th {handler} orderBy="status">Priority</Th>
+                            <Th {handler} orderBy={(row => row.service?.name)}>Service</Th>
+                            <Th {handler} orderBy={(row => task_status[row.status].name)}>Status</Th>
+                            <Th {handler} orderBy={(row => priority[row.priority].name)}>Priority</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="title"/>
+                            <ThSearch {handler} filterBy={(row => row.service?.name)}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
                         </tr>
@@ -243,6 +250,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.title}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.service?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {task_status[row.status].name}
@@ -288,6 +298,10 @@
             <Select required items={task_status} bind:value={createdObject.status}/>
         </Label>
         <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={createdObject.service_id}/>
+        </Label>
+        <Label class="space-y-2">
             <span>Priority</span>
             <Select required items={priority} bind:value={createdObject.priority}/>
         </Label>
@@ -316,6 +330,10 @@
         <Label class="space-y-2">
             <span>Status</span>
             <Select required items={task_status} bind:value={actionsObject.status}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={actionsObject.service_id}/>
         </Label>
         <Label class="space-y-2">
             <span>Priority</span>

@@ -1,4 +1,15 @@
-create task on daily schedules
+*****delete client releated data when client is deleted
+add service instead of status in task template
+
+option to set bulk service in client master.
+
+generate invoice should be available from within task page.
+
+in-complete tasks can also be billed.
+
+TODO , added billed bool in task model for above ^
+
+create task on daily schedules.
 
 add invoice option inside task.
 
@@ -9,14 +20,7 @@ add default columns to client
 ---------------------
 doubts
 
-will one service only have one register. - no
-
 is narration in invoice auto generated. - yes, can be modified later on
-
-create task scheduler based on client rather than register
-
-can move from monthly to quaterly and vv
-register will remain same, task scheduling will change
 
 on entry on specific columns, services will be automatically subscribed
 
@@ -37,12 +41,6 @@ invoice page will have pending amount etc
 billing page will include services, one time tasks, parent company
 
 billing will have option to transfer bill to another company
-
-make admin role un editable, is_admin = admin role -> has all access
-
------------------------
-
-scheduler columns should have next date, so achieve only scheduled tasks, update when next date <= today.
 
 =======
 

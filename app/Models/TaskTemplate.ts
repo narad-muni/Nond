@@ -1,4 +1,5 @@
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import Service from './Service'
 
 export default class TaskTemplate extends BaseModel {
     @column({ isPrimary: true })
@@ -20,5 +21,10 @@ export default class TaskTemplate extends BaseModel {
     public priority: number
 
     @column()
-    public service: number
+    public service_id: number
+
+    @belongsTo(() => Service,{
+        foreignKey: 'service_id'
+    })
+    public service: BelongsTo<typeof Service>
 }

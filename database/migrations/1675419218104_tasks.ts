@@ -13,6 +13,7 @@ export default class extends BaseSchema {
             table.integer('service_id');
             table.integer('status');
             table.integer('priority');
+            table.boolean('billed');
             table.date('started');
             table.date('ended');
         })

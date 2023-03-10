@@ -30,7 +30,7 @@
     let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={_services:{}}, actionsIndex, actionsObject;
+    let headers, services, client_list, data, createdObject={services:{}}, actionsIndex, actionsObject;
     let emptyCreatedObject;
     let handler, rows;
     let automaticAssign = [
@@ -49,7 +49,7 @@
     let error="", success="", assignedUser, autoAssignType, users;
 
     let minNextDate = new Date();
-    minNextDate.setDate(minNextDate.getDate() + 1);
+    minNextDate.setDate(new Date().getDate() + 1);
     minNextDate = minNextDate.toJSON().slice(0, 10);
 
     // fetch data
@@ -70,8 +70,9 @@
                 v["_selected"] = 0;
             });
 
+            //set services in created object
             services.forEach(service => {
-                createdObject._services[service.name] = {}
+                createdObject.services[service.value] = {service_id:service.value}
             });
             
             emptyCreatedObject = createdObject;
@@ -139,6 +140,7 @@
 
             const tempService = {}
 
+            //set values in temp service object from services in received modal
             actionsObject.services.forEach(service => {
                 tempService[service.service_id] = service;
             });
@@ -239,7 +241,7 @@
     }
 
     async function createData(){
-        createdObject.services  = JSON.stringify(createdObject._services);
+        createdObject._services  = JSON.stringify(createdObject.services);
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
 
         if(resp.status == 'success'){
@@ -250,10 +252,8 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject={_services:{}}
-            services.forEach(service => {
-                createdObject._services[service.name] = {}
-            });
+            createdObject = emptyCreatedObject;
+            
         }else{
             error = resp.message || "";
         }
@@ -454,9 +454,9 @@
         </div>
         <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
             {#each services as service}
-                <Checkbox bind:checked={createdObject._services[service.name].subscribed}>{service.name}</Checkbox>
-                <Select bind:value={createdObject._services[service.name].frequency} items={frequency}/>
-                <Input bind:value={createdObject._services[service.name].next} type="date"/>
+                <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
+                <Select required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
+                <Input min={minNextDate} required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].next} type="date"/>
             {/each}
         </div>
 

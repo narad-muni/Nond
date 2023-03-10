@@ -64,7 +64,7 @@ export default class Reseed extends BaseCommand {
             name: 'Default',
             title: '',
             description: '',
-            service: -1,
+            service_id: -1,
             status: 0,
             priority: 1
         });

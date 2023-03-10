@@ -9,6 +9,29 @@ export default class TasksController {
                 query.select('name')
             })
             .preload('client', (query) => {
+                query
+                    .select('name','group_id')
+                    .preload('group', (query) => {
+                        query.select('id','name')
+                    })
+            })
+            .preload('assigned_user', (query) => {
+                query.select('username')
+            })
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
+    public async indexIncomplete({response}: HttpContextContract){
+        const data = await Task
+            .query()
+            .preload('service', (query) => {
+                query.select('name')
+            })
+            .preload('client', (query) => {
                 query.select('name')
             })
             .preload('assigned_user', (query) => {
