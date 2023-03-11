@@ -1,5 +1,4 @@
 *****delete client releated data when client is deleted
-add service instead of status in task template
 
 option to set bulk service in client master.
 

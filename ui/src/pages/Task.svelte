@@ -145,8 +145,16 @@
             }else{
                 error = resp.message || "";
             }
-        }else{
+        }else if(filterStatus==1){
             const resp = await utils.get('/api/task/completed');
+            if(resp.status=='success'){
+                data = resp.data;
+                filterStatus = 2;
+            }else{
+                error = resp.message || "";
+            }
+        }else{
+            const resp = await utils.get('/api/task/incomplete');
             if(resp.status=='success'){
                 data = resp.data;
                 filterStatus = 0;
@@ -266,8 +274,10 @@
                 &nbsp;
                 {#if filterStatus == 1}
                     Show Completed
-                {:else}
+                {:else if filterStatus == 2}
                     Show Active
+                {:else}
+                    Show All
                 {/if}
             </Button>
 

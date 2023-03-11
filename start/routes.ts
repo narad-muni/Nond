@@ -197,6 +197,7 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TasksController.index');
+            Route.get('/incomplete','TasksController.indexIncomplete');
             Route.get('/completed','TasksController.indexCompleted');
             Route.get('/:id','TasksController.get').where('id',/^[0-9]+$/);
 

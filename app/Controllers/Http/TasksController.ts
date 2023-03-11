@@ -32,7 +32,11 @@ export default class TasksController {
                 query.select('name')
             })
             .preload('client', (query) => {
-                query.select('name')
+                query
+                    .select('name','group_id')
+                    .preload('group', (query) => {
+                        query.select('id','name')
+                    })
             })
             .preload('assigned_user', (query) => {
                 query.select('username')
@@ -49,7 +53,11 @@ export default class TasksController {
         const data = await Task
             .query()
             .preload('client', (query) => {
-                query.select('name')
+                query
+                    .select('name','group_id')
+                    .preload('group', (query) => {
+                        query.select('id','name')
+                    })
             })
             .preload('service', (query) => {
                 query.select('name')
