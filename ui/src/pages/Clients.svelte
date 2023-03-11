@@ -27,7 +27,7 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
+    let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
     let selectedRows = new Set();
 
     let headers, services, client_list, data, createdObject={services:{}}, actionsIndex, actionsObject;
@@ -279,6 +279,14 @@
                 &nbsp;
                 Create Tasks
             </Button>
+
+            <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> bulkServiceModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
+                </svg>                                           
+                &nbsp;
+                Set Service
+            </Button>
             
             <Button gradient color="green" on:click={download}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -488,6 +496,18 @@
             <span class="mb-2">Description</span>
             <Textarea rows=8></Textarea>
         </Label>
+    </form>
+</Modal>
+
+<Modal bind:open={bulkServiceModal} size="md">
+    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Set Services</h3>
+        <p class=""><span class="text-red-400">*</span> This will overwrite existing service dates</p>
+        <Label class="flex  flex-col gap-y-1">
+            <span class="mb-2">Client Id's</span>
+            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
+        </Label>
+        
     </form>
 </Modal>
 

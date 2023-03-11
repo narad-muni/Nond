@@ -5,20 +5,15 @@
         NavLi,
         NavUl,
         NavHamburger,
-        Button,
-        Input,
         Avatar,
         Dropdown,
         DropdownHeader,
         DropdownItem,
-        DropdownDivider,
         Chevron,
     } from 'flowbite-svelte';
 
     import utils from '../utils';
     import { user } from '../global/user.js';
-
-    let logoutModal = false;
 
     async function logout(){
         await utils.post_json('/api/auth/logout');
@@ -44,7 +39,7 @@
             <NavLi id="master" class="cursor-pointer"><Chevron aligned>Master</Chevron></NavLi>
         {/if}
         {#if $user.role.read.task}
-            <NavLi class="cursor-pointer" href="/#/task">Tasks</NavLi>
+            <NavLi id="task" class="cursor-pointer"><Chevron aligned>Task</Chevron></NavLi>
         {/if}
         {#if $user.role.read.register}
             <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
@@ -90,6 +85,11 @@
             <DropdownItem href="/#/">GST 1</DropdownItem>
             <DropdownItem href="/#/">GST 3B</DropdownItem>
             <DropdownItem href="/#/">IT</DropdownItem>
+        </Dropdown>
+
+        <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#task">
+            <DropdownItem href="/#/task_board">Task Board</DropdownItem>
+            <DropdownItem href="/#/task_billing">Task Billing</DropdownItem>
         </Dropdown>
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#deleted">

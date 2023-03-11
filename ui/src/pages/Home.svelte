@@ -1,6 +1,5 @@
 <script>
     import Router from "svelte-spa-router";
-    import Sidebar from "../component/Sidebar.svelte";
     import Clients from "./Clients.svelte";
     import Dashboard from "./Dashboard.svelte";
     import Error from "./Error.svelte";
@@ -36,7 +35,8 @@
         '/register_master':RegisterMaster,
         '/lead':Lead,
         '/employee':Users,
-        '/task':Task,
+        '/task_board':Task,
+        '/task_billing':Task,
         '/master_template':MasterTemplate,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,

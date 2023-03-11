@@ -1,4 +1,14 @@
+scheduler - 
+    generate taasks
+    refresh registers every new year
+    *doubt - when to delete tasks
+
 *****delete client releated data when client is deleted
+
+Task
+    | Task board
+    | Billed Tasks
+    | Un billed Tasks
 
 option to set bulk service in client master.
 
