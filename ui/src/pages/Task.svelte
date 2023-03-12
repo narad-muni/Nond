@@ -22,7 +22,6 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
-    import Service from "./Service.svelte";
 
     // Intialization
 
@@ -30,7 +29,7 @@
     let selectedRows = new Set();
 
     let data, createdObject={priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
-    let handler, rows, filterStatus=1;
+    let handler, rows, statusFilter=0, billingFilter=1;
 
     const task_status = [
         {name:'Pending',value:0},
@@ -55,7 +54,7 @@
         services = await utils.get('/api/service/options');
         clients = await utils.get('/api/client/options');
         userList = await utils.get('/api/employee/options');
-        data = await utils.get('/api/task/');
+        data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter);
 
         userList = userList.data;
 
@@ -136,38 +135,35 @@
 
     }
 
-    async function changeFilter(){
-        if(filterStatus==0){
-            const resp = await utils.get('/api/task');
-            if(resp.status=='success'){
-                data = resp.data;
-                filterStatus = 1;
-            }else{
-                error = resp.message || "";
-            }
-        }else if(filterStatus==1){
-            const resp = await utils.get('/api/task/completed');
-            if(resp.status=='success'){
-                data = resp.data;
-                filterStatus = 2;
-            }else{
-                error = resp.message || "";
-            }
-        }else{
-            const resp = await utils.get('/api/task/incomplete');
-            if(resp.status=='success'){
-                data = resp.data;
-                filterStatus = 0;
-            }else{
-                error = resp.message || "";
-            }
+    async function changeFilter(e){
+
+        /**
+         * 0 - Not Billed / Completed
+         * 1 - All
+         * 2 - Billed / Completed
+        */
+
+        const caller = e.target.id;
+
+        if(caller == 'status'){
+            statusFilter = (statusFilter + 1) % 3;
+        }else if(caller == 'bill'){
+            billingFilter = (billingFilter + 1) % 3;
         }
 
-        data.forEach((v) => {
-            v["_selected"] = 0;
-        });
+        const resp = await utils.get('/api/task/'+statusFilter+'/'+billingFilter);
 
-        handler.setRows(data);
+        if(resp.status == 'success'){
+            data = resp.data;
+
+            data.forEach((v) => {
+                v["_selected"] = 0;
+            });
+
+            handler.setRows(data);
+        }else{
+            error = resp.message || "";
+        }
     }
 
     async function openActionsModal(e){
@@ -201,7 +197,13 @@
 
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
-            data[actionsIndex] = resp.data;
+
+            if((resp.data.status == 4 && statusFilter == 0) || (resp.data.status != 4 && statusFilter == 2)){
+                data.splice(actionsIndex, 1);
+            }else{
+                data[actionsIndex] = resp.data;
+            }
+
             handler.setRows(data);
             actionsModals = false;
         }else{
@@ -239,17 +241,13 @@
 
             resp.data.client = clients.find(e => e.value == resp.data.client_id);
 
-            if(!resp.data.started){
-                resp.data.started = null;
+            if(!(resp.data.status == 4 && statusFilter == 0) && !(resp.data.status != 4 && statusFilter == 2)){
+                data.push(resp.data);
             }
 
-            if(!resp.data.ended){
-                resp.data.ended = null;
-            }
-
-            data.push(resp.data);
             handler.setRows(data);
             createModal = false;
+            createdObject = {priority:1,status:0}
         }else{
             error = resp.message || "";
         }
@@ -267,18 +265,40 @@
                 Create
             </Button>
 
-            <Button gradient color="green" on:click={changeFilter}>
+            <Button gradient color="green" id="status" on:click={changeFilter}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75" />
                 </svg>                                                   
                 &nbsp;
-                {#if filterStatus == 1}
+                {#if statusFilter == 1}
                     Show Completed
-                {:else if filterStatus == 2}
-                    Show Active
+                {:else if statusFilter == 2}
+                    Show Pending
                 {:else}
                     Show All
                 {/if}
+            </Button>
+
+            <Button gradient color="green" id="bill" on:click={changeFilter}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>                                                             
+                &nbsp;
+                {#if billingFilter == 1}
+                    Show Billed
+                {:else if billingFilter == 2}
+                    Show Pending
+                {:else}
+                    Show All
+                {/if}
+            </Button>
+
+            <Button disabled={buttonDisabled} gradient color="blue" on:click={()=>{}}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                &nbsp;
+                Bill Tasks
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -288,6 +308,7 @@
                 &nbsp;
                 Delete
             </Button>
+
         </div>
 
         <div class="min-h-0 pl-4">
@@ -306,7 +327,7 @@
                             <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="status">Priority</Th>
-                            <Th {handler} orderBy="started">Started</Th>
+                            <Th {handler} orderBy="created">Created At</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
@@ -318,7 +339,7 @@
                             <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
-                            <ThSearch {handler} filterBy="started"/>
+                            <ThSearch {handler} filterBy="created"/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -350,7 +371,7 @@
                                     {priority[row.priority].name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.started}
+                                    {row.created}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -402,14 +423,6 @@
             <Select required items={task_status} bind:value={createdObject.status}/>
         </Label>
         <Label class="space-y-2">
-            <span>Start date</span>
-            <Input type="date" bind:value={createdObject.started}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>End date</span>
-            <Input type="date" bind:value={createdObject.ended}/>
-        </Label>
-        <Label class="space-y-2">
             <span>Priority</span>
             <Select required items={priority} bind:value={createdObject.priority}/>
         </Label>
@@ -446,14 +459,6 @@
         <Label class="space-y-2">
             <span>Status</span>
             <Select required items={task_status} bind:value={actionsObject.status}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Start date</span>
-            <Input type="date" bind:value={actionsObject.started}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>End date</span>
-            <Input type="date" bind:value={actionsObject.ended}/>
         </Label>
         <Label class="space-y-2">
             <span>Priority</span>

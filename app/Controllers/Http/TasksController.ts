@@ -2,8 +2,12 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Task from 'App/Models/Task'
 
 export default class TasksController {
-    public async index({response}: HttpContextContract){
-        const data = await Task
+    public async index({request,response}: HttpContextContract){
+
+        const billed = request.param("billed",1);
+        const status = request.param("status",1);
+
+        let data:any = Task
             .query()
             .preload('service', (query) => {
                 query.select('name')
@@ -19,57 +23,27 @@ export default class TasksController {
                 query.select('username')
             })
 
-        response.send({
-            status: 'success',
-            data: data
-        });
-    }
+        //task billed status
+        if(billed == 0){
+            data = data
+                .whereNot('billed',true)
+        }else if(billed == 2){
+            data = data
+                .where('billed',true)
+        }
 
-    public async indexIncomplete({response}: HttpContextContract){
-        const data = await Task
-            .query()
-            .preload('service', (query) => {
-                query.select('name')
-            })
-            .preload('client', (query) => {
-                query
-                    .select('name','group_id')
-                    .preload('group', (query) => {
-                        query.select('id','name')
-                    })
-            })
-            .preload('assigned_user', (query) => {
-                query.select('username')
-            })
-            .whereNot('status','4')
+        //task status
+        if(status == 0){
+            data = data
+                .whereNot('status',4)
+        }else if(status == 2){
+            data = data
+                .where('status',4)
+        }
 
         response.send({
             status: 'success',
-            data: data
-        });
-    }
-
-    public async indexCompleted({response}: HttpContextContract){
-        const data = await Task
-            .query()
-            .preload('client', (query) => {
-                query
-                    .select('name','group_id')
-                    .preload('group', (query) => {
-                        query.select('id','name')
-                    })
-            })
-            .preload('service', (query) => {
-                query.select('name')
-            })
-            .preload('assigned_user', (query) => {
-                query.select('username')
-            })
-            .where('status',4);
-
-        response.send({
-            status: 'success',
-            data: data
+            data: await data
         });
     }
 
@@ -106,14 +80,6 @@ export default class TasksController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
 
-        if(payload.started == ""){
-            payload.started = null;
-        }
-
-        if(payload.ended == ""){
-            payload.ended = null;
-        }
-
         const data = await Task.create(payload);
 
         response.send({
@@ -124,19 +90,6 @@ export default class TasksController {
 
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
-
-        const old = await Task
-            .query()
-            .where('id',payload.id)
-            .first();
-
-        if(old?.status != payload.status){
-            if(payload.status == 1 && old?.status == 0){
-                payload.started = new Date().toJSON().slice(0, 10);
-            }else if(payload.status == 4){
-                payload.ended = new Date().toJSON().slice(0, 10);
-            }
-        }
 
         delete payload.client;
         delete payload.assigned_user;
@@ -154,7 +107,7 @@ export default class TasksController {
         })
     }
 
-    //TODO decided, once billed, archive task, keep task for last 2 years
+    //TODO decided, once billed, archive completed task, keep task for last 2 years
     public async archive({}: HttpContextContract){}
 
     public async destroy({request,response}: HttpContextContract){

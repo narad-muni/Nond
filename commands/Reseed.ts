@@ -133,8 +133,7 @@ export default class Reseed extends BaseCommand {
             status: 1,
             priority: 0,
             service_id: 0,
-            started: DateTime.fromISO('2022-12-01'),
-            ended: DateTime.fromISO('2023-01-01')
+            billed: false
         });
 
         await Lead.create({

@@ -197,9 +197,11 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TasksController.index');
-            Route.get('/incomplete','TasksController.indexIncomplete');
-            Route.get('/completed','TasksController.indexCompleted');
-            Route.get('/:id','TasksController.get').where('id',/^[0-9]+$/);
+            Route.get('/:status/:billed','TasksController.index')
+                .where('status',/^[0-2]$/)
+                .where('billed',/^[0-2]$/);
+            Route.get('/:id','TasksController.get')
+                .where('id',/^[0-9]+$/);
 
             Route.post('/','TasksController.create');
 

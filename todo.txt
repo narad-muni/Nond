@@ -3,6 +3,8 @@ scheduler -
     refresh registers every new year
     *doubt - when to delete tasks
 
+create common route for filter
+
 *****delete client releated data when client is deleted
 
 Task

@@ -32,12 +32,9 @@ export default class Task extends BaseModel {
     @column()
     public billed: boolean
     
-    @column.date()
-    public started: DateTime
+    @column.date({ autoCreate:true })
+    public created: DateTime
     
-    @column.date()
-    public ended: DateTime
-
     @belongsTo(() => Service,{
         foreignKey: 'service_id'
     })
