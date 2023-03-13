@@ -197,9 +197,11 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','TasksController.index');
-            Route.get('/:status/:billed','TasksController.index')
+            Route.get('/:status/:billed/:self','TasksController.index')
                 .where('status',/^[0-2]$/)
-                .where('billed',/^[0-2]$/);
+                .where('billed',/^[0-2]$/)
+                .where('self',/^(?:true|false)$/);
+            
             Route.get('/:id','TasksController.get')
                 .where('id',/^[0-9]+$/);
 

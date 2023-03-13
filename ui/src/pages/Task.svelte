@@ -28,8 +28,8 @@
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
-    let handler, rows, statusFilter=0, billingFilter=1;
+    let data, createdObject = {priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
+    let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true;
 
     const task_status = [
         {name:'Pending',value:0},
@@ -54,7 +54,7 @@
         services = await utils.get('/api/service/options');
         clients = await utils.get('/api/client/options');
         userList = await utils.get('/api/employee/options');
-        data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter);
+        data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter+'/'+selfTasks);
 
         userList = userList.data;
 
@@ -149,9 +149,11 @@
             statusFilter = (statusFilter + 1) % 3;
         }else if(caller == 'bill'){
             billingFilter = (billingFilter + 1) % 3;
+        }else if(caller == 'owner'){
+            selfTasks = !selfTasks;
         }
 
-        const resp = await utils.get('/api/task/'+statusFilter+'/'+billingFilter);
+        const resp = await utils.get('/api/task/'+statusFilter+'/'+billingFilter+'/'+selfTasks);
 
         if(resp.status == 'success'){
             data = resp.data;
@@ -290,6 +292,18 @@
                     Show Pending
                 {:else}
                     Show All
+                {/if}
+            </Button>
+
+            <Button gradient color="green" id="owner" on:click={changeFilter}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                &nbsp;
+                {#if selfTasks}
+                    Show All
+                {:else}
+                    Show My Tasks
                 {/if}
             </Button>
 

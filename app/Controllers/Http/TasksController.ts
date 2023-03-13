@@ -2,10 +2,11 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Task from 'App/Models/Task'
 
 export default class TasksController {
-    public async index({request,response}: HttpContextContract){
+    public async index({request,response,session}: HttpContextContract){
 
         const billed = request.param("billed",1);
         const status = request.param("status",1);
+        const self = request.param("self","true");
 
         let data:any = Task
             .query()
@@ -39,6 +40,13 @@ export default class TasksController {
         }else if(status == 2){
             data = data
                 .where('status',4)
+        }
+
+        if(self == "true"){
+            const user_id = session.get('user').id;
+
+            data = data
+                .where('assigned_to',user_id);
         }
 
         response.send({
