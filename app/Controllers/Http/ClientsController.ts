@@ -128,7 +128,7 @@ export default class ClientsController {
 
         //create new scheduler objects
         Object.keys(payload.services).forEach(service_id => {
-            payload.services[service_id].type = 1;
+            payload.services[service_id].type = 5;
 
             if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
                 delete payload.services[service_id].subscribed;
@@ -208,7 +208,7 @@ export default class ClientsController {
 
         //create new objects
         Object.keys(payload.services).forEach(service_id => {
-            payload.services[service_id].type = 1;
+            payload.services[service_id].type = 5;
 
             if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
                 delete payload.services[service_id].subscribed;
@@ -231,6 +231,7 @@ export default class ClientsController {
 
         delete payload.subsidiary;
         delete payload._services;
+        delete payload.services;
         delete payload.group;
 
         const headers = await MasterTemplate
@@ -295,7 +296,7 @@ export default class ClientsController {
         const tempServiceObject = {
             client_id: '',
             service_id: payload.service_id,
-            type: 0,
+            type: 5,
             frequency: payload.frequency,
             next: payload.next
         }
@@ -304,6 +305,7 @@ export default class ClientsController {
             .query()
             .whereIn('client_id',payload.ids)
             .where('service_id',payload.service_id)
+            .delete()
 
         payload.ids.forEach(id => {
             tempServiceObject.client_id = id;

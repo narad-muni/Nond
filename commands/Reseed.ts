@@ -56,7 +56,7 @@ export default class Reseed extends BaseCommand {
             service_id: 0,
             next: DateTime.fromISO('2022-12-01'),
             frequency: '1 month',
-            type: 1
+            type: 5
         });
 
         await TaskTemplate.create({

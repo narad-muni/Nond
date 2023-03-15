@@ -277,11 +277,11 @@
                 </svg>                                                   
                 &nbsp;
                 {#if statusFilter == 1}
-                    Show Completed
+                    All
                 {:else if statusFilter == 2}
-                    Show Pending
+                    Completed
                 {:else}
-                    Show All
+                    Pending
                 {/if}
             </Button>
 
@@ -291,11 +291,11 @@
                 </svg>                                                             
                 &nbsp;
                 {#if billingFilter == 1}
-                    Show Billed
+                    All
                 {:else if billingFilter == 2}
-                    Show Pending
+                    Billed
                 {:else}
-                    Show All
+                    Not Billed
                 {/if}
             </Button>
 
@@ -305,9 +305,9 @@
                 </svg>
                 &nbsp;
                 {#if selfTasks}
-                    Show All
+                    My Tasks
                 {:else}
-                    Show My Tasks
+                    All Tasks
                 {/if}
             </Button>
 
