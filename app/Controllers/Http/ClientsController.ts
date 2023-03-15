@@ -289,6 +289,35 @@ export default class ClientsController {
 
     }
 
+    public async bulkServiceUpdate({request,response}: HttpContextContract){
+        const payload = request.all();
+        const newSchedulers: any[] = [];
+        const tempServiceObject = {
+            client_id: '',
+            service_id: payload.service_id,
+            type: 0,
+            frequency: payload.frequency,
+            next: payload.next
+        }
+
+        await Scheduler
+            .query()
+            .whereIn('client_id',payload.ids)
+            .where('service_id',payload.service_id)
+
+        payload.ids.forEach(id => {
+            tempServiceObject.client_id = id;
+            newSchedulers.push(tempServiceObject);
+        });
+
+        await Scheduler
+            .createMany(newSchedulers);
+
+        response.send({
+            status: 'success'
+        })
+    }
+
     public async remove({request,response}: HttpContextContract){
         const payload = request.all();
 

@@ -75,6 +75,8 @@ Route.group(() => {
 
             Route.post('/','ClientsController.create');
 
+            Route.post('/bulk_service_update','ClientsController.bulkServiceUpdate');
+
             Route.post('/restore','ClientsController.restore');
 
             Route.put('/','ClientsController.update');

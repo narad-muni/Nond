@@ -30,7 +30,7 @@
     let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={services:{}}, actionsIndex, actionsObject;
+    let headers, services, client_list, data, createdObject={services:{}}, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
     let handler, rows;
     let automaticAssign = [
@@ -158,6 +158,29 @@
             actionsModals = true;
         }else{
             error = actionsObject.message || "";
+        }
+    }
+
+    async function bulkSetService(){
+
+        setServiceObject.ids = Array.from(selectedRows);
+
+        const resp = await utils.post_json('/api/client/bulk_service_update/',setServiceObject);
+
+        if(resp.status = 'success'){
+            for (let i = 0; i < data.length; i++) {
+                if (selectedRows.has(data[i].id)) {
+                    data[i]._selected = false;
+                }
+            }
+
+            selectedRows.clear();
+            handler.setRows(data);
+            selectedRows = selectedRows;
+            bulkServiceModal = false;
+            setServiceObject = {};
+        }else{
+            error = resp.message || "";
         }
     }
 
@@ -499,14 +522,34 @@
     </form>
 </Modal>
 
-<Modal bind:open={bulkServiceModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
+<Modal bind:open={bulkServiceModal} size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={bulkSetService}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Set Services</h3>
-        <p class=""><span class="text-red-400">*</span> This will overwrite existing service dates</p>
-        <Label class="flex  flex-col gap-y-1">
+        <p class="md:col-span-2"><span class="text-red-400">*</span> This will overwrite existing service dates</p>
+        <Label class="space-y-2">
             <span class="mb-2">Client Id's</span>
             <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
         </Label>
+
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={setServiceObject.service_id}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={frequency} bind:value={setServiceObject.frequency}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Input type="date" required min={minNextDate} bind:value={setServiceObject.next}/>
+        </Label>
+
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button type="submit" disabled={actionsIndex < 0} class="w-full">Set</Button>
+            <Button on:click={()=>{setServiceObject={},bulkServiceModal=false}} color="alternative" class="w-full">Close</Button>
+        </div>
         
     </form>
 </Modal>

@@ -17,12 +17,13 @@ export default class SchedulerManager{
             const {default: Database} = await import('@ioc:Adonis/Lucid/Database');
 
             const currentDate = new Date().toISOString().slice(0, 10);
-            const schedulers = await Scheduler
+
+            const scheduled_jobs = await Scheduler
                 .query()
                 .where('next','<=',currentDate);
 
-            schedulers.forEach(scheduler => {
-                switch(scheduler.type){
+            scheduled_jobs.forEach(job => {
+                switch(job.type){
                     case 1:// Rotate Registers
                         SchedulerManager.RotateRegisters();                    
                         break;

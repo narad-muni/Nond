@@ -1,7 +1,7 @@
 scheduler - 
     generate taasks
     refresh registers every new year
-    *doubt - when to delete tasks
+    *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
 
 create common route for filter
 

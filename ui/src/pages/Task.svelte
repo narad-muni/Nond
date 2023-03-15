@@ -29,7 +29,7 @@
     let selectedRows = new Set();
 
     let data, createdObject = {priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
-    let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true;
+    let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
         {name:'Pending',value:0},
@@ -232,6 +232,10 @@
         }
     }
 
+    async function billSelected(){
+
+    }
+
     async function createData(){
         let resp = await utils.post_json('/api/task/',createdObject);
 
@@ -307,7 +311,7 @@
                 {/if}
             </Button>
 
-            <Button disabled={buttonDisabled} gradient color="blue" on:click={()=>{}}>
+            <Button disabled={buttonDisabled} gradient color="blue" on:click={()=> billModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -405,6 +409,15 @@
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
         <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
+<Modal bind:open={billModal} size="xs" autoclose>
+    <div class="text-center">
+        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to bill selected rows?</h3>
+        <Button color="green" on:click={billSelected} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>
