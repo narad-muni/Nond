@@ -140,6 +140,9 @@ export default class TasksController {
         const to_arhive: Task[] = [];
         const tasks = await Task
             .query()
+            .preload('service',(query) => {
+                query.select('id','name')
+            })
             .whereIn('id',payload.ids)
 
         //filter out arhciveable
@@ -172,13 +175,40 @@ export default class TasksController {
             .update({billed:true})
 
         // generate bill
-        //prompt for company in frontend
         const tempInvoiceObject = {
-            client_id:"",
-            company_id:"",
-            description:""
+            client_id: 0,
+            company_id: payload.company_id,
+            description: {},
+            paid: 0,
+            total: 0,
+            date: new Date().toJSON().slice(0, 10)
         }
 
+        const invoice_list_obj = {};
+
+        tasks.forEach(task => {
+            if(invoice_list_obj[task.client_id]){
+                if(task.service_id < 0){//other task
+                    invoice_list_obj[task.client_id].description[task.title] = 0
+                }else{
+                    invoice_list_obj[task.client_id].description[task.service.name] = 0
+                }
+            }else{
+                const temp = tempInvoiceObject;
+
+                temp.client_id = task.client_id;
+                
+                if(task.service_id < 0){//other task
+                    temp.description[task.title] = 0
+                }else{
+                    temp.description[task.service.name] = 0
+                }
+
+                invoice_list_obj[task.client_id] = temp;
+            }
+        });
+
+        await Invoice.createMany(Object.values(invoice_list_obj));
 
         response.send({
             status:"success",

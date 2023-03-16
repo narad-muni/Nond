@@ -7,10 +7,12 @@ export default class extends BaseSchema {
         this.schema.createTable(this.tableName, (table) => {
             table.increments('id');
             table.integer('client_id');
+            table.integer('company_id');
             table.json('description');
-            table.integer('paid');
-            table.integer('pending');
+            table.boolean('paid');
+            table.integer('total');
             table.boolean('deleted').defaultTo(false)
+            table.date('date');
 
             /**
              * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
