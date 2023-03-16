@@ -4,35 +4,18 @@ add hsn/sac in service
 2 type of bills gst & non-gst
 
 scheduler - 
-    generate taasks
-    refresh registers every new year
+    run scheduler
     *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
-
-create common route for filter
 
 *****delete client releated data when client is deleted
 
-Task
-    | Task board
-    | Billed Tasks
-    | Un billed Tasks
+ask gst, non gst from task generate invoice page
 
-option to set bulk service in client master.
-
-generate invoice should be available from within task page.
-
-in-complete tasks can also be billed.
-
-TODO , added billed bool in task model for above ^
-
-create task on daily schedules.
-
-add invoice option inside task.
-
-invoice
 register
 
 add default columns to client
+
+
 ---------------------
 doubts
 
@@ -40,24 +23,6 @@ is narration in invoice auto generated. - yes, can be modified later on
 
 on entry on specific columns, services will be automatically subscribed
 
-add linked fields to registers with popup to verify
-
 cron job to move register to new financial year
 
-create bill from task screen
-
-bill based on services
-
-bulk billing
-
-created bills by default will have service names as descriptions which can be changed
-
-invoice page will have pending amount etc
-
-billing page will include services, one time tasks, parent company
-
 billing will have option to transfer bill to another company
-
-=======
-
-Tasks will be service based

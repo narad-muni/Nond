@@ -9,22 +9,18 @@
         TableBodyCell,
         TableBodyRow,
         Checkbox,
-        A,
         Label,
-        Helper,
         Input,
-        Toggle,
         Alert,
         Textarea,
         Select
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { types } from "joi";
 
     // Intialization
 
@@ -33,10 +29,6 @@
 
     let data, createdObject={}, actionsIndex, actionsObject, userList;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
     const leadStatus = [
         {name:'Pending',value:'Pending'},
         {name:'In Process',value:'In Process'},
@@ -45,13 +37,14 @@
         {name:'Deal Closed',value:'Deal Closed'},
         {name:'Deal Failed',value:'Deal Failed'}
     ]
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+    let error="";
 
     // fetch data
 
     (async ()=>{
-        data = await utils.get('/api/lead/');
         userList = await utils.get('/api/employee/options');
+        data = await utils.get('/api/lead/');
+        
         userList = userList.data;
 
         if(data.status != 'success'){
@@ -140,11 +133,10 @@
     async function updateData(){
         const resp = await utils.put_json('/api/lead/',actionsObject);
 
-        actionsObject.assigned_user = userList.find(e => e.value == actionsObject.assigned_to);
-        actionsObject.assigned_user['username'] = actionsObject.assigned_user['name'];
-
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
+            resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
+
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
@@ -155,7 +147,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/lead/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/lead/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -219,7 +211,7 @@
                             </th>
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="client">Client</Th>
-                            <Th {handler} orderBy="assigned_user.username">Assigned To</Th>
+                            <Th {handler} orderBy={(row) => row.assigned_user.username}>Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="started">Started</Th>
                         </tr>
@@ -227,13 +219,13 @@
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="client"/>
-                            <ThSearch {handler} filterBy="assigned_user.username"/>
+                            <ThSearch {handler} filterBy={(row) => row.assigned_user.username}/>
                             <ThSearch {handler} filterBy="status"/>
                             <ThSearch {handler} filterBy="started"/>
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row, index}
+                        {#each $rows as row}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
@@ -340,16 +332,6 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
-        </Alert>
-    </div>
-{/if}
-
-{#if success.length > 0}
-    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
-        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
-            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-            </span>
-            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}
