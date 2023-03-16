@@ -19,6 +19,7 @@
     import Navbar from "../component/Navbar.svelte";
     import Service from "./Service.svelte";
     import RegisterMaster from "./RegisterMaster.svelte";
+  import Invoice from "./Invoice.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -36,6 +37,7 @@
         '/lead':Lead,
         '/employee':Users,
         '/task':Task,
+        '/invoice':Invoice,
         '/master_template':MasterTemplate,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,

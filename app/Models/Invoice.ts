@@ -17,7 +17,13 @@ export default class Invoice extends BaseModel {
     public description: object
 
     @column()
+    public comment: string
+
+    @column()
     public paid: boolean
+
+    @column()
+    public gst: boolean
 
     @column()
     public total: number

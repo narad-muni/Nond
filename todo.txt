@@ -1,3 +1,8 @@
+fixx lead page
+
+add hsn/sac in service
+2 type of bills gst & non-gst
+
 scheduler - 
     generate taasks
     refresh registers every new year

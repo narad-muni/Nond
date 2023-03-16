@@ -53,8 +53,8 @@
         {#if utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).length}
             <NavLi id="template" class="cursor-pointer"><Chevron aligned>Templates</Chevron></NavLi>
         {/if}
-        {#if utils.getArrIntersection(Object.keys($user.role.read),['invoice','billing']).length}
-            <NavLi id="billing" class="cursor-pointer"><Chevron aligned>Billing</Chevron></NavLi>
+        {#if $user.role.read.invoice}
+            <NavLi href="/#/invoice" class="cursor-pointer">Invoice</NavLi>
         {/if}
 
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
