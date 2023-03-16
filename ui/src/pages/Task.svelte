@@ -28,7 +28,7 @@
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject = {priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services;
+    let data, createdObject = {priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services, companies, billTaskObject = {};
     let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
@@ -52,6 +52,7 @@
     (async ()=>{
         taskTemplates = await utils.get('/api/task_template/options');
         services = await utils.get('/api/service/options');
+        companies = await utils.get('/api/company/options');
         clients = await utils.get('/api/client/options');
         userList = await utils.get('/api/employee/options');
         data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter+'/'+selfTasks);
@@ -233,7 +234,28 @@
     }
 
     async function billSelected(){
+        billTaskObject.ids = Array.from(selectedRows);
 
+        const resp = await utils.put_json('/api/task/bill/',billTaskObject);
+
+        if(resp.status = 'success'){
+            for (let i = 0; i < data.length; i++) {
+                if(resp.archived.includes(data[i].id) || billingFilter == 0){
+                    data.splice(i,1);
+                    i--;
+                }else if (selectedRows.has(data[i].id)) {
+                    data[i]._selected = false;
+                }
+            }
+
+            selectedRows.clear();
+            handler.setRows(data);
+            selectedRows = selectedRows;
+            billModal = false;
+            billTaskObject = {};
+        }else{
+            error = resp.message || "";
+        }
     }
 
     async function createData(){
@@ -404,7 +426,7 @@
 
 <!-- Modals -->
 
-<Modal bind:open={deleteModal} size="xs" autoclose>
+<Modal bind:open={deleteModal} size="xs" >
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
@@ -413,12 +435,15 @@
     </div>
 </Modal>
 
-<Modal bind:open={billModal} size="xs" autoclose>
+<Modal bind:open={billModal} size="xs" >
     <div class="text-center">
-        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to bill selected rows?</h3>
-        <Button color="green" on:click={billSelected} class="mr-2">Yes, I'm sure</Button>
-        <Button color='alternative'>No, cancel</Button>
+        <form on:submit|preventDefault={billSelected}>
+            <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to bill selected rows?</h3>
+            <Select required class="mb-5" items={companies} bind:value={billTaskObject.company_id}/>
+            <Button color="green" type="submit" class="mr-2">Yes, I'm sure</Button>
+            <Button color='alternative'>No, cancel</Button>
+        </form>
     </div>
 </Modal>
 

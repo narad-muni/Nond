@@ -165,7 +165,7 @@
 
         setServiceObject.ids = Array.from(selectedRows);
 
-        const resp = await utils.post_json('/api/client/bulk_service_update/',setServiceObject);
+        const resp = await utils.put_json('/api/client/bulk_service_update/',setServiceObject);
 
         if(resp.status = 'success'){
             for (let i = 0; i < data.length; i++) {

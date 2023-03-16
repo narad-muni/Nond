@@ -75,7 +75,7 @@ Route.group(() => {
 
             Route.post('/','ClientsController.create');
 
-            Route.post('/bulk_service_update','ClientsController.bulkServiceUpdate');
+            Route.put('/bulk_service_update','ClientsController.bulkServiceUpdate');
 
             Route.post('/restore','ClientsController.restore');
 
@@ -210,6 +210,8 @@ Route.group(() => {
             Route.post('/','TasksController.create');
 
             Route.put('/','TasksController.update');
+
+            Route.put('/bill','TasksController.bill');
 
             Route.delete('/destroy','TasksController.destroy');
 

@@ -88,7 +88,6 @@ export default class CompaniesController {
             e.name = e.name;
 
             delete e.id;
-            delete e.name;
         });
 
         response.send(serilizedData);
