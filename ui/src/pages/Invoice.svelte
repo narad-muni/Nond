@@ -215,6 +215,7 @@
                             <Th {handler} orderBy={(row) => row.client?.group?.name}>Group</Th>
                             <Th {handler} orderBy="total">Total</Th>
                             <Th {handler} orderBy="paid">Paid</Th>
+                            <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy={(row) => row.company?.name}>Company</Th>
                             <Th {handler} orderBy="date">Date</Th>
                         </tr>
@@ -225,6 +226,7 @@
                             <ThSearch {handler} filterBy={(row) => row.client?.group?.name}/>
                             <ThSearch {handler} filterBy="total"/>
                             <ThSearch {handler} filterBy={(row) => row.paid ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={(row) => row.gst ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={(row) => row.company?.name}/>
                             <ThSearch {handler} filterBy="date"/>
                         </tr>
@@ -247,6 +249,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.paid ? "Yes" : "No"}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.gst ? "Yes" : "No"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.company?.name}

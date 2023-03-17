@@ -5,14 +5,9 @@ export default class extends BaseSchema {
 
     public async up () {
         this.schema.createTable(this.tableName, (table) => {
-        table.increments('id');
-        table.string('name');
-        table.integer('service_id');
-        table.boolean('deleted').defaultTo(false)
-
-        /**
-         * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-         */
+            table.increments('id');
+            table.string('name');
+            table.integer('service_id');
        })
     }
 

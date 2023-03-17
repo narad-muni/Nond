@@ -443,7 +443,7 @@
             <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to bill selected rows?</h3>
             
             <Select required class="mb-5" items={companies} bind:value={billTaskObject.company_id}/>
-            <Toggle class="mb-5" bind:value={billTaskObject.gst}>GST</Toggle>
+            <Toggle class="mb-5" bind:checked={billTaskObject.gst}>GST</Toggle>
 
             <Button color="green" type="submit" class="mr-2">Yes, I'm sure</Button>
             <Button color='alternative' on:click={() => billModal=false}>No, cancel</Button>

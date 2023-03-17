@@ -11,9 +11,6 @@ export default class RegisterMaster extends BaseModel {
     @column()
     public service_id: number
 
-    @column()
-    public deleted: boolean
-
     @belongsTo(() => Service,{
         foreignKey: 'service_id'
     })

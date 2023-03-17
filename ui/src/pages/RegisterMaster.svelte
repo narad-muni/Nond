@@ -15,7 +15,7 @@
         Select,
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
@@ -23,12 +23,12 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal, createRegisterModal;
     let selectedRows = new Set();
 
     let data, createdObject={},services, actionsIndex, actionsObject;
     let handler, rows;
-    let error="", success="";
+    let error="";
 
     // fetch data
 
@@ -134,7 +134,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/register_master/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/register_master/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -149,6 +149,10 @@
         }else{
             error = resp.message;
         }
+    }
+
+    async function createRegister(){
+
     }
 
     async function createData(){
@@ -175,6 +179,14 @@
                 </svg>                        
                 &nbsp;
                 Create
+            </Button>
+
+            <Button disabled={selectedRows.size != 1} gradient color="blue" on:click={() => createRegisterModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>                        
+                &nbsp;
+                Create Register
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -235,22 +247,38 @@
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
+        <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will also delete any active register.</h5>
         <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>
 
+<Modal bind:open={createRegisterModal} size="xs">
+    <div class="text-center">
+        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to create register ?</h3>
+        <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will archive any active register.</h5>
+        <Button color="green" on:click={createRegister} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
+
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         <Label class="space-y-2">
-            <span>name</span>
+            <span>Name</span>
             <Input required bind:value={createdObject.name}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Suffix</span>
+            <Input required bind:value={createdObject.suffix}/>
         </Label>
         <Label class="space-y-2">
             <span>service</span>
             <Select required items={services} bind:value={createdObject.service_id} />
-        </Label>        
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -288,16 +316,6 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
-        </Alert>
-    </div>
-{/if}
-
-{#if success.length > 0}
-    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
-        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
-            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-            </span>
-            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}

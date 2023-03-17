@@ -83,19 +83,6 @@ export default class RegistersController {
             data: data
         })
     }
-
-    public async remove({request,response}: HttpContextContract) {
-        const id = request.input('id');
-        
-        await RegisterMaster
-            .query()
-            .whereIn('id',id)
-            .update({deleted:true});
-        
-        response.send({
-            status: 'success'
-        })
-    }
     
     public async destroy({request,response}: HttpContextContract) {
         const id = request.input('id');

@@ -160,12 +160,29 @@ Route.group(() => {
 
             Route.put('/','RegisterMasterController.update');
 
+            Route.delete('/destroy','RegisterMasterController.destroy');
+
+        })
+        .prefix('/register_master');
+
+        Route.group(() => {
+
+            Route.get('/','RegisterMasterController.index');
+            Route.get('/:id','RegisterMasterController.get').where('id',/^[0-9]+$/);
+            Route.get('/options','RegisterMasterController.options');
+
+            Route.post('/','RegisterMasterController.create');
+
+            Route.put('/','RegisterMasterController.update');
+
+            Route.put('/archive/:id','RegisterMasterController.archive').where('id',/^[0-9]+$/);
+
             Route.delete('/','RegisterMasterController.remove');
 
             Route.delete('/destroy','RegisterMasterController.destroy');
 
         })
-        .prefix('/register_master');
+        .prefix('/register');
 
 
         /*

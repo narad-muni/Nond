@@ -1,3 +1,7 @@
+invoice is pending
+
+starting with register
+
 add hsn/sac in service
 2 type of bills gst & non-gst
 
@@ -12,3 +16,13 @@ ask gst, non gst from task generate invoice page
 register
 
 add default columns to client
+
+
+register_master states register
+register template
+
+
+3 tables
+register_master -> states all the register tables
+register -> states all unique Registers
+register_templates -> template for register
