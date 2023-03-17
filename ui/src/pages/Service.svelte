@@ -200,17 +200,19 @@
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy="hsn">HSN/SAC</Th>
                             <Th {handler} orderBy={(row => row.template?.name || null)}>Template</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="hsn"/>
                             <ThSearch {handler} filterBy={(row => row.template?.name || null)}/>
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row, index}
+                        {#each $rows as row}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
@@ -218,6 +220,9 @@
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
                                     {row.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.hsn}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.template?.name || "null"}
@@ -252,6 +257,10 @@
             <Input required bind:value={createdObject.name}/>
         </Label>
         <Label class="space-y-2">
+            <span>HSN/SAC</span>
+            <Input type="number" required bind:value={createdObject.hsn}/>
+        </Label>
+        <Label class="space-y-2">
             <span>Task Template</span>
             <Select required items={taskTemplates} bind:value={createdObject.template_id} />
         </Label>
@@ -272,6 +281,10 @@
         <Label class="space-y-2">
             <span>Name</span>
             <Input required bind:value={actionsObject.name}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>HSN/SAC</span>
+            <Input type="number" required bind:value={actionsObject.hsn}/>
         </Label>
         <Label class="space-y-2">
             <span>Task Template</span>
