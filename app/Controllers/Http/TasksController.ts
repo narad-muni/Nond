@@ -181,6 +181,7 @@ export default class TasksController {
             description: {},
             paid: 0,
             total: 0,
+            gst: payload.gst,
             date: new Date().toJSON().slice(0, 10)
         }
 
