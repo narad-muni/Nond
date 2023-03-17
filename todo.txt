@@ -1,5 +1,3 @@
-fixx lead page
-
 add hsn/sac in service
 2 type of bills gst & non-gst
 
@@ -14,15 +12,3 @@ ask gst, non gst from task generate invoice page
 register
 
 add default columns to client
-
-
----------------------
-doubts
-
-is narration in invoice auto generated. - yes, can be modified later on
-
-on entry on specific columns, services will be automatically subscribed
-
-cron job to move register to new financial year
-
-billing will have option to transfer bill to another company

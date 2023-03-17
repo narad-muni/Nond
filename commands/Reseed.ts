@@ -71,12 +71,14 @@ export default class Reseed extends BaseCommand {
 
         await Service.create({
             id: 0,
+            hsn:123456,
             name: 'GST',
             template_id:0
         });
 
         await Service.create({
             id: -1,
+            hsn:0,
             name: 'Others',
             template_id:0
         });
