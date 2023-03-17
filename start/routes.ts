@@ -265,7 +265,7 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','ServicesController.index');
-            Route.get('/:id','ServicesController.get').where('id',/^[0-9]+$/);
+            Route.get('/:id','ServicesController.get').where('id',/^-?[0-9]+$/);
             Route.get('/options','ServicesController.options');
             Route.get('/options_all','ServicesController.options_all');
 

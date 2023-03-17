@@ -249,9 +249,9 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="md">
-    <form class="grid gap-6 mb-6 md:grid-cols-1" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">Create Entry</h3>
+<Modal bind:open={createModal} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
             <Input required bind:value={createdObject.name}/>
@@ -264,16 +264,16 @@
             <span>Task Template</span>
             <Select required items={taskTemplates} bind:value={createdObject.template_id} />
         </Label>
-        <div class="col-span-1 grid gap-6 grid-cols-2">
+        <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
 
-<Modal bind:open={actionsModals} placement="top-center" size="md">
-    <form class="grid gap-6 mb-6 md:grid-cols-1" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">View/Update Entry</h3>
+<Modal bind:open={actionsModals} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input value={actionsObject.id} readonly/>
@@ -290,7 +290,7 @@
             <span>Task Template</span>
             <Select required items={taskTemplates} bind:value={actionsObject.template_id} />
         </Label>
-        <div class="col-span-1 grid gap-6 grid-cols-2">
+        <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
