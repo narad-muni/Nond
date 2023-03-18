@@ -237,13 +237,13 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.master.name + ' ' + row.suffix}
+                                    {row.name + ' ' + row.version}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.master.name}
+                                    {row.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.master.service.name}
+                                    {row.service.name}
                                 </TableBodyCell>
                                 <TableBodyCell>    
                                     {row.active ? "Yes" : "No"}

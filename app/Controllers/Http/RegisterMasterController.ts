@@ -1,17 +1,13 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import RegisterMaster from 'App/Models/RegisterMaster'
-import Register from 'App/Models/Register'
 
 export default class RegistersController {
     public async index({response}: HttpContextContract) {
-        const data = await Register
+        const data = await RegisterMaster
             .query()
-            .preload('master',(query) => {
+            .preload('service',(query) => {
                 query
-                    .select('id','name','service_id')
-                    .preload('service',(query) => {
-                        query.select('id','name')
-                    })
+                    .select('id','name')
             })
 
         response.send({

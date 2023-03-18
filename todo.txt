@@ -26,3 +26,5 @@ it can create new register with new master or rotate active registers, archive a
 deleting or archiving active registers will delete the template and master register entry, it will keep archived registers
 
 *** there is issue on calculating columns for archived registers, need new schema
+
+soln - create new tempalte for every master, maintains version
