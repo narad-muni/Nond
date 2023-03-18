@@ -1,5 +1,7 @@
 invoice is pending
 
+create task in client
+
 starting with register
 
 add hsn/sac in service
@@ -10,19 +12,17 @@ scheduler -
     *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
 
 *****delete client releated data when client is deleted
+handle delete cascade
 
-ask gst, non gst from task generate invoice page
+clients -> tasks?, scheudlers, register-entry?,  
 
-register
+------------
 
 add default columns to client
 
 
-register_master states register
-register template
+register master will list all registers e.g. gst-22-23, gst-21-22 
+it can create new register with new master or rotate active registers, archive active registers.
+deleting or archiving active registers will delete the template and master register entry, it will keep archived registers
 
-
-3 tables
-register_master -> states all the register tables
-register -> states all unique Registers
-register_templates -> template for register
+*** there is issue on calculating columns for archived registers, need new schema

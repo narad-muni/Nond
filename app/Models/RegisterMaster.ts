@@ -1,4 +1,5 @@
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import Register from './Register'
 import Service from './Service'
 
 export default class RegisterMaster extends BaseModel {
@@ -15,4 +16,9 @@ export default class RegisterMaster extends BaseModel {
         foreignKey: 'service_id'
     })
     public service: BelongsTo<typeof Service>
+
+    @hasOne(() => Register,{
+        foreignKey: 'master_id'
+    })
+    public active_register: HasOne<typeof Register>
 }

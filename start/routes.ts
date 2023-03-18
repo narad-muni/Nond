@@ -158,6 +158,8 @@ Route.group(() => {
 
             Route.post('/','RegisterMasterController.create');
 
+            Route.post('/rotate','RegisterMasterController.rotate');
+
             Route.put('/','RegisterMasterController.update');
 
             Route.delete('/destroy','RegisterMasterController.destroy');

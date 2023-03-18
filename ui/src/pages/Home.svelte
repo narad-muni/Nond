@@ -6,7 +6,6 @@
     import Users from "./Users.svelte";
 
     import { location } from 'svelte-spa-router'
-    import {wrap} from 'svelte-spa-router/wrap'
 
     import {user} from '../global/user.js'
     import Role from "./Role.svelte";
@@ -19,7 +18,7 @@
     import Navbar from "../component/Navbar.svelte";
     import Service from "./Service.svelte";
     import RegisterMaster from "./RegisterMaster.svelte";
-  import Invoice from "./Invoice.svelte";
+    import Invoice from "./Invoice.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){

@@ -1,13 +1,21 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import RegisterMaster from './RegisterMaster'
 
 export default class Register extends BaseModel {
-  @column({ isPrimary: true })
-  public id: number
+    @column({ isPrimary: true })
+    public id: number
 
-  @column.dateTime({ autoCreate: true })
-  public createdAt: DateTime
+    @column()
+    public master_id: number
 
-  @column.dateTime({ autoCreate: true, autoUpdate: true })
-  public updatedAt: DateTime
+    @column()
+    public suffix: string
+
+    @column()
+    public active: boolean
+
+    @belongsTo(() => RegisterMaster,{
+        foreignKey: 'master_id'
+    })
+    public master: BelongsTo <typeof RegisterMaster>
 }

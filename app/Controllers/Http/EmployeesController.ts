@@ -67,10 +67,7 @@ export default class EmployeesController {
             })
             .where('deleted',false)
 
-        response.send({
-            status: 'success',
-            data: data
-        });
+        response.send(data);
 
     }
 

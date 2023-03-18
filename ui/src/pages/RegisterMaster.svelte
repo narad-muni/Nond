@@ -23,7 +23,7 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, createRegisterModal;
+    let createModal, actionsModals, deleteModal, rotateRegisterModal;
     let selectedRows = new Set();
 
     let data, createdObject={},services, actionsIndex, actionsObject;
@@ -151,7 +151,7 @@
         }
     }
 
-    async function createRegister(){
+    async function rotateRegister(){
 
     }
 
@@ -181,12 +181,20 @@
                 Create
             </Button>
 
-            <Button disabled={selectedRows.size != 1} gradient color="blue" on:click={() => createRegisterModal = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>                        
+            <Button disabled={selectedRows.size != 1} gradient color="green" on:click={() => rotateRegisterModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>                   
                 &nbsp;
-                Create Register
+                Rotate
+            </Button>
+
+            <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> deleteModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>              
+                &nbsp;
+                Archive
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -208,13 +216,17 @@
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy="name">Master</Th>
                             <Th {handler} orderBy="name">Service</Th>
+                            <Th {handler} orderBy="active">Active</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="service"/>
+                            <ThSearch {handler} filterBy="active"/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -225,10 +237,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.name}
+                                    {row.master.name + ' ' + row.suffix}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service.name}
+                                    {row.master.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.master.service.name}
+                                </TableBodyCell>
+                                <TableBodyCell>    
+                                    {row.active ? "Yes" : "No"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -253,12 +271,12 @@
     </div>
 </Modal>
 
-<Modal bind:open={createRegisterModal} size="xs">
+<Modal bind:open={rotateRegisterModal} size="xs">
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to create register ?</h3>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to rotate register ?</h3>
         <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will archive any active register.</h5>
-        <Button color="green" on:click={createRegister} class="mr-2">Yes, I'm sure</Button>
+        <Button color="green" on:click={rotateRegister} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>

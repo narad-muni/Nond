@@ -141,8 +141,8 @@
     
     <Dropdown trigger="hover" placement="bottom" triggeredBy="#avatar">
         <DropdownHeader>
-        <span class="block text-sm"> {$user.username.charAt(0).toUpperCase() + $user.username.slice(1)} </span>
-        <span class="block truncate text-sm font-light"> {$user.role.name} </span>
+            <span class="block text-sm"> {$user.username.charAt(0).toUpperCase() + $user.username.slice(1)} </span>
+            <span class="block truncate text-sm font-light"> {$user.role.name} </span>
         </DropdownHeader>
         <DropdownItem on:click={logout}>Sign out</DropdownItem>
     </Dropdown>

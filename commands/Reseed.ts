@@ -1,4 +1,5 @@
 import { BaseCommand } from '@adonisjs/core/build/standalone'
+import Register from 'App/Models/Register'
 import { DateTime } from 'luxon'
 
 export default class Reseed extends BaseCommand {
@@ -88,6 +89,13 @@ export default class Reseed extends BaseCommand {
             name: 'GST 1',
             service_id: 0
         });
+
+        await Register.create({
+            id: 0,
+            suffix: '22-23',
+            master_id: 0,
+            active: true
+        })
 
         await Role.create({
             id: 0,
