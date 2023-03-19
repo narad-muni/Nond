@@ -15,9 +15,13 @@ export default class AppProvider {
     public async ready () {
 
         const {default: SchedulerManager} = await import('App/Utils/SchedulerManager');
+        const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
-        // App is 
+        // Trigger scheduler manager on start
         SchedulerManager.RunSchedulers();
+
+        //trigger scheduler after 24h if server is running continuously
+        setInterval(SchedulerManager.RunSchedulers,dayInMilliseconds);
     }
 
     public async shutdown () {

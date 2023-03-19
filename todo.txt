@@ -1,5 +1,7 @@
 invoice is pending
 
+download option fix
+
 create task in client
 
 starting with register
@@ -28,3 +30,7 @@ deleting or archiving active registers will delete the template and master regis
 *** there is issue on calculating columns for archived registers, need new schema
 
 soln - create new tempalte for every master, maintains version
+
+add retention strategy and rotation period, date in register master
+
+archived registers cannot be rotated, only deleted

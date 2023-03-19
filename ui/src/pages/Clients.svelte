@@ -30,7 +30,7 @@
     let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={services:{}}, actionsIndex, actionsObject, setServiceObject={};
+    let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={}, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
     let handler, rows;
     let automaticAssign = [
@@ -46,7 +46,7 @@
         {name: "Half Yearly", value:"6 months"},
         {name: "Yearly", value:"1 year"}
     ]
-    let error="", success="", assignedUser, autoAssignType, users;
+    let error="", assignedUser, autoAssignType, users;
 
     let minNextDate = new Date();
     minNextDate.setDate(new Date().getDate() + 1);
@@ -311,13 +311,13 @@
                 Set Service
             </Button>
             
-            <Button gradient color="green" on:click={download}>
+            <!-- <Button gradient color="green" on:click={download}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>                          
                 &nbsp;
                 Download
-            </Button>
+            </Button> -->
             
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -498,16 +498,16 @@
     </form>
 </Modal>
 
-<Modal bind:open={createTasksModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
+<Modal bind:open={createTasksModal} size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
         <Label class="flex  flex-col gap-y-1">
             <span class="mb-2">Client Id's</span>
             <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
         </Label>
         <Label class="flex  flex-col gap-y-1">
             <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={assignedUser}/>
+            <Select items={users} bind:value={createTasksObject.assigned_to}/>
         </Label>
         {#if assignedUser < 0}
             <Label class="flex  flex-col gap-y-1">
@@ -665,16 +665,6 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
-        </Alert>
-    </div>
-{/if}
-
-{#if success.length > 0}
-    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
-        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
-            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
-            </span>
-            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}
