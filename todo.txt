@@ -33,4 +33,4 @@ soln - create new tempalte for every master, maintains version
 
 add retention strategy and rotation period, date in register master
 
-archived registers cannot be rotated, only deleted
+archived registers can only be deleted

@@ -90,12 +90,29 @@ export default class TasksController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
 
-        const data = await Task.create(payload);
+        if(Array.isArray(payload.client_id)){//if array of client id is passed
+            const tasksArray: any[] = [];
+            const tempObject = payload;
 
-        response.send({
-            status: 'success',
-            data: data
-        });
+            payload.client_id.forEach(client => {
+                tempObject.client_id = client;
+                tasksArray.push(tempObject);
+            });
+
+            await Task.createMany(tasksArray);
+
+            response.send({
+                status: 'success'
+            })
+
+        }else{//if single client id is passed
+            const data = await Task.create(payload);
+
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }
     }
 
     public async update({request,response}: HttpContextContract){

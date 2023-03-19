@@ -30,13 +30,9 @@
     let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={}, actionsIndex, actionsObject, setServiceObject={};
+    let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
     let frequency = [
         {name: "Daily", value:"1 day"},
         {name: "Weekly", value:"1 week"},
@@ -45,8 +41,23 @@
         {name: "Quarterly", value:"3 months"},
         {name: "Half Yearly", value:"6 months"},
         {name: "Yearly", value:"1 year"}
-    ]
-    let error="", assignedUser, autoAssignType, users;
+    ];
+
+    const task_status = [
+        {name:'Pending',value:0},
+        {name:'In Process',value:1},
+        {name:'Halted',value:2},
+        {name:'Raised',value:3},
+        {name:'Completed',value:4}
+    ];
+
+    const priority = [
+        {name:'Low',value:0},
+        {name:'Regular',value:1},
+        {name:'Urgent',value:2}
+    ];
+
+    let error="", users;
 
     let minNextDate = new Date();
     minNextDate.setDate(new Date().getDate() + 1);
@@ -58,6 +69,7 @@
         client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
         users = await utils.get('/api/employee/options');
+        taskTemplates = await utils.get('/api/task_template/options');
         services = await utils.get('/api/service/options');
         data = await utils.get('/api/client/master/false');
 
@@ -211,6 +223,47 @@
         selectedRows.clear();
         selectedRows = selectedRows;
         handler.setRows(data);
+    }
+
+    async function createTasks(){
+        const client_id = Array.from(selectedRows);
+        createTasksObject.client_id = client_id;
+
+        const resp = await utils.post_json('/api/task/',createTasksObject);
+
+        if(resp.status == 'success'){
+
+            //clear selection
+            for (let i = 0; i < data.length; i++) {
+                if (selectedRows.has(data[i].id)) {
+                    data[i]._selected = false;
+                }
+            }
+
+            selectedRows.clear();
+            handler.setRows(data);
+
+            //reset object and modal            
+            createTasksObject = {priority:1,status:0};
+            createTasksModal = false;
+        }else{
+            error = resp.message || "";
+        }
+    }
+
+    async function loadTaskTemplate(e){
+        const template_id = e.target.value;
+        const template = await utils.get('/api/task_template/'+template_id);
+
+        if(template.status == 'success'){
+            delete template.data.name;
+            delete template.data.id;
+
+            createTasksObject = template.data;
+        }else{
+            error = template.message || "";
+        }
+
     }
 
     async function viewAllColumns(){
@@ -499,26 +552,44 @@
 </Modal>
 
 <Modal bind:open={createTasksModal} size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createTasks}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Client Id's</span>
+        <Label class="space-y-2 col-span-3">
+            <span>Template</span>
+            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
+        </Label>
+        <Label class="space-y-2 col-span-2">
+            <span>Title</span>
+            <Input required type="text" placeholder="Title" bind:value={createTasksObject.title}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={createTasksObject.service_id} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Client Ids</span>
             <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
         </Label>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={createTasksObject.assigned_to}/>
+        <Label class="space-y-2">
+            <span>Assigned To</span>
+            <Select items={users} bind:value={createTasksObject.assigned_to} />
         </Label>
-        {#if assignedUser < 0}
-            <Label class="flex  flex-col gap-y-1">
-                <span class="mb-2">Assign By</span>
-                <Select items={automaticAssign} bind:value={autoAssignType}/>
-            </Label>
-        {/if}
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Description</span>
-            <Textarea rows=8></Textarea>
+        <Label class="space-y-2">
+            <span>Status</span>
+            <Select required items={task_status} bind:value={createTasksObject.status}/>
         </Label>
+        <Label class="space-y-2">
+            <span>Priority</span>
+            <Select required items={priority} bind:value={createTasksObject.priority}/>
+        </Label>
+        <Label class="space-y-2 col-span-3">
+            <span>Description</span>
+            <Textarea placeholder="Description" rows="4" bind:value={createTasksObject.description}/>
+        </Label>
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button type="submit" class="w-full">Create</Button>
+            <Button on:click={()=>{createTasksModal=false;createTasksObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
+        </div>
     </form>
 </Modal>
 
