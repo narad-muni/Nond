@@ -2,7 +2,7 @@ invoice is pending
 
 download option fix
 
-starting with register
+create register templates and register tables
 
 add hsn/sac in service
 2 type of bills gst & non-gst
@@ -33,4 +33,4 @@ add retention strategy and rotation period, date in register master
 
 archived registers can only be deleted
 
-when rotating keep the id of original one, create a new entry for archived.
+save archived register template in another table

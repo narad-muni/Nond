@@ -9,22 +9,18 @@
         TableBodyCell,
         TableBodyRow,
         Checkbox,
-        A,
         Label,
-        Helper,
         Input,
         Toggle,
         Alert,
-        Textarea,
         Select
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { types } from "joi";
 
     // Intialization
 

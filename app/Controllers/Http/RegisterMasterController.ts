@@ -1,6 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database'
 import RegisterMaster from 'App/Models/RegisterMaster'
 import Scheduler from 'App/Models/Scheduler'
+import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class RegistersController {
     public async index({response}: HttpContextContract) {
@@ -47,6 +49,7 @@ export default class RegistersController {
 
         let data: any = RegisterMaster
             .query()
+            .select('id','name','version');
 
         if(payload == 'archived'){
             data = data.where('active',false);
@@ -60,8 +63,10 @@ export default class RegistersController {
 
         serilizedData.map(e => {
             e.value = e.id;
+            e.name += " " + e.version;
 
             delete e.id;
+            delete e.version;
         });
 
         response.send(serilizedData);
@@ -94,6 +99,11 @@ export default class RegistersController {
             delete payload.next;
             delete payload.rotation_strategy;
 
+            await Database.rawQuery(`create table "register__${string.escapeHTML(payload.name+payload.version)}"(
+                id serial4 primary key not null,
+                client_id int4
+            )`);
+
             payload.active = true;
 
             const data = await RegisterMaster
@@ -124,7 +134,10 @@ export default class RegistersController {
         await RegisterMaster
             .query()
             .whereIn('id',id)
-            .update({active: false}); 
+            .update({active: false});
+
+        //TODO archive register template
+        //TODO flatten register table
 
         response.send({
             status: 'success'
@@ -134,29 +147,54 @@ export default class RegistersController {
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
 
-        const scheduler = data.scheduler;
-
-        delete data.scheduler;
-
-        await Scheduler
+        const exist = await RegisterMaster
             .query()
-            .where('id',scheduler.id)
-            .update(scheduler);
+            .where('name',data.name)
+            .where('version',data.version)
+            .whereNot('id',data.id)
+            .first()
 
-        await RegisterMaster
-            .query()
-            .where('id',data.id)
-            .update(data);
+        if(exist){
+            response.send({
+                status: 'error',
+                message: 'register with same name or version already exists!'
+            });
+        }else{
+            const old = await RegisterMaster.query().where('id',data.id).first();
+            const scheduler = data.scheduler;
 
-        response.send({
-            status: 'success',
-            message: null,
-            data: data
-        });
+            await Database.rawQuery(`alter table "register__${string.escapeHTML(old.name+old.version)}" rename to "register__${string.escapeHTML(data.name+data.version)}"`);
+
+            delete data.scheduler;
+
+            await Scheduler
+                .query()
+                .where('id',scheduler.id)
+                .update(scheduler);
+
+            await RegisterMaster
+                .query()
+                .where('id',data.id)
+                .update(data);
+
+            response.send({
+                status: 'success',
+                message: null,
+                data: data
+            });
+        }
     }
     
     public async destroy({request,response}: HttpContextContract) {
         const id = request.input('id');
+
+        const registers = await RegisterMaster
+            .query()
+            .whereIn('id',id);
+
+        for(const register of registers){
+            await Database.rawQuery(`drop table "register__${string.escapeHTML(register.name+register.version)}"`);
+        }
         
         await RegisterMaster
             .query()

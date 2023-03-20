@@ -34,7 +34,6 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role');
         const { default: Company } = await import('App/Models/Company');
         const { default: Task } = await import('App/Models/Task');
-        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
         const {default: Lead} = await import('App/Models/Lead');
         const {default: Client} = await import('App/Models/Client');
         const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
@@ -158,27 +157,6 @@ export default class Reseed extends BaseCommand {
             started: DateTime.fromISO('2022-12-12')
         });
 
-        await RegisterTemplate.create({
-            id: 0,
-            name: 'GST 1B',
-            columns: {
-                reg_no: {
-                    type: "Text",
-                    is_master: true
-                },
-                test_no: {
-                    type: "File",
-                    is_master: false
-                }
-            },
-            client_columns: {
-                name: {
-                    type: "Text",
-                    is_master: true
-                }
-            }
-        });
-
     }
 
     public async de_initialize(){
@@ -187,40 +165,32 @@ export default class Reseed extends BaseCommand {
         const { default: Role } = await import('App/Models/Role');
         const { default: Company } = await import('App/Models/Company');
         const { default: Task } = await import('App/Models/Task');
-        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
         const {default: Lead} = await import('App/Models/Lead');
         const {default: Client} = await import('App/Models/Client');
-        const {default: RegisterMaster} = await import('App/Models/RegisterMaster');
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
         const {default: Scheduler} = await import('App/Models/Scheduler');
             
         const user = await Employee.findBy('id',0);
         const scheduler = await Scheduler.findBy('id',0);
-        const scheduler2 = await Scheduler.findBy('id',1);
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
         const task = await Task.findBy('id',0);
-        const register_template = await RegisterTemplate.findBy('id',0);
         const lead = await Lead.findBy('id',0);
         const client = await Client.findBy('id',0);
-        const register_master = await RegisterMaster.findBy('id',0);
         const service = await Service.findBy('id',0);
         const service_others = await Service.findBy('id',-1);
         const task_template = await TaskTemplate.findBy('id',0);
 
         await user?.delete();
         await scheduler?.delete();
-        await scheduler2?.delete();
         await role1?.delete();
         await role2?.delete();
         await company?.delete();
         await task?.delete();
-        await register_template?.delete();
         await lead?.delete();
         await client?.delete();
-        await register_master?.delete();
         await service?.delete();
         await service_others?.delete();
         await task_template?.delete();

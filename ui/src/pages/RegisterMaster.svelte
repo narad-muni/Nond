@@ -194,6 +194,7 @@
             data = [...data,resp.data];
             handler.setRows(data);
             createModal = false;
+            createdObject = {};
         }else{
             error = resp.message || "";
         }
@@ -254,17 +255,12 @@
                     <TableBody>
                         {#each $rows as row}
                             <TableBodyRow>
+                                <TableBodyCell>
+                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                </TableBodyCell>
                                 {#if row.active}
-                                    <TableBodyCell>
-                                        <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                                    </TableBodyCell>
-
                                     <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 {:else}
-                                    <TableBodyCell>
-                                        <Checkbox disabled/>
-                                    </TableBodyCell>
-
                                     <TableBodyCell class="cursor-not-allowed bg-gray-100" >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
@@ -333,11 +329,11 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <Input type="date" min={minNextDate} bind:value={createdObject.next} />
+            <Input required type="date" min={minNextDate} bind:value={createdObject.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
-            <Select items={frequency} bind:value={createdObject.frequency} />
+            <Select required items={frequency} bind:value={createdObject.frequency} />
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>

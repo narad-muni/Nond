@@ -1,15 +1,25 @@
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import RegisterMaster from './RegisterMaster'
 
 export default class RegisterTemplate extends BaseModel {
     @column({ isPrimary: true })
     public id: number
 
     @column()
-    public name: string
+    public table_id: number
 
     @column()
-    public columns: object
+    public column_name: string
 
     @column()
-    public client_columns: object
+    public display_name: string
+
+    @column()
+    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox'
+
+    @column()
+    public client_column: boolean
+
+    @column()
+    public master: boolean
 }
