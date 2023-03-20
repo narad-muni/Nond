@@ -22,7 +22,7 @@
 
     if($location == '/'){
         if(!$user.is_admin){
-            window.location.href ='/#/users';
+            window.location.href ='/#/task';
         }
     }
 

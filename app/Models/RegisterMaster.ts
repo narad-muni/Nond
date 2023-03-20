@@ -1,5 +1,6 @@
 import { BaseModel, BelongsTo, belongsTo, column, HasOne, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import RegisterTemplate from './RegisterTemplate'
+import Scheduler from './Scheduler'
 import Service from './Service'
 
 export default class RegisterMaster extends BaseModel {
@@ -27,5 +28,10 @@ export default class RegisterMaster extends BaseModel {
         foreignKey: 'master_id'
     })
     public template: HasOne<typeof RegisterTemplate>
+
+    @hasOne(() => Scheduler,{
+        foreignKey: 'register_id'
+    })
+    public scheduler: HasOne<typeof Scheduler>
 
 }

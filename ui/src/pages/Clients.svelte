@@ -33,7 +33,7 @@
     let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
     let handler, rows;
-    let frequency = [
+    const frequency = [
         {name: "Daily", value:"1 day"},
         {name: "Weekly", value:"1 week"},
         {name: "Bi Weekly", value:"2 weeks"},

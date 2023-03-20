@@ -156,9 +156,11 @@ Route.group(() => {
             Route.get('/','RegisterMasterController.index');
             Route.get('/:id','RegisterMasterController.get').where('id',/^[0-9]+$/);
 
+            Route.get('/options/:filter?','RegisterMasterController.options').where('filter',/all|active|archived/);
+
             Route.post('/','RegisterMasterController.create');
 
-            Route.post('/rotate','RegisterMasterController.rotate');
+            Route.put('/archive','RegisterMasterController.archive');
 
             Route.put('/','RegisterMasterController.update');
 

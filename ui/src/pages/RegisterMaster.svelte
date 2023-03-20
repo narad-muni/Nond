@@ -23,12 +23,26 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, rotateRegisterModal;
+    let createModal, actionsModals, deleteModal, archiveModal, rotateRegisterModal;
     let selectedRows = new Set();
 
     let data, createdObject={},services, actionsIndex, actionsObject;
     let handler, rows;
     let error="";
+
+    let minNextDate = new Date();
+    minNextDate.setDate(new Date().getDate() + 1);
+    minNextDate = minNextDate.toJSON().slice(0, 10);
+
+    const frequency = [
+        {name: "Daily", value:"1 day"},
+        {name: "Weekly", value:"1 week"},
+        {name: "Bi Weekly", value:"2 weeks"},
+        {name: "Monthly", value:"1 month"},
+        {name: "Quarterly", value:"3 months"},
+        {name: "Half Yearly", value:"6 months"},
+        {name: "Yearly", value:"1 year"}
+    ];
 
     // fetch data
 
@@ -80,8 +94,10 @@
             if(e.target.checked){
 
                 $rows.forEach((r) => {
-                    r._selected = true;
-                    selectedRows.add(parseInt(r.id));
+                    if(r.active){
+                        r._selected = true;
+                        selectedRows.add(parseInt(r.id));
+                    }
                 });
 
             }else{
@@ -151,8 +167,22 @@
         }
     }
 
-    async function rotateRegister(){
+    async function archiveRegister(){
+        const resp = await utils.put_json('/api/register_master/archive/',{id:Array.from(selectedRows)});
 
+        if(resp.status == 'success'){
+            for (let i = 0; i < data.length; i++) {
+                if (selectedRows.has(data[i].id)) {
+                    data[i]._selected = false;
+                    data[i].active = false;
+                }
+            }
+            selectedRows.clear();
+            handler.setRows(data);
+            selectedRows = selectedRows;
+        }else{
+            error = resp.message;
+        }
     }
 
     async function createData(){
@@ -160,8 +190,8 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
-            resp.data.service = services.find(e => e.value = resp.data.service_id);
-            data.push(resp.data);
+            resp.data.service = services.find(e => e.value == resp.data.service_id);
+            data = [...data,resp.data];
             handler.setRows(data);
             createModal = false;
         }else{
@@ -181,15 +211,7 @@
                 Create
             </Button>
 
-            <Button disabled={selectedRows.size != 1} gradient color="green" on:click={() => rotateRegisterModal = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>                   
-                &nbsp;
-                Rotate
-            </Button>
-
-            <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> deleteModal = true}>
+            <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> archiveModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>              
@@ -216,31 +238,40 @@
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="name">Master</Th>
-                            <Th {handler} orderBy="name">Service</Th>
-                            <Th {handler} orderBy="active">Active</Th>
+                            <Th {handler} orderBy="version">Version</Th>
+                            <Th {handler} orderBy={(row) => row.service.name}>Service</Th>
+                            <Th {handler} orderBy={(row) => row.active ? "Yes" : "No"}>Active</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"/>
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="service"/>
-                            <ThSearch {handler} filterBy="active"/>
+                            <ThSearch {handler} filterBy="version"/>
+                            <ThSearch {handler} filterBy={(row) => row.service.name}/>
+                            <ThSearch {handler} filterBy={(row) => row.active ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>
                         {#each $rows as row}
                             <TableBodyRow>
-                                <TableBodyCell>
-                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                                </TableBodyCell>
-                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>
-                                    {row.name + ' ' + row.version}
-                                </TableBodyCell>
+                                {#if row.active}
+                                    <TableBodyCell>
+                                        <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                    </TableBodyCell>
+
+                                    <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                {:else}
+                                    <TableBodyCell>
+                                        <Checkbox disabled/>
+                                    </TableBodyCell>
+
+                                    <TableBodyCell class="cursor-not-allowed bg-gray-100" >{row.id}</TableBodyCell>
+                                {/if}
                                 <TableBodyCell>
                                     {row.name}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.version}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.service.name}
@@ -271,16 +302,15 @@
     </div>
 </Modal>
 
-<Modal bind:open={rotateRegisterModal} size="xs">
+<Modal bind:open={archiveModal} size="xs" autoclose>
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to rotate register ?</h3>
-        <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will archive any active register.</h5>
-        <Button color="green" on:click={rotateRegister} class="mr-2">Yes, I'm sure</Button>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to archive selected rows?</h3>
+        <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will also delete templates</h5>
+        <Button color="red" on:click={archiveRegister} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>
-
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
@@ -290,12 +320,24 @@
             <Input required bind:value={createdObject.name}/>
         </Label>
         <Label class="space-y-2">
-            <span>Suffix</span>
-            <Input required bind:value={createdObject.suffix}/>
+            <span>Version</span>
+            <Input required bind:value={createdObject.version}/>
         </Label>
         <Label class="space-y-2">
-            <span>service</span>
+            <span>Service</span>
             <Select required items={services} bind:value={createdObject.service_id} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Rotation Strategy</span>
+            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={createdObject.rotation_strategy} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Next Rotation</span>
+            <Input type="date" min={minNextDate} bind:value={createdObject.next} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Rotation Frequency</span>
+            <Select items={frequency} bind:value={createdObject.frequency} />
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
@@ -308,16 +350,28 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Entry</h3>
         <Label class="space-y-2">
-            <span>ID</span>
-            <Input value={actionsObject.id} readonly/>
-        </Label>
-        <Label class="space-y-2">
-            <span>name</span>
+            <span>Name</span>
             <Input required bind:value={actionsObject.name}/>
         </Label>
         <Label class="space-y-2">
-            <span>service</span>
+            <span>Version</span>
+            <Input required bind:value={actionsObject.version}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
             <Select required items={services} bind:value={actionsObject.service_id} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Rotation Strategy</span>
+            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={actionsObject.scheduler.data.rotation_strategy} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Next Rotation</span>
+            <Input type="date" min={minNextDate} bind:value={actionsObject.scheduler.next} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Rotation Frequency</span>
+            <Select items={frequency} bind:value={actionsObject.scheduler.frequency} />
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>

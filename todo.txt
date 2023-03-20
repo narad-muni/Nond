@@ -2,8 +2,6 @@ invoice is pending
 
 download option fix
 
-create task in client
-
 starting with register
 
 add hsn/sac in service
@@ -34,3 +32,5 @@ soln - create new tempalte for every master, maintains version
 add retention strategy and rotation period, date in register master
 
 archived registers can only be deleted
+
+when rotating keep the id of original one, create a new entry for archived.

@@ -10,6 +10,12 @@ export default class Scheduler extends BaseModel {
 
     @column()
     public service_id: number
+
+    @column()
+    public register_id: number
+
+    @column()
+    public data: object
     
     @column()
     public type: number

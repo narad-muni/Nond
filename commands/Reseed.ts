@@ -59,6 +59,15 @@ export default class Reseed extends BaseCommand {
             type: 5
         });
 
+        await Scheduler.create({
+            id: 1,
+            register_id: 0,
+            data: {rotation_strategy: 'delete'},
+            next: DateTime.fromISO('2022-12-01'),
+            frequency: '1 month',
+            type: 1
+        });
+
         await TaskTemplate.create({
             id: 0,
             name: 'Default',
@@ -188,6 +197,7 @@ export default class Reseed extends BaseCommand {
             
         const user = await Employee.findBy('id',0);
         const scheduler = await Scheduler.findBy('id',0);
+        const scheduler2 = await Scheduler.findBy('id',1);
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
         const company = await Company.findBy('id',0);
@@ -202,6 +212,7 @@ export default class Reseed extends BaseCommand {
 
         await user?.delete();
         await scheduler?.delete();
+        await scheduler2?.delete();
         await role1?.delete();
         await role2?.delete();
         await company?.delete();
