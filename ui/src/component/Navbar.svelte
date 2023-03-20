@@ -13,14 +13,23 @@
     } from 'flowbite-svelte';
 
     import utils from '../utils';
-    import { user } from '../global/user.js';
+    import { user, active_registers, archived_registers } from '../global/stores.js';
 
-    let active_registers, archived_registers;
+    let _active_registers, _archived_registers;
 
-    (async () => {
-        active_registers = await utils.get('/api/register_master/options/active');
-        archived_registers = await utils.get('/api/register_master/options/archived');
-    })();
+    active_registers.subscribe(val => {
+        (async () => {
+            _active_registers = await utils.get('/api/register_master/options/active');
+            _archived_registers = await utils.get('/api/register_master/options/archived');
+        })();
+    });
+
+    archived_registers.subscribe(val => {
+        (async () => {
+            _active_registers = await utils.get('/api/register_master/options/active');
+            _archived_registers = await utils.get('/api/register_master/options/archived');
+        })();
+    });
 
     async function logout(){
         await utils.post_json('/api/auth/logout');
@@ -89,7 +98,7 @@
         </Dropdown>
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#archived">
-            {#each archived_registers as register}
+            {#each _archived_registers as register}
                 <DropdownItem href="/#/register/{register.value}">{register.name}</DropdownItem>
             {/each}
         </Dropdown>
@@ -113,7 +122,7 @@
         </Dropdown>
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#register">
-            {#each active_registers as register}
+            {#each _active_registers as register}
                 <DropdownItem href="/#/register/{register.value}">{register.name}</DropdownItem>
             {/each}
         </Dropdown>
@@ -122,7 +131,7 @@
             {#if $user.role.read.register_template}
                 <DropdownItem id="register_template" class="flex items-center justify-between"><Chevron placement="right">Register Template</Chevron></DropdownItem>
                 <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
-                    {#each active_registers as register}
+                    {#each _active_registers as register}
                         <DropdownItem href="/#/register_template/{register.value}">{register.name}</DropdownItem>
                     {/each}
                 </Dropdown>

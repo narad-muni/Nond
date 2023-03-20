@@ -7,7 +7,7 @@
 
     import { location } from 'svelte-spa-router'
 
-    import {user} from '../global/user.js'
+    import { user } from '../global/stores.js'
     import Role from "./Role.svelte";
     import Lead from "./Lead.svelte";
     import Task from "./Task.svelte";
@@ -19,6 +19,8 @@
     import Service from "./Service.svelte";
     import RegisterMaster from "./RegisterMaster.svelte";
     import Invoice from "./Invoice.svelte";
+    import RegisterTemplate from "./RegisterTemplate.svelte";
+    import Register from "./Register.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -38,6 +40,8 @@
         '/task':Task,
         '/invoice':Invoice,
         '/master_template':MasterTemplate,
+        '/register_template/:id':RegisterTemplate,
+        '/register/:id':Register,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,
         '*':Error

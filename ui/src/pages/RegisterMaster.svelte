@@ -20,6 +20,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+    import { active_registers } from '../global/stores';
 
     // Intialization
 
@@ -138,6 +139,9 @@
         const resp = await utils.put_json('/api/register_master/',actionsObject);
 
         if(resp.status == 'success'){
+            //trigger nav bar update
+            active_registers.set();
+
             resp.data._selected = data[actionsIndex]._selected;
             resp.data.service = services.find(e => e.value == resp.data.service_id);
             data[actionsIndex] = resp.data;
@@ -153,6 +157,9 @@
         const resp = await utils._delete('/api/register_master/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
+            //trigger nav bar update
+            active_registers.set();
+
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {
                     data.splice(i, 1);
@@ -171,6 +178,9 @@
         const resp = await utils.put_json('/api/register_master/archive/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
+            //trigger nav bar update
+            active_registers.set();
+
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {
                     data[i]._selected = false;
@@ -189,6 +199,9 @@
         let resp = await utils.post_json('/api/register_master/',createdObject);
 
         if(resp.status == 'success'){
+            //trigger nav bar update
+            active_registers.set();
+            
             resp.data._selected = false;
             resp.data.service = services.find(e => e.value == resp.data.service_id);
             data = [...data,resp.data];

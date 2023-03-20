@@ -117,14 +117,17 @@ Route.group(() => {
         */
 
         Route.group(() => {
-            Route.get('/','TemplatesController.index');
-            Route.get('/:id','TemplatesController.get').where('id',/^[0-9]+$/);
+            Route.get('/:table_id','RegisterTemplatesController.index').where('table_id',/^[0-9]+$/);
+            
+            Route.get('/:table_id/:id','RegisterTemplatesController.get')
+                .where('id',/^[0-9]+$/)
+                .where('table_id',/^[0-9]+$/);
 
-            Route.post('/','TemplatesController.create');
+            Route.post('/','RegisterTemplatesController.create');
 
-            Route.put('/','TemplatesController.update');
+            Route.put('/','RegisterTemplatesController.update');
 
-            Route.delete('/destroy','TemplatesController.destroy');
+            Route.delete('/destroy','RegisterTemplatesController.destroy');
         })
         .prefix('/register_template');
 

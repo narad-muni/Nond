@@ -1,7 +1,7 @@
 <script>
     import { Input, Label, Button, FloatingLabelInput,Alert } from 'flowbite-svelte';
     import utils from '../utils'
-    import { user } from '../global/user.js';
+    import { user } from '../global/stores.js';
 
     let username,password,error="";
 

@@ -40,6 +40,7 @@ export default class Reseed extends BaseCommand {
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
         const {default: Scheduler} = await import('App/Models/Scheduler');
+        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
 
         await Employee.create({
             id: 0,
@@ -47,6 +48,15 @@ export default class Reseed extends BaseCommand {
             password: 'admin123',
             is_admin: true,
             role_id: 1,
+        });
+
+        await RegisterTemplate.create({
+            id: 0,
+            table_id: 0,
+            column_name: 'relation',
+            display_name: 'Relation',
+            column_type: 'Text',
+            master: true
         });
 
         await Scheduler.create({
@@ -170,6 +180,7 @@ export default class Reseed extends BaseCommand {
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
         const {default: Scheduler} = await import('App/Models/Scheduler');
+        const {default: RegisterTemplate} = await import('App/Models/RegisterTemplate');
             
         const user = await Employee.findBy('id',0);
         const scheduler = await Scheduler.findBy('id',0);
@@ -182,6 +193,7 @@ export default class Reseed extends BaseCommand {
         const service = await Service.findBy('id',0);
         const service_others = await Service.findBy('id',-1);
         const task_template = await TaskTemplate.findBy('id',0);
+        const register_template = await RegisterTemplate.findBy('id',0);
 
         await user?.delete();
         await scheduler?.delete();
@@ -194,6 +206,7 @@ export default class Reseed extends BaseCommand {
         await service?.delete();
         await service_others?.delete();
         await task_template?.delete();
+        await register_template?.delete();
 
     }
 

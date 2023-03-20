@@ -4,12 +4,11 @@
     import {wrap} from 'svelte-spa-router/wrap'
 
     import utils from './utils'
-    import { user } from './global/user.js';
+    import { user } from './global/stores.js';
 
     import Home from './pages/Home.svelte'
     import NotFound from './pages/Error.svelte'
     import Login from './pages/Login.svelte';
-    import Error from './pages/Error.svelte';
 
     let loaded = false;
     let routes;
