@@ -186,11 +186,7 @@ Route.group(() => {
 
             Route.put('/:table_id','RegistersController.update');
 
-            Route.put('/archive/:id','RegistersController.archive').where('id',/^[0-9]+$/);
-
-            Route.delete('/','RegistersController.remove');
-
-            Route.delete('/destroy','RegistersController.destroy');
+            Route.delete('/destroy/:table_id','RegistersController.destroy');
 
         })
         .prefix('/register');

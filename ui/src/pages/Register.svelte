@@ -28,11 +28,10 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false, register_id;
+    let createModal, actionsModals, deleteModal, allColumns = false, register_id;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
-    let emptyCreatedObject;
+    let headers, client_list, data, createdObject={}, actionsIndex, actionsObject;
     let handler, rows;
 
     let error="", users;
@@ -141,47 +140,6 @@
         }
     }
 
-    async function createTasks(){
-        const client_id = Array.from(selectedRows);
-        createTasksObject.client_id = client_id;
-
-        const resp = await utils.post_json('/api/task/',createTasksObject);
-
-        if(resp.status == 'success'){
-
-            //clear selection
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
-                    data[i]._selected = false;
-                }
-            }
-
-            selectedRows.clear();
-            handler.setRows(data);
-
-            //reset object and modal            
-            createTasksObject = {priority:1,status:0};
-            createTasksModal = false;
-        }else{
-            error = resp.message || "";
-        }
-    }
-
-    async function loadTaskTemplate(e){
-        const template_id = e.target.value;
-        const template = await utils.get('/api/task_template/'+template_id);
-
-        if(template.status == 'success'){
-            delete template.data.name;
-            delete template.data.id;
-
-            createTasksObject = template.data;
-        }else{
-            error = template.message || "";
-        }
-
-    }
-
     async function viewAllColumns(){
         allColumns = true;
         data = await utils.get('/api/register/'+register_id);
@@ -207,7 +165,7 @@
             }
         }
 
-        await utils._delete('/api/register/',{id: Array.from(selectedRows)});
+        await utils._delete('/api/register/destroy/'+register_id,{id: Array.from(selectedRows)});
 
         selectedRows.clear();
         handler.setRows(data);
@@ -215,18 +173,15 @@
     }
 
     async function createData(){
-        createdObject._services  = JSON.stringify(createdObject.services);
-        const resp = await utils.post_form('/api/register',utils.getFormData(createdObject));
+        const resp = await utils.post_form('/api/register/'+register_id,utils.getFormData(createdObject));
 
         if(resp.status == 'success'){
             resp.data._selected = false;
 
-            resp.data.group = client_list.find(e => e.value == resp.data.group_id);
-
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject = emptyCreatedObject;
+            createdObject = {};
             
         }else{
             error = resp.message || "";
@@ -351,22 +306,7 @@
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
-            <Input required type="text" bind:value={createdObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={createdObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Group</span>
-            <IdSelect required items={client_list} bind:value={createdObject.group_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GSTIN</span>
-            <Input type="text" bind:value={createdObject.gstin} />
+            <IdSelect required items={client_list} bind:value={createdObject.client_id} />
         </Label>
 
         {#each headers.data as header}
@@ -391,41 +331,7 @@
 
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Cancel</Button>
-        </div>
-    </form>
-</Modal>
-
-<Modal bind:open={createTasksModal} size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createTasks}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
-        <Label class="space-y-2 col-span-3">
-            <span>Template</span>
-            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Title</span>
-            <Input required type="text" placeholder="Title" bind:value={createTasksObject.title}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={createTasksObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Client Ids</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={users} bind:value={createTasksObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2 col-span-3">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={createTasksObject.description}/>
-        </Label>
-        <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createTasksModal=false;createTasksObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
