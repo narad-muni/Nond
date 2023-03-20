@@ -4,6 +4,8 @@ import RegisterMaster from 'App/Models/RegisterMaster';
 import RegisterTemplate from 'App/Models/RegisterTemplate';
 import { string } from '@ioc:Adonis/Core/Helpers';
 import { DateTime } from 'luxon';
+import Application from '@ioc:Adonis/Core/Application';
+import fs from 'fs';
 
 export default class RegistersController {
 
@@ -87,6 +89,7 @@ export default class RegistersController {
     public async create({request,response}: HttpContextContract){
         const payload = request.params();
         const data = request.all();
+        const files = request.allFiles();
 
         //setup dynamic register
         const register = await RegisterMaster
@@ -111,6 +114,14 @@ export default class RegistersController {
 
         const resp = await DynamicRegister
             .create(data);
+
+        //save files
+        Object.values(files).forEach(file => {
+            const path = `/file/register/${payload.table_id}/${resp.id}/`;
+            const file_name = `${file.fieldName}.${file.extname}`
+            file.move(Application.makePath(path),{name:file_name});
+            data[file.fieldName] = path+file_name;
+        });
 
         data.id = resp.id;
 
@@ -178,6 +189,13 @@ export default class RegistersController {
 
         DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
         //setup complete
+
+        //delete files
+        data.id.forEach(id => {
+            try{
+                fs.rmSync(Application.makePath(`/file/register/${payload.table_id}/${id}`),{recursive: true, force: true});
+            }catch{}
+        });
 
         await DynamicRegister
             .query()
