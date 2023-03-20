@@ -3,6 +3,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import RegisterMaster from 'App/Models/RegisterMaster'
 import Scheduler from 'App/Models/Scheduler'
 import { string } from '@ioc:Adonis/Core/Helpers'
+import RegisterTemplate from 'App/Models/RegisterTemplate'
 
 export default class RegistersController {
     public async index({response}: HttpContextContract) {
@@ -195,6 +196,11 @@ export default class RegistersController {
         for(const register of registers){
             await Database.rawQuery(`drop table "register__${string.escapeHTML(register.name+register.version)}"`);
         }
+
+        await RegisterTemplate
+            .query()
+            .whereIn('table_id',id)
+            .delete();
         
         await RegisterMaster
             .query()
