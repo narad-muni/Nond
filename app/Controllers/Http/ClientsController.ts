@@ -4,8 +4,16 @@ import Client from 'App/Models/Client';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import Scheduler from 'App/Models/Scheduler';
 import fs from 'fs';
+import { DateTime } from 'luxon';
 
 export default class ClientsController {
+
+    public static dateOptions = {
+            serialize: (value) => {
+                return DateTime.fromObject(value).toISODate()
+            }
+        }
+
     public async index({request,response}: HttpContextContract){
         const deleted = request.param('deleted');
         const headers = await MasterTemplate
@@ -13,7 +21,7 @@ export default class ClientsController {
             .where('table_name','clients')
 
         headers.forEach(header => {
-            Client.$addColumn(header.column_name,{});      
+            Client.$addColumn(header.column_name,ClientsController.dateOptions);
         });
 
         const data = await Client
@@ -43,7 +51,7 @@ export default class ClientsController {
 
         headers.forEach(header => {
             if(header.is_master){
-                Client.$addColumn(header.column_name,{});
+                Client.$addColumn(header.column_name,ClientsController.dateOptions);
             }            
         });
 
@@ -71,7 +79,7 @@ export default class ClientsController {
             .where('table_name','clients')
 
         headers.forEach(header => {
-            Client.$addColumn(header.column_name,{});
+            Client.$addColumn(header.column_name,ClientsController.dateOptions);
         });
 
         const data = await Client
@@ -143,7 +151,7 @@ export default class ClientsController {
             .where('table_name','clients')
 
         headers.forEach(header => {
-            Client.$addColumn(header.column_name,{});
+            Client.$addColumn(header.column_name,ClientsController.dateOptions);
         });
 
         delete payload.services;
@@ -239,7 +247,7 @@ export default class ClientsController {
             .where('table_name','clients');
 
         headers.forEach(header => {
-            Client.$addColumn(header.column_name,{});
+            Client.$addColumn(header.column_name,ClientsController.dateOptions);
         });
 
         const old = await Client

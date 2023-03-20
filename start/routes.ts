@@ -123,6 +123,8 @@ Route.group(() => {
                 .where('id',/^[0-9]+$/)
                 .where('table_id',/^[0-9]+$/);
 
+            Route.get('/options/:table_id','RegisterTemplatesController.options');
+        
             Route.post('/','RegisterTemplatesController.create');
 
             Route.put('/','RegisterTemplatesController.update');
@@ -174,19 +176,21 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','RegisterMasterController.index');
-            Route.get('/:id','RegisterMasterController.get').where('id',/^[0-9]+$/);
-            Route.get('/options','RegisterMasterController.options');
+            Route.get('/:table_id','RegistersController.index')
+                .where('table_id',/^[0-9]+$/);
+            Route.get('/:table_id/:id','RegistersController.get')
+                .where('id',/^[0-9]+$/)
+                .where('table_id',/^[0-9]+$/);
 
-            Route.post('/','RegisterMasterController.create');
+            Route.post('/:table_id','RegistersController.create');
 
-            Route.put('/','RegisterMasterController.update');
+            Route.put('/:table_id','RegistersController.update');
 
-            Route.put('/archive/:id','RegisterMasterController.archive').where('id',/^[0-9]+$/);
+            Route.put('/archive/:id','RegistersController.archive').where('id',/^[0-9]+$/);
 
-            Route.delete('/','RegisterMasterController.remove');
+            Route.delete('/','RegistersController.remove');
 
-            Route.delete('/destroy','RegisterMasterController.destroy');
+            Route.delete('/destroy','RegistersController.destroy');
 
         })
         .prefix('/register');

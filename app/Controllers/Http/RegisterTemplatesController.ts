@@ -32,6 +32,19 @@ export default class RegisterTemplatesController {
         })
     }
 
+    public async options({request,response}: HttpContextContract){
+        const payload = request.params();
+
+        const data = await RegisterTemplate
+            .query()
+            .where('table_id',payload.table_id)
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
     public async create({request,response}: HttpContextContract) {
         const payload = request.all();
         payload.column_name = string.snakeCase(payload.display_name);
