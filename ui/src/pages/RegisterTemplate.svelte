@@ -169,7 +169,8 @@
     }
 
     async function createData(){
-        let resp = await utils.post_json('/api/register_template/'+register_id,createdObject);
+        createdObject.table_id = register_id;
+        let resp = await utils.post_json('/api/register_template/',createdObject);
 
         if(resp.status == 'success'){
             resp.data._selected = false;
@@ -211,7 +212,7 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
+                            <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} >Register</Th>
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
@@ -272,10 +273,6 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Table Name</span>
-            <Select required items={table_name} bind:value={createdObject.table_name} />
-        </Label>
         <Label class="space-y-2">
             <span>Column Name</span>
             <Input required bind:value={createdObject.display_name}/>
