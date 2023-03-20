@@ -83,7 +83,7 @@ export default class MasterTemplatesController {
 
                 await Database
                     .rawQuery(
-                        'alter table ?? add column ?? '+c_type,
+                        'alter table ?? add column ?? '+string.escapeHTML(c_type),
                         [
                             payload.table_name,
                             payload.column_name
@@ -156,7 +156,7 @@ export default class MasterTemplatesController {
 
                 if(old?.column_type !== payload.column_type){
                     await Database
-                        .rawQuery('alter table ?? alter column ?? type ' + c_type + ' using null', [payload.table_name, payload.column_name]);
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [payload.table_name, payload.column_name]);
                 }
 
                 await MasterTemplate
