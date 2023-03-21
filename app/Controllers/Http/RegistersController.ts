@@ -117,13 +117,18 @@ export default class RegistersController {
 
         //save files
         Object.values(files).forEach(file => {
-            const path = `/file/register/${data.table_id}/${resp.id}/`;
+            const path = `/file/register/${payload.table_id}/${resp.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`
             file.move(Application.makePath(path),{name:file_name});
             data[file.fieldName] = path+file_name;
         });
 
         data.id = resp.id;
+
+        await DynamicRegister
+            .query()
+            .where('id',data.id)
+            .update(data);
 
         response.send({
             status: 'success',
