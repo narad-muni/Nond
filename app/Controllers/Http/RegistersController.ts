@@ -117,7 +117,7 @@ export default class RegistersController {
 
         //save files
         Object.values(files).forEach(file => {
-            const path = `/file/register/${payload.table_id}/${resp.id}/`;
+            const path = `/file/register/${data.table_id}/${resp.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`
             file.move(Application.makePath(path),{name:file_name});
             data[file.fieldName] = path+file_name;
@@ -134,6 +134,7 @@ export default class RegistersController {
     public async update({request,response}: HttpContextContract){
         const payload = request.params();
         const data = request.all();
+        const files = request.allFiles();
 
         //setup dynamic register
         const register = await RegisterMaster
@@ -160,6 +161,39 @@ export default class RegistersController {
         Object.keys(data).forEach(k => {
             if(data[k] == "null"){
                 data[k] = null;
+            }
+        });
+
+        //old entry
+        const old = await DynamicRegister
+            .query()
+            .where('id',data.id)
+            .first();
+
+        //replace existing files or create new
+        Object.values(files).forEach(async file => {
+            const path = `/file/register/${payload.table_id}/${data.id}/`;
+            const file_name = `${file.fieldName}.${file.extname}`
+
+            try{
+                fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
+            }catch(err){}
+
+            file.move(Application.makePath(path),{name:file_name});
+            data[file.fieldName] = path+file_name;
+        });
+
+        //delete nulled files
+        headers.forEach(header=>{
+            //Delete null files
+            if(header.column_type == 'File'){
+                if(old?.[header.column_name]){
+                    if(!data[header.column_name]){
+                        try{
+                            fs.unlinkSync(Application.makePath(old[header.column_name]));
+                        }catch(err){}
+                    }
+                }
             }
         });
 
