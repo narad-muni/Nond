@@ -1,3 +1,5 @@
+additional client side can also be made for viewing register, tasks, data, invoices.
+
 invoice is pending
 
 download option fix
