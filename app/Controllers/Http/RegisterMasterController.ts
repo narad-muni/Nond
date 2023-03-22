@@ -4,6 +4,7 @@ import RegisterMaster from 'App/Models/RegisterMaster'
 import Scheduler from 'App/Models/Scheduler'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import RegisterTemplate from 'App/Models/RegisterTemplate'
+import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate'
 
 export default class RegistersController {
     public async index({response}: HttpContextContract) {
@@ -137,8 +138,41 @@ export default class RegistersController {
             .whereIn('id',id)
             .update({active: false});
 
-        //TODO archive register template
+        //archive register template
+        const register_templates = await RegisterTemplate
+            .query()
+            .select('table_id','column_name','display_name','column_type','master')
+            .whereIn('table_id',id);
+
+        let serialized_register_templates: any = {};
+
+        id.forEach(e => {
+            serialized_register_templates[e] = {table_id:e,columns:[]};
+        });
+
+        register_templates.forEach(register_template => {
+            const table_id_temp = register_template.table_id;
+
+            serialized_register_templates[table_id_temp]
+                .columns
+                .push(register_template);
+        });
+
+        serialized_register_templates = Object.values(serialized_register_templates)
+
+        serialized_register_templates.forEach(e => {
+            e.columns = JSON.stringify(e.columns);
+        });
+
+        await ArchivedRegisterTemplate.createMany(serialized_register_templates);
+
+        await RegisterTemplate
+            .query()
+            .whereIn('table_id',id)
+            .delete()
+
         //TODO flatten register table
+        //need to check, how to add client columns to existing table to avoid column name conflicts due to snakecase
 
         response.send({
             status: 'success'
@@ -198,6 +232,11 @@ export default class RegistersController {
         }
 
         await RegisterTemplate
+            .query()
+            .whereIn('table_id',id)
+            .delete();
+
+        await ArchivedRegisterTemplate
             .query()
             .whereIn('table_id',id)
             .delete();

@@ -8,6 +8,6 @@ export default class ArchivedRegisterTemplate extends BaseModel {
     public table_id: number
 
     @column()
-    public columns: object
+    public columns: string
 
 }

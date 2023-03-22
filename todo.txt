@@ -2,10 +2,7 @@ invoice is pending
 
 download option fix
 
-create register templates and register tables
-
-add hsn/sac in service
-2 type of bills gst & non-gst
+add gst percentage in service
 
 scheduler - 
     run scheduler
@@ -20,17 +17,4 @@ clients -> tasks?, scheudlers, register-entry?,
 
 add default columns to client
 
-
-register master will list all registers e.g. gst-22-23, gst-21-22 
-it can create new register with new master or rotate active registers, archive active registers.
-deleting or archiving active registers will delete the template and master register entry, it will keep archived registers
-
-*** there is issue on calculating columns for archived registers, need new schema
-
-soln - create new tempalte for every master, maintains version
-
-add retention strategy and rotation period, date in register master
-
-archived registers can only be deleted
-
-save archived register template in another table
+archived registers pending
