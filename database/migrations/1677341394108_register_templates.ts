@@ -10,7 +10,7 @@ export default class extends BaseSchema {
             table.string('column_name');
             table.string('display_name');
             table.string('column_type');
-            table.boolean('client_column');
+            table.integer('client_column_id');
             table.boolean('master');
         })
     }

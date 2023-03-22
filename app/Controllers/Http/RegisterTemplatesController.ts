@@ -3,6 +3,7 @@ import RegisterTemplate from 'App/Models/RegisterTemplate';
 import { string } from '@ioc:Adonis/Core/Helpers'
 import Database from '@ioc:Adonis/Lucid/Database';
 import RegisterMaster from 'App/Models/RegisterMaster';
+import MasterTemplate from 'App/Models/MasterTemplate';
 
 export default class RegisterTemplatesController {
     public async index({request,response}: HttpContextContract) {
@@ -47,53 +48,103 @@ export default class RegisterTemplatesController {
 
     public async create({request,response}: HttpContextContract) {
         const payload = request.all();
-        payload.column_name = string.snakeCase(payload.display_name);
 
-        const exist = await RegisterTemplate
-            .query()
-            .where('column_name',payload.column_name)
-            .where('table_id',payload.table_id)
-            .first();
+        try{
+            if(payload.client_column_id != null){//client column
+                
+                payload.master = true;
 
-        if(exist){
-            response.send({
-                status: 'error',
-                message: 'column with same name already exixts'
-            });
-        }else{
-            let c_type: string;
-            
-            const table = await RegisterMaster
-                .query()
-                .select('name','version')
-                .where('id',payload.table_id)
-                .first();
+                const exist = await RegisterTemplate
+                    .query()
+                    .where('client_column_id',payload.client_column_id)
+                    .where('table_id',payload.table_id)
+                    .first();
 
-            if(payload.column_type == 'File' || payload.column_type == 'Text'){
-                c_type = 'varchar(255)'
-            }else if(payload.column_type == 'Checkbox'){
-                c_type = 'boolean'
-            }else{
-                c_type = 'date'
+                if(exist){
+                    response.send({
+                        status: 'error',
+                        message: 'column with same name already exixts'
+                    });
+                }else{
+                    if(payload.client_column_id < 0){//default client columns
+                        const column_name_arr = ["Name","Email","GSTIN",""];
+
+                        payload.display_name = column_name_arr[column_name_arr.length + parseInt(payload.client_column_id)];
+                        payload.column_name = string.snakeCase(payload.display_name);
+                        payload.column_type = "Text";
+                    }else{//dynamic client columns
+                        const client_column = await MasterTemplate
+                            .query()
+                            .where('id',payload.client_column_id)
+                            .first();
+
+                        payload.display_name = client_column?.display_name;
+                        payload.column_name = client_column?.column_name;
+                        payload.column_type = client_column?.column_type;
+                    }
+
+                    const resp = await RegisterTemplate.create(payload);
+
+                    payload.id = resp.id;
+
+                    response.send({
+                        status: 'success',
+                        data: payload
+                    });
+                }
+            }else{//dynamic column
+                payload.column_name = string.snakeCase(payload.display_name);
+
+                const exist = await RegisterTemplate
+                    .query()
+                    .where('column_name',payload.column_name)
+                    .where('table_id',payload.table_id)
+                    .whereNull('client_column_id')
+                    .first();
+
+                if(exist){
+                    response.send({
+                        status: 'error',
+                        message: 'column with same name already exixts'
+                    });
+                }else{
+                    let c_type: string;
+                    
+                    const table = await RegisterMaster
+                        .query()
+                        .select('name','version')
+                        .where('id',payload.table_id)
+                        .first();
+
+                    if(payload.column_type == 'File' || payload.column_type == 'Text'){
+                        c_type = 'varchar(255)'
+                    }else if(payload.column_type == 'Checkbox'){
+                        c_type = 'boolean'
+                    }else{
+                        c_type = 'date'
+                    }
+
+                    await Database
+                        .rawQuery(
+                            'alter table ?? add column ?? '+string.escapeHTML(c_type),
+                            [
+                                string.escapeHTML("register__"+table?.name+table?.version),
+                                payload.column_name
+                            ]
+                        );
+
+                    const data = await RegisterTemplate.create(payload);
+
+                    payload.id = data.id;
+
+                    response.send({
+                        status: 'success',
+                        data: payload
+                    });
+                }
             }
-
-            await Database
-                .rawQuery(
-                    'alter table ?? add column ?? '+string.escapeHTML(c_type),
-                    [
-                        string.escapeHTML("register__"+table?.name+table?.version),
-                        payload.column_name
-                    ]
-                );
-
-            const data = await RegisterTemplate.create(payload);
-
-            payload.id = data.id;
-
-            response.send({
-                status: 'success',
-                data: payload
-            });
+        }catch(e){
+            console.log(e)
         }
     }
 
@@ -177,8 +228,10 @@ export default class RegisterTemplatesController {
 
 
         columns.forEach(async (column) => {
-            await Database
-                .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table?.name+table?.version), column.column_name]);
+            if(column.client_column_id == null){
+                await Database
+                    .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table?.name+table?.version), column.column_name]);
+            }
         });
 
         response.send({

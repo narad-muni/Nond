@@ -140,6 +140,7 @@ Route.group(() => {
 
         Route.group(() => {
             Route.get('/','MasterTemplatesController.index');
+            Route.get('/options/client','MasterTemplatesController.client_options');
             Route.get('/options/:table_name','MasterTemplatesController.index_options');
             Route.get('/:id','MasterTemplatesController.get').where('id',/^[0-9]+$/);
 

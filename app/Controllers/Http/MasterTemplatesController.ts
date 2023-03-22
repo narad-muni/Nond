@@ -2,6 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import MasterTemplate from 'App/Models/MasterTemplate'
 import { string } from '@ioc:Adonis/Core/Helpers'
+import RegisterTemplate from 'App/Models/RegisterTemplate'
 
 export default class MasterTemplatesController {
     public async index({response}: HttpContextContract){
@@ -11,6 +12,28 @@ export default class MasterTemplatesController {
         response.send({
             status: 'success',
             data: data
+        })
+    }
+
+    public async client_options({response}: HttpContextContract){
+        const data = await MasterTemplate
+            .query()
+            .select('id','display_name')
+            .where('table_name','clients');
+
+        const serilizedData = data.map(e => e.serialize())
+
+        serilizedData.map(e => {
+            e.value = e.id;
+            e.name = e.display_name;
+
+            delete e.id;
+            delete e.display_name;
+        });
+
+        response.send({
+            status: 'success',
+            data: serilizedData
         })
     }
 
@@ -164,6 +187,15 @@ export default class MasterTemplatesController {
                     .where('id', payload.id)
                     .update(payload)
 
+                await RegisterTemplate
+                    .query()
+                    .where('client_column_id',payload.id)
+                    .update({
+                        column_name: payload.column_name,
+                        display_name: payload.display_name,
+                        column_type: payload.column_type
+                    });
+
                 response.send({
                     status: 'success',
                     data: payload
@@ -194,9 +226,14 @@ export default class MasterTemplatesController {
             .whereIn('id',payload.id)
             .delete()
 
+        await RegisterTemplate
+            .query()
+            .whereIn('client_column_id',payload.id)
+            .delete()
+
         response.send({
             status: 'success'
-        })
+        });
             
     }
 }

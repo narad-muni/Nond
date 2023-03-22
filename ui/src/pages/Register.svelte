@@ -256,27 +256,51 @@
                                 <TableBodyCell>{row.client_id}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.master}
-                                        <TableBodyCell>
-                                            {#if header.column_type == 'Text'}
-                                                {row[header.column_name]}
-                                            {:else if header.column_type == 'File'}
-                                                {#if row[header.column_name]}
-                                                    <A target="_blank" href={row[header.column_name]}>
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                        </svg>
-                                                        &nbsp;
-                                                        {header.display_name}
-                                                    </A>
+                                        {#if header.client_column_id == null}
+                                            <TableBodyCell>
+                                                {#if header.column_type == 'Text'}
+                                                    {row[header.column_name]}
+                                                {:else if header.column_type == 'File'}
+                                                    {#if row[header.column_name]}
+                                                        <A target="_blank" href={row[header.column_name]}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                            </svg>
+                                                            &nbsp;
+                                                            {header.display_name}
+                                                        </A>
+                                                    {:else}
+                                                        null
+                                                    {/if}
+                                                {:else if header.column_type == 'Date'}
+                                                    {row[header.column_name]}
                                                 {:else}
-                                                    null
+                                                    <Checkbox disabled checked={row[header.column_name]}/>
                                                 {/if}
-                                            {:else if header.column_type == 'Date'}
-                                                {row[header.column_name]}
-                                            {:else}
-                                                <Checkbox disabled checked={row[header.column_name]}/>
-                                            {/if}
-                                        </TableBodyCell>
+                                            </TableBodyCell>
+                                        {:else}
+                                            <TableBodyCell>
+                                                {#if header.column_type == 'Text'}
+                                                    {row.__client[header.column_name]}
+                                                {:else if header.column_type == 'File'}
+                                                    {#if row.__client[header.column_name]}
+                                                        <A target="_blank" href={row.__client[header.column_name]}>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                            </svg>
+                                                            &nbsp;
+                                                            {header.display_name}
+                                                        </A>
+                                                    {:else}
+                                                        null
+                                                    {/if}
+                                                {:else if header.column_type == 'Date'}
+                                                    {row.__client[header.column_name]}
+                                                {:else}
+                                                    <Checkbox disabled checked={row.__client[header.column_name]}/>
+                                                {/if}
+                                            </TableBodyCell>
+                                        {/if}
                                     {/if}
                             {/each}
                             </TableBodyRow>
@@ -305,12 +329,12 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
         <Label class="space-y-2">
-            <span>Name</span>
+            <span>Client</span>
             <IdSelect required items={client_list} bind:value={createdObject.client_id} />
         </Label>
 
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header!="id" && header.client_column_id == null}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>
@@ -350,7 +374,7 @@
         </Label>
 
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header!="id" && header.client_column_id == null}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>

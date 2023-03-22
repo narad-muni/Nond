@@ -25,10 +25,10 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal, createLinked;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, table;
+    let data, createdObject={}, actionsIndex, actionsObject, table, client_columns;
     let handler, rows;
 
     let error="", success="";
@@ -39,6 +39,13 @@
         {name: 'Checkbox',value: 'Checkbox'},
     ];
 
+    const default_client_columns = [
+        {"name":"Name","value":"-4"},
+        {"name":"Email","value":"-3"},
+        {"name":"GSTIN","value":"-2"},
+        // {"name":"Group","value":"-1"},
+    ];
+
     let register_id;
     
     location.subscribe(val => {
@@ -47,10 +54,13 @@
         // fetch data
 
         (async ()=>{
+            client_columns = await utils.get('/api/master_template/options/client');
             table = await utils.get('/api/register_master/'+register_id);
             data = await utils.get('/api/register_template/'+register_id);
 
             table = table.data;
+            client_columns = client_columns.data;
+            client_columns = [...client_columns,...default_client_columns];
 
             if(data.status != 'success'){
                 error = data.message;
@@ -177,6 +187,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
+            createLinked = false;
             createdObject = {};
         }else{
             error = resp.message || "";
@@ -193,6 +204,14 @@
                 </svg>                        
                 &nbsp;
                 Create
+            </Button>
+
+            <Button gradient color="green" on:click={()=> createLinked = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+                </svg>                                          
+                &nbsp;
+                Link
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -216,6 +235,7 @@
                             <Th {handler} >Register</Th>
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
+                            <Th {handler} orderBy={(e) => e.client_column_id!=null ? "Yes" : "No"}>Client Column</Th>
                             <Th {handler} orderBy="master">Is Master</Th>
                         </tr>
                         <tr>
@@ -224,6 +244,7 @@
                             <ThSearch {handler} />
                             <ThSearch {handler} filterBy="display_name"/>
                             <ThSearch {handler} filterBy="column_type"/>
+                            <ThSearch {handler} filterBy={(e) => e.client_column_id!=null ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy="master"/>
                         </tr>
                     </thead>
@@ -233,7 +254,11 @@
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
-                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                {#if row.client_column_id!=null}
+                                    <TableBodyCell class="cursor-not-allowed bg-gray-100 hover:bg-gray-200" >{row.id}</TableBodyCell>
+                                {:else}
+                                    <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                {/if}
                                 <TableBodyCell>
                                     {table.name + " " + table.version}
                                 </TableBodyCell>
@@ -242,6 +267,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.column_type}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.client_column_id!=null ? "Yes" : "No"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.master}/>
@@ -288,6 +316,20 @@
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+        </div>
+    </form>
+</Modal>
+
+<Modal bind:open={createLinked} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Linked Column</h3>
+        <Label class="space-y-2 col-span-2">
+            <span>Column Name</span>
+            <Select items={client_columns} bind:value={createdObject.client_column_id}/>
+        </Label>
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button type="submit" class="w-full">Create</Button>
+            <Button on:click={()=>{createLinked=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>

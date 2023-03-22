@@ -6,6 +6,7 @@ import { string } from '@ioc:Adonis/Core/Helpers';
 import { DateTime } from 'luxon';
 import Application from '@ioc:Adonis/Core/Application';
 import fs from 'fs';
+import Client from 'App/Models/Client';
 
 export default class RegistersController {
 
@@ -21,6 +22,7 @@ export default class RegistersController {
 
     public async index({request,response}: HttpContextContract){
         const payload = request.params();
+        const client_columns: any[] = [];
 
         //setup dynamic register
         const register = await RegisterMaster
@@ -32,18 +34,35 @@ export default class RegistersController {
             .query()
             .where('table_id',payload.table_id);
 
+        DynamicRegister.$addRelation(
+            '__client',
+            'belongsTo',
+            () => Client,
+            {
+                'foreignKey': 'client_id'
+            }
+        );
+
         headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+            if(header.client_column_id == null){
+                if(header.column_type == 'Date'){
+                    DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+                }else{
+                    
+                }
             }else{
-                DynamicRegister.$addColumn(header.column_name,{});
+                client_columns.push(header.column_name);
             }
         });
 
         DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
         //setup complete
 
-        const data = await DynamicRegister.all();
+        const data = await DynamicRegister
+            .query()
+            .preload('__client', (query) => {
+                query.select(...client_columns)
+            });
 
         response.send({
             status: 'success',
@@ -65,10 +84,12 @@ export default class RegistersController {
             .where('table_id',payload.table_id);
 
         headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
-            }else{
-                DynamicRegister.$addColumn(header.column_name,{});
+            if(header.client_column_id == null){
+                if(header.column_type == 'Date'){
+                    DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+                }else{
+                    DynamicRegister.$addColumn(header.column_name,{});
+                }
             }
         });
 
