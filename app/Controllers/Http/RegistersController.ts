@@ -34,6 +34,7 @@ export default class RegistersController {
             .query()
             .where('table_id',payload.table_id);
 
+        //add relation
         DynamicRegister.$addRelation(
             '__client',
             'belongsTo',
@@ -58,6 +59,7 @@ export default class RegistersController {
         DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
         //setup complete
 
+        //add linked columns
         const data = await DynamicRegister
             .query()
             .preload('__client', (query) => {
