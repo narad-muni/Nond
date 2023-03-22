@@ -113,6 +113,7 @@ export default class RegistersController {
         const payload = request.params();
         const data = request.all();
         const files = request.allFiles();
+        const client_columns: any[] = [];
 
         //setup dynamic register
         const register = await RegisterMaster
@@ -125,10 +126,14 @@ export default class RegistersController {
             .where('table_id',payload.table_id);
 
         headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+            if(header.client_column_id == null){
+                if(header.column_type == 'Date'){
+                    DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+                }else{
+                    DynamicRegister.$addColumn(header.column_name,{});
+                }
             }else{
-                DynamicRegister.$addColumn(header.column_name,{});
+                client_columns.push(header.column_name);
             }
         });
 
@@ -153,6 +158,12 @@ export default class RegistersController {
             .where('id',data.id)
             .update(data);
 
+        data.__client = await Client
+            .query()
+            .select(...client_columns)
+            .where('id',data.client_id)
+            .first();
+
         response.send({
             status: 'success',
             data: data
@@ -163,6 +174,7 @@ export default class RegistersController {
         const payload = request.params();
         const data = request.all();
         const files = request.allFiles();
+        const client_columns: any[] = [];
 
         //setup dynamic register
         const register = await RegisterMaster
@@ -175,10 +187,14 @@ export default class RegistersController {
             .where('table_id',payload.table_id);
 
         headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+            if(header.client_column_id == null){
+                if(header.column_type == 'Date'){
+                    DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+                }else{
+                    DynamicRegister.$addColumn(header.column_name,{});
+                }
             }else{
-                DynamicRegister.$addColumn(header.column_name,{});
+                client_columns.push(header.column_name);
             }
         });
 
@@ -229,6 +245,12 @@ export default class RegistersController {
             .query()
             .where('id',data.id)
             .update(data);
+
+        data.__client = await Client
+            .query()
+            .select(...client_columns)
+            .where('id',data.client_id)
+            .first();
 
         response.send({
             status: 'success',
