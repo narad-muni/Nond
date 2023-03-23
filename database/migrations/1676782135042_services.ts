@@ -8,6 +8,7 @@ export default class extends BaseSchema {
             table.increments('id');
             table.string('name');
             table.integer('hsn');
+            table.integer('gst');
             table.integer('template_id');
         })
     }

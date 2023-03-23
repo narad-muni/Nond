@@ -57,6 +57,17 @@ export default class RolesController {
 
     }
 
+    public async options_gst({request,response}: HttpContextContract) {
+        const data = await Service
+            .query()
+            .select('gst')
+            .where('hsn',request.param('hsn',null))
+            .first();
+
+        response.send(data?.gst || "");
+
+    }
+
     public async options_all({response}: HttpContextContract) {
         const data = await Service
             .query()
@@ -91,6 +102,11 @@ export default class RolesController {
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
         
+        await Service
+            .query()
+            .where('hsn',data.hsn)
+            .update({'gst':data.gst});
+
         await Service
             .query()
             .where('id',data.id)

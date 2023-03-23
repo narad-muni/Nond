@@ -307,6 +307,8 @@ Route.group(() => {
             Route.get('/:id','ServicesController.get')
                 .where('id',/^-?[0-9]+$/);
             Route.get('/options','ServicesController.options');
+            Route.get('/options_gst/:hsn','ServicesController.options_gst')
+                .where('id',/^-?[0-9]+$/);
             Route.get('/options_all','ServicesController.options_all');
 
             Route.put('/','ServicesController.update');

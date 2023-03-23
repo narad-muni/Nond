@@ -14,6 +14,9 @@ export default class Service extends BaseModel {
     @column()
     public hsn: number
 
+    @column()
+    public gst: number
+
     @belongsTo(() => TaskTemplate,{
         foreignKey: 'template_id'
     })

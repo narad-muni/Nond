@@ -125,6 +125,12 @@
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
             resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
+
+            data.forEach(e => {
+                if(e.hsn == resp.data.hsn){
+                    e.gst = resp.data.gst;
+                }
+            });
             
             data[actionsIndex] = resp.data;
             handler.setRows(data);
@@ -133,6 +139,15 @@
             error = resp.message || "";
         }
         
+    }
+
+    async function set_gst(e){
+        let hsn = e.target.value;
+        if(parseInt(hsn)){
+            const gst = await utils.get('/api/service/options_gst/'+hsn);
+            createdObject.gst = gst;
+            actionsObject.gst = gst;
+        }
     }
 
     async function deleteSelected(){
@@ -160,6 +175,12 @@
             resp.data._selected = false;
 
             resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
+
+            data.forEach(e => {
+                if(e.hsn == resp.data.hsn){
+                    e.gst = resp.data.gst;
+                }
+            });
 
             data.push(resp.data);
             handler.setRows(data);
@@ -201,6 +222,7 @@
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="hsn">HSN/SAC</Th>
+                            <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy={(row => row.template?.name || null)}>Template</Th>
                         </tr>
                         <tr>
@@ -208,6 +230,7 @@
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="hsn"/>
+                            <ThSearch {handler} filterBy="gst"/>
                             <ThSearch {handler} filterBy={(row => row.template?.name || null)}/>
                         </tr>
                     </thead>
@@ -223,6 +246,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.hsn}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.gst}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.template?.name || "null"}
@@ -258,7 +284,11 @@
         </Label>
         <Label class="space-y-2">
             <span>HSN/SAC</span>
-            <Input type="number" required bind:value={createdObject.hsn}/>
+            <Input on:change={set_gst} type="number" required bind:value={createdObject.hsn}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>GST</span>
+            <Input type="number" required bind:value={createdObject.gst}/>
         </Label>
         <Label class="space-y-2">
             <span>Task Template</span>
@@ -272,7 +302,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -284,14 +314,18 @@
         </Label>
         <Label class="space-y-2">
             <span>HSN/SAC</span>
-            <Input type="number" required bind:value={actionsObject.hsn}/>
+            <Input on:change={set_gst} type="number" required bind:value={actionsObject.hsn}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>GST</span>
+            <Input type="number" required bind:value={actionsObject.gst}/>
         </Label>
         <Label class="space-y-2">
             <span>Task Template</span>
             <Select required items={taskTemplates} bind:value={actionsObject.template_id} />
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
