@@ -23,7 +23,9 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
-
+import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { string } from '@ioc:Adonis/Core/Helpers'
+import Database from '@ioc:Adonis/Lucid/Database';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 

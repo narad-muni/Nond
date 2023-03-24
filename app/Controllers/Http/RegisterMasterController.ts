@@ -126,17 +126,27 @@ export default class RegistersController {
     }
 
     public async archive({request,response}: HttpContextContract){
-        const id = request.input('id');
+        let id = request.input('id');
+        let client_columns: string = "";
+        let client_columns2: string = "";
+        let client_columns3: string = "";
 
-        await Scheduler
-            .query()
-            .whereIn('register_id',id)
-            .delete();
-
-        await RegisterMaster
+        const payload = await RegisterMaster
             .query()
             .whereIn('id',id)
-            .update({active: false});
+            .where('active',true);
+
+        id = payload.map(e => e.id);
+
+        // await Scheduler
+        //     .query()
+        //     .whereIn('register_id',id)
+        //     .delete();
+
+        // await RegisterMaster
+        //     .query()
+        //     .whereIn('id',id)
+        //     .update({active: false});
 
         //archive register template
         const register_templates = await RegisterTemplate
@@ -153,26 +163,44 @@ export default class RegistersController {
         register_templates.forEach(register_template => {
             const table_id_temp = register_template.table_id;
 
+            if(register_template.client_column_id != null){
+                client_columns += "add column client__"+register_template.column_name+" varchar;\n";
+                client_columns2 += register_template.column_name+",";
+                client_columns3 += "client__"+register_template.column_name+",";
+            }
+
             serialized_register_templates[table_id_temp]
                 .columns
                 .push(register_template);
         });
 
+        client_columns2 = client_columns2.slice(0,-1);
+        client_columns3 = client_columns2.slice(0,-1);
+
+        console.log(client_columns,client_columns2,client_columns3);
+
         serialized_register_templates = Object.values(serialized_register_templates)
 
         serialized_register_templates.forEach(e => {
-            e.columns = JSON.stringify(e.columns);
+            e.columns = {data:e.columns};
         });
 
-        await ArchivedRegisterTemplate.createMany(serialized_register_templates);
+        // await ArchivedRegisterTemplate.createMany(serialized_register_templates);
 
-        await RegisterTemplate
-            .query()
-            .whereIn('table_id',id)
-            .delete()
+        // await RegisterTemplate
+        //     .query()
+        //     .whereIn('table_id',id)
+        //     .delete();
 
-        //TODO flatten register table
-        //need to check, how to add client columns to existing table to avoid column name conflicts due to snakecase
+        payload.forEach(async register => {
+            console.log(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
+            await Database.rawQuery(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
+            await Database.rawQuery(`
+                insert into "register__${string.escapeHTML(register.name+register.version)}" (${client_columns3})
+                select ${client_columns2} from clients
+                where "register__${string.escapeHTML(register.name+register.version)}".client_id = clients.client_id
+            `);
+        });
 
         response.send({
             status: 'success'
@@ -198,7 +226,7 @@ export default class RegistersController {
             const old = await RegisterMaster.query().where('id',data.id).first();
             const scheduler = data.scheduler;
 
-            await Database.rawQuery(`alter table "register__${string.escapeHTML(old.name+old.version)}" rename to "register__${string.escapeHTML(data.name+data.version)}"`);
+            await Database.rawQuery(`alter table "register__${string.escapeHTML(old?.name+old?.version)}" rename to "register__${string.escapeHTML(data.name+data.version)}"`);
 
             delete data.scheduler;
 
