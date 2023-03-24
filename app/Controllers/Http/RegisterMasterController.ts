@@ -128,8 +128,7 @@ export default class RegistersController {
     public async archive({request,response}: HttpContextContract){
         let id = request.input('id');
         let client_columns: string = "";
-        let client_columns2: string = "";
-        let client_columns3: string = "";
+        let update_query_columns: string = "";
 
         const payload = await RegisterMaster
             .query()
@@ -164,8 +163,7 @@ export default class RegistersController {
 
             if(register_template.client_column_id != null){
                 client_columns += "add column client__"+register_template.column_name+" varchar;\n";
-                client_columns2 += register_template.column_name+",";
-                client_columns3 += "client__"+register_template.column_name+",";
+                update_query_columns += "client__"+register_template.column_name+" = s."+register_template.column_name+",";
             }
 
             serialized_register_templates[table_id_temp]
@@ -173,8 +171,7 @@ export default class RegistersController {
                 .push(register_template);
         });
 
-        client_columns2 = client_columns2.slice(0,-1);
-        client_columns3 = client_columns3.slice(0,-1);
+        update_query_columns = update_query_columns.slice(0,-1);
 
         serialized_register_templates = Object.values(serialized_register_templates)
 
@@ -192,9 +189,10 @@ export default class RegistersController {
         payload.forEach(async register => {
             await Database.rawQuery(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
             await Database.rawQuery(`
-                insert into "register__${string.escapeHTML(register.name+register.version)}" (${client_columns3})
-                select ${client_columns2} from clients
-                where "register__${string.escapeHTML(register.name+register.version)}".client_id = clients.client_id
+                update "register__${string.escapeHTML(register.name+register.version)}"
+                set ${update_query_columns}
+                from clients s
+                where s.id = client_id
             `);
         });
 
