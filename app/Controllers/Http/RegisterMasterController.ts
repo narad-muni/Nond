@@ -138,20 +138,19 @@ export default class RegistersController {
 
         id = payload.map(e => e.id);
 
-        // await Scheduler
-        //     .query()
-        //     .whereIn('register_id',id)
-        //     .delete();
+        await Scheduler
+            .query()
+            .whereIn('register_id',id)
+            .delete();
 
-        // await RegisterMaster
-        //     .query()
-        //     .whereIn('id',id)
-        //     .update({active: false});
+        await RegisterMaster
+            .query()
+            .whereIn('id',id)
+            .update({active: false});
 
         //archive register template
         const register_templates = await RegisterTemplate
             .query()
-            .select('table_id','column_name','display_name','column_type','master')
             .whereIn('table_id',id);
 
         let serialized_register_templates: any = {};
@@ -185,15 +184,14 @@ export default class RegistersController {
             e.columns = {data:e.columns};
         });
 
-        // await ArchivedRegisterTemplate.createMany(serialized_register_templates);
+        await ArchivedRegisterTemplate.createMany(serialized_register_templates);
 
-        // await RegisterTemplate
-        //     .query()
-        //     .whereIn('table_id',id)
-        //     .delete();
+        await RegisterTemplate
+            .query()
+            .whereIn('table_id',id)
+            .delete();
 
         payload.forEach(async register => {
-            console.log(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
             await Database.rawQuery(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
             await Database.rawQuery(`
                 insert into "register__${string.escapeHTML(register.name+register.version)}" (${client_columns3})
@@ -204,7 +202,7 @@ export default class RegistersController {
 
         response.send({
             status: 'success'
-        })
+        });
     }
 
     public async update({request,response}: HttpContextContract) {
