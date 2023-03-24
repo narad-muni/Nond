@@ -174,9 +174,7 @@ export default class RegistersController {
         });
 
         client_columns2 = client_columns2.slice(0,-1);
-        client_columns3 = client_columns2.slice(0,-1);
-
-        console.log(client_columns,client_columns2,client_columns3);
+        client_columns3 = client_columns3.slice(0,-1);
 
         serialized_register_templates = Object.values(serialized_register_templates)
 
