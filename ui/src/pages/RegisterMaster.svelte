@@ -140,7 +140,7 @@
 
         if(resp.status == 'success'){
             //trigger nav bar update
-            active_registers.set("");
+            active_registers.set(actionsObject);
 
             resp.data._selected = data[actionsIndex]._selected;
             resp.data.service = services.find(e => e.value == resp.data.service_id);
@@ -158,7 +158,7 @@
 
         if(resp.status == 'success'){
             //trigger nav bar update
-            active_registers.set("");
+            active_registers.set(selectedRows);
 
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {
@@ -179,7 +179,7 @@
 
         if(resp.status == 'success'){
             //trigger nav bar update
-            active_registers.set("");
+            active_registers.set(selectedRows);
 
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {
@@ -200,7 +200,7 @@
 
         if(resp.status == 'success'){
             //trigger nav bar update
-            active_registers.set("");
+            active_registers.set(createdObject);
             
             resp.data._selected = false;
             resp.data.service = services.find(e => e.value == resp.data.service_id);

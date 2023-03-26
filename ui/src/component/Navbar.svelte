@@ -99,7 +99,7 @@
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#archived">
             {#each _archived_registers as register}
-                <DropdownItem href="/#/register/{register.value}">{register.name}</DropdownItem>
+                <DropdownItem href="/#/archived_register/{register.value}">{register.name}</DropdownItem>
             {/each}
         </Dropdown>
     
