@@ -4,6 +4,7 @@ import { string } from '@ioc:Adonis/Core/Helpers'
 import Database from '@ioc:Adonis/Lucid/Database';
 import RegisterMaster from 'App/Models/RegisterMaster';
 import MasterTemplate from 'App/Models/MasterTemplate';
+import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 
 export default class RegisterTemplatesController {
     public async index({request,response}: HttpContextContract) {
@@ -22,15 +23,33 @@ export default class RegisterTemplatesController {
     public async get({request,response}: HttpContextContract) {
         const payload = request.params();
 
-        const data = await RegisterTemplate
+        const active = await RegisterMaster
+            .query()
+            .select('active')
+            .where('id',payload.table_id)
+            .first();
+
+        if(active){
+            const data = await RegisterTemplate
             .query()
             .where('id',payload.id)
             .first();
 
-        response.send({
-            status: 'success',
-            data: data
-        })
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }else{
+            const data = await ArchivedRegisterTemplate
+            .query()
+            .where('id',payload.id)
+            .first();
+
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }
     }
 
     public async options({request,response}: HttpContextContract){

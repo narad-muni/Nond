@@ -21,6 +21,7 @@
     import Invoice from "./Invoice.svelte";
     import RegisterTemplate from "./RegisterTemplate.svelte";
     import Register from "./Register.svelte";
+  import ArchivedRegister from "./ArchivedRegister.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -42,6 +43,7 @@
         '/master_template':MasterTemplate,
         '/register_template/:id':RegisterTemplate,
         '/register/:id':Register,
+        '/archived_register/:id':ArchivedRegister,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,
         '*':Error
