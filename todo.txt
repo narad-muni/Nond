@@ -1,7 +1,8 @@
-add archived_register in roles
-
 update client list on entry 
 add self option for group select in client create
+
+
+scvhedulers
 
 additional client side can also be made for viewing register, tasks, data, invoices.
 
@@ -9,7 +10,7 @@ invoice is pending
 
 download option fix
 
-add gst percentage in service
+create deleted pages
 
 scheduler - 
     run scheduler
@@ -18,7 +19,7 @@ scheduler -
 *****delete client releated data when client is deleted
 handle delete cascade
 
-clients -> tasks?, scheudlers, register-entry?,  
+clients -> tasks?, scheudlers, register-entry?, files
 
 ------------
 
