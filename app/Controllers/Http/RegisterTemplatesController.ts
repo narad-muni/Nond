@@ -23,33 +23,15 @@ export default class RegisterTemplatesController {
     public async get({request,response}: HttpContextContract) {
         const payload = request.params();
 
-        const active = await RegisterMaster
-            .query()
-            .select('active')
-            .where('id',payload.table_id)
-            .first();
+        const data = await RegisterTemplate
+        .query()
+        .where('id',payload.id)
+        .first();
 
-        if(active){
-            const data = await RegisterTemplate
-            .query()
-            .where('id',payload.id)
-            .first();
-
-            response.send({
-                status: 'success',
-                data: data
-            });
-        }else{
-            const data = await ArchivedRegisterTemplate
-            .query()
-            .where('id',payload.id)
-            .first();
-
-            response.send({
-                status: 'success',
-                data: data
-            });
-        }
+        response.send({
+            status: 'success',
+            data: data
+        });
     }
 
     public async options({request,response}: HttpContextContract){
@@ -57,12 +39,25 @@ export default class RegisterTemplatesController {
 
         const data = await RegisterTemplate
             .query()
-            .where('table_id',payload.table_id)
+            .where('table_id',payload.table_id);
 
-        response.send({
-            status: 'success',
-            data: data
-        });
+        if(data.length){
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }else{
+            const data = await ArchivedRegisterTemplate
+                .query()
+                .where('table_id',payload.table_id)
+                .first();
+
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }
+
     }
 
     public async create({request,response}: HttpContextContract) {

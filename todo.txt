@@ -1,3 +1,5 @@
+add archived_register in roles
+
 update client list on entry 
 add self option for group select in client create
 

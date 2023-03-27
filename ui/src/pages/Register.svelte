@@ -14,8 +14,6 @@
         Input,
         Toggle,
         Alert,
-        Textarea,
-        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -53,6 +51,7 @@
                 error = data.message;
                 data = null;
             }else{
+                headers.data = headers.data || [];
                 data = data.data;
                 data.forEach((v) => {
                     v["_selected"] = 0;

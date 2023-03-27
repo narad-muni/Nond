@@ -23,9 +23,6 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
-import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { string } from '@ioc:Adonis/Core/Helpers'
-import Database from '@ioc:Adonis/Lucid/Database';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
@@ -131,7 +128,8 @@ Route.group(() => {
                 .where('id',/^[0-9]+$/)
                 .where('table_id',/^[0-9]+$/);
 
-            Route.get('/options/:table_id','RegisterTemplatesController.options');
+            Route.get('/options/:table_id','RegisterTemplatesController.options')
+                .where('table_id',/^[0-9]+$/);
         
             Route.post('/','RegisterTemplatesController.create');
 
@@ -203,6 +201,18 @@ Route.group(() => {
 
         })
         .prefix('/register');
+
+        Route.group(() => {
+
+            Route.get('/:table_id','ArchivedRegistersController.index')
+                .where('table_id',/^[0-9]+$/);
+                
+            Route.get('/:table_id/:id','ArchivedRegistersController.get')
+                .where('id',/^[0-9]+$/)
+                .where('table_id',/^[0-9]+$/);
+
+        })
+        .prefix('/archived_register');
 
 
         /*

@@ -20,11 +20,11 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { active_registers } from '../global/stores';
+    import { active_registers, archived_registers } from '../global/stores';
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, archiveModal, rotateRegisterModal;
+    let createModal, actionsModals, deleteModal, archiveModal;
     let selectedRows = new Set();
 
     let data, createdObject={},services, actionsIndex, actionsObject;
@@ -180,6 +180,7 @@
         if(resp.status == 'success'){
             //trigger nav bar update
             active_registers.set(selectedRows);
+            archived_registers.set(selectedRows);
 
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {

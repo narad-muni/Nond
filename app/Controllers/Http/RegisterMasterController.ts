@@ -127,8 +127,8 @@ export default class RegistersController {
 
     public async archive({request,response}: HttpContextContract){
         let id = request.input('id');
-        let client_columns: string = "";
-        let update_query_columns: string = "";
+        let client_columns = {};
+        let update_query_columns = {};
 
         const payload = await RegisterMaster
             .query()
@@ -155,6 +155,8 @@ export default class RegistersController {
         let serialized_register_templates: any = {};
 
         id.forEach(e => {
+            update_query_columns[e] = "";
+            client_columns[e] = "";
             serialized_register_templates[e] = {table_id:e,columns:[]};
         });
 
@@ -162,16 +164,14 @@ export default class RegistersController {
             const table_id_temp = register_template.table_id;
 
             if(register_template.client_column_id != null){
-                client_columns += "add column client__"+register_template.column_name+" varchar;\n";
-                update_query_columns += "client__"+register_template.column_name+" = s."+register_template.column_name+",";
+                client_columns[table_id_temp] += "add column client__"+register_template.column_name+" varchar;\n";
+                update_query_columns[table_id_temp] += "client__"+register_template.column_name+" = s."+register_template.column_name+",";
             }
 
             serialized_register_templates[table_id_temp]
                 .columns
                 .push(register_template);
         });
-
-        update_query_columns = update_query_columns.slice(0,-1);
 
         serialized_register_templates = Object.values(serialized_register_templates)
 
@@ -187,13 +187,18 @@ export default class RegistersController {
             .delete();
 
         payload.forEach(async register => {
-            await Database.rawQuery(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns}`);
-            await Database.rawQuery(`
-                update "register__${string.escapeHTML(register.name+register.version)}"
-                set ${update_query_columns}
-                from clients s
-                where s.id = client_id
-            `);
+            if(update_query_columns[register.id]?.length && client_columns[register.id]?.length){
+
+                update_query_columns[register.id] = update_query_columns[register.id].slice(0,-1);
+
+                await Database.rawQuery(`alter table  "register__${string.escapeHTML(register.name+register.version)}" ${client_columns[register.id]}`);
+                await Database.rawQuery(`
+                    update "register__${string.escapeHTML(register.name+register.version)}"
+                    set ${update_query_columns[register.id]}
+                    from clients s
+                    where s.id = client_id
+                `);
+            }
         });
 
         response.send({
