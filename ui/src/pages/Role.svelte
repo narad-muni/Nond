@@ -249,6 +249,7 @@
                 <Checkbox bind:checked={createdObject.read.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.read.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={createdObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
@@ -266,6 +267,7 @@
                 <Checkbox bind:checked={createdObject.create.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.create.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.create.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={createdObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.create.task} >Task</Checkbox>
@@ -283,6 +285,7 @@
                 <Checkbox bind:checked={createdObject.update.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.update.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.update.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={createdObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.update.task} >Task</Checkbox>
@@ -297,14 +300,6 @@
                 <Checkbox bind:checked={createdObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.register_template} >Register Template</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.master_template} >Master Template</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.register} >Register</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.register_master} >Register Master</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.role} >Role</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.task_template} >Task Template</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.invoice} >Invoice</Checkbox>
             </div>
         </Label>
@@ -317,6 +312,7 @@
                 <Checkbox bind:checked={createdObject.destroy.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.register} >Register</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.task} >Task</Checkbox>
@@ -352,6 +348,7 @@
                 <Checkbox bind:checked={actionsObject.read.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.role} >Role</Checkbox>
                 <Checkbox checked disabled>Task</Checkbox>
@@ -369,6 +366,7 @@
                 <Checkbox bind:checked={actionsObject.create.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.create.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.create.task} >Task</Checkbox>
@@ -386,6 +384,7 @@
                 <Checkbox bind:checked={actionsObject.update.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.update.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.update.task} >Task</Checkbox>
@@ -400,14 +399,6 @@
                 <Checkbox bind:checked={actionsObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.register_template} >Register Template</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.master_template} >Master Template</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.register} >Register</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.register_master} >Register Master</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.role} >Role</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.task} >Task</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.task_template} >Task Template</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.invoice} >Invoice</Checkbox>
             </div>
         </Label>
@@ -420,6 +411,7 @@
                 <Checkbox bind:checked={actionsObject.destroy.register_template} >Register Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.master_template} >Master Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.register} >Register</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.archived_register} >Archived Register</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.register_master} >Register Master</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.role} >Role</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.task} >Task</Checkbox>
