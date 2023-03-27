@@ -150,6 +150,10 @@ export default class ClientsController {
 
         payload.services = JSON.parse(payload._services);
 
+        if(payload.group_id == "Self"){
+            payload.group_id = null;
+        }
+
         //create new scheduler objects
         Object.keys(payload.services).forEach(service_id => {
             payload.services[service_id].type = 5;
@@ -180,6 +184,8 @@ export default class ClientsController {
         const inserted = await Client.create(payload);
 
         payload.id = inserted.id;
+        payload.group_id = payload.group_id || payload.id;
+        
 
         //set scheduler client id after inserting
         newSchedulersList.forEach(e => {

@@ -77,6 +77,8 @@
             error = data.message;
             data = null;
         }else{
+            client_list = [{name:"Self",value:"Self"},...client_list];
+
             data = data.data;
             data.forEach((v) => {
                 v["_selected"] = 0;
@@ -322,7 +324,9 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
-
+            
+            client_list.push({name:resp.data.name,value:resp.data.id});
+            
             resp.data.group = client_list.find(e => e.value == resp.data.group_id);
 
             data.push(resp.data);

@@ -1,7 +1,3 @@
-update client list on entry 
-add self option for group select in client create
-
-
 scvhedulers
 
 additional client side can also be made for viewing register, tasks, data, invoices.
