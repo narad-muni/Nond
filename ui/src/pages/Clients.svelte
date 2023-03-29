@@ -59,9 +59,11 @@
 
     let error="", users;
 
-    let minNextDate = new Date();
-    minNextDate.setDate(new Date().getDate() + 1);
-    minNextDate = minNextDate.toJSON().slice(0, 10);
+    const minNextDate = new Date(
+            (new Date)
+                .setDate(new Date().getDate() + 1)
+        )
+        .toJSON().slice(0, 10);
 
     // fetch data
 

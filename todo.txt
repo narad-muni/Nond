@@ -1,3 +1,5 @@
+fix date format in archived registers
+
 scvhedulers
 
 additional client side can also be made for viewing register, tasks, data, invoices.
@@ -20,5 +22,3 @@ clients -> tasks?, scheudlers, register-entry?, files
 ------------
 
 add default columns to client
-
-archived registers pending

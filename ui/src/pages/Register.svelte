@@ -34,9 +34,11 @@
 
     let error="", users;
 
-    let minNextDate = new Date();
-    minNextDate.setDate(new Date().getDate() + 1);
-    minNextDate = minNextDate.toJSON().slice(0, 10);
+    const minNextDate = new Date(
+            (new Date)
+                .setDate(new Date().getDate() + 1)
+        )
+        .toJSON().slice(0, 10);
 
     // fetch data
 
@@ -189,7 +191,7 @@
 
 </script>
 
-{#if data && headers && handler}
+{#if data && Array.isArray(headers.data) && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
         <div class="pl-4 flex gap-x-4 my-2">
             <Button gradient color="blue" on:click={()=> createModal = true}>

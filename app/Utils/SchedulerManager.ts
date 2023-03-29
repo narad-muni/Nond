@@ -8,8 +8,9 @@ export default class SchedulerManager{
          * 2. Delete Tasks
          * 3. Arhive Tasks/Invoices
          * 4. Add Entries in Register
-         * 5. Create Tasks
-         * 6. update scheduler dates
+         * 5. Create Tasks & Add Entryies
+         * 6. Create Tasks
+         * 7. update scheduler dates
          */
         
         try{
@@ -27,10 +28,10 @@ export default class SchedulerManager{
                     case 1:// Rotate Registers
                         SchedulerManager.RotateRegisters();                    
                         break;
-                    case 2:// Delete Data
+                    case 2:// Delete old Data
                         SchedulerManager.DeleteData();
                         break;
-                    case 3:// Archive Data
+                    case 3:// Archive old Data
                         SchedulerManager.ArchiveData();
                         break;
                     case 4:// Add Entries in Register

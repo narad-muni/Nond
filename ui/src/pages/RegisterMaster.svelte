@@ -24,16 +24,21 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, archiveModal;
+    let createModal, actionsModals, deleteModal, archiveModal, rotateModal;
     let selectedRows = new Set();
 
-    let data, createdObject={},services, actionsIndex, actionsObject;
+    const currDate = new Date()
+        .toJSON().slice(0, 10);
+
+    let data, createdObject={version:currDate,next:""},services, actionsIndex, actionsObject;
     let handler, rows;
     let error="";
 
-    let minNextDate = new Date();
-    minNextDate.setDate(new Date().getDate() + 1);
-    minNextDate = minNextDate.toJSON().slice(0, 10);
+    const minNextDate = new Date(
+            (new Date)
+                .setDate(new Date().getDate() + 1)
+        )
+        .toJSON().slice(0, 10);
 
     const frequency = [
         {name: "Daily", value:"1 day"},
@@ -77,6 +82,7 @@
     $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => parseInt(i.id)))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
+    $: createdObject.version = currDate + "  -  " + createdObject.next;
 
     //Functions
 
@@ -95,10 +101,8 @@
             if(e.target.checked){
 
                 $rows.forEach((r) => {
-                    if(r.active){
-                        r._selected = true;
-                        selectedRows.add(parseInt(r.id));
-                    }
+                    r._selected = true;
+                    selectedRows.add(parseInt(r.id));
                 });
 
             }else{
@@ -196,6 +200,28 @@
         }
     }
 
+    async function rotateRegister(){
+        const resp = await utils.put_json('/api/register_master/rotate/',{id:Array.from(selectedRows)});
+
+        if(resp.status == 'success'){
+            //trigger nav bar update
+            active_registers.set(selectedRows);
+            archived_registers.set(selectedRows);
+
+            for (let i = 0; i < data.length; i++) {
+                if (selectedRows.has(data[i].id)) {
+                    data[i]._selected = false;
+                    data[i].active = false;
+                }
+            }
+            selectedRows.clear();
+            handler.setRows(data);
+            selectedRows = selectedRows;
+        }else{
+            error = resp.message;
+        }
+    }
+
     async function createData(){
         let resp = await utils.post_json('/api/register_master/',createdObject);
 
@@ -208,7 +234,7 @@
             data = [...data,resp.data];
             handler.setRows(data);
             createModal = false;
-            createdObject = {};
+            createdObject = {version:currDate,next:""};
         }else{
             error = resp.message || "";
         }
@@ -228,10 +254,18 @@
 
             <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> archiveModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>              
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5m6 4.125l2.25 2.25m0 0l2.25 2.25M12 13.875l2.25-2.25M12 13.875l-2.25 2.25M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
+                </svg>                  
                 &nbsp;
                 Archive
+            </Button>
+
+            <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> rotateModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>                  
+                &nbsp;
+                Rotate
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -305,7 +339,7 @@
 <Modal bind:open={deleteModal} size="xs" autoclose>
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected registers?</h3>
         <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will also delete any active register.</h5>
         <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
@@ -315,16 +349,25 @@
 <Modal bind:open={archiveModal} size="xs" autoclose>
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to archive selected rows?</h3>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to archive selected registers?</h3>
         <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will also delete templates</h5>
         <Button color="red" on:click={archiveRegister} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>
 
+<Modal bind:open={rotateModal} size="xs" autoclose>
+    <div class="text-center">
+        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to rotate selected registers?</h3>
+        <Button color="red" on:click={rotateRegister} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Register</h3>
         <Label class="space-y-2">
             <span>Name</span>
             <Input required bind:value={createdObject.name}/>
@@ -351,7 +394,7 @@
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={version:currDate,next:""}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>

@@ -94,7 +94,7 @@ export default class RegistersController {
         if(exist){
             response.send({
                 status: 'error',
-                message: 'register already exists, rotate existsing.'
+                message: 'register already exists, rotate existsing register.'
             });
         }else{
             delete payload.frequency;
@@ -130,6 +130,7 @@ export default class RegistersController {
         let client_columns = {};
         let update_query_columns = {};
 
+        //filter out only active one's
         const payload = await RegisterMaster
             .query()
             .whereIn('id',id)
@@ -206,6 +207,24 @@ export default class RegistersController {
         });
     }
 
+    public async rotate({request,response}: HttpContextContract) {
+        let id = request.input('id');
+        let client_columns = {};
+        let update_query_columns = {};
+
+        //filter out only active one's
+        const payload = await RegisterMaster
+            .query()
+            .whereIn('id',id)
+            .where('active',true);
+
+        id = payload.map(e => e.id);
+
+        //create new register
+
+        //archive existing register and copy & update template
+    }
+
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
 
@@ -214,13 +233,22 @@ export default class RegistersController {
             .where('name',data.name)
             .where('version',data.version)
             .whereNot('id',data.id)
-            .first()
+            .first();
+
+        if(!data.active){//archived regitser
+            response.send({
+                status: 'error',
+                message: 'register not active!'
+            });
+            return;
+        }
 
         if(exist){
             response.send({
                 status: 'error',
-                message: 'register with same name or version already exists!'
+                message: 'register with same name and version already exists!'
             });
+            return;
         }else{
             const old = await RegisterMaster.query().where('id',data.id).first();
             const scheduler = data.scheduler;

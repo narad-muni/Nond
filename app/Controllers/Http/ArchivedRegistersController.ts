@@ -19,7 +19,7 @@ export default class ArchivedRegistersController {
         response.send({
             status: 'success',
             data: data.rows
-        })
+        });
     }
 
     public async get({request,response}: HttpContextContract){

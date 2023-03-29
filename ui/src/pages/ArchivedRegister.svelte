@@ -33,9 +33,11 @@
 
     let error="";
 
-    let minNextDate = new Date();
-    minNextDate.setDate(new Date().getDate() + 1);
-    minNextDate = minNextDate.toJSON().slice(0, 10);
+    const minNextDate = new Date(
+            (new Date)
+                .setDate(new Date().getDate() + 1)
+        )
+        .toJSON().slice(0, 10);
 
     // fetch data
 
@@ -46,7 +48,8 @@
             headers = await utils.get('/api/register_template/options/'+register_id);
             data = await utils.get('/api/archived_register/'+register_id);
 
-            headers = headers.data.columns || [];
+            headers = headers?.data?.columns || [];
+            console.log(headers);
 
             if(data.status != 'success'){
                 error = data.message;
@@ -88,7 +91,7 @@
 
 </script>
 
-{#if data && headers && handler}
+{#if data && Array.isArray(headers.data) && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
 
         <div class="min-h-0 pl-4">
