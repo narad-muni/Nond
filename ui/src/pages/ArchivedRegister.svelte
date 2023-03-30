@@ -23,6 +23,7 @@
     import utils from '../utils';
     import { location } from 'svelte-spa-router';
     import IdSelect from "../component/IdSelect.svelte";
+  import { archived_registers } from "../global/stores";
 
     // Intialization
 
@@ -49,7 +50,6 @@
             data = await utils.get('/api/archived_register/'+register_id);
 
             headers = headers?.data?.columns || [];
-            console.log(headers);
 
             if(data.status != 'success'){
                 error = data.message;
@@ -89,14 +89,58 @@
         }
     }
 
+    async function download(){
+        const table = document.querySelector('#table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
+
+        headers = headers.slice(0,headers.length/2);
+
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
+            if(td.querySelector('a')){
+                return td.querySelector('a').href;
+            }else{
+                return td.textContent;
+            }
+        }));
+
+        rows = rows.slice(2);
+        const data = [headers, ...rows];
+        console.log(archived_registers)
+        
+        // Convert the table data to CSV format
+        const csv = data.map(row => row.join(',')).join('\n');
+        
+        // Create a Blob object from the CSV string
+        const blob = new Blob([csv], { type: 'text/csv' });
+        
+        // Create a link to download the CSV file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `register_${register_id}.csv`;
+        
+        // Programmatically click on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
 </script>
 
 {#if data && Array.isArray(headers.data) && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
+        <div class="pl-4 flex gap-x-4 my-2">
+            <Button gradient color="green" on:click={download}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>                          
+                &nbsp;
+                Download
+            </Button>
+        </div>
 
         <div class="min-h-0 pl-4">
             <DataTable {handler}>
-                <Table>
+                <Table id="table">
                     <thead>
                         <tr>
                             <Th {handler} orderBy="id">ID</Th>

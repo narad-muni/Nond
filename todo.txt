@@ -6,14 +6,9 @@ delete 2 year old tasks
 archive 1 year old invoices (paid)
 archive 1 year old tasks (billed & completed)
 
-fix date format in archived registers
-
 scvhedulers
 
-
 invoice is pending
-
-download option fix
 
 create deleted pages
 

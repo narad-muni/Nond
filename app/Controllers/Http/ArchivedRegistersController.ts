@@ -16,6 +16,14 @@ export default class ArchivedRegistersController {
         const data = await Database
             .rawQuery(`select * from "${string.escapeHTML("register__"+table?.name+table?.version)}"`);
 
+        data.rows.forEach((_,i) => {
+            Object.keys(data.rows[i]).forEach(element => {
+                if(data.rows[i][element] instanceof Date){
+                    data.rows[i][element] = data.rows[i][element].toISOString().slice(0, 10);
+                }
+            });
+        });
+
         response.send({
             status: 'success',
             data: data.rows
@@ -33,6 +41,12 @@ export default class ArchivedRegistersController {
 
         const data = await Database
             .rawQuery(`select * from "${string.escapeHTML("register__"+table?.name+table?.version)}" where id = ${payload.id}`);
+
+        Object.keys(data.rows[0]).forEach(element => {
+            if(data.rows[0][element] instanceof Date){
+                data.rows[0][element] = data.rows[0][element].toISOString().slice(0, 10);
+            }
+        });
 
         response.send({
             status: 'success',

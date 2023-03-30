@@ -295,7 +295,14 @@
 
         headers = headers.slice(0,headers.length/2);
 
-        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent));
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
+            if(td.querySelector('a')){
+                return td.querySelector('a').href;
+            }else{
+                return td.textContent;
+            }
+        }));
+
         rows = rows.slice(2);
         const data = [headers, ...rows];
         
@@ -308,7 +315,7 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'table-data.csv';
+        link.download = 'Client.csv';
         
         // Programmatically click on the link to initiate the download
         document.body.appendChild(link);

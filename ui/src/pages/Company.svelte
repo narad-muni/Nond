@@ -181,23 +181,37 @@
     }
     
     async function download(){
-        let downloadData;
+        const table = document.querySelector('#table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
 
-        //check if all columns are fetched to avoid api call
-        if(allColumns){
-            downloadData = data;
-        }else{
-            downloadData = await utils.get('/api/company/read_full');
-        }
+        headers = headers.slice(0,headers.length/2);
 
-        //download selected rows if selected, else if everything or nothing is selected, download full
-        if(indeterminate){
-            downloadData = downloadData.filter((i) => {
-                return selectedRows.has(i.id);
-            });
-        }
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
+            if(td.querySelector('a')){
+                return td.querySelector('a').href;
+            }else{
+                return td.textContent;
+            }
+        }));
 
-        utils.downloadCSVFile(Object.keys(headers.columns),downloadData,'ClientMaster');
+        rows = rows.slice(2);
+        const data = [headers, ...rows];
+        
+        // Convert the table data to CSV format
+        const csv = data.map(row => row.join(',')).join('\n');
+        
+        // Create a Blob object from the CSV string
+        const blob = new Blob([csv], { type: 'text/csv' });
+        
+        // Create a link to download the CSV file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Client.csv';
+        
+        // Programmatically click on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     async function deleteSelected(){
@@ -283,7 +297,7 @@
 
         <div class="min-h-0 pl-4">
             <DataTable {handler}>
-                <Table>
+                <Table id="table">
                     <thead>
                         <tr>
                             <th>
