@@ -1,8 +1,15 @@
+(year = financial year)
+
+delete 2 year old invoices
+delete 2 year old tasks
+
+archive 1 year old invoices (paid)
+archive 1 year old tasks (billed & completed)
+
 fix date format in archived registers
 
 scvhedulers
 
-additional client side can also be made for viewing register, tasks, data, invoices.
 
 invoice is pending
 
@@ -13,6 +20,8 @@ create deleted pages
 scheduler - 
     run scheduler
     *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
+
+additional client side can also be made for viewing register, tasks, data, invoices.
 
 *****delete client releated data when client is deleted
 handle delete cascade

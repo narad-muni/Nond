@@ -24,7 +24,7 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, archiveModal, rotateModal;
+    let createModal, actionsModals, deleteModal, archiveModal;
     let selectedRows = new Set();
 
     const currDate = new Date()
@@ -200,28 +200,6 @@
         }
     }
 
-    async function rotateRegister(){
-        const resp = await utils.put_json('/api/register_master/rotate/',{id:Array.from(selectedRows)});
-
-        if(resp.status == 'success'){
-            //trigger nav bar update
-            active_registers.set(selectedRows);
-            archived_registers.set(selectedRows);
-
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
-                    data[i]._selected = false;
-                    data[i].active = false;
-                }
-            }
-            selectedRows.clear();
-            handler.setRows(data);
-            selectedRows = selectedRows;
-        }else{
-            error = resp.message;
-        }
-    }
-
     async function createData(){
         let resp = await utils.post_json('/api/register_master/',createdObject);
 
@@ -258,14 +236,6 @@
                 </svg>                  
                 &nbsp;
                 Archive
-            </Button>
-
-            <Button disabled={buttonDisabled} gradient color="yellow" on:click={()=> rotateModal = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                </svg>                  
-                &nbsp;
-                Rotate
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -352,15 +322,6 @@
         <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to archive selected registers?</h3>
         <h5 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">This will also delete templates</h5>
         <Button color="red" on:click={archiveRegister} class="mr-2">Yes, I'm sure</Button>
-        <Button color='alternative'>No, cancel</Button>
-    </div>
-</Modal>
-
-<Modal bind:open={rotateModal} size="xs" autoclose>
-    <div class="text-center">
-        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to rotate selected registers?</h3>
-        <Button color="red" on:click={rotateRegister} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>

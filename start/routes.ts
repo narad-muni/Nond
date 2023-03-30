@@ -65,11 +65,12 @@ Route.group(() => {
             
             Route.get('/:deleted','ClientsController.index')
                 .where('deleted',/true|false/);
-            Route.get('/:id','ClientsController.get')
-                .where('id',/^[0-9]+$/);
 
             Route.get('/master/:deleted','ClientsController.indexMaster')
                 .where('deleted',/true|false/);
+
+            Route.get('/:id','ClientsController.get')
+                .where('id',/^[0-9]+$/);
 
             Route.get('/options','ClientsController.options');
 

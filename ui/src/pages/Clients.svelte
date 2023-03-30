@@ -224,6 +224,8 @@
             data = await utils.get('/api/client/master/false');
         }
 
+        data = data.data;
+
         selectedRows.clear();
         selectedRows = selectedRows;
         handler.setRows(data);
@@ -274,6 +276,8 @@
         allColumns = true;
         data = await utils.get('/api/client/false');
 
+        data = data.data;
+
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
                 v["_selected"] = true;
@@ -286,23 +290,30 @@
     }
     
     async function download(){
-        let downloadData;
+        const table = document.querySelector('#table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
 
-        //check if all columns are fetched to avoid api call
-        if(allColumns){
-            downloadData = data;
-        }else{
-            downloadData = await utils.get('/api/client/read_full');
-        }
+        headers = headers.slice(0,headers.length/2);
 
-        //download selected rows if selected, else if everything or nothing is selected, download full
-        if(indeterminate){
-            downloadData = downloadData.filter((i) => {
-                return selectedRows.has(i.id);
-            });
-        }
-
-        utils.downloadCSVFile(Object.keys(headers.columns),downloadData,'ClientMaster');
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => td.textContent));
+        rows = rows.slice(2);
+        const data = [headers, ...rows];
+        
+        // Convert the table data to CSV format
+        const csv = data.map(row => row.join(',')).join('\n');
+        
+        // Create a Blob object from the CSV string
+        const blob = new Blob([csv], { type: 'text/csv' });
+        
+        // Create a link to download the CSV file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'table-data.csv';
+        
+        // Programmatically click on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     async function deleteSelected(){
@@ -370,13 +381,13 @@
                 Set Service
             </Button>
             
-            <!-- <Button gradient color="green" on:click={download}>
+            <Button gradient color="green" on:click={download}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                 </svg>                          
                 &nbsp;
                 Download
-            </Button> -->
+            </Button>
             
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -404,7 +415,7 @@
 
         <div class="min-h-0 pl-4">
             <DataTable {handler}>
-                <Table>
+                <Table id="table">
                     <thead>
                         <tr>
                             <th>
@@ -436,7 +447,7 @@
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row, index}
+                        {#each $rows as row}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>

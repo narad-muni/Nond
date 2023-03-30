@@ -37,12 +37,6 @@ export default class ClientsController {
             .preload('group', (query) => {
                 query.select('id','name')
             })
-            .preload('subsidiary', (query) => {
-                query.select('id','name')
-            })
-            .preload('services', (query) => {
-                query.select('id','next','frequency','service')
-            })
             .where('deleted',deleted)
 
         response.send({
@@ -55,24 +49,21 @@ export default class ClientsController {
         const deleted = request.param('deleted');
         const headers = await MasterTemplate
             .query()
-            .where('table_name','clients')
+            .where('table_name','clients');
 
         headers.forEach(header => {
             if(header.is_master){
                 if(header.column_type == 'Date'){
-                Client.$addColumn(header.column_name,ClientsController.dateOptions);
-            }else{
-                Client.$addColumn(header.column_name,{});
-            }
+                    Client.$addColumn(header.column_name,ClientsController.dateOptions);
+                }else{
+                    Client.$addColumn(header.column_name,{});
+                }
             }            
         });
 
         const data = await Client
             .query()
             .preload('group', (query) => {
-                query.select('id','name')
-            })
-            .preload('subsidiary', (query) => {
                 query.select('id','name')
             })
             .where('deleted',deleted)
@@ -88,7 +79,7 @@ export default class ClientsController {
 
         const headers = await MasterTemplate
             .query()
-            .where('table_name','clients')
+            .where('table_name','clients');
 
         headers.forEach(header => {
             if(header.column_type == 'Date'){

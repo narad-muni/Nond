@@ -207,24 +207,6 @@ export default class RegistersController {
         });
     }
 
-    public async rotate({request,response}: HttpContextContract) {
-        let id = request.input('id');
-        let client_columns = {};
-        let update_query_columns = {};
-
-        //filter out only active one's
-        const payload = await RegisterMaster
-            .query()
-            .whereIn('id',id)
-            .where('active',true);
-
-        id = payload.map(e => e.id);
-
-        //create new register
-
-        //archive existing register and copy & update template
-    }
-
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
 
