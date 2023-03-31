@@ -67,95 +67,113 @@ class utils{
     }
 
     static async get(url){
-        loader.set(true);
-        const requestOptions = {
-            method: 'GET'
-        };
+        try{
+            loader.set(true);
+            const requestOptions = {
+                method: 'GET'
+            };
 
-        const resp = await fetch(url, requestOptions);
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     static async post_json(url, body){
-        loader.set(true);
-        
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        };
+        try{
+            loader.set(true);
+            
+            const requestOptions = {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            };
 
-        const resp = await fetch(url, requestOptions);
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     static async post_form(url, body){
-        loader.set(true);
-        
-        const requestOptions = {
-            method: 'POST',
-            body: body
-        };
+        try{
+            loader.set(true);
+            
+            const requestOptions = {
+                method: 'POST',
+                body: body
+            };
 
-        const resp = await fetch(url, requestOptions);
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     static async put_form(url, body){
-        loader.set(true);
-        
-        const requestOptions = {
-            method: 'PUT',
-            body: body
-        };
+        try{
+            loader.set(true);
+            
+            const requestOptions = {
+                method: 'PUT',
+                body: body
+            };
 
-        const resp = await fetch(url, requestOptions);    
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);    
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     static async put_json(url, body){
-        loader.set(true);
-        
-        const requestOptions = {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        };
+        try{
+            loader.set(true);
+            
+            const requestOptions = {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            };
 
-        const resp = await fetch(url, requestOptions);    
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);    
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     // prefixed with underscored because delete is a reserved word in javascript
     static async _delete(url,body){
-        loader.set(true);
-        
-        const requestOptions = {
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
-        };
+        try{
+            loader.set(true);
+            
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json'},
+                body: JSON.stringify(body)
+            };
 
-        const resp = await fetch(url, requestOptions);
-        const respJson = await resp.json()
+            const resp = await fetch(url, requestOptions);
+            const respJson = await resp.json()
 
-        loader.set(false);
-        return respJson;
+            return respJson;
+        }finally{
+            loader.set(false);
+        }
     }
 
     static getFormData(object) {
