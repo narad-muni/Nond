@@ -21,7 +21,10 @@
     import Invoice from "./Invoice.svelte";
     import RegisterTemplate from "./RegisterTemplate.svelte";
     import Register from "./Register.svelte";
-  import ArchivedRegister from "./ArchivedRegister.svelte";
+    import ArchivedRegister from "./ArchivedRegister.svelte";
+    
+    import { loader } from "../global/stores.js";
+  import { Spinner } from "flowbite-svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -56,6 +59,12 @@
         <Navbar/>
     </div>
     <Router {routes}/>
+
+    {#if $loader}
+        <div class="absolute w-[100%] h-[100%] bg-gray-500/50 flex justify-center items-center z-[99]">
+            <Spinner size="10"/>
+        </div>
+    {/if}
 </main>
 
 <style>

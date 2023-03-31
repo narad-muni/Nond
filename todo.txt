@@ -1,3 +1,13 @@
+add min-max date in invoice description
+e.g.
+GST 2022-13-05 to 2022-18-06
+
+Invoice dropdown
+
+Unpaid Invoice
+Pending Invoice
+Paid Invoices
+
 (year = financial year)
 
 delete 2 year old invoices

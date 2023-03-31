@@ -38,7 +38,7 @@
 
 </script>
 
-<Navbar let:hidden let:toggle class="bg-slate-100">
+<Navbar let:hidden let:toggle class="!bg-slate-100">
     <NavBrand href="#">
         <img
         src="logo.png"

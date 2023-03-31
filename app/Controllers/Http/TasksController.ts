@@ -174,7 +174,7 @@ export default class TasksController {
         //fetch archivaeble tasks
         const archiveable = await Task
             .query()
-            .whereIn('id',archiveable_ids)
+            .whereIn('id',archiveable_ids);
 
         //add archiveable tasks in archive table
         await ArchivedTask.createMany(archiveable);

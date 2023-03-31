@@ -120,7 +120,6 @@ export default class ClientsController {
         const data = await Client
             .query()
             .select('id','name')
-            .where('deleted',false)
 
         const serilizedData = data.map(e => e.serialize())
 
