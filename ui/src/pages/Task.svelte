@@ -195,6 +195,8 @@
 
         resp.data.client = clients.find(e => e.value == resp.data.client_id);
 
+        resp.data.client.group = clients.find(e => e.value == resp.data.client_id);
+
         resp.data.service = services.find(e => e.value == resp.data.service_id);
 
         if(resp.status == 'success'){
@@ -258,7 +260,7 @@
     }
 
     async function createData(){
-        let resp = await utils.post_json('/api/task/',createdObject);
+        const resp = await utils.post_json('/api/task/',createdObject);
 
         if(resp.status == 'success'){
             resp.data._selected = false;
@@ -267,6 +269,10 @@
             resp.data.assigned_user.username = resp.data.assigned_user.name;
 
             resp.data.client = clients.find(e => e.value == resp.data.client_id);
+
+            resp.data.client.group = clients.find(e => e.value == resp.data.client_id);
+
+            resp.data.service = services.find(e => e.value == resp.data.service_id);
 
             if(!(resp.data.status == 4 && statusFilter == 0) && !(resp.data.status != 4 && statusFilter == 2)){
                 data.push(resp.data);

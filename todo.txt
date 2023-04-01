@@ -1,3 +1,5 @@
+check tasks create adds null to tables
+
 add min-max date in invoice description
 e.g.
 GST 2022-13-05 to 2022-18-06

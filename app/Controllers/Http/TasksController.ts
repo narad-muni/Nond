@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database';
 import ArchivedTask from 'App/Models/ArchivedTask';
 import Invoice from 'App/Models/Invoice';
 import Task from 'App/Models/Task'
@@ -203,13 +204,46 @@ export default class TasksController {
         }
 
         const invoice_list_obj = {};
+        const high_low = {};
 
+        //get high low date range for client tasks based on services
         tasks.forEach(task => {
-            if(invoice_list_obj[task.client_id]){
+            if(task.service_id >= 0){
+                if(high_low[task.client_id]){//exisiting entry
+
+                    if(high_low[task.client_id][task.service_id]){//existing entry
+
+                        //update previous dates
+                        if(high_low[task.client_id][task.service_id]['high'] < task.created.toISODate()){
+                            high_low[task.client_id][task.service_id]['high'] = task.created.toISODate();
+                        }else if(high_low[task.client_id][task.service_id]['low'] > task.created.toISODate()){
+                            high_low[task.client_id][task.service_id]['low'] = task.created.toISODate();
+                        }
+
+                    }else{
+                        high_low[task.client_id][task.service_id] = {//new entry
+                            high: task.created.toISODate(),
+                            low: task.created.toISODate(),
+                        }
+                    }
+
+                }else{//new entry
+                    high_low[task.client_id] = {}
+                    high_low[task.client_id][task.service_id] = {high: task.created.toISODate(),low: task.created.toISODate(),}
+                }
+            }
+        });
+
+        //add task in description with price
+        tasks.forEach(task => {
+            if(invoice_list_obj[task.client_id]){//client already in invoice list
+
                 if(task.service_id < 0){//other task
-                    invoice_list_obj[task.client_id].description[task.title] = 0
+                    invoice_list_obj[task.client_id].description[task.title + "     " + task.created.toISODate()] = {"price":0};
                 }else{
-                    invoice_list_obj[task.client_id].description[task.service.name] = 0
+                    let date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+
+                    invoice_list_obj[task.client_id].description[task.service.name + "      " + date_range] = {"price":0};
                 }
             }else{
                 const temp = tempInvoiceObject;
@@ -217,9 +251,11 @@ export default class TasksController {
                 temp.client_id = task.client_id;
                 
                 if(task.service_id < 0){//other task
-                    temp.description[task.title] = 0
+                    temp.description[task.title + "     " + task.created.toISODate()] = {"price":0};
                 }else{
-                    temp.description[task.service.name] = 0
+                    let date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+                    
+                    temp.description[task.service.name + "      " + date_range] = {"price":0};
                 }
 
                 invoice_list_obj[task.client_id] = temp;
