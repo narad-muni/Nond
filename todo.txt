@@ -1,6 +1,4 @@
-Unpaid Invoice
-Pending Invoice
-Paid Invoices
+Invoice crud
 
 (year = financial year)
 
@@ -11,8 +9,6 @@ archive 1 year old invoices (paid)
 archive 1 year old tasks (billed & completed)
 
 scvhedulers
-
-invoice is pending
 
 create deleted pages
 

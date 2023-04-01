@@ -314,7 +314,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-1" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>Invoice ID</span>
