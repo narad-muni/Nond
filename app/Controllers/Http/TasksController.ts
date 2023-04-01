@@ -131,9 +131,9 @@ export default class TasksController {
 
         if(payload.status == 4 && old?.billed){
             await Task
-            .query()
-            .where('id',payload.id)
-            .delete()
+                .query()
+                .where('id',payload.id)
+                .delete()
 
             archived = true;
 
