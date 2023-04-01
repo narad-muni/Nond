@@ -190,21 +190,21 @@
     async function updateData(){
         const resp = await utils.put_json('/api/task/',actionsObject);
 
-        resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
-        resp.data.assigned_user.username = resp.data.assigned_user.name;
-
-        resp.data.client = clients.find(e => e.value == resp.data.client_id);
-
-        resp.data.client.group = clients.find(e => e.value == resp.data.client_id);
-
-        resp.data.service = services.find(e => e.value == resp.data.service_id);
-
         if(resp.status == 'success'){
-            resp.data._selected = data[actionsIndex]._selected;
-
-            if((resp.data.status == 4 && statusFilter == 0) || (resp.data.status != 4 && statusFilter == 2)){
+            if((resp.data.status == 4 && statusFilter == 0) || (resp.data.status != 4 && statusFilter == 2) || resp.archived){
                 data.splice(actionsIndex, 1);
             }else{
+                resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
+                resp.data.assigned_user.username = resp.data.assigned_user.name;
+
+                resp.data.client = clients.find(e => e.value == resp.data.client_id);
+
+                resp.data.client.group = clients.find(e => e.value == resp.data.client_id);
+
+                resp.data.service = services.find(e => e.value == resp.data.service_id);
+
+                resp.data._selected = data[actionsIndex]._selected;
+
                 data[actionsIndex] = resp.data;
             }
 

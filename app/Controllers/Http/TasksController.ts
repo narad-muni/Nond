@@ -137,7 +137,7 @@ export default class TasksController {
 
             archived = true;
 
-            await ArchivedTask.create(old);
+            await ArchivedTask.create(old.serialize());
         }else{
             await Task
             .query()
@@ -176,6 +176,10 @@ export default class TasksController {
         const archiveable = await Task
             .query()
             .whereIn('id',archiveable_ids);
+
+        archiveable.forEach((task,index) => {
+            archiveable[index] = task.serialize();
+        });
 
         //add archiveable tasks in archive table
         await ArchivedTask.createMany(archiveable);
