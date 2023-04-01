@@ -1,5 +1,3 @@
-Invoice dropdown
-
 Unpaid Invoice
 Pending Invoice
 Paid Invoices
