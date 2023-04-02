@@ -72,6 +72,59 @@ export default class RegistersController {
         });
     }
 
+    public async indexMaster({request,response}: HttpContextContract){
+        const payload = request.params();
+        const client_columns: any[] = [];
+
+        //setup dynamic register
+        const register = await RegisterMaster
+            .query()
+            .where('id',payload.table_id)
+            .first();
+
+        const headers = await RegisterTemplate
+            .query()
+            .where('table_id',payload.table_id)
+            .where('master',true);
+
+        //add relation
+        DynamicRegister.$addRelation(
+            '__client',
+            'belongsTo',
+            () => Client,
+            {
+                'foreignKey': 'client_id'
+            }
+        );
+
+        headers.forEach(header => {
+            if(header.client_column_id == null){
+                if(header.column_type == 'Date'){
+                    DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
+                }else{
+                    
+                }
+            }else{
+                client_columns.push(header.column_name);
+            }
+        });
+
+        DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+        //setup complete
+
+        //add linked columns
+        const data = await DynamicRegister
+            .query()
+            .preload('__client', (query) => {
+                query.select(...client_columns)
+            });
+
+        response.send({
+            status: 'success',
+            data: data
+        });
+    }
+
     public async get({request,response}: HttpContextContract){
         const payload = request.params();
 

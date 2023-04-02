@@ -159,7 +159,7 @@ export default class TasksController {
         const tasks = await Task
             .query()
             .preload('service',(query) => {
-                query.select('id','name')
+                query.select('id','name','hsn','gst')
             })
             .whereIn('id',payload.ids)
 
@@ -173,7 +173,7 @@ export default class TasksController {
         const archiveable_ids = to_arhive.map(e => e.id);
 
         //fetch archivaeble tasks
-        const archiveable = await Task
+        const archiveable : Task[] | object[] = await Task
             .query()
             .whereIn('id',archiveable_ids);
 
@@ -240,14 +240,15 @@ export default class TasksController {
 
         //add task in description with price
         tasks.forEach(task => {
+            const date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+
             if(invoice_list_obj[task.client_id]){//client already in invoice list
 
                 if(task.service_id < 0){//other task
-                    invoice_list_obj[task.client_id].description[task.title + "     " + task.created.toISODate()] = {"price":0};
+                    invoice_list_obj[task.client_id].description[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0};
                 }else{
-                    let date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
 
-                    invoice_list_obj[task.client_id].description[task.service.name + "      " + date_range] = {"price":0};
+                    invoice_list_obj[task.client_id].description[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst};
                 }
             }else{
                 const temp = tempInvoiceObject;
@@ -255,11 +256,10 @@ export default class TasksController {
                 temp.client_id = task.client_id;
                 
                 if(task.service_id < 0){//other task
-                    temp.description[task.title + "     " + task.created.toISODate()] = {"price":0};
+                    temp.description[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0};
                 }else{
-                    let date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
                     
-                    temp.description[task.service.name + "      " + date_range] = {"price":0};
+                    temp.description[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst};
                 }
 
                 invoice_list_obj[task.client_id] = temp;
@@ -271,7 +271,7 @@ export default class TasksController {
         response.send({
             status:"success",
             archived: archiveable_ids
-        })
+        });
     }
 
     public async destroy({request,response}: HttpContextContract){
@@ -280,7 +280,7 @@ export default class TasksController {
         await Task
             .query()
             .whereIn('id',payload.id)
-            .delete()
+            .delete();
 
         response.send({
             status: 'success'

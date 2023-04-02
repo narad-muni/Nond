@@ -187,6 +187,10 @@ Route.group(() => {
 
             Route.get('/:table_id','RegistersController.index')
                 .where('table_id',/^[0-9]+$/);
+
+            Route.get('/master/:table_id','RegistersController.indexMaster')
+                .where('table_id',/^[0-9]+$/);
+
             Route.get('/:table_id/:id','RegistersController.get')
                 .where('id',/^[0-9]+$/)
                 .where('table_id',/^[0-9]+$/);
