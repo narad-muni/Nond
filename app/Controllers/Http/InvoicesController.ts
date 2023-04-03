@@ -43,13 +43,31 @@ export default class InvoicesController {
         })
     }
 
-    public async options({}: HttpContextContract){}
+    public async create({request,response}: HttpContextContract){
+        const payload = request.all();
 
-    public async create({}: HttpContextContract){}
+        const data = await Invoice.create(payload);
 
-    public async update({}: HttpContextContract){}
+        payload.id = data.id;
 
-    public async remove({}: HttpContextContract){}
+        response.send({
+            status: 'success',
+            data: payload
+        });
+    }
 
-    public async destroy({}: HttpContextContract){}
+    public async update({request,response}: HttpContextContract){}
+
+    public async destroy({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        await Invoice
+            .query()
+            .whereIn('id',payload.id)
+            .delete();
+
+        response.send({
+            status: 'success'
+        });
+    }
 }

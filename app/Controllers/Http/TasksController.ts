@@ -181,28 +181,29 @@ export default class TasksController {
             archiveable[index] = task.serialize();
         });
 
-        //add archiveable tasks in archive table
+        //add archiveable tasks in archive table 
         await ArchivedTask.createMany(archiveable);
 
         //remove archived tasks from active table
         await Task
             .query()
             .whereIn('id',archiveable_ids)
-            .delete()
+            .delete();
 
         //mark remaining tasks billed
         await Task
             .query()
             .whereIn('id',payload.ids)
-            .update({billed:true})
+            .update({billed:true});
 
         // generate bill
         const tempInvoiceObject = {
             client_id: 0,
             company_id: payload.company_id,
-            description: {},
-            paid: 0,
-            total: 0,
+            particulars: {},
+            paid: null,
+            total: null,
+            remarks: '',
             gst: payload.gst,
             date: new Date().toJSON().slice(0, 10)
         }
@@ -238,17 +239,16 @@ export default class TasksController {
             }
         });
 
-        //add task in description with price
+        //add task in particulars with price
         tasks.forEach(task => {
             const date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
 
             if(invoice_list_obj[task.client_id]){//client already in invoice list
 
                 if(task.service_id < 0){//other task
-                    invoice_list_obj[task.client_id].description[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0};
+                    invoice_list_obj[task.client_id].particulars[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0,description:task.created.toISODate()};
                 }else{
-
-                    invoice_list_obj[task.client_id].description[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst};
+                    invoice_list_obj[task.client_id].particulars[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
                 }
             }else{
                 const temp = tempInvoiceObject;
@@ -256,10 +256,9 @@ export default class TasksController {
                 temp.client_id = task.client_id;
                 
                 if(task.service_id < 0){//other task
-                    temp.description[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0};
+                    temp.particulars[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0,description:task.created.toISODate()};
                 }else{
-                    
-                    temp.description[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst};
+                    temp.particulars[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
                 }
 
                 invoice_list_obj[task.client_id] = temp;
@@ -284,6 +283,6 @@ export default class TasksController {
 
         response.send({
             status: 'success'
-        })
+        });
     }
 }

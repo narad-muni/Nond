@@ -134,7 +134,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/invoice/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/invoice/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -343,8 +343,8 @@
         <span>&nbsp;</span>
 
         <Label class="space-y-2 col-span-2">
-            <span>Comment</span>
-            <Textarea required bind:value={actionsObject.comment}/>
+            <span>Remarks</span>
+            <Textarea required bind:value={actionsObject.remarks}/>
         </Label>
 
         <Label class="space-y-2">

@@ -65,7 +65,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -158,9 +158,18 @@
         if(resp.status == 'success'){
             data = resp.data;
 
+            const temp_selection = new Set();
+
             data.forEach((v) => {
-                v["_selected"] = 0;
+                if(selectedRows.has(v.id)){
+                    v["_selected"] = true;
+                    temp_selection.add(v.id);
+                }else{
+                    v["_selected"] = false;
+                }
             });
+
+            selectedRows = temp_selection;
 
             handler.setRows(data);
         }else{

@@ -8,10 +8,10 @@ export default class extends BaseSchema {
             table.increments('id');
             table.integer('client_id');
             table.integer('company_id');
-            table.json('description');
+            table.json('particulars');
             table.boolean('paid');
             table.boolean('gst');
-            table.string('comments');
+            table.string('remarkss');
             table.integer('total');
             table.boolean('deleted').defaultTo(false)
             table.date('date');
