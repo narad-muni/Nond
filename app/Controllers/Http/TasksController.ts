@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database';
 import ArchivedTask from 'App/Models/ArchivedTask';
 import Invoice from 'App/Models/Invoice';
 import Task from 'App/Models/Task'
@@ -246,9 +245,9 @@ export default class TasksController {
             if(invoice_list_obj[task.client_id]){//client already in invoice list
 
                 if(task.service_id < 0){//other task
-                    invoice_list_obj[task.client_id].particulars[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0,description:task.created.toISODate()};
+                    invoice_list_obj[task.client_id].particulars[task.title + "  on  " + task.created.toISODate()] = {amount:0,hsn:"",gst:0,description:task.created.toISODate()};
                 }else{
-                    invoice_list_obj[task.client_id].particulars[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
+                    invoice_list_obj[task.client_id].particulars[task.service.name + "      " + date_range] = {amount:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
                 }
             }else{
                 const temp = tempInvoiceObject;
@@ -256,9 +255,9 @@ export default class TasksController {
                 temp.client_id = task.client_id;
                 
                 if(task.service_id < 0){//other task
-                    temp.particulars[task.title + "  on  " + task.created.toISODate()] = {price:0,hsn:"",gst:0,description:task.created.toISODate()};
+                    temp.particulars[task.title + "  on  " + task.created.toISODate()] = {amount:0,hsn:"",gst:0,description:task.created.toISODate()};
                 }else{
-                    temp.particulars[task.service.name + "      " + date_range] = {price:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
+                    temp.particulars[task.service.name + "      " + date_range] = {amount:0,hsn:task.service.hsn,gst:task.service.gst,description:date_range};
                 }
 
                 invoice_list_obj[task.client_id] = temp;

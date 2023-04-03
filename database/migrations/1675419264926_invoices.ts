@@ -11,7 +11,7 @@ export default class extends BaseSchema {
             table.json('particulars');
             table.boolean('paid');
             table.boolean('gst');
-            table.string('remarkss');
+            table.string('remarks');
             table.integer('total');
             table.boolean('deleted').defaultTo(false)
             table.date('date');

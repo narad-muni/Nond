@@ -347,6 +347,26 @@
             <Textarea required bind:value={actionsObject.remarks}/>
         </Label>
 
+        {#if actionsObject.gst}
+            <div>
+                {#each Object.keys(actionsObject.particulars) as particular}
+                    {particular}
+                    {actionsObject.particulars[particular].description}
+                    {actionsObject.particulars[particular].hsn}
+                    {actionsObject.particulars[particular].gst}
+                    {actionsObject.particulars[particular].amount}
+                {/each}
+            </div>
+        {:else}
+            <div>
+                {#each Object.keys(actionsObject.particulars) as particular}
+                    {particular}
+                    {actionsObject.particulars[particular].description}
+                    {actionsObject.particulars[particular].amount}
+                {/each}
+            </div>
+        {/if}
+
         <Label class="space-y-2">
             <span></span>
         </Label>
