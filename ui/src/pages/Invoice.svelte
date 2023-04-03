@@ -349,20 +349,20 @@
 
         {#if actionsObject.gst}
             <div>
-                {#each Object.keys(actionsObject.particulars) as particular}
-                    {particular}
-                    {actionsObject.particulars[particular].description}
-                    {actionsObject.particulars[particular].hsn}
-                    {actionsObject.particulars[particular].gst}
-                    {actionsObject.particulars[particular].amount}
+                {#each Object.values(actionsObject.particulars) as particular}
+                    {particular.master}
+                    {particular.details}
+                    {particular.gst}
+                    {particular.hsn}
+                    {particular.amount}
                 {/each}
             </div>
         {:else}
             <div>
-                {#each Object.keys(actionsObject.particulars) as particular}
-                    {particular}
-                    {actionsObject.particulars[particular].description}
-                    {actionsObject.particulars[particular].amount}
+                {#each Object.values(actionsObject.particulars) as particular}
+                    {particular.master}
+                    {particular.details}
+                    {particular.amount}
                 {/each}
             </div>
         {/if}

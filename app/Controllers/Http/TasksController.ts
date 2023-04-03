@@ -264,6 +264,25 @@ export default class TasksController {
             }
         });
 
+        Object.keys(invoice_list_obj).forEach(client_id => {
+            const temp_particular_list = [];
+            Object.keys(invoice_list_obj[client_id].particulars).forEach(particular => {
+                const temp_particular = {};
+
+                temp_particular["master"] = particular;
+                temp_particular["amount"] = invoice_list_obj[client_id].particulars[particular].amount;
+                temp_particular["description"] = invoice_list_obj[client_id].particulars[particular].description;
+
+                if(invoice_list_obj[client_id].gst){
+                    temp_particular["hsn"] = invoice_list_obj[client_id].particulars[particular].hsn;
+                    temp_particular["gst"] = invoice_list_obj[client_id].particulars[particular].gst;
+                }
+
+                temp_particular_list.push(temp_particular);
+            });
+            invoice_list_obj[client_id].particulars = {"particulars":temp_particular_list};
+        });
+
         await Invoice.createMany(Object.values(invoice_list_obj));
 
         response.send({
