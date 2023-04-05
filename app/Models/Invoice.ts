@@ -28,7 +28,9 @@ export default class Invoice extends BaseModel {
     @column()
     public total: number
 
-    @column.date()
+    @column.date({
+        serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),
+    })
     public date: DateTime
 
     @belongsTo(() => Client,{

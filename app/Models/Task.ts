@@ -32,7 +32,10 @@ export default class Task extends BaseModel {
     @column()
     public billed: boolean
     
-    @column.date({ autoCreate:true })
+    @column.date({
+        autoCreate:true,
+        serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),
+    })
     public created: DateTime
     
     @belongsTo(() => Service,{

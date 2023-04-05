@@ -23,6 +23,8 @@ export default class Lead extends BaseModel {
     })
     public assigned_user: BelongsTo<typeof Employee>
 
-    @column.date()
+    @column.date({
+        serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),
+    })
     public started: DateTime
 }

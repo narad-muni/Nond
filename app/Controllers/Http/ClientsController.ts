@@ -11,7 +11,7 @@ export default class ClientsController {
     public static dateOptions = {
         serialize: (value) => {
             if(value){
-                return DateTime.fromObject(value).toISODate()
+                return DateTime.fromObject(value).toLocaleString(DateTime.DATE_MED);
             }else{
                 return value
             }

@@ -23,6 +23,8 @@ export default class Scheduler extends BaseModel {
     @column()
     public frequency: string
     
-    @column.date()
+    @column.date({
+        serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),
+    })
     public next: DateTime
 }
