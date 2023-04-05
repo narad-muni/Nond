@@ -321,11 +321,16 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','ServicesController.index');
+
             Route.get('/:id','ServicesController.get')
                 .where('id',/^-?[0-9]+$/);
-            Route.get('/options','ServicesController.options');
+
+            Route.get('/options/:all?','ServicesController.options')
+                .where('al',/true|false/);
+
             Route.get('/options_gst/:hsn','ServicesController.options_gst')
                 .where('id',/^-?[0-9]+$/);
+
             Route.get('/options_all','ServicesController.options_all');
 
             Route.put('/','ServicesController.update');
@@ -413,8 +418,9 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','InvoicesController.index')
-                .where('deleted',/true|false/);
+            Route.get('/filter/:filter','InvoicesController.index')
+                .where('filter',/^[0-9]+$/);
+
             Route.get('/:id','InvoicesController.get')
                 .where('id',/^[0-9]+$/);
 

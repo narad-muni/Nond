@@ -137,12 +137,19 @@
         let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
             if(td.querySelector('a')){
                 return td.querySelector('a').href;
+            }else if(td.querySelector('input[type=checkbox]')){
+                return td.querySelector('input[type=checkbox]').checked ? 'Yes' : 'No';
             }else{
                 return td.textContent;
             }
         }));
 
         rows = rows.slice(2);
+
+        if(indeterminate){
+            rows = rows.filter(e => e[0] == 'Yes');
+        }
+
         const data = [headers, ...rows];
         
         // Convert the table data to CSV format
@@ -154,7 +161,7 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'Client.csv';
+        link.download = 'Invoices.csv';
         
         // Programmatically click on the link to initiate the download
         document.body.appendChild(link);

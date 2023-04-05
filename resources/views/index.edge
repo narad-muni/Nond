@@ -14,10 +14,10 @@
 
         @if(assetsData.found)
             @each(css in assetsData.css)
-            <link rel="stylesheet" type="text/css" href="{{css}}">
+                <link rel="stylesheet" type="text/css" href="{{css}}">
             @end
             @each(js in assetsData.js)
-            <script type="module" src="{{js}}" defer></script>
+                <script type="module" src="{{js}}" defer></script>
             @end
         @end
     </head>

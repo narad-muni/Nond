@@ -1,4 +1,5 @@
-Invoice crud
+Invoice send to clients
+Invoice download pdf
 
 (year = financial year)
 
