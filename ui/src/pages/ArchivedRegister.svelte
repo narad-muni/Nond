@@ -23,7 +23,8 @@
     import utils from '../utils';
     import { location } from 'svelte-spa-router';
     import IdSelect from "../component/IdSelect.svelte";
-  import { archived_registers } from "../global/stores";
+    import { archived_registers } from "../global/stores";
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -249,7 +250,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <Input type="date" bind:value={actionsObject[header.column_name]}/>
+                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]}></SveltyPicker>
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
@@ -278,7 +279,7 @@
                         <Input bind:value={actionsObject["client__"+header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <Input type="date" bind:value={actionsObject["client__"+header.column_name]}/>
+                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject["client__"+header.column_name]}></SveltyPicker>
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:checked={actionsObject["client__"+header.column_name]}>{header.display_name}</Toggle>

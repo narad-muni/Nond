@@ -394,7 +394,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <Input type="date" bind:value={actionsObject[header.column_name]}/>
+                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]}></SveltyPicker>
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
