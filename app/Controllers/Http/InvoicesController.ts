@@ -21,7 +21,7 @@ export default class InvoicesController {
             })
             .where('deleted',false);
 
-        if(filter == 0){ // pending
+        if(filter == 0){ // waiting
             invoices = invoices.where('total',null);
         }else if(filter == 1){ // unpaid
             invoices = invoices.where('paid',false);
@@ -61,6 +61,12 @@ export default class InvoicesController {
         const data = await Invoice.create(payload);
 
         payload.id = data.id;
+
+        payload.client = await Client
+            .query()
+            .select('id','name','group_id')
+            .where('id',payload.client_id)
+            .first();
 
         response.send({
             status: 'success',

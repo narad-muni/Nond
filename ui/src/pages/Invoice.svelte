@@ -26,10 +26,10 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, filterStatus=1;
+    let createModal, actionsModals, deleteModal, filterStatus=3;
     let selectedRows = new Set();
 
-    let data, emptyCreatedObject,createdObject={}, actionsIndex, actionsObject = {}, client_list, company_list;
+    let data, emptyCreatedObject, createdObject={}, actionsIndex, actionsObject = {}, client_list, company_list;
     let handler, rows;
     let error="";
 
@@ -38,9 +38,15 @@
     (async ()=>{
         client_list = await utils.get('/api/client/options/');
         company_list = await utils.get('/api/company/options/');
-        data = await utils.get('/api/invoice/filter/1');
+        data = await utils.get('/api/invoice/filter/'+filterStatus);
 
-        emptyCreatedObject = createdObject;
+        emptyCreatedObject = {
+            particulars:{
+                particulars:[]
+            }
+        };
+
+        createdObject = emptyCreatedObject;
         
         if(data.status != 'success'){
             error = data.message;
@@ -61,14 +67,19 @@
 
             rows = handler.getRows();
         }
-    })()
+    })();
 
     //Reactive variables
 
     $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => parseInt(i.id)))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
-    $: actionsObject.total = actionsObject?.particulars?.particulars.map(e => parseInt(e.amount)).reduce((a,b) => a+b);
+    
+    $: actionsObject.total = actionsObject?.particulars?.particulars.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
+    $: createdObject.total = createdObject?.particulars?.particulars.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
+
+    $: actionsObject.tax = actionsObject?.particulars?.particulars.reduce((a,b) => a+ (b.amount*b.gst*.01), 0);
+    $: createdObject.tax = createdObject?.particulars?.particulars.reduce((a,b) => a+ (b.amount*b.gst*.01), 0);
 
     //Functions
 
@@ -157,29 +168,54 @@
 
     }
 
-    function removeParticular(index){
+    function removeParticularActions(index){
         actionsObject.particulars.particulars.splice(index,1);
         actionsObject.particulars.particulars = actionsObject.particulars.particulars;
     }
 
-    function addParticular(isGST){
+    function removeParticularCreated(index){
+        createdObject.particulars.particulars.splice(index,1);
+        createdObject.particulars.particulars = createdObject.particulars.particulars;
+    }
+
+    function addParticularInActions(isGST){
         if(isGST){
             actionsObject.particulars.particulars.push({
                 master:'',
                 description:'',
-                gst:'',
+                gst:0,
                 hsn:'',
-                amount:''
+                amount:0
             });
         }else{
             actionsObject.particulars.particulars.push({
                 master:'',
                 description:'',
-                amount:''
+                amount:0
             });
         }
 
         actionsObject.particulars.particulars = actionsObject.particulars.particulars;
+    }
+
+    function addParticularInCreated(isGST){
+        if(isGST){
+            createdObject.particulars.particulars.push({
+                master:'',
+                description:'',
+                gst:0,
+                hsn:'',
+                amount:0
+            });
+        }else{
+            createdObject.particulars.particulars.push({
+                master:'',
+                description:'',
+                amount:0
+            });
+        }
+
+        createdObject.particulars.particulars = createdObject.particulars.particulars;
     }
 
     async function updateData(){
@@ -194,6 +230,8 @@
             data[actionsIndex] = resp.data;
             handler.setRows(data);
             actionsModals = false;
+
+            createdObject = emptyCreatedObject;
         }else{
             error = resp.message || "";
         }
@@ -268,9 +306,15 @@
 
         if(resp.status == 'success'){
             resp.data._selected = false;
+
+            resp.data.client.group = client_list.find(e => e.value == resp.data.client.group_id);
+            resp.data.company = company_list.find(e => e.value == resp.data.company_id);
+
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
+
+            createdObject = emptyCreatedObject;
         }else{
             error = resp.message || "";
         }
@@ -294,7 +338,7 @@
                 </svg>
                 &nbsp;
                 {#if filterStatus == 0}
-                    Pending
+                    Waiting
                 {:else if filterStatus == 1}
                     Unpaid
                 {:else if filterStatus == 2}
@@ -350,6 +394,7 @@
                             <Th {handler} orderBy={(row) => row.client?.name}>Client</Th>
                             <Th {handler} orderBy={(row) => row.client?.group?.name}>Group</Th>
                             <Th {handler} orderBy="total">Total</Th>
+                            <Th {handler} orderBy="tax">Tax</Th>
                             <Th {handler} orderBy="paid">Paid</Th>
                             <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy={(row) => row.company?.name}>Company</Th>
@@ -361,6 +406,7 @@
                             <ThSearch {handler} filterBy={(row) => row.client?.name}/>
                             <ThSearch {handler} filterBy={(row) => row.client?.group?.name}/>
                             <ThSearch {handler} filterBy="total"/>
+                            <ThSearch {handler} filterBy="tax"/>
                             <ThSearch {handler} filterBy={(row) => row.paid ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={(row) => row.gst ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={(row) => row.company?.name}/>
@@ -382,6 +428,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.total}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.tax}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.paid ? "Yes" : "No"}
@@ -420,15 +469,131 @@
 
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Create Entry</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 col-span-3">Create Invoice</h3>
         <Label class="space-y-2">
-            <span>name</span>
-            <Input required bind:value={createdObject.name}/>
+            <span>Client</span>
+            <IdSelect items={client_list} required bind:value={createdObject.client_id}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Company</span>
+            <IdSelect items={company_list} required bind:value={createdObject.company_id}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Date</span>
+            <SveltyPicker format="M d, yyyy" required bind:value={createdObject.date}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={createdObject.paid}>Paid</Toggle>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={createdObject.gst}>GST</Toggle>
         </Label>
         
-        <div class="col-span-3 grid gap-6 grid-cols-2">
+        <Label class="space-y-2">
+            <span>Remarks</span>
+            <Textarea bind:value={createdObject.remarks}/>
+        </Label>
+
+        {#if createdObject.gst}
+            <div class="grid gap-2 col-span-3 grid-cols-10">
+                <Label class="space-y-2 text-center col-span-2">
+                    <span>Master</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-4">
+                    <span>Description</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>GST</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>HSN</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>Amount</span>
+                </Label>
+                {#each createdObject.particulars.particulars as particular,index}
+                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-4" bind:value={particular.description} />
+                    <Input required class="col-span-1" bind:value={particular.gst} />
+                    <Input required class="col-span-1" bind:value={particular.hsn} />
+                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Button color="red" on:click={()=>removeParticularCreated(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/each}
+                <span class="col-span-9"></span>
+                <Button on:click={()=>addParticularInCreated(createdObject.gst)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </Button>
+
+                <span class="col-span-7"></span>
+                <span>Sub Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={createdObject.total}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Tax</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={createdObject.tax}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={createdObject.tax+createdObject.total}/>
+                </Label>
+            </div>
+        {:else}
+            <div class="grid gap-2 col-span-3 grid-cols-7">
+                <Label class="space-y-2 text-center col-span-2">
+                    <span>Master</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-3">
+                    <span>Description</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>Amount</span>
+                </Label>
+                {#each createdObject.particulars.particulars as particular,index}
+                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-3" bind:value={particular.description} />
+                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Button color="red" on:click={()=>removeParticularCreated(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/each}
+
+                <span class="col-span-6"></span>
+                <Button on:click={()=>addParticularInCreated(createdObject.gst)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </Button>
+
+                <span class="col-span-4"></span>
+                <span>Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={createdObject.total}/>
+                </Label>
+            </div>
+        {/if}
+
+        <div class="col-span-1 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
 </Modal>
@@ -459,8 +624,13 @@
             <span>&nbsp;</span>
             <Toggle bind:checked={actionsObject.paid}>Paid</Toggle>
         </Label>
+
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={actionsObject.gst}>GST</Toggle>
+        </Label>
         
-        <Label class="space-y-2 col-span-3">
+        <Label class="space-y-2">
             <span>Remarks</span>
             <Textarea bind:value={actionsObject.remarks}/>
         </Label>
@@ -488,22 +658,36 @@
                     <Input required class="col-span-1" bind:value={particular.gst} />
                     <Input required class="col-span-1" bind:value={particular.hsn} />
                     <Input required class="col-span-1" bind:value={particular.amount} />
-                    <Button color="red" on:click={()=>removeParticular(index)} class="col-span-1">
+                    <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                         </svg>
                     </Button>
                 {/each}
+
                 <span class="col-span-9"></span>
-                <Button on:click={()=>addParticular(actionsObject.gst)}>
+                <Button on:click={()=>addParticularInActions(actionsObject.gst)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                 </Button>
-                <span class="col-span-8"></span>
+
+                <span class="col-span-7"></span>
+                <span>Sub Total</span>
                 <Label class="space-y-2 text-center font-bold">
-                    <span>Total</span>
                     <Input readonly value={actionsObject.total}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Tax</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={actionsObject.tax}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={actionsObject.tax+actionsObject.total}/>
                 </Label>
             </div>
         {:else}
@@ -521,21 +705,23 @@
                     <Input required class="col-span-2" bind:value={particular.master} />
                     <Input required class="col-span-3" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.amount} />
-                    <Button color="red" on:click={()=>removeParticular(index)} class="col-span-1">
+                    <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                         </svg>
                     </Button>
                 {/each}
+
                 <span class="col-span-6"></span>
-                <Button on:click={()=>addParticular(actionsObject.gst)}>
+                <Button on:click={()=>addParticularInActions(actionsObject.gst)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                 </Button>
-                <span class="col-span-5"></span>
+                
+                <span class="col-span-4"></span>
+                <span>Total</span>
                 <Label class="space-y-2 text-center font-bold">
-                    <span>Total</span>
                     <Input readonly value={actionsObject.total}/>
                 </Label>
             </div>

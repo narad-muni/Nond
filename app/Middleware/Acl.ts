@@ -10,14 +10,14 @@ export default class Acl {
         const prefix_index = req_url.indexOf('/',2);
         const url = req_url.substring(prefix_index+1);
         const part = url.substring(0,url.indexOf('/'));
-        const method = request.method()
+        const method = request.method();
         const role = session.get('user').role;
         const not_permitted_err = {
             status: 'error',
             message: 'Permission denied'
         }
 
-        if(method == 'GET' && url.includes('options')){
+        if(method == 'GET' && url.includes('options') && role){
             await next();
             return;
         }
@@ -60,7 +60,7 @@ export default class Acl {
         }
 
         // If none of these matches, then continue the request
-        await next()
+        await next();
     
     }
 }
