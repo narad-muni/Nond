@@ -23,6 +23,7 @@
     import utils from '../utils';
     import { location } from 'svelte-spa-router';
     import IdSelect from "../component/IdSelect.svelte";
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -393,7 +394,7 @@
                         <Input type="text" bind:value={createdObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]}></SveltyPicker>
+                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]}>{header.display_name}</Toggle>
@@ -433,7 +434,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]}></SveltyPicker>
+                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>

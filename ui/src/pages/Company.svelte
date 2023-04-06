@@ -11,7 +11,6 @@
         Checkbox,
         A,
         Label,
-        Helper,
         Input,
         Toggle,
         Alert,
@@ -19,11 +18,12 @@
         Select
     } from "flowbite-svelte";
 
-    import { DataHandler, ThFilter } from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -136,20 +136,6 @@
             actionsModals = false;
         }else{
             error = resp.message || "";
-        }
-    }
-
-    async function loadTemplateData(){
-        if(templateFile){
-            let resp = await utils.post_form('/api/company/load_template_data',utils.getFormData({"template":templateFile}));
-            if(resp.status != "success"){
-                error=resp.message;
-            }else{
-                success=resp.message;
-                uploadModal = false;
-            }
-        }else{
-            error="Please select a file";
         }
     }
 
@@ -445,7 +431,7 @@
                         <Input type="text" bind:value={createdObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]}></SveltyPicker>
+                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]}>{header.display_name}</Toggle>
@@ -541,7 +527,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]}></SveltyPicker>
+                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>

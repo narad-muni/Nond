@@ -22,6 +22,7 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -451,7 +452,7 @@
 
         <Label class="space-y-2">
             <span>Date</span>
-            <Input type="date" required bind:value={actionsObject.date}/>
+            <SveltyPicker format="M d, yyyy" required bind:value={actionsObject.date}/>
         </Label>
 
         <Label class="space-y-2">

@@ -21,6 +21,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -320,7 +321,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Start date</span>
-            <Input required type="date" bind:value={createdObject.started}/>
+            <SveltyPicker format="M d, yyyy" bind:value={createdObject.started}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>
@@ -350,7 +351,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Start date</span>
-            <Input type="date" bind:value={actionsObject.started}/>
+            <SveltyPicker format="M d, yyyy" bind:value={actionsObject.started}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>

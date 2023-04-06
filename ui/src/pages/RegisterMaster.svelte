@@ -21,6 +21,7 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import { active_registers, archived_registers } from '../global/stores';
+    import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
@@ -347,7 +348,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <Input required type="date" min={minNextDate} bind:value={createdObject.next} />
+            <SveltyPicker required startDate={minNextDate} format="M d, yyyy" bind:value={createdObject.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
@@ -381,7 +382,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <Input type="date" min={minNextDate} bind:value={actionsObject.scheduler.next} />
+            <SveltyPicker startDate={minNextDate} format="M d, yyyy" bind:value={actionsObject.scheduler.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
