@@ -81,7 +81,7 @@ export default class RegisterTemplatesController {
                     });
                 }else{
                     if(payload.client_column_id < 0){//default client columns
-                        const column_name_arr = ["Name","Email","GSTIN",""];
+                        const column_name_arr = ["Name","Email","GST",""];
 
                         payload.display_name = column_name_arr[column_name_arr.length + parseInt(payload.client_column_id)];
                         payload.column_name = string.snakeCase(payload.display_name);

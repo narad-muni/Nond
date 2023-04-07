@@ -1,5 +1,9 @@
-Invoice send to clients
+Invoice send to clients via email
 Invoice download pdf
+
+create sequence for each company unique invoice id <---
+
+company suffix
 
 (year = financial year)
 
@@ -32,20 +36,5 @@ add default columns to client
 
 fields required for invoice
 
-company : 
-    logo, name, address, gstin?, Invoice suffix, pan
-
-client : 
-    gst?, name, address, 
-
 invoice : 
     particulars, invoice no., date, remarks, buyer, seller, amount, total, signature, hsn?, tax breakdown
-
-
-{
-    "master":"Income tax consultancy".
-    "description":"Fees for IT Consultance for fy ...",
-    "amount":"",
-    "gst":""?,
-    "hsn":""?
-}

@@ -27,16 +27,12 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, allColumns = false;
+    let createModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, data, createdObject={}, actionsIndex, actionsObject, templateFile;
+    let headers, data, createdObject={}, actionsIndex, actionsObject, users;
     let handler, rows;
-    let automaticAssign = [
-        {name:"Divide",value:"Divide"},
-        {name:"By Client",value:"By Client"}
-    ]
-    let error="", success="", assignedUser, autoAssignType, users;
+    let error="", success="";
 
     // fetch data
 
@@ -252,14 +248,6 @@
                 &nbsp;
                 Create
             </Button>
-
-            <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> createTasksModal = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 7.5V6.108c0-1.135.845-2.098 1.976-2.192.373-.03.748-.057 1.123-.08M15.75 18H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08M15.75 18.75v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5A3.375 3.375 0 006.375 7.5H5.25m11.9-3.664A2.251 2.251 0 0015 2.25h-1.5a2.251 2.251 0 00-2.15 1.586m5.8 0c.065.21.1.433.1.664v.75h-6V4.5c0-.231.035-.454.1-.664M6.75 7.5H4.875c-.621 0-1.125.504-1.125 1.125v12c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V16.5a9 9 0 00-9-9z" />
-                </svg>                                 
-                &nbsp;
-                Create Tasks
-            </Button>
             
             <Button gradient color="green" on:click={download}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -308,7 +296,8 @@
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="gstin">GSTIN</Th>
+                            <Th {handler} orderBy="email">Pan</Th>
+                            <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
@@ -321,7 +310,8 @@
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="email"/>
-                            <ThSearch {handler} filterBy="gstin"/>
+                            <ThSearch {handler} filterBy="pan"/>
+                            <ThSearch {handler} filterBy="gst"/>
                             <ThSearch {handler} filterBy="signature"/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
@@ -339,7 +329,8 @@
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>{row.name}</TableBodyCell>
                                 <TableBodyCell>{row.email}</TableBodyCell>
-                                <TableBodyCell>{row.gstin}</TableBodyCell>
+                                <TableBodyCell>{row.pan}</TableBodyCell>
+                                <TableBodyCell>{row.gst}</TableBodyCell>
                                 <TableBodyCell>
                                     {#if row.signature}
                                         <A target="_blank" href={row.signature}>
@@ -414,13 +405,43 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>GSTIN</span>
-            <Input required type="text" bind:value={createdObject.gstin} />
+            <span>Address</span>
+            <Input type="text" bind:value={createdObject.address} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Pan</span>
+            <Input type="text" bind:value={createdObject.pan} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>GST</span>
+            <Input required type="text" bind:value={createdObject.gst} />
         </Label>
 
         <Label class="space-y-2">
             <p>Signature</p>
             <input required type="file" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+        </Label>
+        
+        <Label class="space-y-2">
+            <span>SMTP Host</span>
+            <Input type="text" bind:value={createdObject.smtp_host} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Port</span>
+            <Input type="text" bind:value={createdObject.smtp_port} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Email</span>
+            <Input type="text" bind:value={createdObject.smtp_email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Password</span>
+            <Input type="text" bind:value={createdObject.smtp_password} />
         </Label>
 
         {#each headers.data as header}
@@ -449,30 +470,6 @@
     </form>
 </Modal>
 
-<Modal bind:open={createTasksModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Client Id's</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={assignedUser}/>
-        </Label>
-        {#if assignedUser < 0}
-            <Label class="flex  flex-col gap-y-1">
-                <span class="mb-2">Assign By</span>
-                <Select items={automaticAssign} bind:value={autoAssignType}/>
-            </Label>
-        {/if}
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Description</span>
-            <Textarea rows=8></Textarea>
-        </Label>
-    </form>
-</Modal>
-
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
@@ -492,8 +489,18 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>GSTIN</span>
-            <Input type="text" bind:value={actionsObject.gstin} />
+            <span>Address</span>
+            <Input type="text" bind:value={actionsObject.address} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Pan</span>
+            <Input type="text" bind:value={actionsObject.pan} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>GST</span>
+            <Input type="text" bind:value={actionsObject.gst} />
         </Label>
 
         <Label class="space-y-2">
@@ -517,6 +524,26 @@
                 <p>Signature</p>
                 <input required type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
             {/if}
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Host</span>
+            <Input type="text" bind:value={actionsObject.smtp_host} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Port</span>
+            <Input type="text" bind:value={actionsObject.smtp_port} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Email</span>
+            <Input type="text" bind:value={actionsObject.smtp_email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Password</span>
+            <Input type="text" bind:value={actionsObject.smtp_password} />
         </Label>
 
         {#each headers.data as header}

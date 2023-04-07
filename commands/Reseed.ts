@@ -116,7 +116,7 @@ export default class Reseed extends BaseCommand {
         await Company.create({
             id: 0,
             name: 'JJ Industries',
-            gstin: '27GAHJAKS',
+            gst: '27GAHJAKS',
             email: 'jjind2011@gmail.com',
             signature: '.jpg'
         });
@@ -125,7 +125,7 @@ export default class Reseed extends BaseCommand {
             id: 0,
             name: 'JJ Industries',
             email: 'jjind2011@gmail.com',
-            gstin: '27aafh',
+            gst: '27aafh',
             deleted: false,
             group_id: 0
         });

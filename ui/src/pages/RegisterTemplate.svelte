@@ -42,7 +42,7 @@
     const default_client_columns = [
         {"name":"Name","value":"-4"},
         {"name":"Email","value":"-3"},
-        {"name":"GSTIN","value":"-2"},
+        {"name":"GST","value":"-2"},
         // {"name":"Group","value":"-1"},
     ];
 

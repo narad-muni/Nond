@@ -1,4 +1,3 @@
-import { DateTime } from 'luxon'
 import { BaseModel, beforeSave, column } from '@ioc:Adonis/Lucid/Orm'
 
 export default class Company extends BaseModel {
@@ -9,10 +8,29 @@ export default class Company extends BaseModel {
     public name: string
 
     @column()
-    public gstin: string
+    public gst: string
 
     @column()
     public email: string
+
+    @column()
+    public address: string
+
+    @column()
+    public pan: string
+
+    @column()
+    public smtp_host: string
+
+    @column()
+    public smtp_port: string
+
+    @column()
+    public smtp_email: string
+
+    @column()
+    public smtp_password: string
+
 
     @column()
     public signature: string

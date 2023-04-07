@@ -8,7 +8,9 @@ export default class extends BaseSchema {
             table.increments('id');
             table.string('name');
             table.string('email');
-            table.string('gstin');
+            table.string('gst');
+            table.string('address');
+            table.string('pan');
             table.integer('group_id');
             table.boolean('deleted').defaultTo(false);
         })

@@ -279,7 +279,7 @@
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="gstin">GSTIN</Th>
+                            <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy={(row => row.group?.name || null)}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
@@ -292,7 +292,7 @@
                             <ThSearch {handler} filterBy="id"/>
                             <ThSearch {handler} filterBy="name"/>
                             <ThSearch {handler} filterBy="email"/>
-                            <ThSearch {handler} filterBy="gstin"/>
+                            <ThSearch {handler} filterBy="gst"/>
                             <ThSearch {handler} filterBy={(row => row.group?.name || null)}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
@@ -310,7 +310,7 @@
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>{row.name}</TableBodyCell>
                                 <TableBodyCell>{row.email}</TableBodyCell>
-                                <TableBodyCell>{row.gstin}</TableBodyCell>
+                                <TableBodyCell>{row.gst}</TableBodyCell>
                                 <TableBodyCell>{row.group?.name || null}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
@@ -383,8 +383,8 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>GSTIN</span>
-            <Input type="text" bind:value={actionsObject.gstin} />
+            <span>GST</span>
+            <Input type="text" bind:value={actionsObject.gst} />
         </Label>
 
         {#each headers.data as header}
