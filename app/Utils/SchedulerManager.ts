@@ -6,6 +6,7 @@ import Service from 'App/Models/Service';
 import Task from 'App/Models/Task';
 import TaskTemplate from 'App/Models/TaskTemplate';
 import { string } from '@ioc:Adonis/Core/Helpers';
+import Database from '@ioc:Adonis/Lucid/Database';
 
 export default class SchedulerManager{
     
@@ -57,12 +58,12 @@ export default class SchedulerManager{
                 }
             });
 
-            // 6
-            // //update the next date
-            // await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
+            6
+            //update the next date
+            await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
 
-            // //if for multiple days task is not created, then set next date = tommorow
-            // await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
+            //if for multiple days task is not created, then set next date = tommorow
+            await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
 
             //updating before this gives us next date calculated by sql
             SchedulerManager.everyFinancialYear(every_financial_year);
