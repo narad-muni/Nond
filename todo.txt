@@ -1,17 +1,11 @@
 Invoice send to clients via email
 Invoice download pdf
 
-create sequence for each company unique invoice id <--- ???
-
 reports ??
-
-company suffix
-
-reset company invoice on new financial year
 
 need to show multiple gst
 
-scvhedulers
+schedulers
 
 create deleted pages
 
@@ -25,6 +19,8 @@ scheduler -
     archive 1 year old invoices (paid)
     archive 1 year old tasks (billed & completed)
     *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
+
+    reset company invoice on new financial year
 
 additional client side can also be made for viewing register, tasks, data, invoices.
 
