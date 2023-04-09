@@ -23,7 +23,7 @@
         <RowsPerPage {handler}/>
     </header>
 
-    <article bind:this={element}>
+    <article class="border-2 mt-4" bind:this={element}>
         <slot/>
     </article>
 

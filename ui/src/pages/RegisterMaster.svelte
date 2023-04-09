@@ -248,7 +248,7 @@
             </Button>
         </div>
 
-        <div class="min-h-0 pl-4">
+        <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
                 <Table>
                     <thead>

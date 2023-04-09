@@ -71,7 +71,7 @@
 
     //Reactive variables
 
-    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => parseInt(i.id)))); // $rows||[] is used to wait and not fail
+    $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => i.id))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
     
@@ -89,9 +89,9 @@
 
         if(id){ // if oid is passed, then element is column
             if(e.target.checked){
-                selectedRows.add(parseInt(id));
+                selectedRows.add(id);
             }else{
-                selectedRows.delete(parseInt(id));
+                selectedRows.delete(id);
             }
 
         }else{//element is column, global checkbox
@@ -99,14 +99,14 @@
 
                 $rows.forEach((r) => {
                     r._selected = true;
-                    selectedRows.add(parseInt(r.id));
+                    selectedRows.add(r.id);
                 });
 
             }else{
 
                 $rows.forEach((r) => {
                     r._selected = false;
-                    selectedRows.delete(parseInt(r.id));
+                    selectedRows.delete(r.id);
                 });
 
             }
@@ -382,7 +382,7 @@
 
         </div>
 
-        <div class="min-h-0 pl-4">
+        <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
                 <Table id="table">
                     <thead>

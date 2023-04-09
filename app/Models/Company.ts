@@ -31,9 +31,11 @@ export default class Company extends BaseModel {
     @column()
     public smtp_password: string
 
-
     @column()
     public signature: string
+
+    @column()
+    public integer: string
 
     @column()
     public deleted: boolean

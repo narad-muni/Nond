@@ -1,11 +1,12 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Client from './Client'
 import Company from './Company'
+import StringUtils from 'App/Utils/StringUtils'
 
 export default class Invoice extends BaseModel {
     @column({ isPrimary: true })
-    public id: number
+    public id: string
 
     @column()
     public client_id: number
@@ -45,4 +46,17 @@ export default class Invoice extends BaseModel {
         foreignKey: 'company_id'
     })
     public company: BelongsTo<typeof Company>
+
+    @beforeCreate()
+    public static async generateNextInvoiceNumber(payload: Invoice){
+
+        const company_details = await Company
+            .query()
+            .where('id',payload.company_id)
+            .increment('invoice_counter',1)
+            .update({},['name','invoice_counter']);
+
+        payload.id = StringUtils.shortName(company_details[0]['name']) + " " + StringUtils.getFinancialYear() + " " + company_details[0]['invoice_counter'];
+
+    }
 }

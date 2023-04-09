@@ -1,5 +1,6 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Database from '@ioc:Adonis/Lucid/Database';
 import Company from 'App/Models/Company';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
@@ -98,9 +99,24 @@ export default class CompaniesController {
         const payload = request.all();
         const files = request.allFiles();
 
+        const exists = await Company
+            .query()
+            .where('name',payload.name)
+            .first();
+
+        if(exists){
+
+            response.send({
+                status: 'error',
+                message: "Company with same name already exists"
+            });
+
+            return;
+        }
+
         const headers = await MasterTemplate
             .query()
-            .where('table_name','companies')
+            .where('table_name','companies');
 
         headers.forEach(header => {
             Company.$addColumn(header.column_name,{});
@@ -126,21 +142,41 @@ export default class CompaniesController {
         await Company
             .query()
             .where('id',inserted.id)
-            .update(payload)
+            .update(payload);
+
+        await Database
+            .rawQuery(`
+
+            `);
 
         response.send({
             status: 'success',
             data: payload
-        })
+        });
     }
 
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
 
+        const exists = await Company
+            .query()
+            .where('name',payload.name)
+            .first();
+
+        if(exists && exists?.id != payload.id){
+
+            response.send({
+                status: 'error',
+                message: "Company with same name already exists"
+            });
+
+            return;
+        }
+
         const headers = await MasterTemplate
             .query()
-            .where('table_name','companies')
+            .where('table_name','companies');
 
         headers.forEach(header => {
             Company.$addColumn(header.column_name,{});
@@ -185,12 +221,12 @@ export default class CompaniesController {
         await Company
             .query()
             .where('id',payload.id)
-            .update(payload)
+            .update(payload);
 
         response.send({
             status: 'success',
             data: payload
-        })
+        });
 
     }
 

@@ -23,6 +23,7 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
+import Company from 'App/Models/Company';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
@@ -418,11 +419,9 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/filter/:filter','InvoicesController.index')
-                .where('filter',/^[0-9]+$/);
+            Route.get('/filter/:filter','InvoicesController.index');
 
-            Route.get('/:id','InvoicesController.get')
-                .where('id',/^[0-9]+$/);
+            Route.get('/:id','InvoicesController.get');
 
             Route.post('/','InvoicesController.create');
 
@@ -448,7 +447,7 @@ Route.group(() => {
             'status': 'error',
             'message': 'Invalid API endpoint'
         });
-    })
+    });
 
 })
 .prefix('/api');
@@ -460,7 +459,6 @@ if (isDevEnv) {
         response.attachment(file, path.basename(file), 'inline');
     });
 }
-
 
 /*
 | Redirect all routes to index page, spa

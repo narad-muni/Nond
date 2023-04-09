@@ -176,6 +176,7 @@
         if(resp.status == 'success'){
             resp.data._selected = data[actionsIndex]._selected;
             resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
+            resp.data.assigned_user.username = resp.data.assigned_user.name;
 
             data[actionsIndex] = resp.data;
             handler.setRows(data);
@@ -249,7 +250,7 @@
             </Button>
         </div>
 
-        <div class="min-h-0 pl-4">
+        <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
                 <Table id="table">
                     <thead>
