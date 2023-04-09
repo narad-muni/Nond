@@ -47,8 +47,6 @@ pending stuff
 home page.
 
 rotate register scheduler
-archive scheduler
-delete scheduler
 
 invoice send by email
 invoice generate pdf

@@ -218,7 +218,8 @@ export default class SchedulerManager{
         const registers = await RegisterMaster
             .query()
             .select('id','name','version', 'service_id')
-            .whereIn('service_id', service_ids);
+            .whereIn('service_id', service_ids)
+            .where('active', true);
 
         //tasks array
         const tasks: Task[] = [];
