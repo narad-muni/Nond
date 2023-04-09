@@ -782,7 +782,7 @@
             {#each services as service}
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker startDate={minNextDate} format="M d, yyyy" required={actionsObject.services[service.value].next} bind:value={actionsObject[createdObject.services[service.value].next]}/>
+                <SveltyPicker startDate={minNextDate} format="M d, yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
             {/each}
         </div>
         
