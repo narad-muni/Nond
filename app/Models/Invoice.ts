@@ -56,7 +56,7 @@ export default class Invoice extends BaseModel {
             .increment('invoice_counter',1)
             .update({},['name','invoice_counter']);
 
-        payload.id = StringUtils.shortName(company_details[0]['name']) + " " + StringUtils.getFinancialYear() + " " + company_details[0]['invoice_counter'];
+        payload.id = StringUtils.shortName(company_details[0]['name']) + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
 
     }
 }

@@ -39,3 +39,38 @@ fields required for invoice
 
 invoice : 
     particulars, invoice no., date, remarks, buyer, seller, amount, total, signature, hsn?, tax breakdown
+
+
+
+pending stuff
+
+home page.
+
+rotate register scheduler
+archive scheduler
+delete scheduler
+
+invoice send by email
+invoice generate pdf
+
+soft delete cascade client = register entries ?, schedulers.
+
+delete cascade client = tasks, bills, files, register entries, schedulers
+
+delete cascade company = invoices, files.
+
+delete cascade registers = files.
+
+archived tasks
+archived invoices
+
+deleted clients
+deleted companies
+deleted employee
+
+-----
+aditional stuff
+
+reports
+
+client access to view data

@@ -14,12 +14,7 @@ export default class extends BaseSchema {
             table.string('remarks');
             table.float('total');
             table.float('tax');
-            table.boolean('deleted').defaultTo(false)
             table.date('date');
-
-            /**
-             * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
-             */
        })
     }
 

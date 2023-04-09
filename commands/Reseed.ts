@@ -32,14 +32,9 @@ export default class Reseed extends BaseCommand {
 
         const { default: Employee } = await import('App/Models/Employee');
         const { default: Role } = await import('App/Models/Role');
-        const { default: Company } = await import('App/Models/Company');
-        const { default: Task } = await import('App/Models/Task');
-        const {default: Lead} = await import('App/Models/Lead');
-        const {default: Client} = await import('App/Models/Client');
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
         const {default: Scheduler} = await import('App/Models/Scheduler');
-        const {default: ArchivedTask} = await import('App/Models/ArchivedTask');
 
         await Employee.create({
             id: 0,
@@ -49,24 +44,25 @@ export default class Reseed extends BaseCommand {
             role_id: 1,
         });
 
-        await ArchivedTask.create({});
-
         await Scheduler.create({
-            id: 0,
-            client_id: 0,
-            service_id: 0,
-            next: DateTime.fromISO('2022-12-01'),
-            frequency: '1 month',
-            type: 5
+            data:{"info":"delete data"},
+            type: 2,
+            next: DateTime.now(),
+            frequency: '1 week'
         });
 
         await Scheduler.create({
-            id: 1,
-            register_id: 0,
-            data: {rotation_strategy: 'delete'},
-            next: DateTime.fromISO('2022-12-01'),
-            frequency: '1 month',
-            type: 1
+            data:{"info":"archive data"},
+            type: 3,
+            next: DateTime.now(),
+            frequency: '1 week'
+        });
+
+        await Scheduler.create({
+            data:{"info":"every financial year"},
+            type: 4,
+            next: DateTime.fromISO('2023-01-04'),
+            frequency: '1 year'
         });
 
         await TaskTemplate.create({
@@ -77,13 +73,6 @@ export default class Reseed extends BaseCommand {
             service_id: -1,
             status: 0,
             priority: 1
-        });
-
-        await Service.create({
-            id: 0,
-            hsn:123456,
-            name: 'GST',
-            template_id:0
         });
 
         await Service.create({
@@ -104,7 +93,6 @@ export default class Reseed extends BaseCommand {
         });
 
         await Role.create({
-            id: 1,
             name: 'admin',
             read: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
             create: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
@@ -113,54 +101,12 @@ export default class Reseed extends BaseCommand {
             destroy: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
         });
 
-        await Company.create({
-            id: 0,
-            name: 'JJ Industries',
-            gst: '27GAHJAKS',
-            email: 'jjind2011@gmail.com',
-            signature: '.jpg'
-        });
-
-        await Client.create({
-            id: 0,
-            name: 'JJ Industries',
-            email: 'jjind2011@gmail.com',
-            gst: '27aafh',
-            deleted: false,
-            group_id: 0
-        });
-
-        await Task.create({
-            id: 0,
-            assigned_to: 0,
-            client_id: 0,
-            title: 'Please complete this asap',
-            description: 'Very bad\nVery Late',
-            status: 1,
-            priority: 0,
-            service_id: 0,
-            billed: false
-        });
-
-        await Lead.create({
-            id: 0,
-            client: 'SS Industries',
-            assigned_to: 0,
-            description: 'Wan\'t to arrange meeting',
-            status: 'On boarding',
-            started: DateTime.fromISO('2022-12-12')
-        });
-
     }
 
     public async de_initialize(){
 
         const { default: Employee } = await import('App/Models/Employee');
         const { default: Role } = await import('App/Models/Role');
-        const { default: Company } = await import('App/Models/Company');
-        const { default: Task } = await import('App/Models/Task');
-        const {default: Lead} = await import('App/Models/Lead');
-        const {default: Client} = await import('App/Models/Client');
         const {default: Service} = await import('App/Models/Service');
         const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
         const {default: Scheduler} = await import('App/Models/Scheduler');
@@ -169,10 +115,6 @@ export default class Reseed extends BaseCommand {
         const scheduler = await Scheduler.findBy('id',0);
         const role1 = await Role.findBy('id',0);
         const role2 = await Role.findBy('id',1);
-        const company = await Company.findBy('id',0);
-        const task = await Task.findBy('id',0);
-        const lead = await Lead.findBy('id',0);
-        const client = await Client.findBy('id',0);
         const service = await Service.findBy('id',0);
         const service_others = await Service.findBy('id',-1);
         const task_template = await TaskTemplate.findBy('id',0);
@@ -181,10 +123,6 @@ export default class Reseed extends BaseCommand {
         await scheduler?.delete();
         await role1?.delete();
         await role2?.delete();
-        await company?.delete();
-        await task?.delete();
-        await lead?.delete();
-        await client?.delete();
         await service?.delete();
         await service_others?.delete();
         await task_template?.delete();

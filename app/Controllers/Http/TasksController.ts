@@ -240,7 +240,11 @@ export default class TasksController {
 
         //add task in particulars with price
         tasks.forEach(task => {
-            const date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+            let date_range;
+
+            if(task.service_id >= 0){
+                date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+            }
 
             if(invoice_list_obj[task.client_id]){//client already in invoice list
 

@@ -21,7 +21,7 @@ export default class Scheduler extends BaseModel {
     public type: number
     
     @column()
-    public frequency: string
+    public frequency: '1 day' | '1 week' | '2 weeks' | '1 month' | '3 months' | '6 months' | '1 year'
     
     @column.date({
         serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),

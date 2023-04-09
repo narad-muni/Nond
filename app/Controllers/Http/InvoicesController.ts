@@ -20,8 +20,7 @@ export default class InvoicesController {
             })
             .preload('company',(query) => {
                 query.select('id','name')
-            })
-            .where('deleted',false);
+            });
 
         if(filter == 0){ // waiting
             invoices = invoices.where('total',null);

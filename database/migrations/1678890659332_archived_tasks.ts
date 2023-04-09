@@ -5,15 +5,13 @@ export default class extends BaseSchema {
 
   public async up () {
     this.schema.createTable(this.tableName, (table) => {
-        table.increments('id')
-        table.integer('assigned_to');
-        table.integer('client_id');
+        table.integer('id')
+        table.string('assigned_to');
+        table.string('client');
+        table.string('group');
         table.string('title');
         table.string('description');
-        table.integer('service_id');
-        table.integer('status');
-        table.integer('priority');
-        table.boolean('billed').defaultTo(false);
+        table.string('service');
         table.date('created');
     })
   }
