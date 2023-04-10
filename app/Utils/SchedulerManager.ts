@@ -150,14 +150,30 @@ export default class SchedulerManager{
                 // remap existing register tempalte
                 await RegisterTemplate
                     .query()
-                    .update('table_id', new_reigster.id)
-                    .where('id', old_register.id);
+                    .update({'table_id': new_reigster.id})
+                    .where('table_id', old_register.id);
 
                 // mark old register as inactive
                 await RegisterMaster
                     .query()
                     .update({"active": false})
                     .where("id", old_register.id);
+
+                //check if there are any client linked columns
+                if(update_query_columns?.length && client_columns?.length){
+
+                    update_query_columns = update_query_columns.slice(0,-1);
+                    //add client link columns to register
+                    await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name+old_register.version)}" ${client_columns}`);
+
+                    //add data to old register
+                    await Database.rawQuery(`
+                        update "register__${string.escapeHTML(old_register.name+old_register.version)}"
+                        set ${update_query_columns}
+                        from clients s
+                        where s.id = client_id
+                    `);
+                }
 
             }else{ // delete old register
                 //truncate old table

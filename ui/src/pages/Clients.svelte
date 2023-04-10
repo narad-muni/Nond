@@ -92,7 +92,7 @@
                 createdObject.services[service.value] = {service_id:service.value}
             });
             
-            emptyCreatedObject = createdObject;
+            emptyCreatedObject = JSON.parse(JSON.stringify(createdObject));
 
             handler = new DataHandler(
                 data,
@@ -366,7 +366,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject = emptyCreatedObject;
+            createdObject = JSON.parse(JSON.stringify(emptyCreatedObject));
             
         }else{
             error = resp.message || "";

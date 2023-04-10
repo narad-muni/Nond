@@ -3,24 +3,9 @@ Invoice download pdf
 
 reports ??
 
-need to show multiple gst
-
-schedulers
-
 create deleted pages
 
-scheduler - 
-    run scheduler
-    (year = financial year)
-
-    delete 2 year old invoices
-    delete 2 year old tasks
-
-    archive 1 year old invoices (paid)
-    archive 1 year old tasks (billed & completed)
-    *doubt - when to delete tasks - delete after 2 1 year, archive when billed and completed
-
-    reset company invoice on new financial year
+-------------------------errrororrr -> register rotates but doesnt load client linked columns properly
 
 additional client side can also be made for viewing register, tasks, data, invoices.
 

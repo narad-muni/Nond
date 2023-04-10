@@ -28,7 +28,18 @@ export default class RegistersController {
         const register = await RegisterMaster
             .query()
             .where('id',payload.table_id)
+            .where('active', true)
             .first();
+
+        if(!register){
+
+            response.send({
+                status:"error",
+                message: "Register Not found"
+            });
+
+            return;
+        }
 
         const headers = await RegisterTemplate
             .query()
@@ -80,7 +91,18 @@ export default class RegistersController {
         const register = await RegisterMaster
             .query()
             .where('id',payload.table_id)
+            .where('active', true)
             .first();
+
+        if(!register){
+
+            response.send({
+                status:"error",
+                message: "Register Not found"
+            });
+
+            return;
+        }
 
         const headers = await RegisterTemplate
             .query()
