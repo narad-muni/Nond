@@ -216,10 +216,10 @@ export default class MasterTemplatesController {
             .query()
             .whereIn('id',payload.id)
 
-        columns.forEach(async (column) => {
+        for await (const column of columns) {
             await Database
                 .rawQuery('alter table ?? drop column ??',[column.table_name, column.column_name]);
-        });
+        };
 
         await MasterTemplate
             .query()

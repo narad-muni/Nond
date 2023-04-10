@@ -187,7 +187,7 @@ export default class CompaniesController {
             .where('id',payload.id)
             .first()
 
-        Object.values(files).forEach(async file => {
+        Object.values(files).forEach(file => {
             const path = `/file/company/${payload.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`
 

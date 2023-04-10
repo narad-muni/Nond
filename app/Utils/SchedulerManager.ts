@@ -11,6 +11,9 @@ import StringUtils from './StringUtils';
 import Invoice from 'App/Models/Invoice';
 import ArchivedTask from 'App/Models/ArchivedTask';
 import ArchivedInvoice from 'App/Models/ArchivedInvoice';
+import RegisterTemplate from 'App/Models/RegisterTemplate';
+import { column } from '@ioc:Adonis/Lucid/Orm';
+import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 
 export default class SchedulerManager{
     
@@ -73,8 +76,125 @@ export default class SchedulerManager{
     }
 
     static async RotateRegisters(jobs: Scheduler[]) {
-        //copy new register
-        //archive old register
+
+        const register_ids = jobs.map(e => e.register_id);
+
+        const old_registers = await RegisterMaster
+                .query()
+                .whereIn('id', register_ids);
+
+        const schedulers = await Scheduler
+            .query()
+            .whereIn('register_id',register_ids);
+
+        const register_templates = await RegisterTemplate
+            .query()
+            .whereIn('table_id',register_ids);
+        
+        for await (const job of jobs){
+
+            const old_register = old_registers.find(e => e.id == job.register_id);
+            const scheduler = schedulers.find(e => e.register_id == old_register?.id);
+            const register_template = register_templates.filter(e => e.table_id == old_register?.id);
+
+            let client_columns = "";
+            let update_query_columns = "";
+            const serialized_columns: any = {table_id: old_register?.id, columns: []};
+
+            if(job.data?.["rotation_strategy"] == "archive"){ // archive old register
+
+                //create new table
+                const new_reigster = await RegisterMaster
+                    .create({
+                        name: old_register?.name,
+                        version: old_register?.version+1,
+                        service_id: old_register?.service_id,
+                        active: true
+                    });
+                
+                //create new table with same structure
+                await Database
+                    .rawQuery(
+                        "create table ?? as select * from ?? rtt with no data",
+                        [
+                            string.escapeHTML("register__"+old_register?.name+old_register?.version+1),
+                            string.escapeHTML("register__"+old_register?.name+old_register?.version)
+                        ]
+                    )
+
+                // remap scheduler to new register
+                await Scheduler
+                    .query()
+                    .update({"register_id": new_reigster.id})
+                    .where("id", scheduler.id);
+
+                // create archived register tempalte
+                register_template.forEach(column => {
+        
+                    if(column.client_column_id != null){
+                        client_columns += "add column client__"+column.column_name+" varchar;\n";
+                        update_query_columns += "client__"+column.column_name+" = s."+column.column_name+",";
+                    }
+        
+                    serialized_columns
+                        .columns
+                        .push(column);
+                });
+
+                //convert array to object for storing in db
+                serialized_columns.columns = {data:serialized_columns.columns};
+
+                //add to db
+                await ArchivedRegisterTemplate.create(serialized_columns);
+
+                // remap existing register tempalte
+                await RegisterTemplate
+                    .query()
+                    .update('table_id', new_reigster.id)
+                    .where('id', old_register.id);
+
+                // mark old register as inactive
+                await RegisterMaster
+                    .query()
+                    .update({"active": false})
+                    .where("id", old_register.id);
+
+            }else{ // delete old register
+                //truncate old table
+                await Database.rawQuery(
+                    "truncate table ??",
+                    [string.escapeHTML("register__"+old_register?.name+old_register?.version)]
+                );
+
+                const old_version = old_register?.version;
+
+                //create new table
+                old_register.version += 1;
+
+                //rename old table
+                await Database.rawQuery(
+                    "alter table ?? rename to ??",
+                    [string.escapeHTML("register__"+old_register?.name+old_version)
+                    ,string.escapeHTML("register__"+old_register?.name+old_register?.version)]
+                );
+
+                //update entry in register master
+                await RegisterMaster
+                    .query()
+                    .update({"version": old_register?.version})
+                    .where('id', old_register.id);
+
+            }
+
+            //create new register master
+            //create table
+            //update scheduler to point to new register
+            //update register template to point to new register
+            
+            //copy register template to archive table
+            //archive old register
+
+        }
     }
 
     static async DeleteData() {

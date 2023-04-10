@@ -28,8 +28,9 @@
     let createModal, actionsModals, deleteModal, archiveModal;
     let selectedRows = new Set();
 
-    const currDate = new Date()
-        .toJSON().slice(0, 10);
+    const date = (new Date).toDateString().split(" ");// gives "Mon Apr 10 2023"
+
+    const currDate = date[1]+" "+date[2]+", "+date[3];// convert above to Apr 10, 2023
 
     let data, createdObject={version:currDate,next:""},services, actionsIndex, actionsObject;
     let handler, rows;
@@ -328,23 +329,11 @@
 </Modal>
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Register</h3>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Create Register</h3>
         <Label class="space-y-2">
             <span>Name</span>
             <Input required bind:value={createdObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Version</span>
-            <Input required bind:value={createdObject.version}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={createdObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Strategy</span>
-            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={createdObject.rotation_strategy} />
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
@@ -354,7 +343,19 @@
             <span>Rotation Frequency</span>
             <Select required items={frequency} bind:value={createdObject.frequency} />
         </Label>
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <Label class="space-y-2">
+            <span>Rotation Strategy</span>
+            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={createdObject.rotation_strategy} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Version</span>
+            <Input required bind:value={createdObject.version}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={createdObject.service_id} />
+        </Label>
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={version:currDate,next:""}}} color="alternative" class="w-full">Cancel</Button>
         </div>
@@ -369,24 +370,24 @@
             <Input required bind:value={actionsObject.name}/>
         </Label>
         <Label class="space-y-2">
-            <span>Version</span>
-            <Input required bind:value={actionsObject.version}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={actionsObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Strategy</span>
-            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={actionsObject.scheduler.data.rotation_strategy} />
-        </Label>
-        <Label class="space-y-2">
             <span>Next Rotation</span>
             <SveltyPicker startDate={minNextDate} format="M d, yyyy" bind:value={actionsObject.scheduler.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
             <Select items={frequency} bind:value={actionsObject.scheduler.frequency} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Rotation Strategy</span>
+            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={actionsObject.scheduler.data.rotation_strategy} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Version</span>
+            <Input required bind:value={actionsObject.version}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select required items={services} bind:value={actionsObject.service_id} />
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>

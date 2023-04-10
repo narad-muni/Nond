@@ -174,7 +174,8 @@ export default class RegistersController {
                 .push(register_template);
         });
 
-        serialized_register_templates = Object.values(serialized_register_templates)
+        //convert array to object for storing in db
+        serialized_register_templates = Object.values(serialized_register_templates);
 
         serialized_register_templates.forEach(e => {
             e.columns = {data:e.columns};
@@ -187,7 +188,7 @@ export default class RegistersController {
             .whereIn('table_id',id)
             .delete();
 
-        payload.forEach(async register => {
+        for await (const register of payload){
             if(update_query_columns[register.id]?.length && client_columns[register.id]?.length){
 
                 update_query_columns[register.id] = update_query_columns[register.id].slice(0,-1);
@@ -200,7 +201,7 @@ export default class RegistersController {
                     where s.id = client_id
                 `);
             }
-        });
+        };
 
         response.send({
             status: 'success'

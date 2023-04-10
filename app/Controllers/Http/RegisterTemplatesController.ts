@@ -238,15 +238,15 @@ export default class RegisterTemplatesController {
         await RegisterTemplate
             .query()
             .whereIn('id',payload.id)
-            .delete()
+            .delete();
 
 
-        columns.forEach(async (column) => {
+        for await (const column of columns) {
             if(column.client_column_id == null){
                 await Database
                     .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table?.name+table?.version), column.column_name]);
             }
-        });
+        };
 
         response.send({
             status: 'success'

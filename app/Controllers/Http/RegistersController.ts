@@ -268,7 +268,7 @@ export default class RegistersController {
             .first();
 
         //replace existing files or create new
-        Object.values(files).forEach(async file => {
+        Object.values(files).forEach(file => {
             const path = `/file/register/${payload.table_id}/${data.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`
 

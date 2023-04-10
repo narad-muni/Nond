@@ -275,7 +275,7 @@ export default class ClientsController {
             .where('id',payload.id)
             .first()
 
-        Object.values(files).forEach(async file => {
+        Object.values(files).forEach(file => {
             const path = `/file/client/${payload.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`
 
