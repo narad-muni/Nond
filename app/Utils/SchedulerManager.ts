@@ -115,12 +115,12 @@ export default class SchedulerManager{
                 //create new table with same structure
                 await Database
                     .rawQuery(
-                        "create table ?? as select * from ?? rtt with no data",
+                        `create table ?? (like ?? including all);`,
                         [
                             string.escapeHTML("register__"+old_register?.name+old_register?.version+1),
                             string.escapeHTML("register__"+old_register?.name+old_register?.version)
                         ]
-                    )
+                    );
 
                 // remap scheduler to new register
                 await Scheduler
@@ -165,7 +165,7 @@ export default class SchedulerManager{
                     update_query_columns = update_query_columns.slice(0,-1);
                     //add client link columns to register
                     await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name+old_register.version)}" ${client_columns}`);
-
+                    
                     //add data to old register
                     await Database.rawQuery(`
                         update "register__${string.escapeHTML(old_register.name+old_register.version)}"

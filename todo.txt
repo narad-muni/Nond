@@ -5,8 +5,6 @@ reports ??
 
 create deleted pages
 
--------------------------errrororrr -> register rotates but doesnt load client linked columns properly
-
 additional client side can also be made for viewing register, tasks, data, invoices.
 
 *****delete client releated data when client is deleted
@@ -30,8 +28,6 @@ invoice :
 pending stuff
 
 home page.
-
-rotate register scheduler
 
 invoice send by email
 invoice generate pdf
