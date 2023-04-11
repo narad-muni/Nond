@@ -106,7 +106,6 @@
 
         rows = rows.slice(2);
         const data = [headers, ...rows];
-        console.log(archived_registers)
         
         // Convert the table data to CSV format
         const csv = data.map(row => row.join(',')).join('\n');

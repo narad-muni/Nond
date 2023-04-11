@@ -58,6 +58,15 @@ export default class RolesController {
         const payload = request.all();
         payload.read.task = true;
 
+        // remove unchecked roles
+        Object.keys(payload).forEach(action => {
+            Object.keys(payload[action]).forEach(role => {
+                if(!payload[action][role]){
+                    delete payload[action][role];
+                }
+            });
+        });
+
         const data = await Role
             .create(payload)
 
@@ -71,24 +80,34 @@ export default class RolesController {
     }
 
     public async update({request,response}: HttpContextContract) {
-        const data = request.all();
-        if(data.id < 2){
+        const payload = request.all();
+        if(payload.id < 2){
             response.send({
                 status: 'error',
                 message: 'Cannot modify default roles',
                 data: null
             })
         }else{
+
+            // remove unchecked roles
+            Object.keys(payload).forEach(action => {
+                Object.keys(payload[action]).forEach(role => {
+                    if(!payload[action][role]){
+                        delete payload[action][role];
+                    }
+                });
+            });
+
             await Role
                 .query()
-                .where('id',data.id)
-                .update(data)
+                .where('id',payload.id)
+                .update(payload);
 
             response.send({
                 status: 'success',
                 message: null,
-                data: data
-            })
+                data: payload
+            });
         }
     }
 

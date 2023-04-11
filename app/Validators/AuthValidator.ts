@@ -12,7 +12,7 @@ export default class AuthValidator{
                 .required(),
             
             password: Joi.string()
-                .min(8)
+                .min(4)
                 .max(20)
                 .required()
         });

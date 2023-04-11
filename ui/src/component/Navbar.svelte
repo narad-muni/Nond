@@ -57,7 +57,7 @@
         {#if $user.role.read.task}
             <NavLi href="/#/task" class="cursor-pointer">Task</NavLi>
         {/if}
-        {#if $user.role.read.register}
+        {#if $user.role.read.archived_registers}
             <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
         {/if}
         {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','register','invoice','employee']).length}
@@ -67,6 +67,8 @@
             <NavLi id="register" class="cursor-pointer"><Chevron aligned>Registers</Chevron></NavLi>
         {/if}
         {#if utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).length}
+        {console.log(utils.getArrIntersection(Object.keys($user.role.read),['master_template','invoice_template','register_template']).length)}
+        {console.log($user.role.read)}
             <NavLi id="template" class="cursor-pointer"><Chevron aligned>Templates</Chevron></NavLi>
         {/if}
         {#if $user.role.read.invoice}

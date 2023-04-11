@@ -7,23 +7,17 @@
 
     async function login(){
 
-        if(username?.length < 3){
-            error="Username should be 3 or more characters long";
-        }else if(password?.length < 8){
-            error="Password should be 8 or more characters long";
+        const data = {
+            username: username,
+            password: password
+        }
+        const resp = await utils.post_json('/api/auth/login',data);
+        
+        if(resp.status == 'success'){
+            user.set(resp.data);
+            window.location.href = '/'
         }else{
-            const data = {
-                username: username,
-                password: password
-            }
-            const resp = await utils.post_json('/api/auth/login',data);
-            
-            if(resp.status == 'success'){
-                user.set(resp.data);
-                window.location.href = '/'
-            }else{
-                error = resp.message;
-            }
+            error = resp.message;
         }
 
     }
