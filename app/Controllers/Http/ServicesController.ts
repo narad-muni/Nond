@@ -90,6 +90,13 @@ export default class RolesController {
     public async create({request,response}: HttpContextContract) {
         const payload = request.all();
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         const data = await Service
             .create(payload)
 
@@ -104,6 +111,13 @@ export default class RolesController {
 
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
+
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
+            }
+        });
         
         await Service
             .query()

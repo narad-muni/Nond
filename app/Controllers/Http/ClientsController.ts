@@ -138,6 +138,13 @@ export default class ClientsController {
         const files = request.allFiles();
         const newSchedulersList = [];
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         payload.services = JSON.parse(payload._services);
 
         if(payload.group_id == "Self"){
@@ -215,6 +222,13 @@ export default class ClientsController {
         const newSchedulersList = [];
         const updateSchedulersList = [];
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         payload.services = JSON.parse(payload._services);
 
         //delete unchecked
@@ -227,7 +241,7 @@ export default class ClientsController {
         await Scheduler
             .query()
             .whereIn('id',deletedSchedulerIds)
-            .delete()
+            .delete();
         
 
         //create new objects

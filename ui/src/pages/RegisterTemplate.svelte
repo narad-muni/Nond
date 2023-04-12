@@ -272,7 +272,7 @@
                                     {row.client_column_id!=null ? "Yes" : "No"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    <Checkbox disabled checked={row.master}/>
+                                    <Checkbox disabled checked={row.master=="true" || row.master}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -311,7 +311,7 @@
         </Label>
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.master}>Is Master</Toggle>
+            <Toggle bind:value={createdObject.master} bind:checked={createdObject.master}>Is Master</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
@@ -351,7 +351,7 @@
         </Label>
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={actionsObject.master}>Is Master</Toggle>
+            <Toggle bind:value={actionsObject.master} bind:checked={actionsObject.master}>Is Master</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>

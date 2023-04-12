@@ -487,12 +487,12 @@
 
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.paid}>Paid</Toggle>
+            <Toggle bind:value={createdObject.paid} bind:checked={createdObject.paid}>Paid</Toggle>
         </Label>
 
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.gst}>GST</Toggle>
+            <Toggle bind:value={createdObject.gst} bind:checked={createdObject.gst}>GST</Toggle>
         </Label>
         
         <Label class="space-y-2">
@@ -622,12 +622,12 @@
 
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={actionsObject.paid}>Paid</Toggle>
+            <Toggle bind:value={actionsObject.paid} bind:checked={actionsObject.paid}>Paid</Toggle>
         </Label>
 
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={actionsObject.gst}>GST</Toggle>
+            <Toggle bind:value={actionsObject.gst} bind:checked={actionsObject.gst}>GST</Toggle>
         </Label>
         
         <Label class="space-y-2">

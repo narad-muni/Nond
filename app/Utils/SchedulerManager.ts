@@ -132,7 +132,7 @@ export default class SchedulerManager{
                 register_template.forEach(column => {
         
                     if(column.client_column_id != null){
-                        client_columns += "add column client__"+column.column_name+" varchar;\n";
+                        client_columns += "add column client__"+column.column_name+" varchar,";
                         update_query_columns += "client__"+column.column_name+" = s."+column.column_name+",";
                     }
         
@@ -163,6 +163,8 @@ export default class SchedulerManager{
                 if(update_query_columns?.length && client_columns?.length){
 
                     update_query_columns = update_query_columns.slice(0,-1);
+                    client_columns = client_columns.slice(0,-1);
+
                     //add client link columns to register
                     await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name+old_register.version)}" ${client_columns}`);
                     

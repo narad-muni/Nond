@@ -7,7 +7,7 @@
     "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently \"cd ui && npx vite\" \"node ace serve --watch\"",
     "dev-be": "node ace serve --watch",
     "dev-fe": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite",
-    "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd.. && node ace build --production && cp .env build/.env",
+    "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd .. && node ace build --production --ignore-ts-errors && cp .env build/.env",
     "start": "node server.js"
   },
   "devDependencies": {

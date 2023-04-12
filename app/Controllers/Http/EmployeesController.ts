@@ -74,6 +74,13 @@ export default class EmployeesController {
     public async create({request,response}: HttpContextContract) {
         const data = request.all();
 
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
+            }
+        });
+
         if(data.is_master){
             data.role_id = 1;
         }
@@ -91,6 +98,13 @@ export default class EmployeesController {
 
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
+
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
+            }
+        });
 
         if(data.is_master){
             data.role_id = 1;

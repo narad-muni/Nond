@@ -53,14 +53,12 @@ export default class TaskTemplatesController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
 
-        if(payload.started == ""){
-            payload.started = null;
-        }
-
-        if(payload.ended == ""){
-            payload.ended = null;
-        }
-
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
 
         const data = await TaskTemplate.create(payload);
 
@@ -72,6 +70,13 @@ export default class TaskTemplatesController {
 
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
+
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
 
         if(payload.id == 0){
             response.send({

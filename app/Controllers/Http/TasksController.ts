@@ -90,6 +90,13 @@ export default class TasksController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         if(Array.isArray(payload.client_id)){//if array of client id is passed
             const tasksArray: any[] = [];
             const tempObject = payload;
@@ -117,6 +124,13 @@ export default class TasksController {
 
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
+
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
 
         delete payload.client;
         delete payload.assigned_user;

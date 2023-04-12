@@ -236,7 +236,7 @@
                                     {row.column_type}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    <Checkbox disabled checked={row.is_master}/>
+                                    <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

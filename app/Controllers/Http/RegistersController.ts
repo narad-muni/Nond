@@ -215,6 +215,13 @@ export default class RegistersController {
         DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
         //setup complete
 
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
+            }
+        });
+
         const resp = await DynamicRegister
             .create(data);
 
@@ -276,10 +283,10 @@ export default class RegistersController {
         DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
         //setup complete
 
-        //null data
-        Object.keys(data).forEach(k => {
-            if(data[k] == "null"){
-                data[k] = null;
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
             }
         });
 

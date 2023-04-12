@@ -293,7 +293,7 @@
                                     {row.role?.name || null}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    <Checkbox disabled checked={row.is_admin}/>
+                                    <Checkbox disabled checked={row.is_admin=="true" || row.is_admin}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -333,7 +333,7 @@
         </Label>
         <Label class="space-y-2">
             <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.is_admin}>Admin</Toggle>
+            <Toggle bind:value={createdObject.is_admin} bind:checked={createdObject.is_admin}>Admin</Toggle>
         </Label>
 
         <div class="col-span-2 grid gap-6 grid-cols-2">
@@ -388,7 +388,7 @@
         </Label>
         <Label class="space-y-2">
             <span>&nbsp</span>
-            <Toggle bind:checked={actionsObject.is_admin} >Admin</Toggle>
+            <Toggle bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} >Admin</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button on:click={updateData} type="submit" class="w-full">Update</Button>

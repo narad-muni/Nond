@@ -20,6 +20,13 @@ export default class SchedulersController {
     public async create(scheduler: Scheduler){
         const data = await Scheduler.create(scheduler);
 
+        //set "null" to null
+        Object.keys(data).forEach(e => {
+            if(data[e] == "null" || data[e] == ""){
+                data[e] = null;
+            }
+        });
+
         return data;
     }
 
@@ -29,7 +36,7 @@ export default class SchedulersController {
             .where('id',scheduler.id)
             .update(scheduler);
 
-        return data
+        return data;
     }
 
     public async destroy(ids: number[]){

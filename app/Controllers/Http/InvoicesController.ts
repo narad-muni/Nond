@@ -59,6 +59,13 @@ export default class InvoicesController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         const data = await Invoice.create(payload);
 
         payload.id = data.id;
@@ -78,6 +85,13 @@ export default class InvoicesController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const hsn_gst = {};
+
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
 
         let status;
 

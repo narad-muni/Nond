@@ -364,7 +364,7 @@
                                             {:else if header.column_type == 'Date'}
                                                 {row[header.column_name]}
                                             {:else}
-                                                <Checkbox disabled checked={row[header.column_name]}/>
+                                                <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                             {/if}
                                         </TableBodyCell>
                                     {/if}
@@ -455,7 +455,7 @@
                         <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                        <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
                     {:else}
                         <p>{header.display_name}</p>
                         <input type="file" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
@@ -557,7 +557,7 @@
                         <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
-                        <Toggle bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                        <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
                     {:else}
                         {#if typeof(actionsObject[header.column_name]) == 'string'}
                             <span>{header.display_name}</span>

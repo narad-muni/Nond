@@ -99,6 +99,13 @@ export default class CompaniesController {
         const payload = request.all();
         const files = request.allFiles();
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
+
         const exists = await Company
             .query()
             .where('name',payload.name)
@@ -158,6 +165,13 @@ export default class CompaniesController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
+
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || payload[e] == ""){
+                payload[e] = null;
+            }
+        });
 
         const exists = await Company
             .query()
