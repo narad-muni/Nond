@@ -33,7 +33,7 @@ export default class Invoice extends BaseModel {
     public tax: number
 
     @column.date({
-        serialize: (value: DateTime) => value.toLocaleString(DateTime.DATE_MED),
+        serialize: (value: DateTime) => value?.toLocaleString(DateTime.DATE_MED),
     })
     public date: DateTime
 

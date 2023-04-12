@@ -335,7 +335,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>Id</span>
@@ -354,7 +354,7 @@
             <Toggle bind:value={actionsObject.master} bind:checked={actionsObject.master}>Is Master</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

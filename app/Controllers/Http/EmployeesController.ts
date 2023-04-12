@@ -76,7 +76,7 @@ export default class EmployeesController {
 
         //set "null" to null
         Object.keys(data).forEach(e => {
-            if(data[e] == "null" || data[e] == ""){
+            if(data[e] == "null" || String(data[e]) == ""){
                 data[e] = null;
             }
         });
@@ -101,7 +101,7 @@ export default class EmployeesController {
 
         //set "null" to null
         Object.keys(data).forEach(e => {
-            if(data[e] == "null" || data[e] == ""){
+            if(data[e] == "null" || String(data[e]) == ""){
                 data[e] = null;
             }
         });

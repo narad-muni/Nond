@@ -669,7 +669,7 @@
 
         <Label class="space-y-2">
             <span>Service</span>
-            <SveltyPicker startDate={minNextDate} format="M d, yyyy" bind:value={setServiceObject.next} />
+            <SveltyPicker required startDate={minNextDate} format="M d, yyyy" bind:value={setServiceObject.next} />
         </Label>
 
         <div class="col-span-2 grid gap-6 grid-cols-2">

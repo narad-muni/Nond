@@ -92,7 +92,7 @@ export default class RolesController {
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || payload[e] == ""){
+            if(payload[e] == "null" || String(payload[e]) == ""){
                 payload[e] = null;
             }
         });
@@ -114,7 +114,7 @@ export default class RolesController {
 
         //set "null" to null
         Object.keys(data).forEach(e => {
-            if(data[e] == "null" || data[e] == ""){
+            if(data[e] == "null" || String(data[e]) == ""){
                 data[e] = null;
             }
         });

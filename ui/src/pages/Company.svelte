@@ -526,26 +526,6 @@
             {/if}
         </Label>
 
-        <Label class="space-y-2">
-            <span>SMTP Host</span>
-            <Input type="text" bind:value={actionsObject.smtp_host} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Port</span>
-            <Input type="text" bind:value={actionsObject.smtp_port} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Email</span>
-            <Input type="text" bind:value={actionsObject.smtp_email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Password</span>
-            <Input type="text" bind:value={actionsObject.smtp_password} />
-        </Label>
-
         {#each headers.data as header}
             {#if header!="id"}
                 <Label class="space-y-2">
@@ -583,6 +563,27 @@
                 </Label>
             {/if}
         {/each}
+
+        <Label class="space-y-2">
+            <span>SMTP Host</span>
+            <Input type="text" bind:value={actionsObject.smtp_host} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Port</span>
+            <Input type="text" bind:value={actionsObject.smtp_port} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Email</span>
+            <Input type="text" bind:value={actionsObject.smtp_email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Password</span>
+            <Input type="text" bind:value={actionsObject.smtp_password} />
+        </Label>
+        
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>

@@ -238,19 +238,19 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.name}
+                                    {row?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.title}
+                                    {row?.title}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service?.name}
+                                    {row?.service?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {task_status[row.status].name}
+                                    {task_status[row.status]?.name}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {priority[row.priority].name}
+                                    {priority[row.priority]?.name}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -309,7 +309,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
@@ -336,7 +336,7 @@
             <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

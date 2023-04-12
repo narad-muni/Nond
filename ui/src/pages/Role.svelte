@@ -329,7 +329,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -421,7 +421,7 @@
             </div>
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

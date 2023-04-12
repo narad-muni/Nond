@@ -22,7 +22,7 @@ export default class SchedulersController {
 
         //set "null" to null
         Object.keys(data).forEach(e => {
-            if(data[e] == "null" || data[e] == ""){
+            if(data[e] == "null" || String(data[e]) == ""){
                 data[e] = null;
             }
         });

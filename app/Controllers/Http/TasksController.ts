@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import ArchivedTask from 'App/Models/ArchivedTask';
+import Client from 'App/Models/Client';
 import Invoice from 'App/Models/Invoice';
 import Task from 'App/Models/Task'
 
@@ -92,7 +93,7 @@ export default class TasksController {
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || payload[e] == ""){
+            if(payload[e] == "null" || String(payload[e]) == ""){
                 payload[e] = null;
             }
         });
@@ -124,10 +125,11 @@ export default class TasksController {
 
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
+        const temp_task = new ArchivedTask();
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || payload[e] == ""){
+            if(payload[e] == "null" || String(payload[e]) == ""){
                 payload[e] = null;
             }
         });
@@ -138,24 +140,52 @@ export default class TasksController {
         let archived = false;
 
         const old = await Task
-        .query()
-        .where('id',payload.id)
-        .first();
+            .query()
+            .where('id',payload.id)
+            .first();
 
         if(payload.status == 4 && old?.billed){
+
+            const archiveable : Task = await Task
+                .query()
+                .preload('service', query => {
+                    query.select('name')
+                })
+                .preload('assigned_user', query => {
+                    query.select('username')
+                })
+                .preload('client', query => {
+                    query
+                        .select('name','group_id')
+                        .preload('group', query => {
+                            query.select('name')
+                        })
+                })
+                .where('id', old.id)
+                .firstOrFail();
+
             await Task
                 .query()
                 .where('id',payload.id)
-                .delete()
+                .delete();
 
             archived = true;
 
-            await ArchivedTask.create(old.serialize());
+            temp_task.id = archiveable.id;
+            temp_task.title = archiveable.title;
+            temp_task.assigned_to = archiveable.assigned_user.username;
+            temp_task.description = archiveable.description;
+            temp_task.created = archiveable.created;
+            temp_task.service = archiveable.service.name;
+            temp_task.client = archiveable.client.name;
+            temp_task.group = archiveable.client.group.name;
+
+            await ArchivedTask.create(temp_task);
         }else{
             await Task
             .query()
             .where('id',payload.id)
-            .update(payload)
+            .update(payload);
         }
 
         response.send({
@@ -174,7 +204,7 @@ export default class TasksController {
             .preload('service',(query) => {
                 query.select('id','name','hsn','gst')
             })
-            .whereIn('id',payload.ids)
+            .whereIn('id',payload.ids);
 
         //filter out arhciveable
         tasks.forEach(task => {
@@ -186,16 +216,42 @@ export default class TasksController {
         const archiveable_ids = to_arhive.map(e => e.id);
 
         //fetch archivaeble tasks
-        const archiveable : Task[] | object[] = await Task
+        const archiveable : Task[] = await Task
             .query()
+            .preload('service', query => {
+                query.select('name')
+            })
+            .preload('assigned_user', query => {
+                query.select('username')
+            })
+            .preload('client', query => {
+                query
+                    .select('name','group_id')
+                    .preload('group', query => {
+                        query.select('name')
+                    })
+            })
             .whereIn('id',archiveable_ids);
 
-        archiveable.forEach((task,index) => {
-            archiveable[index] = task.serialize();
+        const archiveable_objects: ArchivedTask[] = [];
+
+        archiveable.forEach((task) => {
+            const temp_task = new ArchivedTask();
+
+            temp_task.id = task.id;
+            temp_task.title = task.title;
+            temp_task.assigned_to = task.assigned_user.username;
+            temp_task.description = task.description;
+            temp_task.created = task.created;
+            temp_task.service = task.service.name;
+            temp_task.client = task.client.name;
+            temp_task.group = task.client.group.name;
+
+            archiveable_objects.push(temp_task);
         });
 
         //add archiveable tasks in archive table 
-        await ArchivedTask.createMany(archiveable);
+        await ArchivedTask.createMany(archiveable_objects);
 
         //remove archived tasks from active table
         await Task

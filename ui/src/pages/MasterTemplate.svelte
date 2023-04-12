@@ -30,7 +30,7 @@
     let data, createdObject={}, actionsIndex, actionsObject;
     let handler, rows;
 
-    let error="", success="", assignedUser, autoAssignType, users=[{value:1,name:"Saumil"},{value:2,name:"Rajesh"},{value:-1,name:"Automatic"}];
+    let error="", success="";
     const type_list = [
         {name: 'Text',value: 'Text'},
         {name: 'Date',value: 'Date'},
@@ -38,8 +38,8 @@
         {name: 'Checkbox',value: 'Checkbox'},
     ];
     const table_name = [
-        {name: 'clients',value: 'clients'},
-        {name: 'companies',value: 'companies'}
+        {name: 'Client',value: 'clients'},
+        {name: 'Company',value: 'companies'}
     ];
     // fetch data
 
@@ -289,7 +289,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>Id</span>
@@ -312,7 +312,7 @@
             <Toggle bind:checked={actionsObject.is_master}>Is Master</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

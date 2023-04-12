@@ -315,7 +315,7 @@
             {/if}
         {/each}
         
-        <div class="col-span-3 grid gap-6 grid-cols-2">
+        <div class="col-span-3 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

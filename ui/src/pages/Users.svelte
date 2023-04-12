@@ -343,32 +343,8 @@
     </form>
 </Modal>
 
-<Modal bind:open={createTasksModal} size="md">
-    <form class="flex flex-col gap-y-6" on:submit|preventDefault>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Client Id's</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Assign To</span>
-            <Select items={users} bind:value={assignedUser}/>
-        </Label>
-        {#if assignedUser < 0}
-            <Label class="flex  flex-col gap-y-1">
-                <span class="mb-2">Assign By</span>
-                <Select items={automaticAssign} bind:value={autoAssignType}/>
-            </Label>
-        {/if}
-        <Label class="flex  flex-col gap-y-1">
-            <span class="mb-2">Description</span>
-            <Textarea rows=8></Textarea>
-        </Label>
-    </form>
-</Modal>
-
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -391,7 +367,7 @@
             <Toggle bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} >Admin</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button on:click={updateData} type="submit" class="w-full">Update</Button>
+            <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

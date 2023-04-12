@@ -1,7 +1,5 @@
 deploying first beta on 11 april 2023, 11:30 pm
 
-convert "null" to null
-
 Invoice send to clients via email
 Invoice download pdf
 

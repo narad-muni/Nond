@@ -101,7 +101,7 @@ export default class CompaniesController {
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || payload[e] == ""){
+            if(payload[e] == "null" || String(payload[e]) == ""){
                 payload[e] = null;
             }
         });
@@ -168,7 +168,7 @@ export default class CompaniesController {
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || payload[e] == ""){
+            if(payload[e] == "null" || String(payload[e]) == ""){
                 payload[e] = null;
             }
         });
