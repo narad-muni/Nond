@@ -57,9 +57,7 @@
         {#if $user.role.read.task}
             <NavLi href="/#/task" class="cursor-pointer">Task</NavLi>
         {/if}
-        {#if $user.role.read.archived_register}
-            <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
-        {/if}
+        <NavLi id="archived" class="cursor-pointer"><Chevron aligned>Archived</Chevron></NavLi>
         {#if utils.getArrIntersection(Object.keys($user.role.read),['client','company','register','invoice','employee']).length}
             <NavLi id="deleted" class="cursor-pointer"><Chevron aligned>Deleted</Chevron></NavLi>
         {/if}
@@ -96,11 +94,20 @@
                 <DropdownItem href="/#/employee">Employee</DropdownItem>
             {/if}
         </Dropdown>
-    
+
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#archived">
-            {#each _archived_registers as register}
-                <DropdownItem href="/#/archived_register/{register.value}">{register.name}</DropdownItem>
-            {/each}
+            <DropdownItem href="/#/archived_tasks">Tasks</DropdownItem>
+            {#if $user.role.read.company}
+                <DropdownItem href="/#/archived_invoices">Invoices</DropdownItem>
+            {/if}
+            {#if $user.role.read.employee}
+                <DropdownItem class="flex items-center justify-between"><Chevron placement="right">Registers</Chevron></DropdownItem>
+                <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
+                    {#each _archived_registers as register}
+                        <DropdownItem href="/#/archived_register/{register.value}">{register.name}</DropdownItem>
+                    {/each}
+                </Dropdown>
+            {/if}
         </Dropdown>
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#deleted">

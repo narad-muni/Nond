@@ -25,6 +25,7 @@
     
     import { loader } from "../global/stores.js";
   import { Spinner } from "flowbite-svelte";
+  import ArchivedTask from "./ArchivedTask.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -47,6 +48,8 @@
         '/register_template/:id':RegisterTemplate,
         '/register/:id':Register,
         '/archived_register/:id':ArchivedRegister,
+        '/archived_tasks':ArchivedTask,
+        '/archived_invoices':ArchivedRegister,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,
         '*':Error

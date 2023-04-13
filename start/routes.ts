@@ -273,6 +273,20 @@ Route.group(() => {
         })
         .prefix('/task');
 
+        Route.group(() => {
+
+            Route.get('/','ArchivedTasksController.index');
+            Route.get('/:self','ArchivedTasksController.index')
+                .where('status',/^[0-2]$/)
+                .where('billed',/^[0-2]$/)
+                .where('self',/^(?:true|false)$/);
+            
+            Route.get('/:id','ArchivedTasksController.get')
+                .where('id',/^[0-9]+$/);
+
+        })
+        .prefix('/task/archived');
+
         /*
         | task_template routes
         */

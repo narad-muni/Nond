@@ -13,6 +13,14 @@ export default class ArchivedRegistersController {
                         .where('id',payload.table_id)
                         .first();
 
+        if(!table){
+            response.send({
+                status: "error",
+                message: "Register not found"
+            });
+            return;
+        }
+
         const data = await Database
             .rawQuery(`select * from "${string.escapeHTML("register__"+table?.name+table?.version)}"`);
 
@@ -38,6 +46,14 @@ export default class ArchivedRegistersController {
                         .select('name','version')
                         .where('id',payload.table_id)
                         .first();
+
+        if(!table){
+            response.send({
+                status: "error",
+                message: "Register not found"
+            });
+            return;
+        }
 
         const data = await Database
             .rawQuery(`select * from "${string.escapeHTML("register__"+table?.name+table?.version)}" where id = ${payload.id}`);

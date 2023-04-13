@@ -200,7 +200,7 @@
         const resp = await utils.put_json('/api/task/',actionsObject);
 
         if(resp.status == 'success'){
-            if((resp.data.status == 4 && statusFilter == 0) || (resp.data.status != 4 && statusFilter == 2) || resp.archived){
+            if((resp.data.status == 4 && statusFilter == 0) || (resp.data.status != 4 && statusFilter == 2)){
                 data.splice(actionsIndex, 1);
             }else{
                 resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
@@ -250,7 +250,7 @@
 
         if(resp.status = 'success'){
             for (let i = 0; i < data.length; i++) {
-                if(resp.archived.includes(data[i].id) || billingFilter == 0){
+                if(billingFilter == 0){
                     data.splice(i,1);
                     i--;
                 }else if (selectedRows.has(data[i].id)) {
@@ -266,6 +266,47 @@
         }else{
             error = resp.message || "";
         }
+    }
+
+    async function download(){
+        const table = document.querySelector('#table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
+
+        headers = headers.slice(0,headers.length/2);
+
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
+            if(td.querySelector('a')){
+                return td.querySelector('a').href;
+            }else if(td.querySelector('input[type=checkbox]')){
+                return td.querySelector('input[type=checkbox]').checked ? 'Yes' : 'No';
+            }else{
+                return td.textContent;
+            }
+        }));
+
+        rows = rows.slice(2);
+
+        if(indeterminate){
+            rows = rows.filter(e => e[0] == 'Yes');
+        }
+
+        const data = [headers, ...rows];
+        
+        // Convert the table data to CSV format
+        const csv = data.map(row => row.join(',')).join('\n');
+        
+        // Create a Blob object from the CSV string
+        const blob = new Blob([csv], { type: 'text/csv' });
+        
+        // Create a link to download the CSV file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Tasks.csv';
+        
+        // Programmatically click on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     async function createData(){
@@ -347,6 +388,14 @@
                 {/if}
             </Button>
 
+            <Button gradient color="green" on:click={download}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>                          
+                &nbsp;
+                Download
+            </Button>
+
             <Button disabled={buttonDisabled || billingFilter!=0} gradient color="blue" on:click={()=> billModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -367,7 +416,7 @@
 
         <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
-                <Table>
+                <Table id="table">
                     <thead>
                         <tr>
                             <th>
