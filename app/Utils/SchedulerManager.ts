@@ -36,7 +36,8 @@ export default class SchedulerManager{
 
             const scheduled_jobs = await Scheduler
                 .query()
-                .where('next','<=',currentDate);
+                .where('next','<=',currentDate)
+                .orderBy('type', 'asc');
 
             const rotate_registers: Scheduler[] = [];
             const add_entries_create_tasks: Scheduler[] = [];
@@ -53,6 +54,8 @@ export default class SchedulerManager{
                         SchedulerManager.ArchiveData();
                         break;
                     case 4:// every_financial_year
+                        SchedulerManager.DeleteData();
+                        SchedulerManager.ArchiveData();
                         SchedulerManager.everyFinancialYear();
                         break;
                     case 5:// Create Tasks & Add Entries in Register
@@ -279,6 +282,7 @@ export default class SchedulerManager{
             .preload('company', query => {
                 query.select('name')
             });
+
 
         //add to archive array
 

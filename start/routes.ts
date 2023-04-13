@@ -448,6 +448,15 @@ Route.group(() => {
         })
         .prefix('/invoice');
 
+        Route.group(() => {
+
+            Route.get('/filter/:filter','ArchivedInvoicesController.index');
+
+            Route.get('/:id','ArchivedInvoicesController.get');
+
+        })
+        .prefix('/invoice/archived');
+
     })
     .middleware('auth')
     .middleware('acl');

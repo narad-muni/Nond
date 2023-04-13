@@ -1,8 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
-import Company from 'App/Models/Company';
 import Invoice from 'App/Models/Invoice'
-import StringUtils from 'App/Utils/StringUtils';
 
 export default class InvoicesController {
     public async index({request,response}: HttpContextContract){

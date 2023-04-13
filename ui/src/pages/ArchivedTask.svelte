@@ -13,7 +13,6 @@
         Input,
         Alert,
         Textarea,
-        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -21,40 +20,20 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import IdSelect from "../component/IdSelect.svelte";
 
     // Intialization
 
     let actionsModals;
     let selectedRows = new Set();
 
-    let data, clients, actionsIndex, actionsObject, userList, taskTemplates, services, companies;
+    let data, actionsIndex, actionsObject;
     let handler, rows, selfTasks = true;
-
-    const task_status = [
-        {name:'Pending',value:0},
-        {name:'In Process',value:1},
-        {name:'Halted',value:2},
-        {name:'Raised',value:3},
-        {name:'Completed',value:4}
-    ];
-
-    const priority = [
-        {name:'Low',value:0},
-        {name:'Regular',value:1},
-        {name:'Urgent',value:2}
-    ];
 
     let error="";
 
     // fetch data
 
     (async ()=>{
-        taskTemplates = await utils.get('/api/task_template/options');
-        services = await utils.get('/api/service/options');
-        companies = await utils.get('/api/company/options');
-        clients = await utils.get('/api/client/options');
-        userList = await utils.get('/api/employee/options');
         data = await utils.get('/api/task/archived/'+selfTasks);
 
         if(data.status != 'success'){
