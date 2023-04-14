@@ -8,6 +8,9 @@ export default class Company extends BaseModel {
     public name: string
 
     @column()
+    public prefix: string
+
+    @column()
     public gst: string
 
     @column()

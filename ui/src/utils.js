@@ -137,6 +137,30 @@ class utils{
         }
     }
 
+    static shortName(str) {
+
+        str = str.trim();
+
+        if(str.length == 0){
+            return "";
+        }
+
+        let arr = str.split(" ");
+        let suffix = "";
+
+
+        if(arr.length == 1){
+            suffix = arr[0].substr(0,3).toUpperCase();
+        }else{
+            arr.forEach(word => {
+                suffix += word[0].toUpperCase();
+            })
+        }
+
+        return suffix;
+
+    }
+
     static async put_json(url, body){
         try{
             loader.set(true);

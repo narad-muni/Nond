@@ -1,5 +1,7 @@
 deploying first beta on 11 april 2023, 11:30 pm
 
+invoice payment qr code
+
 Invoice send to clients via email
 Invoice download pdf
 

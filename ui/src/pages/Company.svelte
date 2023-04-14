@@ -13,9 +13,7 @@
         Label,
         Input,
         Toggle,
-        Alert,
-        Textarea,
-        Select
+        Alert
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -223,6 +221,15 @@
         selectedRows = selectedRows;
     }
 
+    function updatePrefix(){
+        createdObject.prefix = utils.shortName(createdObject.name);
+    }
+
+    function capitalizePrefix(){
+        createdObject.prefix = createdObject.prefix.toUpperCase().trim();
+        createdObject.prefix = createdObject.prefix.split(/[^a-zA-Z0-9 ]/).join('');
+    }
+
     async function createData(){
         const resp = await utils.post_form('/api/company',utils.getFormData(createdObject));
         if(resp.status == 'success'){
@@ -396,7 +403,12 @@
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
-            <Input required type="text" bind:value={createdObject.name} />
+            <Input on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Invoice Prefix</span>
+            <Input on:input={capitalizePrefix} required type="text" bind:value={createdObject.prefix} />
         </Label>
 
         <Label class="space-y-2">

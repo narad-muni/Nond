@@ -31,7 +31,7 @@
     let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
+    let headers, services, all_services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
     let handler, rows;
     const frequency = [
@@ -58,7 +58,7 @@
         {name:'Urgent',value:2}
     ];
 
-    let error="", users;
+    let error="", users=[{name: "Unassigned", value:null}];
 
     const minNextDate = new Date(
             (new Date)
@@ -71,9 +71,10 @@
     (async ()=>{
         client_list = await utils.get('/api/client/options');
         headers = await utils.get('/api/master_template/options/clients');
-        users = await utils.get('/api/employee/options');
+        users = users.concat(await utils.get('/api/employee/options'));
         taskTemplates = await utils.get('/api/task_template/options');
         services = await utils.get('/api/service/options/false');
+        all_services = await utils.get('/api/service/options/true');
         data = await utils.get('/api/client/master/false');
 
         if(data.status != 'success'){
@@ -619,7 +620,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Service</span>
-            <Select required items={services} bind:value={createTasksObject.service_id} />
+            <Select required items={all_services} bind:value={createTasksObject.service_id} />
         </Label>
         <Label class="space-y-2">
             <span>Client Ids</span>

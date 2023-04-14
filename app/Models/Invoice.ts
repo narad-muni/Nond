@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon'
-import { BaseModel, BelongsTo, beforeCreate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, beforeCreate, beforeUpdate, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Client from './Client'
 import Company from './Company'
 import StringUtils from 'App/Utils/StringUtils'
@@ -19,6 +19,9 @@ export default class Invoice extends BaseModel {
 
     @column()
     public remarks: string
+
+    @column()
+    public note: string
 
     @column()
     public paid: boolean
@@ -54,9 +57,9 @@ export default class Invoice extends BaseModel {
             .query()
             .where('id',payload.company_id)
             .increment('invoice_counter',1)
-            .update({},['name','invoice_counter']);
+            .update({},['prefix','invoice_counter']);
 
-        payload.id = StringUtils.shortName(company_details[0]['name']) + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
+        payload.id = company_details[0].prefix + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
 
     }
 }

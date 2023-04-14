@@ -1,6 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
+import Company from 'App/Models/Company';
 import Invoice from 'App/Models/Invoice'
+import StringUtils from 'App/Utils/StringUtils';
 
 export default class InvoicesController {
     public async index({request,response}: HttpContextContract){
@@ -51,7 +53,7 @@ export default class InvoicesController {
         response.send({
             status: 'success',
             data: invoice
-        })
+        });
     }
 
     public async create({request,response}: HttpContextContract){
@@ -104,7 +106,7 @@ export default class InvoicesController {
 
                 response.send({
                     status: 'error',
-                    message: 'different GST cannot exist for same hsn!'
+                    message: 'different GST cannot exist for same HSN code'
                 });
 
                 status = -1;
@@ -117,13 +119,26 @@ export default class InvoicesController {
             return;
         }
 
+        const old_company_prefix = payload.id.split(" ")[0];
+        const old_id = payload.id;
+
+        if(old_company_prefix != StringUtils.shortName(payload.company.name)){
+            
+            const company_details = await Company
+                .query()
+                .where('id',payload.company_id)
+                .increment('invoice_counter',1)
+                .update({},['prefix','invoice_counter']);
+
+            payload.id = company_details[0].prefix + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
+        }
 
         delete payload.client;
         delete payload.company;
 
         await Invoice
             .query()
-            .where('id',payload.id)
+            .where('id',old_id)
             .update(payload);
 
         payload.client = await Client

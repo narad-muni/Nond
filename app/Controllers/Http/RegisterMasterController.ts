@@ -78,6 +78,13 @@ export default class RegistersController {
     public async create({request,response}: HttpContextContract) {
         const payload = request.all();
 
+        //set "null" to null
+        Object.keys(payload).forEach(e => {
+            if(payload[e] == "null" || String(payload[e]) == ""){
+                payload[e] = null;
+            }
+        });
+
         const scheduler = {
             frequency: payload.frequency,
             next: payload.next,
@@ -114,6 +121,11 @@ export default class RegistersController {
             payload.id = data.id;
 
             scheduler.register_id = data.id;
+
+            //never rotate
+            if(payload.frequency == null){
+                scheduler.type = -1;
+            }
 
             await Scheduler.create(scheduler);
             

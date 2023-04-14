@@ -1,6 +1,9 @@
 export default class StringUtils {
 
     static shortName(str: String) {
+
+        str = str.trim();
+
         if(str.length == 0){
             return "";
         }

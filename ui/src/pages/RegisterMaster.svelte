@@ -49,7 +49,8 @@
         {name: "Monthly", value:"1 month"},
         {name: "Quarterly", value:"3 months"},
         {name: "Half Yearly", value:"6 months"},
-        {name: "Yearly", value:"1 year"}
+        {name: "Yearly", value:"1 year"},
+        {name: "Never", value:null}
     ];
 
     // fetch data

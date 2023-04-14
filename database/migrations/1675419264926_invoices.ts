@@ -12,6 +12,7 @@ export default class extends BaseSchema {
             table.boolean('paid');
             table.boolean('gst');
             table.string('remarks');
+            table.string('note');
             table.float('total');
             table.float('tax');
             table.date('date');
