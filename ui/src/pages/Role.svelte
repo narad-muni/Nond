@@ -132,7 +132,7 @@
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/role/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/role/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -300,7 +300,6 @@
                 <Checkbox bind:checked={createdObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={createdObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={createdObject.remove.invoice} >Invoice</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">
@@ -399,7 +398,6 @@
                 <Checkbox bind:checked={actionsObject.remove.client} >Client</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.company} >Company</Checkbox>
                 <Checkbox bind:checked={actionsObject.remove.employee} >Employee</Checkbox>
-                <Checkbox bind:checked={actionsObject.remove.invoice} >Invoice</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">

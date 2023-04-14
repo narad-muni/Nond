@@ -4,13 +4,15 @@ import Employee from 'App/Models/Employee';
 import Crypto from 'crypto';
 
 export default class EmployeesController {
-    public async index({response}: HttpContextContract) {
+    public async index({request, response}: HttpContextContract) {
+        const deleted = request.param('deleted',false);
+
         const data = await Employee
             .query()
             .preload('role',(query) => {
                 query.select('name')
             })
-            .where('deleted',false)
+            .where('deleted',deleted);
 
         response.send({
             status: 'success',
@@ -69,6 +71,19 @@ export default class EmployeesController {
 
         response.send(data);
 
+    }
+
+    public async restore({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        await Employee
+            .query()
+            .whereIn('id',payload.id)
+            .update({deleted: false});
+
+        response.send({
+            status: 'success'
+        });
     }
 
     public async create({request,response}: HttpContextContract) {

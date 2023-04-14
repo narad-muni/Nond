@@ -27,6 +27,8 @@
   import { Spinner } from "flowbite-svelte";
   import ArchivedTask from "./ArchivedTask.svelte";
   import ArchivedInvoice from "./ArchivedInvoice.svelte";
+  import DeletedCompanies from "./DeletedCompanies.svelte";
+  import DeletedEmployees from "./DeletedEmployees.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -53,6 +55,8 @@
         '/archived_invoices':ArchivedInvoice,
         '/task_template':TaskTemplate,
         '/deleted/client':DeletedClients,
+        '/deleted/employee':DeletedEmployees,
+        '/deleted/company':DeletedCompanies,
         '*':Error
     }
 

@@ -44,12 +44,7 @@ delete cascade company = invoices, files.
 
 delete cascade registers = files.
 
-archived tasks
-archived invoices
-
-deleted clients
-deleted companies
-deleted employee
+//TODO : update client services json, delete tasks and schedulers in servicesControllers.destroy
 
 -----
 aditional stuff

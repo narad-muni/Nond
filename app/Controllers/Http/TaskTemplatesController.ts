@@ -78,7 +78,7 @@ export default class TaskTemplatesController {
             }
         });
 
-        if(payload.id == 0){
+        if(payload.id <= 0){
             response.send({
                 status: 'error',
                 message: 'Cannot modify default template'
@@ -103,12 +103,13 @@ export default class TaskTemplatesController {
     public async destroy({request,response}: HttpContextContract){
         const payload = request.all();
 
-        if(payload.id.includes(0)){
+        if(payload.id.filter(e => e <= 0).length){
             response.send({
                 status: 'error',
-                message: 'Cannot modify default template'
+                message: 'Cannot remove default services'
             });
-            return
+
+            return;
         }
 
         await TaskTemplate

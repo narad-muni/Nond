@@ -13,7 +13,7 @@
         Label,
         Input,
         Toggle,
-        Alert,
+        Alert
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -21,56 +21,42 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { location } from 'svelte-spa-router';
-    import IdSelect from "../component/IdSelect.svelte";
     import SveltyPicker from 'svelty-picker';
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, allColumns = false, register_id;
+    let actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, client_list, data, createdObject={}, actionsIndex, actionsObject;
+    let headers, data, actionsIndex, actionsObject;
     let handler, rows;
-
-    let error="", users;
-
-    const minNextDate = new Date(
-            (new Date)
-                .setDate(new Date().getDate() + 1)
-        )
-        .toJSON().slice(0, 10);
+    let error="";
 
     // fetch data
 
-    location.subscribe(val => {
-        (async ()=>{
-            register_id = val.substr(val.lastIndexOf('/')+1);
-            client_list = await utils.get('/api/client/options');
-            headers = await utils.get('/api/register_template/options/'+register_id);
-            data = await utils.get('/api/register/master/'+register_id);
+    (async ()=>{
+        headers = await utils.get('/api/master_template/options/companies');
+        data = await utils.get('/api/company/master/true');
 
-            if(data.status != 'success'){
-                error = data.message;
-                data = null;
-            }else{
-                headers.data = headers.data || [];
-                data = data.data;
-                data.forEach((v) => {
-                    v["_selected"] = 0;
-                });
+        if(data.status != 'success'){
+            error = data.message;
+            data = null;
+        }else{
+            data = data.data;
+            data.forEach((v) => {
+                v["_selected"] = 0;
+            });
+            
+            handler = new DataHandler(
+                data,
+                {
+                    rowsPerPage:50
+                }
+            )
 
-                handler = new DataHandler(
-                    data,
-                    {
-                        rowsPerPage:50
-                    }
-                )
-
-                rows = handler.getRows();
-            }
-        })();
-    });
+            rows = handler.getRows();
+        }
+    })()
 
     //Reactive variables
 
@@ -114,20 +100,57 @@
     }
 
     async function openActionsModal(e){
-        let oid = e.target.getAttribute('oid');
-        actionsIndex = data.findIndex(e => e.id == oid);
+        let oid = e.target.innerText;
+        data.every((el,i) => {
+            if(el.id == oid){
+                actionsIndex = i;
+                return false;
+            }
+            return true;
+        });
 
-        actionsObject = await utils.get('/api/register/'+register_id+'/'+oid);
+        actionsObject = await utils.get('/api/company/'+data[actionsIndex].id);
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
-
             actionsModals = true;
         }else{
             error = actionsObject.message || "";
         }
     }
 
+    async function reloadData(){
+        if(allColumns){
+            data = await utils.get('/api/company/true');
+        }else{
+            data = await utils.get('/api/company/master/true');
+        }
+
+        selectedRows.clear();
+        selectedRows = selectedRows;
+        handler.setRows(data);
+    }
+
+    async function viewAllColumns(){
+        allColumns = !allColumns;
+
+        if(allColumns){
+            data = await utils.get('/api/company/true');
+        }else{
+            data = await utils.get('/api/company/master/true');
+        }
+
+        data.forEach((v) => {
+            if(selectedRows.has(v["id"])){
+                v["_selected"] = true;
+            }else{
+                v["_selected"] = false;
+            }
+        });
+
+        handler.setRows(data);
+    }
+    
     async function download(){
         const table = document.querySelector('#table');
         let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
@@ -161,48 +184,12 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = `register_${register_id}.csv`;
+        link.download = 'Invoices.csv';
         
         // Programmatically click on the link to initiate the download
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-    }
-
-    async function updateData(){
-        const resp = await utils.put_form('/api/register/'+register_id,utils.getFormData(actionsObject));
-        
-        if(resp.status == 'success'){
-            resp.data._selected = data[actionsIndex]._selected;
-
-            data[actionsIndex] = resp.data;
-            handler.setRows(data);
-            actionsModals = false;
-        }else{
-            error = resp.message || "";
-        }
-    }
-
-    async function viewAllColumns(){
-        allColumns = !allColumns;
-
-        if(allColumns){
-            data = await utils.get('/api/register/master/'+register_id);
-        }else{
-            data = await utils.get('/api/register/'+register_id);
-        }
-
-        data = data.data;
-
-        data.forEach((v) => {
-            if(selectedRows.has(v["id"])){
-                v["_selected"] = true;
-            }else{
-                v["_selected"] = false;
-            }
-        });
-
-        handler.setRows(data);
     }
 
     async function deleteSelected(){
@@ -213,42 +200,41 @@
             }
         }
 
-        await utils._delete('/api/register/destroy/'+register_id,{id: Array.from(selectedRows)});
+        await utils._delete('/api/company/destroy/',{id: Array.from(selectedRows)});
 
         selectedRows.clear();
         handler.setRows(data);
         selectedRows = selectedRows;
     }
 
-    async function createData(){
-        const resp = await utils.post_form('/api/register/'+register_id,utils.getFormData(createdObject));
-
-        if(resp.status == 'success'){
-            resp.data._selected = false;
-
-            data.push(resp.data);
-            handler.setRows(data);
-            createModal = false;
-            createdObject = {};
-            
-        }else{
-            error = resp.message || "";
+    async function restoreData(){
+        for (let i = 0; i < data.length; i++) {
+            if (selectedRows.has(data[i].id)) {
+                data.splice(i, 1);
+                i--;
+            }
         }
+
+        await utils.post_json('/api/company/restore/',{id: Array.from(selectedRows)});
+
+        selectedRows.clear();
+        handler.setRows(data);
+        selectedRows = selectedRows;
     }
 
 </script>
 
-{#if data && Array.isArray(headers.data) && handler}
+{#if data && headers && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
         <div class="pl-4 flex gap-x-4 my-2">
-            <Button gradient color="blue" on:click={()=> createModal = true}>
+            <Button gradient color="blue" on:click={restoreData}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>                        
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
                 &nbsp;
-                Create
+                Restore
             </Button>
-
+            
             <Button gradient color="green" on:click={download}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -256,7 +242,7 @@
                 &nbsp;
                 Download
             </Button>
-
+            
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -277,6 +263,12 @@
                     Master Columns
                 {/if}
             </Button>
+
+            <Button color="alternative" on:click={reloadData}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </Button>
         </div>
 
         <div class="min-h-0 pl-4 mt-4">
@@ -288,9 +280,13 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="client_id">Client Id</Th>
+                            <Th {handler} orderBy="name">Name</Th>
+                            <Th {handler} orderBy="email">Email</Th>
+                            <Th {handler} orderBy="email">Pan</Th>
+                            <Th {handler} orderBy="gst">GST</Th>
+                            <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
-                                {#if allColumns || header.master}
+                                {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
                                 {/if}
                             {/each}
@@ -298,69 +294,65 @@
                         <tr>
                             <ThSearch {handler} filterBy="_selected"></ThSearch>
                             <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="client_id"/>
+                            <ThSearch {handler} filterBy="name"/>
+                            <ThSearch {handler} filterBy="email"/>
+                            <ThSearch {handler} filterBy="pan"/>
+                            <ThSearch {handler} filterBy="gst"/>
+                            <ThSearch {handler} filterBy="signature"/>
                             {#each headers.data as header}
-                                {#if allColumns || header.master}
+                                {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>
                                 {/if}
                             {/each}
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row}
+                        {#each $rows as row, index}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
-                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.client_id}</TableBodyCell>
+                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                <TableBodyCell>{row.name}</TableBodyCell>
+                                <TableBodyCell>{row.email}</TableBodyCell>
+                                <TableBodyCell>{row.pan}</TableBodyCell>
+                                <TableBodyCell>{row.gst}</TableBodyCell>
+                                <TableBodyCell>
+                                    {#if row.signature}
+                                        <A target="_blank" href={row.signature}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                            &nbsp;
+                                            Signature
+                                        </A>
+                                    {:else}
+                                        null
+                                    {/if}
+                                </TableBodyCell>
                                 {#each headers.data as header}
-                                    {#if allColumns || header.master}
-                                        {#if header.client_column_id == null}
-                                            <TableBodyCell>
-                                                {#if header.column_type == 'Text'}
-                                                    {row[header.column_name]}
-                                                {:else if header.column_type == 'File'}
-                                                    {#if row[header.column_name]}
-                                                        <A target="_blank" href={row[header.column_name]}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                            </svg>
-                                                            &nbsp;
-                                                            {header.display_name}
-                                                        </A>
-                                                    {:else}
-                                                        null
-                                                    {/if}
-                                                {:else if header.column_type == 'Date'}
-                                                    {row[header.column_name]}
+                                    {#if allColumns || header.is_master}
+                                        <TableBodyCell>
+                                            {#if header.column_type == 'Text'}
+                                                {row[header.column_name]}
+                                            {:else if header.column_type == 'File'}
+                                                {#if row[header.column_name]}
+                                                    <A target="_blank" href={row[header.column_name]}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                                        </svg>
+                                                        &nbsp;
+                                                        {header.display_name}
+                                                    </A>
                                                 {:else}
-                                                    <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
+                                                    null
                                                 {/if}
-                                            </TableBodyCell>
-                                        {:else}
-                                            <TableBodyCell>
-                                                {#if header.column_type == 'Text'}
-                                                    {row.__client?.[header.column_name]}
-                                                {:else if header.column_type == 'File'}
-                                                    {#if row.__client?.[header.column_name]}
-                                                        <A target="_blank" href={row.__client?.[header.column_name]}>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                                            </svg>
-                                                            &nbsp;
-                                                            {header.display_name}
-                                                        </A>
-                                                    {:else}
-                                                        null
-                                                    {/if}
-                                                {:else if header.column_type == 'Date'}
-                                                    {row.__client?.[header.column_name]}
-                                                {:else}
-                                                    <Checkbox disabled checked={row.__client?.[header.column_name]=="true" || row.__client?.[header.column_name]}/>
-                                                {/if}
-                                            </TableBodyCell>
-                                        {/if}
+                                            {:else if header.column_type == 'Date'}
+                                                {row[header.column_name]}
+                                            {:else}
+                                                <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
+                                            {/if}
+                                        </TableBodyCell>
                                     {/if}
                             {/each}
                             </TableBodyRow>
@@ -385,56 +377,64 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect required items={client_list} bind:value={createdObject.client_id} />
-        </Label>
-
-        {#each headers.data as header}
-            {#if header!="id" && header.client_column_id == null}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input type="text" bind:value={createdObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else}
-                        <p>{header.display_name}</p>
-                        <input type="file" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
-
-        <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
-        </div>
-    </form>
-</Modal>
-
-<Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
+<Modal bind:open={actionsModals} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input readonly type="text" bind:value={actionsObject.id} />
         </Label>
 
         <Label class="space-y-2">
-            <span>Client ID</span>
-            <IdSelect required items={client_list} bind:value={actionsObject.client_id} />
+            <span>Name</span>
+            <Input type="text" bind:value={actionsObject.name} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Email</span>
+            <Input type="email" bind:value={actionsObject.email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Address</span>
+            <Input type="text" bind:value={actionsObject.address} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Pan</span>
+            <Input type="text" bind:value={actionsObject.pan} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>GST</span>
+            <Input type="text" bind:value={actionsObject.gst} />
+        </Label>
+
+        <Label class="space-y-2">
+            {#if actionsObject.signature}
+                <span>Signature</span>
+                <div class="flex justify-between">
+                    <A target="_blank" href={actionsObject.signature}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                        &nbsp;
+                        Signature
+                    </A>
+                    <Button on:click={() => {actionsObject.signature = null}} gradient color="red">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>                                  
+                    </Button>
+                </div>
+            {:else}
+                <p>Signature</p>
+                <input required type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+            {/if}
         </Label>
 
         {#each headers.data as header}
-            {#if header!="id" && header.client_column_id == null}
+            {#if header!="id"}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>
@@ -470,9 +470,28 @@
                 </Label>
             {/if}
         {/each}
+
+        <Label class="space-y-2">
+            <span>SMTP Host</span>
+            <Input type="text" bind:value={actionsObject.smtp_host} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Port</span>
+            <Input type="text" bind:value={actionsObject.smtp_port} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Email</span>
+            <Input type="text" bind:value={actionsObject.smtp_email} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Password</span>
+            <Input type="text" bind:value={actionsObject.smtp_password} />
+        </Label>
         
-        <div class="col-span-3 grid gap-6 grid-cols-2">
-            <Button type="submit" disabled={actionsIndex < 0} class="w-full">Update</Button>
+        <div class="col-span-2 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

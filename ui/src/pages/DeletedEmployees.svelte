@@ -11,11 +11,12 @@
         Checkbox,
         Label,
         Input,
+        Toggle,
         Alert,
-        Select,
+        Select
     } from "flowbite-svelte";
 
-    import { DataHandler} from "@vincjo/datatables";
+    import { DataHandler } from "@vincjo/datatables";
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
@@ -23,18 +24,19 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal;
+    let actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject, taskTemplates;
+    let data, actionsIndex, actionsObject, role_options;
     let handler, rows;
+    
     let error="";
 
     // fetch data
 
     (async ()=>{
-        taskTemplates = await utils.get('/api/task_template/options');
-        data = await utils.get('/api/service/');
+        data = await utils.get('/api/employee/true');
+        role_options = await utils.get('/api/role/options');
 
         if(data.status != 'success'){
             error = data.message;
@@ -107,7 +109,7 @@
             }
         });
 
-        actionsObject = await utils.get('/api/service/'+data[actionsIndex].id);
+        actionsObject = await utils.get('/api/employee/'+data[actionsIndex].id);
 
         if(actionsObject.status != 'success'){
             error = actionsObject.message;
@@ -119,39 +121,49 @@
         actionsModals = true;
     }
 
-    async function updateData(){
-        const resp = await utils.put_json('/api/service/',actionsObject);
+    async function download(){
+        const table = document.querySelector('#table');
+        let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
 
-        if(resp.status == 'success'){
-            resp.data._selected = data[actionsIndex]._selected;
-            resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
+        headers = headers.slice(0,headers.length/2);
 
-            data.forEach(e => {
-                if(e.hsn == resp.data.hsn){
-                    e.gst = resp.data.gst;
-                }
-            });
-            
-            data[actionsIndex] = resp.data;
-            handler.setRows(data);
-            actionsModals = false;
-        }else{
-            error = resp.message || "";
+        let rows = Array.from(table.querySelectorAll('tr')).map(tr => Array.from(tr.querySelectorAll('td')).map(td => {
+            if(td.querySelector('a')){
+                return td.querySelector('a').href;
+            }else if(td.querySelector('input[type=checkbox]')){
+                return td.querySelector('input[type=checkbox]').checked ? 'Yes' : 'No';
+            }else{
+                return td.textContent;
+            }
+        }));
+
+        rows = rows.slice(2);
+
+        if(indeterminate){
+            rows = rows.filter(e => e[0] == 'Yes');
         }
+
+        const data = [headers, ...rows];
         
-    }
-
-    async function set_gst(e){
-        let hsn = e.target.value;
-        if(parseInt(hsn)){
-            const gst = await utils.get('/api/service/options_gst/'+hsn);
-            createdObject.gst = gst;
-            actionsObject.gst = gst;
-        }
+        // Convert the table data to CSV format
+        const csv = data.map(row => row.join(',')).join('\n');
+        
+        // Create a Blob object from the CSV string
+        const blob = new Blob([csv], { type: 'text/csv' });
+        
+        // Create a link to download the CSV file
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'Employee.csv';
+        
+        // Programmatically click on the link to initiate the download
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/service/destroy/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/employee/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -168,40 +180,42 @@
         }
     }
 
-    async function createData(){
-        let resp = await utils.post_json('/api/service/',createdObject);
-
-        if(resp.status == 'success'){
-            resp.data._selected = false;
-
-            resp.data.template = taskTemplates.find(e => e.value == resp.data.template_id);
-
-            data.forEach(e => {
-                if(e.hsn == resp.data.hsn){
-                    e.gst = resp.data.gst;
-                }
-            });
-
-            data.push(resp.data);
-            handler.setRows(data);
-            createModal = false;
-        }else{
-            error = resp.message || "";
+    async function restoreData(){
+        for (let i = 0; i < data.length; i++) {
+            if (selectedRows.has(data[i].id)) {
+                data.splice(i, 1);
+                i--;
+            }
         }
+
+        await utils.post_json('/api/employee/restore/',{id: Array.from(selectedRows)});
+
+        selectedRows.clear();
+        handler.setRows(data);
+        selectedRows = selectedRows;
     }
 
 </script>
+
 {#if data && handler}
     <main class="flex flex-col w-full min-w-0 max-h-full p-2">
         <div class="pl-4 flex gap-x-4 my-2">
-            <Button gradient color="blue" on:click={()=> createModal = true}>
+            <Button gradient color="blue" on:click={restoreData}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>                        
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
                 &nbsp;
-                Create
+                Restore
             </Button>
-
+            
+            <Button gradient color="green" on:click={download}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                </svg>                          
+                &nbsp;
+                Download
+            </Button>
+            
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -213,45 +227,40 @@
 
         <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
-                <Table>
+                <Table id="table">
                     <thead>
                         <tr>
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="hsn">HSN/SAC</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy={(row => row.template?.name || null)}>Template</Th>
+                            <Th {handler} orderBy="id">id</Th>
+                            <Th {handler} orderBy="username">username</Th>
+                            <Th {handler} orderBy={(row => row.role?.name || null)}>role</Th>
+                            <Th {handler} orderBy="is_admin">admin</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
+                            <ThSearch {handler} filterBy="_selected"></ThSearch>
                             <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="hsn"/>
-                            <ThSearch {handler} filterBy="gst"/>
-                            <ThSearch {handler} filterBy={(row => row.template?.name || null)}/>
+                            <ThSearch {handler} filterBy="username"/>
+                            <ThSearch {handler} filterBy={(row => row.role?.name || null)}/>
+                            <ThSearch {handler} filterBy="is_admin"/>
                         </tr>
                     </thead>
                     <TableBody>
-                        {#each $rows as row}
+                        {#each $rows as row, index}
                             <TableBodyRow>
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.name}
+                                    {row.username}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.hsn}
+                                    {row.role?.name || null}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.gst}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.template?.name || "null"}
+                                    <Checkbox disabled checked={row.is_admin=="true" || row.is_admin}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -275,57 +284,30 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={createdObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>HSN/SAC</span>
-            <Input on:change={set_gst} type="number" required bind:value={createdObject.hsn}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="number" required bind:value={createdObject.gst}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Task Template</span>
-            <Select required items={taskTemplates} bind:value={createdObject.template_id} />
-        </Label>
-        <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
-        </div>
-    </form>
-</Modal>
-
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input value={actionsObject.id} readonly/>
         </Label>
         <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={actionsObject.name}/>
+            <span>Username</span>
+            <Input required bind:value={actionsObject.username}/>
         </Label>
         <Label class="space-y-2">
-            <span>HSN/SAC</span>
-            <Input on:change={set_gst} type="number" required bind:value={actionsObject.hsn}/>
+            <span>Password</span>
+            <Input type="password" bind:value={actionsObject.password}/>
         </Label>
         <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="number" required bind:value={actionsObject.gst}/>
+            <span>Role</span>
+            <Select required items={role_options} bind:value={actionsObject.role_id}></Select>
         </Label>
         <Label class="space-y-2">
-            <span>Task Template</span>
-            <Select required items={taskTemplates} bind:value={actionsObject.template_id} />
+            <span>&nbsp</span>
+            <Toggle bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} >Admin</Toggle>
         </Label>
-        <div class="col-span-2 grid gap-6 grid-cols-2">
-            <Button type="submit" class="w-full">Update</Button>
+        <div class="col-span-2 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>

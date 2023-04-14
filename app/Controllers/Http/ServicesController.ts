@@ -112,6 +112,15 @@ export default class RolesController {
     public async update({request,response}: HttpContextContract) {
         const data = request.all();
 
+        if(data.id < 0){
+            response.send({
+                status: "error",
+                message: "Cannot modify default services"
+            });
+
+            return;
+        }
+
         //set "null" to null
         Object.keys(data).forEach(e => {
             if(data[e] == "null" || String(data[e]) == ""){
@@ -137,7 +146,18 @@ export default class RolesController {
     }
 
     public async destroy({request,response}: HttpContextContract) {
-        const id = request.input('id')
+        const id = request.input('id');
+
+        if(id.filter(e => e <= 0).length){
+            response.send({
+                status: 'error',
+                message: 'Cannot remove default services'
+            });
+
+            return;
+        }
+
+        console.log(id.filter(e => e <= 0).length);
         
         //TODO : update client services json, delete tasks and schedulers
 

@@ -120,12 +120,6 @@
             {#if $user.role.read.employee}
                 <DropdownItem href="/#/deleted/employee">Employee</DropdownItem>
             {/if}
-            {#if $user.role.read.register}
-                <DropdownItem href="/#/deleted/register">Register</DropdownItem>
-            {/if}
-            {#if $user.role.read.invoice}
-                <DropdownItem href="/#/deleted/invoice">Invoice</DropdownItem>
-            {/if}
         </Dropdown>
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#register">

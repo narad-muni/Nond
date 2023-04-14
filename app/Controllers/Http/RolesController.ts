@@ -81,7 +81,7 @@ export default class RolesController {
 
     public async update({request,response}: HttpContextContract) {
         const payload = request.all();
-        if(payload.id < 2){
+        if(payload.id <= 0){
             response.send({
                 status: 'error',
                 message: 'Cannot modify default roles',
@@ -113,24 +113,28 @@ export default class RolesController {
 
     public async destroy({request,response}: HttpContextContract) {
         const id = request.input('id')
-        if(id.includes(0) || id.includes(1)){
+
+        if(id.filter(e => e <= 0).length){
             response.send({
                 status: 'error',
                 message: 'Cannot remove default roles'
-            })
-        }else{
-            await Employee
-                .query()
-                .whereIn('role_id',id)
-                .update({role_id:1})
-            await Role
-                .query()
-                .whereIn('id',id)
-                .delete()
-            
-            response.send({
-                status: 'success'
-            })
+            });
+
+            return;
         }
+
+        await Employee
+            .query()
+            .whereIn('role_id',id)
+            .update({role_id:1});
+
+        await Role
+            .query()
+            .whereIn('id',id)
+            .delete();
+        
+        response.send({
+            status: 'success'
+        });
     }
 }

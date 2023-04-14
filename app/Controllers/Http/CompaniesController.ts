@@ -6,10 +6,12 @@ import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
 
 export default class CompaniesController {
-    public async index({response}: HttpContextContract){
+    public async index({request, response}: HttpContextContract){
+        const deleted = request.param('deleted',false);
+
         const headers = await MasterTemplate
             .query()
-            .where('table_name','companies')
+            .where('table_name','companies');
 
         headers.forEach(header => {
             Company.$addColumn(header.column_name,{});      
@@ -17,7 +19,7 @@ export default class CompaniesController {
 
         const data = await Company
             .query()
-            .where('deleted',false)
+            .where('deleted',deleted)
 
         response.send({
             status: 'success',
@@ -25,7 +27,8 @@ export default class CompaniesController {
         });
     }
 
-    public async indexMaster({response}: HttpContextContract){
+    public async indexMaster({request,response}: HttpContextContract){
+        const deleted = request.param('deleted',false);
 
         const headers = await MasterTemplate
             .query()
@@ -39,7 +42,7 @@ export default class CompaniesController {
 
         const data = await Company
             .query()
-            .where('deleted',false)
+            .where('deleted',deleted);
 
         response.send({
             status: 'success',
@@ -93,6 +96,19 @@ export default class CompaniesController {
 
         response.send(serilizedData);
 
+    }
+
+    public async restore({request,response}: HttpContextContract){
+        const payload = request.all();
+
+        await Company
+            .query()
+            .whereIn('id',payload.id)
+            .update({deleted: false});
+
+        response.send({
+            status: 'success'
+        });
     }
 
     public async create({request,response}: HttpContextContract){

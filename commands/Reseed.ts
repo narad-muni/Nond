@@ -45,6 +45,7 @@ export default class Reseed extends BaseCommand {
         });
 
         await Scheduler.create({
+            id: -3,
             data:{"info":"delete data"},
             type: 2,
             next: DateTime.now(),
@@ -52,6 +53,7 @@ export default class Reseed extends BaseCommand {
         });
 
         await Scheduler.create({
+            id: -2,
             data:{"info":"archive data"},
             type: 3,
             next: DateTime.now(),
@@ -59,6 +61,7 @@ export default class Reseed extends BaseCommand {
         });
 
         await Scheduler.create({
+            id: -1,
             data:{"info":"every financial year"},
             type: 4,
             next: DateTime.fromISO('2023-01-04'),
@@ -66,7 +69,7 @@ export default class Reseed extends BaseCommand {
         });
 
         await TaskTemplate.create({
-            id: 0,
+            id: -1,
             name: 'Default',
             title: '',
             description: '',
@@ -83,7 +86,7 @@ export default class Reseed extends BaseCommand {
         });
 
         await Role.create({
-            id: 0,
+            id: -2,
             name: 'viewer',
             read: {"task":true},
             create: {},
@@ -93,11 +96,12 @@ export default class Reseed extends BaseCommand {
         });
 
         await Role.create({
+            id: -1,
             name: 'admin',
             read: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
             create: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
             update: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            remove: {"client":true,"company":true,"employee":true,"invoice":true},
+            remove: {"client":true,"company":true,"employee":true},
             destroy: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
         });
 

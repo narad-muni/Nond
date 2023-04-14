@@ -20,9 +20,10 @@ export default class ClientsController {
 
     public async index({request,response}: HttpContextContract){
         const deleted = request.param('deleted');
+        
         const headers = await MasterTemplate
             .query()
-            .where('table_name','clients')
+            .where('table_name','clients');
 
         headers.forEach(header => {
             if(header.column_type == 'Date'){
@@ -37,7 +38,7 @@ export default class ClientsController {
             .preload('group', (query) => {
                 query.select('id','name')
             })
-            .where('deleted',deleted)
+            .where('deleted',deleted);
 
         response.send({
             status: 'success',
@@ -381,15 +382,24 @@ export default class ClientsController {
         await Client
             .query()
             .whereIn('id',payload.id)
-            .update({deleted: false})
+            .update({deleted: false});
 
         response.send({
             status: 'success'
-        })
+        });
     }
 
     public async destroy({request,response}: HttpContextContract){
         const payload = request.all();
+
+        if(payload.id <= 0){
+            response.send({
+                status: "error",
+                message: "Cannot delete default user"
+            });
+
+            return;
+        }
 
         //delete folders for above clients
         payload.id.forEach(id => {

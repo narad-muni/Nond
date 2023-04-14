@@ -23,7 +23,6 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
-import Company from 'App/Models/Company';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
@@ -64,7 +63,7 @@ Route.group(() => {
 
         Route.group(() => {
             
-            Route.get('/:deleted','ClientsController.index')
+            Route.get('/:deleted?','ClientsController.index')
                 .where('deleted',/true|false/);
 
             Route.get('/master/:deleted','ClientsController.indexMaster')
@@ -99,8 +98,9 @@ Route.group(() => {
 
         Route.group(() => {
 
-            Route.get('/','EmployeesController.index')
+            Route.get('/:deleted?','EmployeesController.index')
                 .where('deleted',/true|false/);
+
             Route.get('/:id','EmployeesController.get')
                 .where('id',/^[0-9]+$/);
 
@@ -109,6 +109,8 @@ Route.group(() => {
             Route.put('/','EmployeesController.update');
 
             Route.post('/','EmployeesController.create');
+
+            Route.post('/restore','EmployeesController.restore');
 
             Route.delete('/','EmployeesController.remove');
 
@@ -222,32 +224,6 @@ Route.group(() => {
 
 
         /*
-        | entry routes
-        | TODO: add template and register id in routes
-        */
-
-        Route.group(() => {
-
-            Route.get('/','EntriesController.index');
-            Route.get('/:id','EntriesController.get')
-                .where('id',/^[0-9]+$/);
-
-            Route.get('/master/','EntriesController.indexMaster');
-
-            Route.get('/columns/:template_id','EntriesController.columns')
-            .where('template_id',/^[0-9]+$/);
-
-            Route.post('/','EntriesController.create');
-
-            Route.put('/','EntriesController.update');
-
-            Route.delete('/','EntriesController.destroy');
-
-        })
-        .prefix('/entry');
-
-
-        /*
         | task routes
         */
 
@@ -324,7 +300,7 @@ Route.group(() => {
 
             Route.post('/','RolesController.create');
 
-            Route.delete('/','RolesController.destroy');
+            Route.delete('/destroy','RolesController.destroy');
 
         })
         .prefix('/role');
@@ -352,7 +328,7 @@ Route.group(() => {
 
             Route.post('/','ServicesController.create');
 
-            Route.delete('/','ServicesController.destroy');
+            Route.delete('/destroy','ServicesController.destroy');
 
         })
         .prefix('/service');
@@ -372,7 +348,7 @@ Route.group(() => {
 
             Route.put('/','SchedulersController.update');
 
-            Route.delete('/','SchedulersController.destroy');
+            Route.delete('/destroy','SchedulersController.destroy');
 
         })
         .prefix('/scheduler');
@@ -384,18 +360,21 @@ Route.group(() => {
 
         Route.group(() => {
             
-            Route.get('/','CompaniesController.index')
+            Route.get('/:deleted?','CompaniesController.index')
                 .where('deleted',/true|false/);
+                
             Route.get('/:id','CompaniesController.get')
                 .where('id',/^[0-9]+$/);
 
-            Route.get('/master/','CompaniesController.indexMaster');
+            Route.get('/master/:deleted?','CompaniesController.indexMaster');
 
             Route.get('/options','CompaniesController.options');
 
             Route.get('/columns','CompaniesController.columns');
 
             Route.post('/','CompaniesController.create');
+
+            Route.post('/restore','CompaniesController.restore');
 
             Route.put('/','CompaniesController.update');
 
@@ -440,8 +419,6 @@ Route.group(() => {
             Route.post('/','InvoicesController.create');
 
             Route.put('/','InvoicesController.update');
-
-            Route.delete('/','InvoicesController.remove');
 
             Route.delete('/destroy','InvoicesController.destroy');
 
