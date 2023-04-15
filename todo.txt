@@ -22,29 +22,12 @@ add default columns to client
 
 ------------
 
-fields required for invoice
-
-invoice : 
-    particulars, invoice no., date, remarks, buyer, seller, amount, total, signature, hsn?, tax breakdown
-
-
-
 pending stuff
 
 home page.
 
 invoice send by email
 invoice generate pdf
-
-soft delete cascade client = register entries ?, schedulers.
-
-delete cascade client = tasks, bills, files, register entries, schedulers
-
-delete cascade company = invoices, files.
-
-delete cascade registers = files.
-
-//TODO : update client services json, delete tasks and schedulers in servicesControllers.destroy
 
 -----
 aditional stuff

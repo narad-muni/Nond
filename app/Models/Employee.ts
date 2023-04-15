@@ -31,7 +31,7 @@ export default class Employee extends BaseModel {
     @beforeSave()
     public static async hashPassword(user: Employee) {
         if (user.$dirty.password) {
-        user.password = Crypto.createHash('sha256').update(user.password).digest('hex');
+            user.password = Crypto.createHash('sha256').update(user.password).digest('hex');
         }
     }
 

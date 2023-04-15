@@ -1,10 +1,13 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Client from 'App/Models/Client';
+import DynamicRegister from 'App/Models/DynamicRegister';
 import MasterTemplate from 'App/Models/MasterTemplate';
+import RegisterMaster from 'App/Models/RegisterMaster';
 import Scheduler from 'App/Models/Scheduler';
 import fs from 'fs';
 import { DateTime } from 'luxon';
+import { string } from '@ioc:Adonis/Core/Helpers';
 
 export default class ClientsController {
 
@@ -137,7 +140,7 @@ export default class ClientsController {
     public async create({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
-        const newSchedulersList = [];
+        const newSchedulersList: any = [];
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
@@ -219,9 +222,9 @@ export default class ClientsController {
     public async update({request,response}: HttpContextContract){
         const payload = request.all();
         const files = request.allFiles();
-        const deletedSchedulerIds = [];
-        const newSchedulersList = [];
-        const updateSchedulersList = [];
+        const deletedSchedulerIds: any = [];
+        const newSchedulersList: any = [];
+        const updateSchedulersList: any = [];
 
         //set "null" to null
         Object.keys(payload).forEach(e => {
@@ -295,7 +298,7 @@ export default class ClientsController {
             const file_name = `${file.fieldName}.${file.extname}`
 
             try{
-                fs.unlinkSync(Application.makePath(old[file.fieldName]));
+                fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
             }catch(err){}
 
             file.move(Application.makePath(path),{name:file_name});
@@ -416,7 +419,27 @@ export default class ClientsController {
         await Client
             .query()
             .whereIn('group_id',payload.id)
-            .update({'group_id':null})
+            .update({'group_id':null});
+
+        await Scheduler
+            .query()
+            .where('client_id', payload.id)
+            .delete();
+
+        //delete from active registers
+        const activeRegisters = await RegisterMaster
+            .query()
+            .select('name','version')
+            .where('active', true);
+
+        for await(const register of activeRegisters){
+            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+
+            await DynamicRegister
+                .query()
+                .whereIn('client_id', payload.id)
+                .delete();
+        }
         
         response.send({
             status: 'success'

@@ -1,4 +1,7 @@
-import { BaseModel, beforeSave, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, beforeDelete, beforeSave, column } from '@ioc:Adonis/Lucid/Orm'
+import fs from 'fs-extra';
+import Application from '@ioc:Adonis/Core/Application';
+import Invoice from './Invoice';
 
 export default class Company extends BaseModel {
     @column({ isPrimary: true })
@@ -49,6 +52,20 @@ export default class Company extends BaseModel {
         if(company.$dirty.signature != null){
             company.signature = '/file/company/'+company.id+'/signature'+company.signature;
         }
+    }
+
+    @beforeDelete()
+    public static async cascadeDelete(company: Company) {
+        //delete files
+        try{
+            fs.removeSync(Application.makePath(`/file/company/${company.id}`));
+        }catch(err){}
+
+        //delete Invoices
+        await Invoice
+            .query()
+            .where('company_id', company.id)
+            .delete();
     }
 
 }

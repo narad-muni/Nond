@@ -1,5 +1,8 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import RegisterMaster from 'App/Models/RegisterMaster'
+import Scheduler from 'App/Models/Scheduler'
 import Service from 'App/Models/Service'
+import Task from 'App/Models/Task'
 
 export default class RolesController {
 
@@ -159,15 +162,33 @@ export default class RolesController {
 
         console.log(id.filter(e => e <= 0).length);
         
-        //TODO : update client services json, delete tasks and schedulers
+        //update delete tasks, schedulers, registers
+        
+        //delete tasks
+        await Task
+            .query()
+            .whereIn('service_id',id)
+            .delete();
+
+        //delete user entries scheduler
+        await Scheduler
+            .query()
+            .whereIn('service_id', id)
+            .delete();
+
+        //delete registers
+        await RegisterMaster
+            .query()
+            .whereIn('service_id',id)
+            .delete();
 
         await Service
             .query()
             .whereIn('id',id)
-            .delete()
+            .delete();
             
-            response.send({
-                status: 'success'
-            })
+        response.send({
+            status: 'success'
+        });
     }
 }

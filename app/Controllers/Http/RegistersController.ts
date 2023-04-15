@@ -345,8 +345,6 @@ export default class RegistersController {
         const payload = request.params();
         const data = request.all();
 
-        //TODO Remove files
-
         //setup dynamic register
         const register = await RegisterMaster
             .query()
