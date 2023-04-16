@@ -1,6 +1,8 @@
 import { loader } from "./global/stores";
 
 class utils{
+
+    static domain = "http://localhost:3333";
     
     static compareSets (set1, set2){
         if (set1.size < set2.size) {
@@ -73,7 +75,7 @@ class utils{
                 method: 'GET'
             };
 
-            const resp = await fetch(url, requestOptions);
+            const resp = await fetch(utils.domain+url, requestOptions);
             const respJson = await resp.json()
 
             return respJson;
@@ -92,7 +94,7 @@ class utils{
                 body: JSON.stringify(body)
             };
 
-            const resp = await fetch(url, requestOptions);
+            const resp = await fetch(utils.domain+url, requestOptions);
             const respJson = await resp.json()
 
             return respJson;
@@ -110,7 +112,7 @@ class utils{
                 body: body
             };
 
-            const resp = await fetch(url, requestOptions);
+            const resp = await fetch(utils.domain+url, requestOptions);
             const respJson = await resp.json()
 
             return respJson;
@@ -128,7 +130,7 @@ class utils{
                 body: body
             };
 
-            const resp = await fetch(url, requestOptions);    
+            const resp = await fetch(utils.domain+url, requestOptions);    
             const respJson = await resp.json()
 
             return respJson;
@@ -171,7 +173,7 @@ class utils{
                 body: JSON.stringify(body)
             };
 
-            const resp = await fetch(url, requestOptions);    
+            const resp = await fetch(utils.domain+url, requestOptions);    
             const respJson = await resp.json()
 
             return respJson;
@@ -191,7 +193,7 @@ class utils{
                 body: JSON.stringify(body)
             };
 
-            const resp = await fetch(url, requestOptions);
+            const resp = await fetch(utils.domain+url, requestOptions);
             const respJson = await resp.json()
 
             return respJson;

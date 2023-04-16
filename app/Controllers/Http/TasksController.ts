@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import ArchivedTask from 'App/Models/ArchivedTask';
 import Invoice from 'App/Models/Invoice';
 import Task from 'App/Models/Task'
 

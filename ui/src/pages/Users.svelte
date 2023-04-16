@@ -251,10 +251,10 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="username">username</Th>
-                            <Th {handler} orderBy={(row => row.role?.name || null)}>role</Th>
-                            <Th {handler} orderBy="is_admin">admin</Th>
+                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy="username">Username</Th>
+                            <Th {handler} orderBy={(row => row.role?.name || null)}>Role</Th>
+                            <Th {handler} orderBy="is_admin">Admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy="_selected"></ThSearch>

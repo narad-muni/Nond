@@ -67,7 +67,7 @@ export default class EmployeesController {
                 name: 'username',
                 value: 'id'
             })
-            .where('deleted',false)
+            .where('deleted',false);
 
         response.send(data);
 
@@ -96,8 +96,8 @@ export default class EmployeesController {
             }
         });
 
-        if(data.is_master){
-            data.role_id = 1;
+        if(data.is_admin){
+            data.role_id = -1;
         }
 
         const emp = await Employee.create(data);
@@ -121,8 +121,8 @@ export default class EmployeesController {
             }
         });
 
-        if(data.is_master){
-            data.role_id = 1;
+        if(data.is_admin){
+            data.role_id = -1;
         }
 
         if(data.password == null){

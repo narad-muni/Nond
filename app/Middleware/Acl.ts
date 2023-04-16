@@ -3,6 +3,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 export default class Acl {
     public async handle({request,response,session}: HttpContextContract, next: () => Promise<void>) {
         let req_url = request.url();
+
         if(!req_url.endsWith('/')){
             req_url += '/'
         }
@@ -17,6 +18,10 @@ export default class Acl {
             message: 'Permission denied'
         }
 
+        if(!role){
+            session.forget('user');
+        }
+
         if(method == 'GET' && url.includes('options') && role){
             await next();
             return;
@@ -24,21 +29,21 @@ export default class Acl {
 
         if(method == 'GET'){// Read Operation
 
-            if(!role.read[part]){
+            if(!role?.read[part]){
                 response.send(not_permitted_err);
                 return;
             }
 
         }else if(method == 'POST'){// Create Operation
 
-            if(!role.create[part]){
+            if(!role?.create[part]){
                 response.send(not_permitted_err);
                 return;
             }
 
         }else if(method == 'PUT'){// Update Operation
 
-            if(!role.update[part]){
+            if(!role?.update[part]){
                 response.send(not_permitted_err);
                 return;
             }
@@ -46,12 +51,12 @@ export default class Acl {
         }else if(method == 'DELETE'){// Delete Operation
 
             if(url.includes('destroy')){
-                if(!role.destroy[part]){
+                if(!role?.destroy[part]){
                     response.send(not_permitted_err);
                     return;
                 }
             }else{
-                if(!role.remove[part]){
+                if(!role?.remove[part]){
                     response.send(not_permitted_err);
                     return;
                 }

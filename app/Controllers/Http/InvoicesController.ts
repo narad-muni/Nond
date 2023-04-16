@@ -23,7 +23,7 @@ export default class InvoicesController {
             });
 
         if(filter == 0){ // waiting
-            invoices = invoices.where('total',null);
+            invoices = invoices.whereNull('total');
         }else if(filter == 1){ // unpaid
             invoices = invoices.where('paid',false);
         }else if(filter == 2){ // paid

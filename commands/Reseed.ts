@@ -41,7 +41,7 @@ export default class Reseed extends BaseCommand {
             username: 'admin',
             password: 'admin123',
             is_admin: true,
-            role_id: 1,
+            role_id: -1,
         });
 
         await Scheduler.create({
@@ -82,7 +82,7 @@ export default class Reseed extends BaseCommand {
             id: -1,
             hsn:0,
             name: 'Others',
-            template_id:0
+            template_id: -1
         });
 
         await Role.create({
