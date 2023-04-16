@@ -1,6 +1,0 @@
-Run following commands
-
-1. pip install -r requirements.txt
-2. python main.py
-
-import CRUD Postman Collection.json into postman for postman Collection
