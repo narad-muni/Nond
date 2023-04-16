@@ -31,8 +31,8 @@ const isDevEnv = Env.get('NODE_ENV') === 'development';
 */
 
 Route.get('/file/*','FilesController.get')
-.middleware('auth')
-.middleware('acl');
+    .middleware('auth')
+    .middleware('acl');
 
 Route.group(() => {
   
@@ -44,12 +44,21 @@ Route.group(() => {
     Route.group(() => {
 
         Route.post('/login','AuthController.login');
-        Route.post('/logout','AuthController.logout');
+        Route.any('/logout','AuthController.logout');
         Route.get('/is_logged_in','AuthController.isLoggedIn');
         Route.get('/get_user','AuthController.user');
 
     })
     .prefix('/auth');
+
+    //dashboard routes
+    Route.group(() => {
+
+        Route.any('/stats','DashboardController.getStats');
+
+    })
+    .middleware('auth')
+    .prefix('/dashboard');
 
     /*
     | Auth and role protected clients
@@ -70,7 +79,7 @@ Route.group(() => {
                 .where('deleted',/true|false/);
 
             Route.get('/:id','ClientsController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.get('/options','ClientsController.options');
 
@@ -91,7 +100,6 @@ Route.group(() => {
         })
         .prefix('/client');
 
-
         /*
         | user routes
         */
@@ -102,7 +110,7 @@ Route.group(() => {
                 .where('deleted',/true|false/);
 
             Route.get('/:id','EmployeesController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.get('/options','EmployeesController.options');
 
@@ -119,21 +127,20 @@ Route.group(() => {
         })
         .prefix('/employee');
 
-
         /*
         | template routes
         */
 
         Route.group(() => {
             Route.get('/:table_id','RegisterTemplatesController.index')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
             
             Route.get('/:table_id/:id','RegisterTemplatesController.get')
-                .where('id',/^[0-9]+$/)
-                .where('table_id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/)
+                .where('table_id',/^-?\d+$/);
 
             Route.get('/options/:table_id','RegisterTemplatesController.options')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
         
             Route.post('/','RegisterTemplatesController.create');
 
@@ -153,7 +160,7 @@ Route.group(() => {
             Route.get('/options/client','MasterTemplatesController.client_options');
             Route.get('/options/:table_name','MasterTemplatesController.index_options');
             Route.get('/:id','MasterTemplatesController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.post('/','MasterTemplatesController.create');
 
@@ -171,7 +178,7 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/','RegisterMasterController.index');
-            Route.get('/:id','RegisterMasterController.get').where('id',/^[0-9]+$/);
+            Route.get('/:id','RegisterMasterController.get').where('id',/^-?\d+$/);
 
             Route.get('/options/:filter?','RegisterMasterController.options').where('filter',/all|active|archived/);
 
@@ -189,23 +196,23 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/:table_id','RegistersController.index')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
 
             Route.get('/master/:table_id','RegistersController.indexMaster')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
 
             Route.get('/:table_id/:id','RegistersController.get')
-                .where('id',/^[0-9]+$/)
-                .where('table_id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/)
+                .where('table_id',/^-?\d+$/);
 
             Route.post('/:table_id','RegistersController.create')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
 
             Route.put('/:table_id','RegistersController.update')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
 
             Route.delete('/destroy/:table_id','RegistersController.destroy')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
 
         })
         .prefix('/register');
@@ -213,11 +220,11 @@ Route.group(() => {
         Route.group(() => {
 
             Route.get('/:table_id','ArchivedRegistersController.index')
-                .where('table_id',/^[0-9]+$/);
+                .where('table_id',/^-?\d+$/);
                 
             Route.get('/:table_id/:id','ArchivedRegistersController.get')
-                .where('id',/^[0-9]+$/)
-                .where('table_id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/)
+                .where('table_id',/^-?\d+$/);
 
         })
         .prefix('/archived_register');
@@ -236,7 +243,7 @@ Route.group(() => {
                 .where('self',/^(?:true|false)$/);
             
             Route.get('/:id','TasksController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.post('/','TasksController.create');
 
@@ -258,7 +265,7 @@ Route.group(() => {
                 .where('self',/^(?:true|false)$/);
             
             Route.get('/:id','ArchivedTasksController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
         })
         .prefix('/task/archived');
@@ -271,7 +278,7 @@ Route.group(() => {
 
             Route.get('/','TaskTemplatesController.index');
             Route.get('/:id','TaskTemplatesController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.get('/options','TaskTemplatesController.options');
 
@@ -293,7 +300,7 @@ Route.group(() => {
 
             Route.get('/','RolesController.index');
             Route.get('/:id','RolesController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
             Route.get('/options','RolesController.options');
 
             Route.put('/','RolesController.update');
@@ -342,7 +349,7 @@ Route.group(() => {
 
             Route.get('/','SchedulersController.index');
             Route.get('/:id','SchedulersController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.post('/','SchedulersController.create');
 
@@ -364,7 +371,7 @@ Route.group(() => {
                 .where('deleted',/true|false/);
                 
             Route.get('/:id','CompaniesController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.get('/master/:deleted?','CompaniesController.indexMaster');
 
@@ -394,7 +401,7 @@ Route.group(() => {
 
             Route.get('/','LeadsController.index');
             Route.get('/:id','LeadsController.get')
-                .where('id',/^[0-9]+$/);
+                .where('id',/^-?\d+$/);
 
             Route.post('/','LeadsController.create');
 
