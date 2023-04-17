@@ -8,62 +8,88 @@ import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 
 export default class RegisterTemplatesController {
     public async index({request,response}: HttpContextContract) {
-        const payload = request.params();
+        try{
+            const payload = request.params();
 
-        const data = await RegisterTemplate
-            .query()
-            .where('table_id',payload.table_id);
+            const data = await RegisterTemplate
+                .query()
+                .where('table_id',payload.table_id);
 
-        response.send({
-            status: 'success',
-            data: data
-        });
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async get({request,response}: HttpContextContract) {
-        const payload = request.params();
+        try{
+            const payload = request.params();
 
-        const data = await RegisterTemplate
-        .query()
-        .where('id',payload.id)
-        .first();
+            const data = await RegisterTemplate
+            .query()
+            .where('id',payload.id)
+            .first();
 
-        response.send({
-            status: 'success',
-            data: data
-        });
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async options({request,response}: HttpContextContract){
-        const payload = request.params();
+        try{
+            const payload = request.params();
 
-        const data = await RegisterTemplate
-            .query()
-            .where('table_id',payload.table_id);
-
-        if(data.length){
-            response.send({
-                status: 'success',
-                data: data
-            });
-        }else{
-            const data = await ArchivedRegisterTemplate
+            const data = await RegisterTemplate
                 .query()
-                .where('table_id',payload.table_id)
-                .first();
+                .where('table_id',payload.table_id);
+
+            if(data.length){
+                response.send({
+                    status: 'success',
+                    data: data
+                });
+            }else{
+                const data = await ArchivedRegisterTemplate
+                    .query()
+                    .where('table_id',payload.table_id)
+                    .first();
+
+                response.send({
+                    status: 'success',
+                    data: data
+                });
+            }
+
+        }catch(e){
+            console.log(e);
 
             response.send({
-                status: 'success',
-                data: data
+                status: "error",
+                message: "some error occured"
             });
         }
-
     }
 
     public async create({request,response}: HttpContextContract) {
-        const payload = request.all();
-
         try{
+            const payload = request.all();
             if(payload.client_column_id != null){//client column
                 
                 payload.master = true;
@@ -158,98 +184,121 @@ export default class RegisterTemplatesController {
                 }
             }
         }catch(e){
-            console.log(e)
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
     }
 
     public async update({request,response}: HttpContextContract) {
-        const payload = request.all();
-        payload.column_name = string.snakeCase(payload.display_name);
+        try{
+            const payload = request.all();
+            payload.column_name = string.snakeCase(payload.display_name);
 
-        const exist = await RegisterTemplate
-            .query()
-            .whereNot('id',payload.id)
-            .where('column_name',payload.column_name)
-            .where('table_id',payload.table_id)
-            .first();
-
-        if(exist){
-            response.send({
-                status: 'error',
-                message: 'column with same name already exixts'
-            });
-        }else{
-            let c_type: string;
-
-            const old = await RegisterTemplate
+            const exist = await RegisterTemplate
                 .query()
-                .where('id',payload.id)
+                .whereNot('id',payload.id)
+                .where('column_name',payload.column_name)
+                .where('table_id',payload.table_id)
                 .first();
 
-            const table = await RegisterMaster
-                .query()
-                .select('name','version')
-                .where('id',payload.table_id)
-                .first();
-
-            if(payload.column_type == 'File' || payload.column_type == 'Text'){
-                c_type = 'varchar(255)'
-            }else if(payload.column_type == 'Checkbox'){
-                c_type = 'boolean'
+            if(exist){
+                response.send({
+                    status: 'error',
+                    message: 'column with same name already exixts'
+                });
             }else{
-                c_type = 'date'
-            }
+                let c_type: string;
 
-            if(old?.column_name !== payload.column_name){
-                await Database
-                    .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__"+table?.name+table?.version), old?.column_name, payload.column_name]);
-            }
+                const old = await RegisterTemplate
+                    .query()
+                    .where('id',payload.id)
+                    .first();
 
-            if(old?.column_type !== payload.column_type){
-                await Database
-                    .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__"+table?.name+table?.version), payload.column_name]);
-            }
+                const table = await RegisterMaster
+                    .query()
+                    .select('name','version')
+                    .where('id',payload.table_id)
+                    .first();
 
-            await RegisterTemplate
-                .query()
-                .where('id',payload.id)
-                .update(payload)
+                if(payload.column_type == 'File' || payload.column_type == 'Text'){
+                    c_type = 'varchar(255)'
+                }else if(payload.column_type == 'Checkbox'){
+                    c_type = 'boolean'
+                }else{
+                    c_type = 'date'
+                }
+
+                if(old?.column_name !== payload.column_name){
+                    await Database
+                        .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__"+table?.name+table?.version), old?.column_name, payload.column_name]);
+                }
+
+                if(old?.column_type !== payload.column_type){
+                    await Database
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__"+table?.name+table?.version), payload.column_name]);
+                }
+
+                await RegisterTemplate
+                    .query()
+                    .where('id',payload.id)
+                    .update(payload)
+
+                response.send({
+                    status: 'success',
+                    data: payload
+                });
+            }
+        }catch(e){
+            console.log(e);
 
             response.send({
-                status: 'success',
-                data: payload
+                status: "error",
+                message: "some error occured"
             });
         }
     }
 
     public async destroy({request,response}: HttpContextContract) {
-        const payload = request.all();
-        
-        const columns = await RegisterTemplate
-            .query()
-            .whereIn('id',payload.id);
+        try{
+            const payload = request.all();
+            
+            const columns = await RegisterTemplate
+                .query()
+                .whereIn('id',payload.id);
 
-        const table = await RegisterMaster
-            .query()
-            .select('name','version')
-            .where('id',columns[0].table_id)
-            .first();
+            const table = await RegisterMaster
+                .query()
+                .select('name','version')
+                .where('id',columns[0].table_id)
+                .first();
 
-        await RegisterTemplate
-            .query()
-            .whereIn('id',payload.id)
-            .delete();
+            await RegisterTemplate
+                .query()
+                .whereIn('id',payload.id)
+                .delete();
 
 
-        for await (const column of columns) {
-            if(column.client_column_id == null){
-                await Database
-                    .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table?.name+table?.version), column.column_name]);
-            }
-        };
+            for await (const column of columns) {
+                if(column.client_column_id == null){
+                    await Database
+                        .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table?.name+table?.version), column.column_name]);
+                }
+            };
 
-        response.send({
-            status: 'success'
-        });
+            response.send({
+                status: 'success'
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 }

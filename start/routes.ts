@@ -342,26 +342,6 @@ Route.group(() => {
 
 
         /*
-        | scheduler routes
-        */
-
-        Route.group(() => {
-
-            Route.get('/','SchedulersController.index');
-            Route.get('/:id','SchedulersController.get')
-                .where('id',/^-?\d+$/);
-
-            Route.post('/','SchedulersController.create');
-
-            Route.put('/','SchedulersController.update');
-
-            Route.delete('/destroy','SchedulersController.destroy');
-
-        })
-        .prefix('/scheduler');
-
-
-        /*
         | company routes
         */
 

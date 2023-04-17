@@ -22,427 +22,517 @@ export default class ClientsController {
     }
 
     public async index({request,response}: HttpContextContract){
-        const deleted = request.param('deleted');
-        
-        const headers = await MasterTemplate
-            .query()
-            .where('table_name','clients');
+        try{
+            const deleted = request.param('deleted');
+            
+            const headers = await MasterTemplate
+                .query()
+                .where('table_name','clients');
 
-        headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                Client.$addColumn(header.column_name,ClientsController.dateOptions);
-            }else{
-                Client.$addColumn(header.column_name,{});
-            }
-        });
-
-        const data = await Client
-            .query()
-            .preload('group', (query) => {
-                query.select('id','name')
-            })
-            .where('deleted',deleted);
-
-        response.send({
-            status: 'success',
-            data: data
-        });
-    }
-
-    public async indexMaster({request,response}: HttpContextContract){
-        const deleted = request.param('deleted');
-        const headers = await MasterTemplate
-            .query()
-            .where('table_name','clients');
-
-        headers.forEach(header => {
-            if(header.is_master){
+            headers.forEach(header => {
                 if(header.column_type == 'Date'){
                     Client.$addColumn(header.column_name,ClientsController.dateOptions);
                 }else{
                     Client.$addColumn(header.column_name,{});
                 }
-            }            
-        });
+            });
 
-        const data = await Client
-            .query()
-            .preload('group', (query) => {
-                query.select('id','name')
-            })
-            .where('deleted',deleted)
+            const data = await Client
+                .query()
+                .preload('group', (query) => {
+                    query.select('id','name')
+                })
+                .where('deleted',deleted);
 
-        response.send({
-            status: 'success',
-            data: data
-        });
-    }
-
-    public async get({request,response}: HttpContextContract){
-        const payload = request.params()
-
-        const headers = await MasterTemplate
-            .query()
-            .where('table_name','clients');
-
-        headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                Client.$addColumn(header.column_name,ClientsController.dateOptions);
-            }else{
-                Client.$addColumn(header.column_name,{});
-            }
-        });
-
-        const data = await Client
-            .query()
-            .preload('group', (query) => {
-                query.select('id','name')
-            })
-            .preload('subsidiary', (query) => {
-                query.select('id','name')
-            })
-            .preload('services', (query) => {
-                query.select('id','next','frequency','service_id','client_id')
-            })
-            .where('id',payload.id)
-            .first()
-
-        if(data){
             response.send({
                 status: 'success',
                 data: data
             });
-        }else{
+        }catch(e){
+            console.log(e);
+
             response.send({
-                status: 'error',
-                message: 'No data found'
-            })
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
+    public async indexMaster({request,response}: HttpContextContract){
+        try{
+            const deleted = request.param('deleted');
+            const headers = await MasterTemplate
+                .query()
+                .where('table_name','clients');
+
+            headers.forEach(header => {
+                if(header.is_master){
+                    if(header.column_type == 'Date'){
+                        Client.$addColumn(header.column_name,ClientsController.dateOptions);
+                    }else{
+                        Client.$addColumn(header.column_name,{});
+                    }
+                }            
+            });
+
+            const data = await Client
+                .query()
+                .preload('group', (query) => {
+                    query.select('id','name')
+                })
+                .where('deleted',deleted)
+
+            response.send({
+                status: 'success',
+                data: data
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
+    public async get({request,response}: HttpContextContract){
+        try{
+            const payload = request.params()
+
+            const headers = await MasterTemplate
+                .query()
+                .where('table_name','clients');
+
+            headers.forEach(header => {
+                if(header.column_type == 'Date'){
+                    Client.$addColumn(header.column_name,ClientsController.dateOptions);
+                }else{
+                    Client.$addColumn(header.column_name,{});
+                }
+            });
+
+            const data = await Client
+                .query()
+                .preload('group', (query) => {
+                    query.select('id','name')
+                })
+                .preload('subsidiary', (query) => {
+                    query.select('id','name')
+                })
+                .preload('services', (query) => {
+                    query.select('id','next','frequency','service_id','client_id')
+                })
+                .where('id',payload.id)
+                .first();
+
+            if(data){
+                response.send({
+                    status: 'success',
+                    data: data
+                });
+            }else{
+                response.send({
+                    status: 'error',
+                    message: 'No data found'
+                })
+            }
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
     }
 
     public async options({response}: HttpContextContract) {
-        const data = await Client
-            .query()
-            .select('id','name')
+        try{
+            const data = await Client
+                .query()
+                .select('id','name');
 
-        const serilizedData = data.map(e => e.serialize())
+            const serilizedData = data.map(e => e.serialize());
 
-        serilizedData.map(e => {
-            e.value = e.id;
+            serilizedData.map(e => {
+                e.value = e.id;
 
-            delete e.id;
-        });
+                delete e.id;
+            });
 
-        response.send(serilizedData);
+            response.send(serilizedData);
 
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
     
     public async create({request,response}: HttpContextContract){
-        const payload = request.all();
-        const files = request.allFiles();
-        const newSchedulersList: any = [];
+        try{
+            const payload = request.all();
+            const files = request.allFiles();
+            const newSchedulersList: any = [];
 
-        //set "null" to null
-        Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || String(payload[e]) == ""){
-                payload[e] = null;
+            //set "null" to null
+            Object.keys(payload).forEach(e => {
+                if(payload[e] == "null" || String(payload[e]) == ""){
+                    payload[e] = null;
+                }
+            });
+
+            payload.services = JSON.parse(payload._services);
+
+            if(payload.group_id == "Self"){
+                payload.group_id = null;
             }
-        });
 
-        payload.services = JSON.parse(payload._services);
+            //create new scheduler objects
+            Object.keys(payload.services).forEach(service_id => {
+                payload.services[service_id].type = 5;
 
-        if(payload.group_id == "Self"){
-            payload.group_id = null;
+                if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
+                    delete payload.services[service_id].subscribed;
+                    
+                    //push in array
+                    newSchedulersList.push(payload.services[service_id]);
+                }
+            });
+
+            const headers = await MasterTemplate
+                .query()
+                .where('table_name','clients')
+
+            headers.forEach(header => {
+                if(header.column_type == 'Date'){
+                    Client.$addColumn(header.column_name,ClientsController.dateOptions);
+                }else{
+                    Client.$addColumn(header.column_name,{});
+                }
+            });
+
+            delete payload.services;
+            delete payload._services;
+
+            const inserted = await Client.create(payload);
+
+            payload.id = inserted.id;
+            payload.group_id = payload.group_id || payload.id;
+            
+
+            //set scheduler client id after inserting
+            newSchedulersList.forEach(e => {
+                e.client_id = inserted.id;
+            });
+
+            await Scheduler.createMany(newSchedulersList);
+            
+            Object.values(files).forEach(file => {
+                const path = `/file/client/${inserted.id}/`;
+                const file_name = `${file.fieldName}.${file.extname}`
+                file.move(Application.makePath(path),{name:file_name});
+                payload[file.fieldName] = path+file_name;
+            });
+
+            Object.keys(payload).forEach(key => {
+                if(payload[key] == 'null'){
+                    payload[key] = null;
+                }
+            });
+
+            await Client
+                .query()
+                .where('id',inserted.id)
+                .update(payload)
+
+            response.send({
+                status: 'success',
+                data: payload
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
-
-        //create new scheduler objects
-        Object.keys(payload.services).forEach(service_id => {
-            payload.services[service_id].type = 5;
-
-            if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
-                delete payload.services[service_id].subscribed;
-                
-                //push in array
-                newSchedulersList.push(payload.services[service_id]);
-            }
-        });
-
-        const headers = await MasterTemplate
-            .query()
-            .where('table_name','clients')
-
-        headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                Client.$addColumn(header.column_name,ClientsController.dateOptions);
-            }else{
-                Client.$addColumn(header.column_name,{});
-            }
-        });
-
-        delete payload.services;
-        delete payload._services;
-
-        const inserted = await Client.create(payload);
-
-        payload.id = inserted.id;
-        payload.group_id = payload.group_id || payload.id;
-        
-
-        //set scheduler client id after inserting
-        newSchedulersList.forEach(e => {
-            e.client_id = inserted.id;
-        });
-
-        await Scheduler.createMany(newSchedulersList);
-        
-        Object.values(files).forEach(file => {
-            const path = `/file/client/${inserted.id}/`;
-            const file_name = `${file.fieldName}.${file.extname}`
-            file.move(Application.makePath(path),{name:file_name});
-            payload[file.fieldName] = path+file_name;
-        });
-
-        Object.keys(payload).forEach(key => {
-            if(payload[key] == 'null'){
-                payload[key] = null;
-            }
-        });
-
-        await Client
-            .query()
-            .where('id',inserted.id)
-            .update(payload)
-
-        response.send({
-            status: 'success',
-            data: payload
-        })
     }
 
     public async update({request,response}: HttpContextContract){
-        const payload = request.all();
-        const files = request.allFiles();
-        const deletedSchedulerIds: any = [];
-        const newSchedulersList: any = [];
-        const updateSchedulersList: any = [];
+        try{
+            const payload = request.all();
+            const files = request.allFiles();
+            const deletedSchedulerIds: any = [];
+            const newSchedulersList: any = [];
+            const updateSchedulersList: any = [];
 
-        //set "null" to null
-        Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || String(payload[e]) == ""){
-                payload[e] = null;
-            }
-        });
+            //set "null" to null
+            Object.keys(payload).forEach(e => {
+                if(payload[e] == "null" || String(payload[e]) == ""){
+                    payload[e] = null;
+                }
+            });
 
-        payload.services = JSON.parse(payload._services);
+            payload.services = JSON.parse(payload._services);
 
-        //delete unchecked
-        Object.keys(payload.services).forEach(service_id => {
-            if(payload.services[service_id].id != null && !payload.services[service_id].subscribed){
-                deletedSchedulerIds.push(payload.services[service_id].id);
-            }
-        });
+            //delete unchecked
+            Object.keys(payload.services).forEach(service_id => {
+                if(payload.services[service_id].id != null && !payload.services[service_id].subscribed){
+                    deletedSchedulerIds.push(payload.services[service_id].id);
+                }
+            });
 
-        await Scheduler
-            .query()
-            .whereIn('id',deletedSchedulerIds)
-            .delete();
-        
+            await Scheduler
+                .query()
+                .whereIn('id',deletedSchedulerIds)
+                .delete();
+            
 
-        //create new objects
-        Object.keys(payload.services).forEach(service_id => {
-            payload.services[service_id].type = 5;
+            //create new objects
+            Object.keys(payload.services).forEach(service_id => {
+                payload.services[service_id].type = 5;
 
-            if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
-                delete payload.services[service_id].subscribed;
+                if(payload.services[service_id].client_id == null && payload.services[service_id].subscribed){
+                    delete payload.services[service_id].subscribed;
 
-                //set client id on new schedulers
-                payload.services[service_id].client_id = payload.id;
-                
-                //push in array
-                newSchedulersList.push(payload.services[service_id]);
-            }else if(payload.services[service_id].subscribed){
-                delete payload.services[service_id].subscribed;
-                
-                //add in update data
-                updateSchedulersList.push(payload.services[service_id]);
-            }
-        });
+                    //set client id on new schedulers
+                    payload.services[service_id].client_id = payload.id;
+                    
+                    //push in array
+                    newSchedulersList.push(payload.services[service_id]);
+                }else if(payload.services[service_id].subscribed){
+                    delete payload.services[service_id].subscribed;
+                    
+                    //add in update data
+                    updateSchedulersList.push(payload.services[service_id]);
+                }
+            });
 
-        await Scheduler.createMany(newSchedulersList);
-        await Scheduler.updateOrCreateMany('id',updateSchedulersList);
+            await Scheduler.createMany(newSchedulersList);
+            await Scheduler.updateOrCreateMany('id',updateSchedulersList);
 
-        delete payload.subsidiary;
-        delete payload._services;
-        delete payload.services;
-        delete payload.group;
+            delete payload.subsidiary;
+            delete payload._services;
+            delete payload.services;
+            delete payload.group;
 
-        const headers = await MasterTemplate
-            .query()
-            .where('table_name','clients');
+            const headers = await MasterTemplate
+                .query()
+                .where('table_name','clients');
 
-        headers.forEach(header => {
-            if(header.column_type == 'Date'){
-                Client.$addColumn(header.column_name,ClientsController.dateOptions);
-            }else{
-                Client.$addColumn(header.column_name,{});
-            }
-        });
+            headers.forEach(header => {
+                if(header.column_type == 'Date'){
+                    Client.$addColumn(header.column_name,ClientsController.dateOptions);
+                }else{
+                    Client.$addColumn(header.column_name,{});
+                }
+            });
 
-        const old = await Client
-            .query()
-            .where('id',payload.id)
-            .first()
+            const old = await Client
+                .query()
+                .where('id',payload.id)
+                .first()
 
-        Object.values(files).forEach(file => {
-            const path = `/file/client/${payload.id}/`;
-            const file_name = `${file.fieldName}.${file.extname}`
+            Object.values(files).forEach(file => {
+                const path = `/file/client/${payload.id}/`;
+                const file_name = `${file.fieldName}.${file.extname}`
 
-            try{
-                fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
-            }catch(err){}
+                try{
+                    fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
+                }catch(err){}
 
-            file.move(Application.makePath(path),{name:file_name});
-            payload[file.fieldName] = path+file_name;
-        });
+                file.move(Application.makePath(path),{name:file_name});
+                payload[file.fieldName] = path+file_name;
+            });
 
-        Object.keys(payload).forEach(key => {
-            if(payload[key] == 'null'){
-                payload[key] = null;
-            }
-        });
+            Object.keys(payload).forEach(key => {
+                if(payload[key] == 'null'){
+                    payload[key] = null;
+                }
+            });
 
-        headers.forEach(header=>{
-            //Delete null files
-            if(header.column_type == 'File'){
-                if(old?.[header.column_name]){
-                    if(!payload[header.column_name]){
-                        try{
-                            fs.unlinkSync(Application.makePath(old[header.column_name]));
-                        }catch(err){}
+            headers.forEach(header=>{
+                //Delete null files
+                if(header.column_type == 'File'){
+                    if(old?.[header.column_name]){
+                        if(!payload[header.column_name]){
+                            try{
+                                fs.unlinkSync(Application.makePath(old[header.column_name]));
+                            }catch(err){}
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        await Client
-            .query()
-            .where('id',payload.id)
-            .update(payload)
+            await Client
+                .query()
+                .where('id',payload.id)
+                .update(payload);
 
-        response.send({
-            status: 'success',
-            data: payload
-        })
+            response.send({
+                status: 'success',
+                data: payload
+            });
 
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async bulkServiceUpdate({request,response}: HttpContextContract){
-        const payload = request.all();
-        const newSchedulers: any[] = [];
-        const tempServiceObject = {
-            client_id: '',
-            service_id: payload.service_id,
-            type: 5,
-            frequency: payload.frequency,
-            next: payload.next
+        try{
+            const payload = request.all();
+            const newSchedulers: any[] = [];
+            const tempServiceObject = {
+                client_id: '',
+                service_id: payload.service_id,
+                type: 5,
+                frequency: payload.frequency,
+                next: payload.next
+            }
+
+            await Scheduler
+                .query()
+                .whereIn('client_id',payload.ids)
+                .where('service_id',payload.service_id)
+                .delete()
+
+            payload.ids.forEach(id => {
+                tempServiceObject.client_id = id;
+                newSchedulers.push(tempServiceObject);
+            });
+
+            await Scheduler
+                .createMany(newSchedulers);
+
+            response.send({
+                status: 'success'
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
-
-        await Scheduler
-            .query()
-            .whereIn('client_id',payload.ids)
-            .where('service_id',payload.service_id)
-            .delete()
-
-        payload.ids.forEach(id => {
-            tempServiceObject.client_id = id;
-            newSchedulers.push(tempServiceObject);
-        });
-
-        await Scheduler
-            .createMany(newSchedulers);
-
-        response.send({
-            status: 'success'
-        })
     }
 
     public async remove({request,response}: HttpContextContract){
-        const payload = request.all();
+        try{
+            const payload = request.all();
 
-        await Client
-            .query()
-            .whereIn('id',payload.id)
-            .update({deleted: true})
+            await Client
+                .query()
+                .whereIn('id',payload.id)
+                .update({deleted: true})
 
-        response.send({
-            status: 'success'
-        })
+            response.send({
+                status: 'success'
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async restore({request,response}: HttpContextContract){
-        const payload = request.all();
+        try{
+            const payload = request.all();
 
-        await Client
-            .query()
-            .whereIn('id',payload.id)
-            .update({deleted: false});
+            await Client
+                .query()
+                .whereIn('id',payload.id)
+                .update({deleted: false});
 
-        response.send({
-            status: 'success'
-        });
+            response.send({
+                status: 'success'
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async destroy({request,response}: HttpContextContract){
-        const payload = request.all();
+        try{
+            const payload = request.all();
 
-        if(payload.id <= 0){
-            response.send({
-                status: "error",
-                message: "Cannot delete default user"
+            if(payload.id <= 0){
+                response.send({
+                    status: "error",
+                    message: "Cannot delete default user"
+                });
+
+                return;
+            }
+
+            //delete folders for above clients
+            payload.id.forEach(id => {
+                try{
+                    fs.rmSync(Application.makePath(`/file/client/${id}`),{recursive: true, force: true});
+                }catch{}
             });
 
-            return;
-        }
-
-        //delete folders for above clients
-        payload.id.forEach(id => {
-            try{
-                fs.rmSync(Application.makePath(`/file/client/${id}`),{recursive: true, force: true});
-            }catch{}
-        });
-
-        await Client
-            .query()
-            .whereIn('id',payload.id)
-            .delete();
-
-        await Client
-            .query()
-            .whereIn('group_id',payload.id)
-            .update({'group_id':null});
-
-        await Scheduler
-            .query()
-            .where('client_id', payload.id)
-            .delete();
-
-        //delete from active registers
-        const activeRegisters = await RegisterMaster
-            .query()
-            .select('name','version')
-            .where('active', true);
-
-        for await(const register of activeRegisters){
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
-
-            await DynamicRegister
+            await Client
                 .query()
-                .whereIn('client_id', payload.id)
+                .whereIn('id',payload.id)
                 .delete();
+
+            await Client
+                .query()
+                .whereIn('group_id',payload.id)
+                .update({'group_id':null});
+
+            await Scheduler
+                .query()
+                .where('client_id', payload.id)
+                .delete();
+
+            //delete from active registers
+            const activeRegisters = await RegisterMaster
+                .query()
+                .select('name','version')
+                .where('active', true);
+
+            for await(const register of activeRegisters){
+                DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+
+                await DynamicRegister
+                    .query()
+                    .whereIn('client_id', payload.id)
+                    .delete();
+            }
+            
+            response.send({
+                status: 'success'
+            });
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
-        
-        response.send({
-            status: 'success'
-        })
     }
 }

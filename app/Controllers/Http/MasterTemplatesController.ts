@@ -6,6 +6,7 @@ import RegisterTemplate from 'App/Models/RegisterTemplate'
 
 export default class MasterTemplatesController {
     public async index({response}: HttpContextContract){
+        try{
         const data = await MasterTemplate
             .all()
 
@@ -13,9 +14,18 @@ export default class MasterTemplatesController {
             status: 'success',
             data: data
         })
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async client_options({response}: HttpContextContract){
+        try{
         const data = await MasterTemplate
             .query()
             .select('id','display_name')
@@ -35,9 +45,18 @@ export default class MasterTemplatesController {
             status: 'success',
             data: serilizedData
         })
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async index_options({request,response}: HttpContextContract){
+        try{
         const payload = request.params()
         const data = await MasterTemplate
             .query()
@@ -47,9 +66,18 @@ export default class MasterTemplatesController {
             status: 'success',
             data: data
         })
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 
     public async get({request,response}: HttpContextContract){
+        try{
         const payload = request.params()
         const data = await MasterTemplate
             .query()
@@ -66,6 +94,14 @@ export default class MasterTemplatesController {
                 status: 'error',
                 message: 'no data found'
             })
+        }
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
     }
 
@@ -86,13 +122,13 @@ export default class MasterTemplatesController {
                 .query()
                 .where('column_name', payload.column_name)
                 .where('table_name', payload.table_name)
-                .first()
+                .first();
 
             if(duplicate){
                 response.send({
                     status: 'error',
                     message: 'cannot have duplicate columns for single table'
-                })
+                });
             }else{
                 let c_type: string;
 
@@ -114,20 +150,22 @@ export default class MasterTemplatesController {
                     );
 
                 const data = await MasterTemplate
-                    .create(payload)
+                    .create(payload);
 
                 payload.id = data.id;
 
                 response.send({
                     status: 'success',
                     data: payload
-                })
+                });
             }
-        }catch{
+        }catch(e){
+            console.log(e);
+
             response.send({
                 status: 'error',
                 message: 'Only Valid characters are accepted'
-            })
+            });
         }
     }
 
@@ -148,7 +186,7 @@ export default class MasterTemplatesController {
                 .query()
                 .where('column_name', payload.display_name)
                 .where('table_name', payload.table_name)
-                .first()
+                .first();
 
             if(duplicate?.id !== payload.id && duplicate){
                 response.send({
@@ -170,7 +208,7 @@ export default class MasterTemplatesController {
                 const old = await MasterTemplate
                     .query()
                     .where('id', payload.id)
-                    .first()
+                    .first();
 
                 if(old?.column_name !== payload.column_name){
                     await Database
@@ -185,7 +223,7 @@ export default class MasterTemplatesController {
                 await MasterTemplate
                     .query()
                     .where('id', payload.id)
-                    .update(payload)
+                    .update(payload);
 
                 await RegisterTemplate
                     .query()
@@ -199,41 +237,52 @@ export default class MasterTemplatesController {
                 response.send({
                     status: 'success',
                     data: payload
-                })
+                });
             }
-        }catch{
+        }catch(e){
+            console.log(e);
+
             response.send({
                 status: 'error',
                 message: 'Only Valid characters are accepted'
-            })
+            });
         }
     }
     
     public async destroy({request,response}: HttpContextContract){
-        const payload = request.all()
+        try{
+            const payload = request.all();
 
-        const columns = await MasterTemplate
-            .query()
-            .whereIn('id',payload.id)
+            const columns = await MasterTemplate
+                .query()
+                .whereIn('id',payload.id);
 
-        for await (const column of columns) {
-            await Database
-                .rawQuery('alter table ?? drop column ??',[column.table_name, column.column_name]);
-        };
+            for await (const column of columns) {
+                await Database
+                    .rawQuery('alter table ?? drop column ??',[column.table_name, column.column_name]);
+            };
 
-        await MasterTemplate
-            .query()
-            .whereIn('id',payload.id)
-            .delete()
+            await MasterTemplate
+                .query()
+                .whereIn('id',payload.id)
+                .delete();
 
-        await RegisterTemplate
-            .query()
-            .whereIn('client_column_id',payload.id)
-            .delete()
+            await RegisterTemplate
+                .query()
+                .whereIn('client_column_id',payload.id)
+                .delete();
 
-        response.send({
-            status: 'success'
-        });
+            response.send({
+                status: 'success'
+            });
             
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
     }
 }

@@ -5,91 +5,128 @@ import Crypto from 'crypto';
 
 export default class AuthController {
     public async login({ request,response,session }: HttpContextContract){
+        try{
+            
+            const dirty_payload = {
+                username: request.input('username'),
+                password: request.input('password')
+            }
 
-        const dirty_payload = {
-            username: request.input('username'),
-            password: request.input('password')
-        }
+            const payload = AuthValidator.LoginValidator(dirty_payload);
 
-        const payload = AuthValidator.LoginValidator(dirty_payload);
+            let resp = {}
 
-        let resp = {}
+            if(payload.error){
+                resp = {
+                    status: "error",
+                    message: payload.error.details[0].message
+                }
+            }else{
+                const user = await Employee
+                    .query()
+                    .preload('role')
+                    .where('deleted',false)
+                    .where('username',payload.value.username)
+                    .where('password',Crypto.createHash('sha256').update(payload.value.password).digest('hex'))
+                    .first()
 
-        if(payload.error){
-            resp = {
+                resp = {
+                    status: user?"success":"error",
+                    message: user?"":"User not found",
+                    data: user
+                }
+
+                if(user){
+                    session.put('user',user);
+                }
+            }
+
+            response.send(resp);
+            
+        }catch(e){
+            console.log(e);
+
+            response.send({
                 status: "error",
-                message: payload.error.details[0].message
-            }
-        }else{
-            const user = await Employee
-                .query()
-                .preload('role')
-                .where('deleted',false)
-                .where('username',payload.value.username)
-                .where('password',Crypto.createHash('sha256').update(payload.value.password).digest('hex'))
-                .first()
-
-            resp = {
-                status: user?"success":"error",
-                message: user?"":"User not found",
-                data: user
-            }
-
-            if(user){
-                session.put('user',user);
-            }
+                message: "some error occured"
+            });
         }
-
-        response.send(resp);
     }
 
     public async logout({session,response}: HttpContextContract){
-
-        if(session.has('user')){
-            session.forget('user');
-        }
-
-        response.send({
-            status: "success",
-            message: "User logged out"
-        });
-
-    }
-
-    public async isLoggedIn({ session,response }: HttpContextContract){
-        if(session.has('user')){
+        try{
             
+            if(session.has('user')){
+                session.forget('user');
+            }
+
             response.send({
                 status: "success",
-                message: "User logged in"
+                message: "User logged out"
             });
 
-        }else{
+        }catch(e){
+            console.log(e);
 
             response.send({
                 status: "error",
-                message: "User not logged in"
+                message: "some error occured"
             });
+        }
+    }
 
+    public async isLoggedIn({ session,response }: HttpContextContract){
+        try{
+            if(session.has('user')){
+                
+                response.send({
+                    status: "success",
+                    message: "User logged in"
+                });
+
+            }else{
+
+                response.send({
+                    status: "error",
+                    message: "User not logged in"
+                });
+
+            }
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
         }
     }
 
     public async user({ session,response }: HttpContextContract){
-        if(session.has('user')){
-            
-            response.send({
-                status: "success",
-                data: session.get('user')
-            });
+        try{
+            if(session.has('user')){
+                
+                response.send({
+                    status: "success",
+                    data: session.get('user')
+                });
 
-        }else{
+            }else{
+
+                response.send({
+                    status: "error",
+                    message: "User not logged in",
+                    data: null
+                });
+
+            }
+        }catch(e){
+            console.log(e);
 
             response.send({
                 status: "error",
-                message: "User not logged in",
-                data: null
+                message: "some error occured"
             });
-
         }
     }
 }
