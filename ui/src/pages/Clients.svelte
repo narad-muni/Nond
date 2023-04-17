@@ -85,7 +85,7 @@
 
             data = data.data;
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             //set services in created object
@@ -460,13 +460,13 @@
                             {/each}
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"></ThSearch>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="email"/>
-                            <ThSearch {handler} filterBy="gst"/>
-                            <ThSearch {handler} filterBy="pan"/>
-                            <ThSearch {handler} filterBy={(row => row.group?.name || null)}/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.email || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.gst || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.pan || "-"}/>
+                            <ThSearch {handler} filterBy={(row => row.group?.name || "-")}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>
@@ -481,16 +481,16 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name}</TableBodyCell>
-                                <TableBodyCell>{row.email}</TableBodyCell>
-                                <TableBodyCell>{row.gst}</TableBodyCell>
-                                <TableBodyCell>{row.pan}</TableBodyCell>
-                                <TableBodyCell>{row.group?.name || null}</TableBodyCell>
+                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.group?.name || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
                                             {#if header.column_type == 'Text'}
-                                                {row[header.column_name]}
+                                                {row[header.column_name] || "-"}
                                             {:else if header.column_type == 'File'}
                                                 {#if row[header.column_name]}
                                                     <A target="_blank" href={row[header.column_name]}>
@@ -501,10 +501,10 @@
                                                         {header.display_name}
                                                     </A>
                                                 {:else}
-                                                    null
+                                                    -
                                                 {/if}
                                             {:else if header.column_type == 'Date'}
-                                                {row[header.column_name]}
+                                                {row[header.column_name] || "-"}
                                             {:else}
                                                 <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                             {/if}

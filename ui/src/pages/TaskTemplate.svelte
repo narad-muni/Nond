@@ -59,7 +59,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -221,10 +221,10 @@
                             <Th {handler} orderBy={(row => priority[row.priority].name)}>Priority</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="title"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.title || "-"}/>
                             <ThSearch {handler} filterBy={(row => row.service?.name)}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
@@ -238,19 +238,19 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.name}
+                                    {row?.nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.title}
+                                    {row?.titl || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.service?.name}
+                                    {row?.service?.nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {task_status[row.status]?.name}
+                                    {task_status[row.status]?.nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {priority[row.priority]?.name}
+                                    {priority[row.priority]?.nam || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

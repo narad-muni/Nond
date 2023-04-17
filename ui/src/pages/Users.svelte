@@ -43,7 +43,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -257,11 +257,11 @@
                             <Th {handler} orderBy="is_admin">Admin</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"></ThSearch>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="username"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.username || "-"}/>
                             <ThSearch {handler} filterBy={(row => row.role?.name || null)}/>
-                            <ThSearch {handler} filterBy="is_admin"/>
+                            <ThSearch {handler} filterBy={row => row.is_admin || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -272,10 +272,10 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.username}
+                                    {row.usernam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role?.name || null}
+                                    {row.role?.name || nul || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_admin=="true" || row.is_admin}/>

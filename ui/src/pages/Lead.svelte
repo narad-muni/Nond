@@ -53,7 +53,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
             
             handler = new DataHandler(
@@ -265,12 +265,12 @@
                             <Th {handler} orderBy="started">Started</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="client"/>
-                            <ThSearch {handler} filterBy={(row) => row.assigned_user.username}/>
-                            <ThSearch {handler} filterBy="status"/>
-                            <ThSearch {handler} filterBy="started"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.client || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.assigned_user.username || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.status || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.started || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -281,16 +281,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client}
+                                    {row.clien || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.assigned_user.username}
+                                    {row.assigned_user.usernam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.status}
+                                    {row.statu || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.started}
+                                    {row.starte || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

@@ -69,7 +69,7 @@
                 data = data.data;
 
                 data.forEach((v) => {
-                    v["_selected"] = 0;
+                    v["_selected"] = false;
                 });
 
                 handler = new DataHandler(
@@ -239,13 +239,13 @@
                             <Th {handler} orderBy="master">Is Master</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} />
-                            <ThSearch {handler} filterBy="display_name"/>
-                            <ThSearch {handler} filterBy="column_type"/>
+                            <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
                             <ThSearch {handler} filterBy={(e) => e.client_column_id!=null ? "Yes" : "No"}/>
-                            <ThSearch {handler} filterBy="master"/>
+                            <ThSearch {handler} filterBy={row => row.master || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -260,13 +260,13 @@
                                     <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
-                                    {table.name + " " + table.version}
+                                    {table.name + " " + table.versio || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.display_name}
+                                    {row.display_nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.column_type}
+                                    {row.column_typ || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.client_column_id!=null ? "Yes" : "No"}

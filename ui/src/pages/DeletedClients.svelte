@@ -67,7 +67,7 @@
 
             data = data.data;
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -332,12 +332,12 @@
                             {/each}
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"></ThSearch>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="email"/>
-                            <ThSearch {handler} filterBy="gst"/>
-                            <ThSearch {handler} filterBy="pan"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.email || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.gst || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.pan || "-"}/>
                             <ThSearch {handler} filterBy={(row => row.group?.name || null)}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}

@@ -235,14 +235,14 @@
                             <Th {handler} orderBy="created">Created At</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="title"/>
-                            <ThSearch {handler} filterBy="client"/>
-                            <ThSearch {handler} filterBy="group"/>
-                            <ThSearch {handler} filterBy="service"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.title || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.client || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.group || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.service || "-"}/>
                             <ThSearch {handler} filterBy={(row => row.assigned_to || "Unassigned")}/>
-                            <ThSearch {handler} filterBy="created"/>
+                            <ThSearch {handler} filterBy={row => row.created || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -253,22 +253,22 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.title}
+                                    {row.titl || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client}
+                                    {row.clien || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.group}
+                                    {row.grou || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service}
+                                    {row.servic || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.assigned_to || "Unassigned"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.created}
+                                    {row.create || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

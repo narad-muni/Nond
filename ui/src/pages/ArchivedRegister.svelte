@@ -57,7 +57,7 @@
             }else{
                 data = data.data;
                 data.forEach((v) => {
-                    v["_selected"] = 0;
+                    v["_selected"] = false;
                 });
 
                 handler = new DataHandler(
@@ -164,8 +164,8 @@
                             {/each}
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="client_id"/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.client_id || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
                                     <ThSearch {handler} filterBy={header.column_name}/>

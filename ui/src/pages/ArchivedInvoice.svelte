@@ -44,7 +44,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -219,16 +219,16 @@
                             <Th {handler} orderBy="date">Date</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy={(row) => row.client}/>
-                            <ThSearch {handler} filterBy={(row) => row.group}/>
-                            <ThSearch {handler} filterBy="total"/>
-                            <ThSearch {handler} filterBy="tax"/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.client || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.group || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.total || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.tax || "-"}/>
                             <ThSearch {handler} filterBy={(row) => row.paid ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={(row) => row.gst ? "Yes" : "No"}/>
-                            <ThSearch {handler} filterBy={(row) => row.company}/>
-                            <ThSearch {handler} filterBy="date"/>
+                            <ThSearch {handler} filterBy={row => row.company || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.date || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -239,16 +239,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client}
+                                    {row.clien || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.group}
+                                    {row.grou || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.total}
+                                    {row.tota || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.tax}
+                                    {row.ta || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.paid ? "Yes" : "No"}
@@ -257,10 +257,10 @@
                                     {row.gst ? "Yes" : "No"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.company}
+                                    {row.compan || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.date}
+                                    {row.dat || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

@@ -66,7 +66,7 @@
             data = data.data;
 
             data.forEach((v) => {
-                v["_selected"] = 0;
+                v["_selected"] = false;
             });
 
             handler = new DataHandler(
@@ -265,11 +265,11 @@
                             <Th {handler} orderBy={(row) => row.active ? "Yes" : "No"}>Active</Th>
                         </tr>
                         <tr>
-                            <ThSearch {handler} filterBy="_selected"/>
-                            <ThSearch {handler} filterBy="id"/>
-                            <ThSearch {handler} filterBy="name"/>
-                            <ThSearch {handler} filterBy="version"/>
-                            <ThSearch {handler} filterBy={(row) => row.service.name}/>
+                            <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.version || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.service.name || "-"}/>
                             <ThSearch {handler} filterBy={(row) => row.active ? "Yes" : "No"}/>
                         </tr>
                     </thead>
@@ -285,13 +285,13 @@
                                     <TableBodyCell class="cursor-not-allowed bg-gray-100" >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
-                                    {row.name}
+                                    {row.nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.version}
+                                    {row.versio || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service.name}
+                                    {row.service.nam || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>    
                                     {row.active ? "Yes" : "No"}
