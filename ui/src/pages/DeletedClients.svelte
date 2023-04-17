@@ -353,11 +353,11 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name}</TableBodyCell>
-                                <TableBodyCell>{row.email}</TableBodyCell>
-                                <TableBodyCell>{row.gst}</TableBodyCell>
-                                <TableBodyCell>{row.pan}</TableBodyCell>
-                                <TableBodyCell>{row.group?.name || null}</TableBodyCell>
+                                <TableBodyCell>{row.nam || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.emai || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.gs || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.pa || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.group?.name || nul || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
