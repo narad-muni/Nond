@@ -313,10 +313,10 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.nam || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.emai || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.pa || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.gs || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
                                 <TableBodyCell>
                                     {#if row.signature}
                                         <A target="_blank" href={row.signature}>
@@ -334,7 +334,7 @@
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
                                             {#if header.column_type == 'Text'}
-                                                {row[header.column_name]}
+                                                {row[header.column_name] || "-"}
                                             {:else if header.column_type == 'File'}
                                                 {#if row[header.column_name]}
                                                     <A target="_blank" href={row[header.column_name]}>
@@ -345,10 +345,10 @@
                                                         {header.display_name}
                                                     </A>
                                                 {:else}
-                                                    null
+                                                    -
                                                 {/if}
                                             {:else if header.column_type == 'Date'}
-                                                {row[header.column_name]}
+                                                {row[header.column_name] || "-"}
                                             {:else}
                                                 <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                             {/if}

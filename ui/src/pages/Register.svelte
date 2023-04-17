@@ -313,7 +313,7 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.client_i || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.client_id || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.master}
                                         {#if header.client_column_id == null}
