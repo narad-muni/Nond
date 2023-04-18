@@ -1,6 +1,5 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import Database from '@ioc:Adonis/Lucid/Database';
 import Company from 'App/Models/Company';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
@@ -212,11 +211,6 @@ export default class CompaniesController {
                 .query()
                 .where('id',inserted.id)
                 .update(payload);
-
-            await Database
-                .rawQuery(`
-
-                `);
 
             response.send({
                 status: 'success',
