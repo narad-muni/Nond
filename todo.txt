@@ -36,4 +36,5 @@ reports
 
 client access to view data
 
-rewrite whole app, improve performance, architecture for both frontend and backend
+rewrite frontend with responsive and better usage of svelte stores.
+rewrite backend with opimizations and better structure.
