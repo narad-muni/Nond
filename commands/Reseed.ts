@@ -49,7 +49,7 @@ export default class Reseed extends BaseCommand {
             data:{"info":"delete data"},
             type: 2,
             next: DateTime.now(),
-            frequency: '1 month'
+            frequency: '3 months'
         });
 
         await Scheduler.create({
@@ -57,7 +57,7 @@ export default class Reseed extends BaseCommand {
             data:{"info":"archive data"},
             type: 3,
             next: DateTime.now(),
-            frequency: '1 month'
+            frequency: '3 months'
         });
 
         await Scheduler.create({

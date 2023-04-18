@@ -35,3 +35,5 @@ aditional stuff
 reports
 
 client access to view data
+
+rewrite whole app, improve performance, architecture for both frontend and backend

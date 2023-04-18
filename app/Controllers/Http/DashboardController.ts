@@ -3,6 +3,7 @@ import Database from '@ioc:Adonis/Lucid/Database';
 import Application from '@ioc:Adonis/Core/Application';
 import fastFolderSize from 'fast-folder-size';
 import StringUtils from 'App/Utils/StringUtils';
+import Env from '@ioc:Adonis/Core/Env'
 
 export default class DashboardController {
 
@@ -136,7 +137,7 @@ export default class DashboardController {
 
             //database space used
             data.dbSize = StringUtils.formatBytes((await Database
-                .rawQuery("SELECT pg_database_size('postgres');")
+                .rawQuery("SELECT pg_database_size('"+Env.get('PG_DB_NAME','postgres')+"');")
                 ).rows[0].pg_database_size)
 
             //file space used
