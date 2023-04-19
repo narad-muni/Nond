@@ -42,7 +42,8 @@ rewrite backend with opimizations and better structure.
 
 ---____-___---_-----_--__--__---_----_-__-
 
-function escapeCSV(row){
+function escapeCSV(original_row){
+	row = JSON.parse(JSON.stringify(original_row));
 	for(i = 0; i<row.length;i++)
 	{
 		row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
@@ -50,4 +51,24 @@ function escapeCSV(row){
 	return row;
 }
 
+function downloadCSV(){
+let table = $('#example').DataTable();
+ 
+let data = table
+    .rows()
+    .data();
+
+let text = '';
+
+data.map( row => text += escapeCSV(row).join(',') + '\n' );
+
+let blob = new Blob( [text], {type: "text/csv"} );
+
+const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'data.csv';
+document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+}
 escape when creating csv
