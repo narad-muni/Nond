@@ -121,7 +121,15 @@
         actionsModals = true;
     }
 
-    async function download(){
+    function escapeCSV(original_row){
+        let row = JSON.parse(JSON.stringify(original_row));
+        for(let i = 0; i < row.length; i++){
+            row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
+        };
+        return row;
+    }
+    
+    function download(){
         const table = document.querySelector('#table');
         let headers = Array.from(table.querySelectorAll('th')).map(th => th.textContent);
 
@@ -146,7 +154,7 @@
         const data = [headers, ...rows];
         
         // Convert the table data to CSV format
-        const csv = data.map(row => row.join(',')).join('\n');
+        const csv = data.map(row => escapeCSV(row).join(',')).join('\n');
         
         // Create a Blob object from the CSV string
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -154,12 +162,10 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'Employee.csv';
+        link.download = 'DeletedEmployee.csv';
         
         // Programmatically click on the link to initiate the download
-        document.body.appendChild(link);
         link.click();
-        document.body.removeChild(link);
     }
 
     async function deleteSelected(){
