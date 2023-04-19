@@ -38,3 +38,16 @@ client access to view data
 
 rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure.
+
+
+---____-___---_-----_--__--__---_----_-__-
+
+function escapeCSV(row){
+	for(i = 0; i<row.length;i++)
+	{
+		row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
+	};
+	return row;
+}
+
+escape when creating csv
