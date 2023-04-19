@@ -324,7 +324,7 @@
                             <Th {handler} orderBy="email">Email</Th>
                             <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy="gst">Pan</Th>
-                            <Th {handler} orderBy={(row => row.group?.name || null)}>Group</Th>
+                            <Th {handler} orderBy={row => row.group?.name}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
@@ -338,7 +338,7 @@
                             <ThSearch {handler} filterBy={row => row.email || "-"}/>
                             <ThSearch {handler} filterBy={row => row.gst || "-"}/>
                             <ThSearch {handler} filterBy={row => row.pan || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.group?.name || null)}/>
+                            <ThSearch {handler} filterBy={(row => row.group?.name || "-")}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={header.column_name}/>

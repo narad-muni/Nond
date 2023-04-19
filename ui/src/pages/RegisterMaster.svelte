@@ -261,8 +261,8 @@
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="version">Version</Th>
-                            <Th {handler} orderBy={(row) => row.service.name}>Service</Th>
-                            <Th {handler} orderBy={(row) => row.active ? "Yes" : "No"}>Active</Th>
+                            <Th {handler} orderBy={row => row.service.name}>Service</Th>
+                            <Th {handler} orderBy={row => row.active}>Active</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -270,7 +270,7 @@
                             <ThSearch {handler} filterBy={row => row.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.version || "-"}/>
                             <ThSearch {handler} filterBy={row => row.service.name || "-"}/>
-                            <ThSearch {handler} filterBy={(row) => row.active ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.active ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -285,13 +285,13 @@
                                     <TableBodyCell class="cursor-not-allowed bg-gray-100" >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
-                                    {row.nam || "-"}
+                                    {row.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.versio || "-"}
+                                    {row.version || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service.nam || "-"}
+                                    {row.service.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>    
                                     {row.active ? "Yes" : "No"}

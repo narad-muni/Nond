@@ -227,13 +227,13 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.table_nam || "-"}
+                                    {row.table_name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.display_nam || "-"}
+                                    {row.display_name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.column_typ || "-"}
+                                    {row.column_type || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>

@@ -436,8 +436,8 @@
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.title || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.client?.name || null)}/>
-                            <ThSearch {handler} filterBy={(row => row.client?.group?.name || null)}/>
+                            <ThSearch {handler} filterBy={row => row.client?.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.client?.group?.name || "-"}/>
                             <ThSearch {handler} filterBy={(row => row.service.name)}/>
                             <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
@@ -453,25 +453,25 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.titl || "-"}
+                                    {row.title || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client?.nam || "-"}
+                                    {row.client?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client?.group?.nam || "-"}
+                                    {row.client?.group?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service?.nam || "-"}
+                                    {row.service?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.assigned_user?.username || "Unassigned"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {task_status[row.status].nam || "-"}
+                                    {task_status[row.status].name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {priority[row.priority].nam || "-"}
+                                    {priority[row.priority].name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.create || "-"}

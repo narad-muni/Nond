@@ -223,7 +223,7 @@
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="hsn">HSN/SAC</Th>
                             <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy={(row => row.template?.name || null)}>Template</Th>
+                            <Th {handler} orderBy={row => row.template?.name}>Template</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -231,7 +231,7 @@
                             <ThSearch {handler} filterBy={row => row.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.hsn || "-"}/>
                             <ThSearch {handler} filterBy={row => row.gst || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.template?.name || null)}/>
+                            <ThSearch {handler} filterBy={row => row.template?.name || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -242,13 +242,13 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.nam || "-"}
+                                    {row.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.hs || "-"}
+                                    {row.hsn || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.gs || "-"}
+                                    {row.gst || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.template?.name || "null"}

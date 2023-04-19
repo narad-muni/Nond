@@ -260,7 +260,7 @@
                             </th>
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="client">Client</Th>
-                            <Th {handler} orderBy={(row) => row.assigned_user.username}>Assigned To</Th>
+                            <Th {handler} orderBy={row => row.assigned_user.username}>Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
                             <Th {handler} orderBy="started">Started</Th>
                         </tr>
@@ -281,16 +281,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.clien || "-"}
+                                    {row.client || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.assigned_user.usernam || "-"}
+                                    {row.assigned_user.username || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.statu || "-"}
+                                    {row.status || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.starte || "-"}
+                                    {row.started || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

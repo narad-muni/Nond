@@ -208,7 +208,7 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.nam || "-"}
+                                    {row.name || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

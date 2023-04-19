@@ -235,14 +235,14 @@
                             </th>
                             <Th {handler} orderBy="id">id</Th>
                             <Th {handler} orderBy="username">username</Th>
-                            <Th {handler} orderBy={(row => row.role?.name || null)}>role</Th>
+                            <Th {handler} orderBy={row => row.role?.name}>role</Th>
                             <Th {handler} orderBy="is_admin">admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.username || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.role?.name || null)}/>
+                            <ThSearch {handler} filterBy={row => row.role?.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.is_admin || "-"}/>
                         </tr>
                     </thead>
@@ -254,10 +254,10 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.usernam || "-"}
+                                    {row.username || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role?.name || nul || "-"}
+                                    {row.role?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_admin=="true" || row.is_admin}/>

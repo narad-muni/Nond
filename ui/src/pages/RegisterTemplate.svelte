@@ -235,7 +235,7 @@
                             <Th {handler} >Register</Th>
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
-                            <Th {handler} orderBy={(e) => e.client_column_id!=null ? "Yes" : "No"}>Client Column</Th>
+                            <Th {handler} orderBy={e => e.client_column_id}>Client Column</Th>
                             <Th {handler} orderBy="master">Is Master</Th>
                         </tr>
                         <tr>
@@ -260,13 +260,13 @@
                                     <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
-                                    {table.name + " " + table.versio || "-"}
+                                    {table.name + " " + table.version || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.display_nam || "-"}
+                                    {row.display_name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.column_typ || "-"}
+                                    {row.column_type || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.client_column_id!=null ? "Yes" : "No"}

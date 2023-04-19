@@ -452,7 +452,7 @@
                             <Th {handler} orderBy="email">Email</Th>
                             <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy="gst">Pan</Th>
-                            <Th {handler} orderBy={(row => row.group?.name || null)}>Group</Th>
+                            <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
@@ -481,11 +481,11 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name || "-" || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.email || "-" || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.gst || "-" || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.pan || "-" || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.group?.name || "-" || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.group?.name || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>

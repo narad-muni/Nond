@@ -238,19 +238,19 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.nam || "-"}
+                                    {row?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.titl || "-"}
+                                    {row?.title || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row?.service?.nam || "-"}
+                                    {row?.service?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {task_status[row.status]?.nam || "-"}
+                                    {task_status[row.status]?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {priority[row.priority]?.nam || "-"}
+                                    {priority[row.priority]?.name || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

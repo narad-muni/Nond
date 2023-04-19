@@ -394,13 +394,13 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy={(row) => row.client?.name}>Client</Th>
-                            <Th {handler} orderBy={(row) => row.client?.group?.name}>Group</Th>
+                            <Th {handler} orderBy={row => row.client?.name}>Client</Th>
+                            <Th {handler} orderBy={row => row.client?.group?.name}>Group</Th>
                             <Th {handler} orderBy="total">Total</Th>
                             <Th {handler} orderBy="tax">Tax</Th>
                             <Th {handler} orderBy="paid">Paid</Th>
                             <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy={(row) => row.company?.name}>Company</Th>
+                            <Th {handler} orderBy={row => row.company?.name}>Company</Th>
                             <Th {handler} orderBy="date">Date</Th>
                         </tr>
                         <tr>
@@ -410,8 +410,8 @@
                             <ThSearch {handler} filterBy={row => row.client?.group?.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.total || "-"}/>
                             <ThSearch {handler} filterBy={row => row.tax || "-"}/>
-                            <ThSearch {handler} filterBy={(row) => row.paid ? "Yes" : "No"}/>
-                            <ThSearch {handler} filterBy={(row) => row.gst ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.paid ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.gst ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={row => row.company?.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.date || "-"}/>
                         </tr>
@@ -424,16 +424,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client?.nam || "-"}
+                                    {row.client?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client?.group?.nam || "-"}
+                                    {row.client?.group?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.tota || "-"}
+                                    {row.total || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.ta || "-"}
+                                    {row.tax || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.paid ? "Yes" : "No"}
@@ -442,10 +442,10 @@
                                     {row.gst ? "Yes" : "No"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.company?.nam || "-"}
+                                    {row.company?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.dat || "-"}
+                                    {row.date || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

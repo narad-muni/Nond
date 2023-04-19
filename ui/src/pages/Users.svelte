@@ -252,16 +252,16 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="username">Username</Th>
-                            <Th {handler} orderBy={(row => row.role?.name || null)}>Role</Th>
-                            <Th {handler} orderBy="is_admin">Admin</Th>
+                            <Th {handler} orderBy={row => row.username}>Username</Th>
+                            <Th {handler} orderBy={row => row.role?.name}>Role</Th>
+                            <Th {handler} orderBy={row => row.username}>Admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.username || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.role?.name || null)}/>
-                            <ThSearch {handler} filterBy={row => row.is_admin || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.role?.name || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.username ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -272,10 +272,10 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.usernam || "-"}
+                                    {row.username || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.role?.name || nul || "-"}
+                                    {row.role?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_admin=="true" || row.is_admin}/>

@@ -253,16 +253,16 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.titl || "-"}
+                                    {row.title || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.clien || "-"}
+                                    {row.client || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.grou || "-"}
+                                    {row.group || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.servic || "-"}
+                                    {row.service || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.assigned_to || "Unassigned"}
