@@ -7,14 +7,7 @@ Invoice download pdf
 
 reports ??
 
-create deleted pages
-
 additional client side can also be made for viewing register, tasks, data, invoices.
-
-*****delete client releated data when client is deleted
-handle delete cascade
-
-clients -> tasks?, scheudlers, register-entry?, files
 
 ------------
 
@@ -38,3 +31,4 @@ client access to view data
 
 rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure.
+probably will be re written in goravel and svelte for better performance
