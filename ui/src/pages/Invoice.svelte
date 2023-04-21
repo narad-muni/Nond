@@ -22,7 +22,7 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
-    import SveltyPicker from 'svelty-picker';
+    import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
 

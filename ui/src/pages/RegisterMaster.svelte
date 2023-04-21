@@ -21,7 +21,7 @@
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
     import { active_registers, archived_registers } from '../global/stores';
-    import SveltyPicker from 'svelty-picker';
+    import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
 

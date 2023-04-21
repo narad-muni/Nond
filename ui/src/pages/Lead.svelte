@@ -21,7 +21,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import SveltyPicker from 'svelty-picker';
+    import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
 

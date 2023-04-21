@@ -23,7 +23,7 @@
     import utils from '../utils';
     import { location } from 'svelte-spa-router';
     import IdSelect from "../component/IdSelect.svelte";
-    import SveltyPicker from 'svelty-picker';
+    import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
 

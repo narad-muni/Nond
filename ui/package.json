@@ -24,7 +24,6 @@
   },
   "dependencies": {
     "@vincjo/datatables": "^1.0.1",
-    "svelte-spa-router": "^3.3.0",
-    "svelty-picker": "^3.4.6"
+    "svelte-spa-router": "^3.3.0"
   }
 }
