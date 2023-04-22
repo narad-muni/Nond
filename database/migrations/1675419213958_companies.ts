@@ -9,6 +9,7 @@ export default class extends BaseSchema {
         table.string('name');
         table.string('prefix');
         table.string('gst');
+        table.string('upi');
         table.string('email');
         table.string('address');
         table.string('pan');

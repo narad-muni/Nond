@@ -17,6 +17,9 @@ export default class Company extends BaseModel {
     public gst: string
 
     @column()
+    public upi: string
+
+    @column()
     public email: string
 
     @column()

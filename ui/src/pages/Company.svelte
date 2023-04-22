@@ -419,7 +419,7 @@
 
         <Label class="space-y-2">
             <span>Email</span>
-            <Input required type="email" bind:value={createdObject.email} />
+            <Input type="email" bind:value={createdObject.email} />
         </Label>
 
         <Label class="space-y-2">
@@ -434,12 +434,17 @@
 
         <Label class="space-y-2">
             <span>GST</span>
-            <Input required type="text" bind:value={createdObject.gst} />
+            <Input type="text" bind:value={createdObject.gst} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>UPI</span>
+            <Input type="text" bind:value={createdObject.upi} />
         </Label>
 
         <Label class="space-y-2">
             <p>Signature</p>
-            <input required type="file" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+            <input type="file" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
         </Label>
         
         <Label class="space-y-2">
@@ -522,6 +527,11 @@
         </Label>
 
         <Label class="space-y-2">
+            <span>UPI</span>
+            <Input type="text" bind:value={actionsObject.upi} />
+        </Label>
+
+        <Label class="space-y-2">
             {#if actionsObject.signature}
                 <span>Signature</span>
                 <div class="flex justify-between">
@@ -540,7 +550,7 @@
                 </div>
             {:else}
                 <p>Signature</p>
-                <input required type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                <input type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
             {/if}
         </Label>
 

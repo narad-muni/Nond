@@ -1,34 +1,20 @@
-deploying first beta on 11 april 2023, 11:30 pm
-
-invoice payment qr code
-
-Invoice send to clients via email
-Invoice download pdf
-
-reports ??
-
-additional client side can also be made for viewing register, tasks, data, invoices.
-
-------------
-
-add default columns to client
-
-------------
-
 pending stuff
 
-home page.
-
-invoice send by email
 invoice generate pdf
+invoice payment qr code
+invoice send by email
 
 -----
 aditional stuff
 
+use gstportal api
+
 reports
+
+add default columns to client
 
 client access to view data
 
 rewrite frontend with responsive and better usage of svelte stores.
-rewrite backend with opimizations and better structure.
-probably will be re written in goravel and svelte for better performance
+rewrite backend with opimizations and better structure & convention.
+rewrite with page filters stored in stores, so that they can be changed through redirect.
