@@ -41,6 +41,10 @@
     {
       "pattern": "nond.sh",
       "reloadServer": false
+    },
+    {
+      "pattern": ".env",
+      "reloadServer": false
     }
   ],
   "aceProviders": [
