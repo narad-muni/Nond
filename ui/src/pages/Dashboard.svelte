@@ -11,7 +11,7 @@
 
 </script>
 
-<main class="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-1 gap-8 mt-8 justify-around mx-8">
+<main class="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-1 gap-8 py-8 justify-around mx-8">
     <Card href="/#/task" class="!text-white !bg-red-500 !items-center !justify-around">
         <div class="flex flex-row w-full justify-evenly items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12">
