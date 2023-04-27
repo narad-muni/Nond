@@ -224,8 +224,6 @@ export default class RolesController {
 
                 return;
             }
-
-            console.log(id.filter(e => e <= 0).length);
             
             //update delete tasks, schedulers, registers
             

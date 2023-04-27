@@ -224,6 +224,35 @@ export default class RegisterTemplatesController {
                     .where('id',payload.table_id)
                     .first();
 
+
+                //dissallow certain actions on file columns, causes bugs
+                //eg
+                //create column file_name
+                //add file
+                //rename column to file_abc
+                //create new column file_name
+                //new column has old data
+                //updating old column deletes new data
+                if(old?.column_type == 'File'){
+                    if(payload.column_type != 'File'){
+
+                        response.send({
+                            status: "error",
+                            message: "Cannot change column of type File to "+payload.column_type
+                        });
+
+                        return;
+                    }else if(old.column_name != payload.column_name){
+                        
+                        response.send({
+                            status: "error",
+                            message: "Cannot rename column of type File"
+                        });
+
+                        return;
+                    }
+                }
+
                 if(payload.column_type == 'File' || payload.column_type == 'Text'){
                     c_type = 'varchar(255)'
                 }else if(payload.column_type == 'Checkbox'){
