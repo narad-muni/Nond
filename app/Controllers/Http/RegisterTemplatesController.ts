@@ -238,7 +238,7 @@ export default class RegisterTemplatesController {
 
                         response.send({
                             status: "error",
-                            message: "Cannot change File type column to "+payload.column_type
+                            message: "Cannot change column of type File to "+payload.column_type
                         });
 
                         return;
@@ -246,7 +246,7 @@ export default class RegisterTemplatesController {
                         
                         response.send({
                             status: "error",
-                            message: "Cannot rename File type column"
+                            message: "Cannot rename column of type File"
                         });
 
                         return;
