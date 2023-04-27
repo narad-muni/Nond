@@ -33,6 +33,14 @@
     {
       "pattern": "resources/views/**/*.edge",
       "reloadServer": false
+    },
+    {
+      "pattern": "nond.bat",
+      "reloadServer": false
+    },
+    {
+      "pattern": "nond.sh",
+      "reloadServer": false
     }
   ],
   "aceProviders": [
