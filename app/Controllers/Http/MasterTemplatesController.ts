@@ -110,7 +110,7 @@ export default class MasterTemplatesController {
             const payload = request.all()
             payload.column_name = string.snakeCase(payload.display_name);
 
-            if(payload.column_name == 'services' || payload.column_name == '_services'){
+            if(["services", "_services", "logo", "signature"].includes(payload.column_name)){
                 response.send({
                     status: 'error',
                     message: `${payload.column_name} is reserved column, please use another name`
@@ -174,7 +174,7 @@ export default class MasterTemplatesController {
             const payload = request.all();
             payload.column_name = string.snakeCase(payload.display_name);
 
-            if(payload.column_name == 'services' || payload.column_name == '_services'){
+            if(["services", "_services", "logo", "signature"].includes(payload.column_name)){
                 response.send({
                     status: 'error',
                     message: `${payload.column_name} is reserved column, please use another name`

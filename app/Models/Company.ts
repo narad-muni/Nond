@@ -44,6 +44,9 @@ export default class Company extends BaseModel {
     public signature: string
 
     @column()
+    public logo: string
+
+    @column()
     public integer: string
 
     @column()
@@ -54,6 +57,10 @@ export default class Company extends BaseModel {
     public static async process(company: Company){
         if(company.$dirty.signature != null){
             company.signature = '/file/company/'+company.id+'/signature'+company.signature;
+        }
+
+        if(company.$dirty.logo != null){
+            company.logo = '/file/company/'+company.id+'/logo'+company.logo;
         }
     }
 

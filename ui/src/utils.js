@@ -2,7 +2,7 @@ import { loader } from "./global/stores";
 
 class utils{
 
-    static domain = "http://localhost:3333";
+    static domain = "";
     
     static compareSets (set1, set2){
         if (set1.size < set2.size) {

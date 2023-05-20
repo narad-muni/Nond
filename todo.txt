@@ -18,3 +18,10 @@ client access to view data
 rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure & convention.
 rewrite with page filters stored in stores, so that they can be changed through redirect.
+
+-----------------
+upload signing certificate in company for signing invoice
+
+file getting corrupted in zip, please test
+
+change template files folder structure so that they can be renamed or deleted when columns change

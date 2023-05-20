@@ -1,7 +1,9 @@
-import { BaseModel, BelongsTo, HasMany, beforeDelete, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, HasMany, beforeDelete, beforeSave, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Scheduler from './Scheduler'
 import Task from './Task';
 import Invoice from './Invoice';
+import fs from 'fs-extra';
+import Application from '@ioc:Adonis/Core/Application';
 
 export default class Client extends BaseModel {
     @column({ isPrimary: true })
@@ -21,6 +23,12 @@ export default class Client extends BaseModel {
 
     @column()
     public address: string
+
+    @column()
+    public signature: string
+
+    @column()
+    public logo: string
 
     @column()
     public group_id: number
@@ -44,8 +52,23 @@ export default class Client extends BaseModel {
     })
     public subsidiary: HasMany<typeof Client>
 
+    @beforeSave()
+    public static async process(client: Client){
+        if(client.$dirty.signature != null){
+            client.signature = '/file/client/'+client.id+'/signature'+client.signature;
+        }
+
+        if(client.$dirty.logo != null){
+            client.logo = '/file/client/'+client.id+'/logo'+client.logo;
+        }
+    }
+
     @beforeDelete()
     public static async cascadeDelete(client: Client) {
+        //delete files
+        try{
+            fs.removeSync(Application.makePath(`/file/client/${client.id}`));
+        }catch(err){}
 
         //delete schedulers
         await Scheduler

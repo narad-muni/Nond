@@ -11,6 +11,8 @@ export default class extends BaseSchema {
             table.string('gst');
             table.string('address');
             table.string('pan');
+            table.string('signature');
+            table.string('logo');
             table.integer('group_id');
             table.boolean('deleted').defaultTo(false);
         })

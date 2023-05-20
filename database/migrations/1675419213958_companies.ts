@@ -14,6 +14,7 @@ export default class extends BaseSchema {
         table.string('address');
         table.string('pan');
         table.string('signature');
+        table.string('logo');
         table.integer('invoice_counter').defaultTo(0);
 
         table.string('smtp_host');

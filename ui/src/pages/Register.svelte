@@ -413,7 +413,7 @@
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
                     {:else}
                         <p>{header.display_name}</p>
-                        <input type="file" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                        <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
                     {/if}
                 </Label>
             {/if}
@@ -470,7 +470,7 @@
                             </div>
                         {:else}
                             <p>{header.display_name}</p>
-                            <input type="file" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                            <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
                         {/if}
                     {/if}
                 </Label>

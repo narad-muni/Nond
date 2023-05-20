@@ -399,6 +399,8 @@ Route.group(() => {
 
         Route.group(() => {
 
+            Route.get('/','InvoicesFilesController.download');
+            
             Route.get('/filter/:filter','InvoicesController.index');
 
             Route.get('/:id','InvoicesController.get');

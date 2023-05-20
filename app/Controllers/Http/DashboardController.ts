@@ -20,7 +20,6 @@ export default class DashboardController {
             });
             return size;
         } catch (err) {
-            console.error(`Error getting folder size: ${err}`);
             return 0;
         }
     }

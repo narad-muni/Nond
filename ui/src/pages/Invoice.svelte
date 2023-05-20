@@ -46,7 +46,7 @@
             }
         };
 
-        createdObject = emptyCreatedObject;
+        createdObject = JSON.parse(JSON.stringify(emptyCreatedObject));
         
         if(data.status != 'success'){
             error = data.message;
@@ -307,7 +307,7 @@
     }
 
     async function downloadBill(){
-
+        window.open('/api/invoice?ids='+Array.from(selectedRows), "_blank");
     }
 
     async function createData(){
@@ -323,7 +323,7 @@
             handler.setRows(data);
             createModal = false;
 
-            createdObject = emptyCreatedObject;
+            createdObject = JSON.parse(JSON.stringify(emptyCreatedObject))
         }else{
             error = resp.message || "";
         }
@@ -414,7 +414,7 @@
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client?.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client?.group?.name || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.total || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.total + (row.tax || 0) || "-"}/>
                             <ThSearch {handler} filterBy={row => row.tax || "-"}/>
                             <ThSearch {handler} filterBy={row => row.paid ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={row => row.gst ? "Yes" : "No"}/>
@@ -436,7 +436,7 @@
                                     {row.client?.group?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.total || "-"}
+                                    {row.total + (row.tax || 0) || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.tax || "-"}
@@ -746,8 +746,11 @@
             </div>
         {/if}
 
-        <div class="col-span-1 grid gap-6 grid-cols-2">
+        <div class="col-span-2 grid gap-6 grid-cols-3">
             <Button type="submit" class="w-full">Update</Button>
+            {#if actionsObject?.id}
+                <Button type="button" href={"/api/invoice?ids="+actionsObject.id} target="_blank" class="w-full">Download</Button>
+            {/if}
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
