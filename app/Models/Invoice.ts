@@ -15,7 +15,7 @@ export default class Invoice extends BaseModel {
     public company_id: number
 
     @column()
-    public particulars: object
+    public particulars: object | any
 
     @column()
     public remarks: string

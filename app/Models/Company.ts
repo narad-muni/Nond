@@ -26,6 +26,18 @@ export default class Company extends BaseModel {
     public address: string
 
     @column()
+    public AHName: string
+
+    @column()
+    public BankName: string
+
+    @column()
+    public AccountNo: string
+
+    @column()
+    public IFSC: string
+    
+    @column()
     public pan: string
 
     @column()

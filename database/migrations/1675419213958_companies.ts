@@ -17,6 +17,11 @@ export default class extends BaseSchema {
         table.string('logo');
         table.integer('invoice_counter').defaultTo(0);
 
+        table.string("ah_name");
+        table.string("bank_name");
+        table.string("account_no");
+        table.string("ifsc");
+
         table.string('smtp_host');
         table.string('smtp_port');
         table.string('smtp_email');

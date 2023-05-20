@@ -4,7 +4,6 @@ import Invoice from 'App/Models/Invoice';
 import { FileUtils } from 'App/Utils/FileUtils';
 import { PDFUtils } from 'App/Utils/PDFUtils';
 import fs from 'fs/promises';
-import syncFs from 'fs';
 export default class InvoicesFilesController {
 
     public async download({request, response, session}: HttpContextContract){

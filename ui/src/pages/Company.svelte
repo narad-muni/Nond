@@ -451,6 +451,26 @@
             <p>Logo</p>
             <input type="file" accept="image/*" on:input={event => createdObject["logo"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
         </Label>
+
+        <Label class="space-y-2">
+            <span>Account Holder Name</span>
+            <Input type="text" bind:value={createdObject.AHName} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Bank Name</span>
+            <Input type="text" bind:value={createdObject.BankName} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Account Number</span>
+            <Input type="text" bind:value={createdObject.AccountNo} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>IFSC & Branch</span>
+            <Input type="text" bind:value={createdObject.IFSC} />
+        </Label>
         
         <Label class="space-y-2">
             <span>SMTP Host</span>
@@ -534,6 +554,26 @@
         <Label class="space-y-2">
             <span>UPI</span>
             <Input type="text" bind:value={actionsObject.upi} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Account Holder Name</span>
+            <Input type="text" bind:value={actionsObject.AHName} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Bank Name</span>
+            <Input type="text" bind:value={actionsObject.BankName} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Account Number</span>
+            <Input type="text" bind:value={actionsObject.AccountNo} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>IFSC & Branch</span>
+            <Input type="text" bind:value={actionsObject.IFSC} />
         </Label>
 
         <Label class="space-y-2">
