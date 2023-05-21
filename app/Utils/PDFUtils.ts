@@ -1,10 +1,18 @@
-import PdfMake from "pdfmake";
 import fs from "fs";
-import asyncFs from "fs/promises";
 import Invoice from "App/Models/Invoice";
 import Application from '@ioc:Adonis/Core/Application'
 import { DateTime } from "luxon";
 import StringUtils from "./StringUtils";
+import PdfPrinter from "pdfmake/src/printer";
+
+const fonts = {
+    Roboto: {
+        normal: Application.publicPath('fonts/Roboto-Regular.ttf'),
+        bold: Application.publicPath('fonts/Roboto-Bold.ttf'),
+        italics: Application.publicPath('fonts/Roboto-Italic.ttf'),
+        bolditalics: Application.publicPath('fonts/Roboto-BoldItalic.ttf')
+    }
+};
 
 export class PDFUtils{
     static async generateInvoices(path: string, invoiceData: Invoice[]) {
@@ -400,37 +408,34 @@ export class PDFUtils{
             generatedFiles.push(invoiceName);
         }
 
-        //some bug, need to generate extra pdf or one of the pdf gets corrupted
-        await this.generatePdf(path, {}, "a.pdf");
-        await asyncFs.rm(path+"/a.pdf");
-
         return generatedFiles;
     }
 
     static async generatePdf(path,data,fileName){
-        const fonts = {
-            Roboto: {
-                normal: Application.publicPath('fonts/Roboto-Regular.ttf'),
-                bold: Application.publicPath('fonts/Roboto-Bold.ttf'),
-                italics: Application.publicPath('fonts/Roboto-Italic.ttf'),
-                bolditalics: Application.publicPath('fonts/Roboto-BoldItalic.ttf')
-            }
-        };
+        
       
         if (!fs.existsSync(path)) {
             await fs.promises.mkdir(path, { recursive: true });
         }
 
-        const printer = new PdfMake(fonts);
-        
-        const pdfDoc = printer.createPdfKitDocument(data);
-        const writeStream = fs.createWriteStream(`${path}/${fileName}`);
+        const printer = new PdfPrinter(fonts);
+
+        const doc = printer.createPdfKitDocument(data);
+
+        const chunks: any = [];
+
+        const result: Buffer = await new Promise((resolve, reject) => {
+            doc.on('data', function (chunk) {
+                chunks.push(chunk);
+            });
     
-        await new Promise((resolve, reject) => {
-            pdfDoc.pipe(writeStream);
-            pdfDoc.on('end', resolve);
-            pdfDoc.on('error', reject);
-            pdfDoc.end();
+            doc.on('end', function () {
+                resolve(Buffer.concat(chunks))
+            });
+    
+            doc.end();
         });
+        
+        await fs.promises.writeFile(`${path}/${fileName}`, result);
     }
 }

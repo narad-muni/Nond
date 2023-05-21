@@ -24,7 +24,7 @@ export default class InvoicesFilesController {
             if(ids.length > 1){//multiple invoices, zip files
                 FileUtils.zipFolder(tempInvoicePath, tempZipPath);
 
-                response.attachment(tempZipPath, 'Invoices.zip', 'inline');
+                response.attachment(tempZipPath, 'Invoices.zip');
             }else{//single pdf invoice
                 response.attachment(tempInvoicePath+"/"+generatedFiles[0],generatedFiles[0],'inline');
             }
