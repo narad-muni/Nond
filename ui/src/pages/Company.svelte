@@ -354,7 +354,7 @@
                                             Signature
                                         </A>
                                     {:else}
-                                        null
+                                        -
                                     {/if}
                                 </TableBodyCell>
                                 {#each headers.data as header}
