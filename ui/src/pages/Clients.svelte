@@ -819,18 +819,20 @@
             {/if}
         {/each}
 
-        {#if actionsObject.group}
+        {#if actionsObject.group && actionsObject.group.id != actionsObject.id}
             <hr class="col-span-3"/>
             <h2 class="col-span-3">Parent Company</h2>
             <Button oid={actionsObject.group.id} on:click={openActionsModal}>{actionsObject.group.name}</Button>
         {/if}
 
-        {#if actionsObject.subsidiary.length > 0}
+        {#if actionsObject.subsidiary.length > 0 && (actionsObject.subsidiary.length != 1 || actionsObject.subsidiary[0].id != actionsObject.id)}
             <hr class="col-span-3"/>
             <h2 class="col-span-3">Subsidiary Companies</h2>
             <div class="col-span-3 grid grid-cols-5 text-center gap-x-3">
                 {#each actionsObject.subsidiary as subsidiary}
-                    <Button oid={subsidiary.id} on:click={openActionsModal}>{subsidiary.name}</Button>
+                    {#if subsidiary.id != actionsObject.id}
+                        <Button oid={subsidiary.id} on:click={openActionsModal}>{subsidiary.name}</Button>
+                    {/if}
                 {/each}
             </div>
         {/if}
