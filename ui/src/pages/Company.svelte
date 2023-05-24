@@ -13,7 +13,8 @@
         Label,
         Input,
         Toggle,
-        Alert
+        Alert,
+        Select
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -24,6 +25,11 @@
     import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
+
+    const smtpType = [
+        {name: 'TLS',value: 'TLS'},
+        {name: 'SSL',value: 'SSL'}
+    ];
 
     let createModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
@@ -492,6 +498,11 @@
             <Input type="text" bind:value={createdObject.smtp_password} />
         </Label>
 
+        <Label class="space-y-2">
+            <span>SMTP Type</span>
+            <Select items={smtpType} bind:value={createdObject.smtp_type} />
+        </Label>
+
         {#each headers.data as header}
             {#if header!="id"}
                 <Label class="space-y-2">
@@ -678,6 +689,11 @@
         <Label class="space-y-2">
             <span>SMTP Password</span>
             <Input type="text" bind:value={actionsObject.smtp_password} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>SMTP Type</span>
+            <Select items={smtpType} bind:value={actionsObject.smtp_type} />
         </Label>
         
         <div class="col-span-2 grid gap-6 grid-cols-2">

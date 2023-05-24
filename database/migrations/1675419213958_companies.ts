@@ -26,6 +26,7 @@ export default class extends BaseSchema {
         table.string('smtp_port');
         table.string('smtp_email');
         table.string('smtp_password');
+        table.string('smtp_type');
 
         table.boolean('deleted').defaultTo(false);
 

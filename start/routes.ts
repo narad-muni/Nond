@@ -406,6 +406,7 @@ Route.group(() => {
             Route.get('/:id','InvoicesController.get');
 
             Route.post('/','InvoicesController.create');
+            Route.post('/send_mail','InvoicesController.sendMail');
 
             Route.put('/','InvoicesController.update');
 
