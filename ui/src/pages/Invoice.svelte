@@ -14,6 +14,7 @@
         Alert,
         Toggle,
         Textarea,
+        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from "@vincjo/datatables";
@@ -25,13 +26,18 @@
     import SveltyPicker from '../component/svelty-picker';
 
     // Intialization
+    const receivers = [
+        {name: "Individual", value: "Individual"},
+        {name: "Parent Company", value: "Parent Company"},
+        {name: "Both", value: "Both"},
+    ];
 
-    let createModal, actionsModals, deleteModal, filterStatus=3;
+    let createModal, actionsModals, deleteModal, sendMailModal, filterStatus=3, send_to;
     let selectedRows = new Set();
 
     let data, emptyCreatedObject, createdObject={}, actionsIndex, actionsObject = {}, client_list, company_list;
     let handler, rows;
-    let error="";
+    let error="", success="";
 
     // fetch data
 
@@ -307,18 +313,12 @@
     }
 
     async function sendMail(){
-        const resp = await utils.post_json('/api/invoice/send_mail/',{id:Array.from(selectedRows)});
+        const resp = await utils.post_json('/api/invoice/send_mail/',{ids:Array.from(selectedRows), send_to: send_to});
 
         if(resp.status == 'success'){
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
-                    data.splice(i, 1);
-                    i--;
-                }
-            }
             selectedRows.clear();
-            handler.setRows(data);
             selectedRows = selectedRows;
+            success = "Mail sent successfully";
         }else{
             error = resp.message;
         }
@@ -375,7 +375,7 @@
                 {/if}
             </Button>
 
-            <Button disabled={buttonDisabled} gradient color="green" on:click={sendMail}>
+            <Button disabled={buttonDisabled} gradient color="green" on:click={() => sendMailModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                 </svg>                  
@@ -487,9 +487,22 @@
 <Modal bind:open={deleteModal} size="xs" autoclose>
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete selected rows?</h3>
-        <h3 class="mb-5 text-sm font-normal text-gray-500 dark:text-gray-400">Users with this role will be assigned default viewer role</h3>
+        <h3 class="mb-5 text-lg font-normal text-gray-500">Are you sure you want to delete selected rows?</h3>
+        <h3 class="mb-5 text-sm font-normal text-gray-500">Users with this role will be assigned default viewer role</h3>
         <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
+<Modal bind:open={sendMailModal} size="xs" autoclose>
+    <div class="text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+        </svg>          
+        <h3 class="mb-1 text-lg font-normal text-gray-500">Select whom to send these mails</h3>
+        <h3 class="mb-5 text-sm font-normal text-red-500">Please make sure that email and smtp are configured</h3>
+        <Select class="mb-5" required items={receivers} bind:value={send_to}></Select>
+        <Button color="green" on:click={sendMail} class="mr-2">Send</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
 </Modal>
@@ -776,12 +789,25 @@
 
 <!--Alerts-->
 
-{#if error.length > 0}
+{#if error?.length > 0}
     <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
         <Alert class="mx-auto mt-4 h-fit" color="red" dismissable on:close={()=>error=""}>
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
+        </Alert>
+    </div>
+{/if}
+
+{#if success?.length > 0}
+    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
+        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
+            <span slot="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
+                </svg>
+            </span>
+            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}

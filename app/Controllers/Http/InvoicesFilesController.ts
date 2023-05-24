@@ -4,6 +4,7 @@ import Invoice from 'App/Models/Invoice';
 import { FileUtils } from 'App/Utils/FileUtils';
 import { PDFUtils } from 'App/Utils/PDFUtils';
 import fs from 'fs/promises';
+
 export default class InvoicesFilesController {
 
     public async download({request, response, session}: HttpContextContract){
@@ -38,7 +39,8 @@ export default class InvoicesFilesController {
             });
 
         }catch(err){
-            console.log(err)
+            console.log(err);
+
             response.send({
                 "Error": err
             });
