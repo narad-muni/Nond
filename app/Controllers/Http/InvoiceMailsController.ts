@@ -1,8 +1,8 @@
 import Application from '@ioc:Adonis/Core/Application'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Invoice from 'App/Models/Invoice';
-import { FileUtils } from 'App/Utils/FileUtils';
 import { PDFUtils } from 'App/Utils/PDFUtils';
+import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 
 export default class InvoiceMailsController {
@@ -12,7 +12,6 @@ export default class InvoiceMailsController {
             const ids = payload?.ids;
             const send_to = payload?.send_to || "Individual";
             const tempInvoicePath = Application.tmpPath("invoices"+session.get("user").id+Math.floor(Math.random() * 999) + 100);
-            const tempZipPath = tempInvoicePath+"/Invoices.zip";
             
             const invoices = await Invoice
                 .query()
@@ -20,7 +19,7 @@ export default class InvoiceMailsController {
                 .preload('client')
                 .whereIn('id', ids);
 
-            const generatedFiles = await PDFUtils.generateInvoices(tempInvoicePath ,invoices);
+            await PDFUtils.generateInvoices(tempInvoicePath ,invoices);
 
             if(send_to == "Both"){ // send to individual as well as parent
 
