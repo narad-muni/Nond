@@ -1,25 +1,30 @@
 pending stuff
 
-invoice generate pdf
-invoice payment qr code
 invoice send by email
 
------
-aditional stuff
-
-use gstportal api
-
+Rollover columns in registers
+Multiple entires in registers
+Auto add fields in registers when added service
+Halted - waiting for information
+Raised - pending for review
+Bulk assign tasks
+Assign tasks from register
+Append >> in windows bat file
+Collision when renaming columns with same version and name
+spent money in tasks
+Task time management
+Add users to register bulk
+clean code for pdf creation
+bulk update things
+change template files folder structure so that they can be renamed or deleted when columns change
 reports
-
-add default columns to client
-
 client access to view data
+-----
+
+rewrite whole app
 
 rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure & convention.
 rewrite with page filters stored in stores, so that they can be changed through redirect.
 
 -----------------
-clean code for pdf creation
-
-change template files folder structure so that they can be renamed or deleted when columns change
