@@ -151,7 +151,7 @@ export default class RegistersController {
                 scheduler.register_id = data.id;
 
                 //never rotate
-                if(payload.frequency == null){
+                if(scheduler.frequency == null){
                     scheduler.type = -1;
                 }
 
@@ -272,9 +272,9 @@ export default class RegistersController {
 
             const exist = await RegisterMaster
                 .query()
+                .select('id')
                 .where('name',data.name)
                 .where('version',data.version)
-                .whereNot('id',data.id)
                 .first();
 
             if(!data.active){//archived regitser
@@ -285,18 +285,20 @@ export default class RegistersController {
                 return;
             }
 
-            if(exist){
+            if(exist?.id != data.id && exist?.id != null){
                 response.send({
                     status: 'error',
                     message: 'register with same name and version already exists!'
                 });
                 return;
             }else{
-                const old = await RegisterMaster.query().where('id',data.id).first();
+
+                if(exist?.id == null){
+                    const old = await RegisterMaster.query().where('id',data.id).first();
+                    await Database.rawQuery(`alter table "register__${string.escapeHTML(old?.name+old?.version)}" rename to "register__${string.escapeHTML(data.name+data.version)}"`);
+                }
+
                 const scheduler = data.scheduler;
-
-                await Database.rawQuery(`alter table "register__${string.escapeHTML(old?.name+old?.version)}" rename to "register__${string.escapeHTML(data.name+data.version)}"`);
-
                 delete data.scheduler;
 
                 await Scheduler

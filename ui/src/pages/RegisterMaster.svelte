@@ -85,9 +85,12 @@
     $: checked = utils.compareSets(selectedRows,new Set(($rows||[]).map(i => parseInt(i.id)))); // $rows||[] is used to wait and not fail
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
-    $: createdObject.version = currDate + "  -  " + createdObject.next;
 
     //Functions
+
+    function setVersion(){
+        createdObject.version = currDate + "  -  " + createdObject.next;
+    }
 
     function addSelection(e){
         
@@ -338,7 +341,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <SveltyPicker required startDate={minNextDate} format="M d, yyyy" bind:value={createdObject.next} />
+            <SveltyPicker on:change={setVersion} required startDate={minNextDate} format="M d, yyyy" bind:value={createdObject.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
