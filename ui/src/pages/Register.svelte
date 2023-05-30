@@ -325,7 +325,7 @@
                                         {#if header.client_column_id == null}
                                             <TableBodyCell>
                                                 {#if header.column_type == 'Text'}
-                                                    {row[header.column_name]}
+                                                    {row[header.column_name] || "-"}
                                                 {:else if header.column_type == 'File'}
                                                     {#if row[header.column_name]}
                                                         <A target="_blank" href={row[header.column_name]}>
@@ -336,10 +336,10 @@
                                                             {header.display_name}
                                                         </A>
                                                     {:else}
-                                                        null
+                                                        -
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
-                                                    {row[header.column_name]}
+                                                    {row[header.column_name] || "-"}
                                                 {:else}
                                                     <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                                 {/if}
@@ -347,7 +347,7 @@
                                         {:else}
                                             <TableBodyCell>
                                                 {#if header.column_type == 'Text'}
-                                                    {row.__client?.[header.column_name]}
+                                                    {row.__client?.[header.column_name] || "-"}
                                                 {:else if header.column_type == 'File'}
                                                     {#if row.__client?.[header.column_name]}
                                                         <A target="_blank" href={row.__client?.[header.column_name]}>
@@ -358,10 +358,10 @@
                                                             {header.display_name}
                                                         </A>
                                                     {:else}
-                                                        null
+                                                        -
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
-                                                    {row.__client?.[header.column_name]}
+                                                    {row.__client?.[header.column_name] || "-"}
                                                 {:else}
                                                     <Checkbox disabled checked={row.__client?.[header.column_name]=="true" || row.__client?.[header.column_name]}/>
                                                 {/if}

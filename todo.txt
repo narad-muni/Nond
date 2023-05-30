@@ -19,6 +19,7 @@ bulk update things
 change template files folder structure so that they can be renamed or deleted when columns change
 reports
 client access to view data
+add lines in tables
 -----
 
 rewrite whole app

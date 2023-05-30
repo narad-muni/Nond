@@ -61,7 +61,7 @@ export default class RegistersController {
                     if(header.column_type == 'Date'){
                         DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
                     }else{
-                        
+                        DynamicRegister.$addColumn(header.column_name,{});
                     }
                 }else{
                     client_columns.push(header.column_name);
@@ -134,7 +134,7 @@ export default class RegistersController {
                     if(header.column_type == 'Date'){
                         DynamicRegister.$addColumn(header.column_name,RegistersController.dateOptions);
                     }else{
-                        
+                        DynamicRegister.$addColumn(header.column_name,{});
                     }
                 }else{
                     client_columns.push(header.column_name);

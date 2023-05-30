@@ -21,12 +21,12 @@ export default class SchedulerManager{
 
         /**
          * Priorities
-         * 1. Rotate Registers
-         * 2. Delete Tasks
-         * 3. Arhive Tasks/Invoices
-         * 4. Every Financial Year
-         * 5. Create Tasks & Add Entryies
-         * 6. update scheduler dates
+         * 1. update scheduler dates
+         * 2. Rotate Registers
+         * 3. Delete Tasks
+         * 4. Arhive Tasks/Invoices
+         * 5. Every Financial Year
+         * 6. Create Tasks & Add Entryies
          */
         
         try{
@@ -41,6 +41,9 @@ export default class SchedulerManager{
 
             const rotate_registers: Scheduler[] = [];
             const add_entries_create_tasks: Scheduler[] = [];
+            let delete_data = false;
+            let archive_data = false;
+            let every_financial_year = false;
 
             scheduled_jobs.forEach(job => {
                 switch(job.type){
@@ -48,15 +51,13 @@ export default class SchedulerManager{
                         rotate_registers.push(job);
                         break;
                     case 2:// Delete old Data
-                        SchedulerManager.DeleteData();
+                        delete_data = true;
                         break;
                     case 3:// Archive old Data
-                        SchedulerManager.ArchiveData();
+                        archive_data = true;
                         break;
                     case 4:// every_financial_year
-                        SchedulerManager.DeleteData();
-                        SchedulerManager.ArchiveData();
-                        SchedulerManager.everyFinancialYear();
+                        every_financial_year = true;
                         break;
                     case 5:// Create Tasks & Add Entries in Register
                         add_entries_create_tasks.push(job);
@@ -64,15 +65,35 @@ export default class SchedulerManager{
                 }
             });
 
-            //6
+            // 1
             //update the next date
             await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
 
             //if for multiple days task is not created, then set next date = tommorow
             await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
 
-            //updating before this gives us next date calculated by sql
+            //updating schedulers before this gives us next date calculated by sql
+            // 2
             SchedulerManager.RotateRegisters(rotate_registers);
+
+            // 3
+            if(delete_data){
+                SchedulerManager.DeleteData();
+            }
+            
+            // 4
+            if(archive_data){
+                SchedulerManager.ArchiveData();
+            }
+
+            // 5
+            if(every_financial_year){
+                SchedulerManager.DeleteData();
+                SchedulerManager.ArchiveData();
+                SchedulerManager.everyFinancialYear();
+            }
+            
+            // 6
             SchedulerManager.AddEntriesCreateTasks(add_entries_create_tasks);
             
         }catch{};

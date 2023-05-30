@@ -26,7 +26,7 @@ export default class InvoiceMailsController {
             }else if(send_to == "Parent Comapny"){ // send to parent
 
             }else{ // send only to individual
-
+                
             }
 
             response.send({
