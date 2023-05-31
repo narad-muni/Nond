@@ -52,7 +52,7 @@
             }
         };
 
-        createdObject = JSON.parse(JSON.stringify(emptyCreatedObject));
+        createdObject = structuredClone(emptyCreatedObject);
         
         if(data.status != 'success'){
             error = data.message;
@@ -266,7 +266,7 @@
     }
 
     function escapeCSV(original_row){
-        let row = JSON.parse(JSON.stringify(original_row));
+        let row = structuredClone(original_row);
         for(let i = 0; i < row.length; i++){
             row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
         };
@@ -341,7 +341,7 @@
             handler.setRows(data);
             createModal = false;
 
-            createdObject = JSON.parse(JSON.stringify(emptyCreatedObject))
+            createdObject = structuredClone(emptyCreatedObject);
         }else{
             error = resp.message || "";
         }

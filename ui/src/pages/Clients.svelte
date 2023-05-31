@@ -93,7 +93,7 @@
                 createdObject.services[service.value] = {service_id:service.value}
             });
             
-            emptyCreatedObject = JSON.parse(JSON.stringify(createdObject));
+            emptyCreatedObject = structuredClone(createdObject);
 
             handler = new DataHandler(
                 data,
@@ -298,7 +298,7 @@
     }
     
     function escapeCSV(original_row){
-        let row = JSON.parse(JSON.stringify(original_row));
+        let row = structuredClone(original_row);
         for(let i = 0; i < row.length; i++){
             row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
         };
@@ -373,7 +373,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject = JSON.parse(JSON.stringify(emptyCreatedObject));
+            createdObject = structuredClone(emptyCreatedObject);
             
         }else{
             error = resp.message || "";

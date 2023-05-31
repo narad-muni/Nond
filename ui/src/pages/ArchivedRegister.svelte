@@ -90,7 +90,7 @@
     }
 
     function escapeCSV(original_row){
-        let row = JSON.parse(JSON.stringify(original_row));
+        let row = structuredClone(original_row);
         for(let i = 0; i < row.length; i++){
             row[i] = '"'+row[i].replaceAll(/"/g,'""')+'"';
         };
