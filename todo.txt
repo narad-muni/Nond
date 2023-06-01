@@ -20,7 +20,7 @@ change template files folder structure so that they can be renamed or deleted wh
 reports
 client access to view data
 add lines in tables
-datatables search option eg. like, not like, more than, less than, exact, not, 
+send iso dates from api, convert to js date long for filtering, sorting date objects
 -----
 
 rewrite whole app

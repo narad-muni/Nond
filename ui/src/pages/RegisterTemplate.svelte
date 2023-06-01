@@ -16,7 +16,7 @@
         Select
     } from "flowbite-svelte";
 
-    import { DataHandler } from "@vincjo/datatables";
+    import { DataHandler } from '../component/datatables';
     import { location } from 'svelte-spa-router'
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";

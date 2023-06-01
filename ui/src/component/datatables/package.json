@@ -1,0 +1,59 @@
+{
+  "name": "@vincjo/datatables",
+  "version": "1.5.1",
+  "keywords": [
+    "svelte sveltejs table tables datatable datatables"
+  ],
+  "description": "A toolkit for creating datatable components with Svelte",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vincjo/datatables.git"
+  },
+  "author": "vincjo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/vincjo/datatables/issues"
+  },
+  "homepage": "https://vincjo.fr/datatables",
+  "devDependencies": {
+    "@sveltejs/adapter-node": "^1.0.0-next.100",
+    "@sveltejs/kit": "next",
+    "@sveltejs/package": "next",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "gros": "^0.16.1",
+    "mdsvex": "^0.10.6",
+    "prettier": "^2.6.2",
+    "prettier-plugin-svelte": "^2.7.0",
+    "prism-svelte": "^0.5.0",
+    "svelte": "^3.44.0",
+    "svelte-check": "^2.7.1",
+    "svelte-preprocess": "^4.10.6",
+    "tslib": "^2.3.1",
+    "typescript": "^4.7.4",
+    "vite": "^4.0.0"
+  },
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    "./core/Context": "./core/Context.js",
+    "./core/Handlers/Filters": "./core/Handlers/Filters.js",
+    "./core/Handlers/GlobalSearch": "./core/Handlers/GlobalSearch.js",
+    "./core/Handlers/Pages": "./core/Handlers/Pages.js",
+    "./core/Handlers/Rows": "./core/Handlers/Rows.js",
+    "./core": "./core/index.js",
+    "./DataHandler": "./DataHandler.js",
+    "./Datatable.svelte": "./Datatable.svelte",
+    ".": "./index.js",
+    "./Pagination.svelte": "./Pagination.svelte",
+    "./RowCount.svelte": "./RowCount.svelte",
+    "./RowsPerPage.svelte": "./RowsPerPage.svelte",
+    "./Search.svelte": "./Search.svelte",
+    "./Th.svelte": "./Th.svelte",
+    "./ThFilter.svelte": "./ThFilter.svelte"
+  },
+  "svelte": "./index.js"
+}

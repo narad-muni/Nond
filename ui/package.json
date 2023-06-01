@@ -23,7 +23,6 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "@vincjo/datatables": "^1.0.1",
     "svelte-spa-router": "^3.3.0"
   }
 }

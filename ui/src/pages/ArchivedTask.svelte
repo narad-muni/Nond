@@ -15,7 +15,7 @@
         Textarea,
     } from "flowbite-svelte";
 
-    import { DataHandler } from "@vincjo/datatables";
+    import { DataHandler } from '../component/datatables';
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
