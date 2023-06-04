@@ -40,7 +40,8 @@ export default class SchedulerManager{
                 .orderBy('type', 'asc');
 
             const rotate_registers: Scheduler[] = [];
-            const add_entries_create_tasks: Scheduler[] = [];
+            const add_entries: Scheduler[] = [];
+            const create_tasks: Scheduler[] = [];
             let delete_data = false;
             let archive_data = false;
             let every_financial_year = false;
@@ -60,7 +61,8 @@ export default class SchedulerManager{
                         every_financial_year = true;
                         break;
                     case 5:// Create Tasks & Add Entries in Register
-                        add_entries_create_tasks.push(job);
+                        add_entries.push(job);
+                        create_tasks.push(job);
                         break;
                 }
             });
@@ -94,7 +96,8 @@ export default class SchedulerManager{
             }
             
             // 6
-            SchedulerManager.AddEntriesCreateTasks(add_entries_create_tasks);
+            SchedulerManager.AddEntries(add_entries);
+            SchedulerManager.CreateTasks(create_tasks);
             
         }catch{};
     }
@@ -383,7 +386,57 @@ export default class SchedulerManager{
             .delete();
     }
 
-    static async AddEntriesCreateTasks(jobs: Scheduler[]) {
+    static async AddEntries(jobs: Scheduler[]) {
+
+        //get services
+        const service_ids = jobs.map(job => job.service_id);
+
+        const services = await Service
+            .query()
+            .select('id','template_id')
+            .whereIn('id',service_ids);
+
+        //registers
+        const registers = await RegisterMaster
+            .query()
+            .select('id','name','version', 'service_id')
+            .whereIn('service_id', service_ids)
+            .where('active', true);
+
+        const RegisterEntries: object = {};
+
+        registers.forEach(register => {
+            RegisterEntries[string.escapeHTML("register__" + register?.name + register?.version)] = [];
+        });
+
+        jobs.forEach(job => {
+            const service = services.find(e => e.id == job.service_id);
+
+            const data_registers = registers.filter(e => e.service_id == service?.id);
+
+            //add entries to register array
+            data_registers.forEach(register => {
+
+                const register_table_name = string.escapeHTML("register__" + register?.name + register?.version);
+
+                const data = {
+                    client_id: job.client_id
+                };
+                
+                RegisterEntries[register_table_name].push(data);
+            });
+
+        });
+
+        //foreach doesn't work
+        //insert data into registers
+        for await(const table_name of Object.keys(RegisterEntries)){
+            DynamicRegister.table = table_name;
+            await DynamicRegister.createMany(RegisterEntries[table_name]);
+        }
+    }
+
+    static async CreateTasks(jobs: Scheduler[]){
 
         //get services
         const service_ids = jobs.map(job => job.service_id);
@@ -400,27 +453,13 @@ export default class SchedulerManager{
             .query()
             .whereIn('id',template_ids);
 
-        //registers
-        const registers = await RegisterMaster
-            .query()
-            .select('id','name','version', 'service_id')
-            .whereIn('service_id', service_ids)
-            .where('active', true);
-
-        //tasks array
         const tasks: Task[] = [];
-        const RegisterEntries: object = {};
-
-        registers.forEach(register => {
-            RegisterEntries[string.escapeHTML("register__" + register?.name + register?.version)] = [];
-        });
 
         jobs.forEach(job => {
+
             const service = services.find(e => e.id == job.service_id);
 
             const template = templates.find(e => e.id == service?.template_id);
-
-            const data_registers = registers.filter(e => e.service_id == service?.id);
 
             //add tasks to array
             const task = new Task();
@@ -435,28 +474,9 @@ export default class SchedulerManager{
 
             tasks.push(task);
 
-            //add entries to register array
-            data_registers.forEach(register => {
-
-                const register_table_name = string.escapeHTML("register__" + register?.name + register?.version);
-
-                const data = {
-                    client_id: job.client_id
-                };
-                
-                RegisterEntries[register_table_name].push(data);
-            });
-
         });
 
         await Task.createMany(tasks);
-
-        //foreach doesn't work
-        //insert data into registers
-        for await(const table_name of Object.keys(RegisterEntries)){
-            DynamicRegister.table = table_name;
-            await DynamicRegister.createMany(RegisterEntries[table_name]);
-        }
     }
 
 }

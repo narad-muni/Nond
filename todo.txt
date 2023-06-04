@@ -27,6 +27,7 @@ rewrite whole app
 rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure & convention.
 rewrite with page filters stored in stores, so that they can be changed through redirect.
+use sqlite
 
 -----------------
 
