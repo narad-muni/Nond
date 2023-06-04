@@ -12,6 +12,7 @@ export default class extends BaseSchema {
             table.string('column_type');
             table.integer('client_column_id');
             table.boolean('master');
+            table.boolean('rollover');
         })
     }
 

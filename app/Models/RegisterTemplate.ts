@@ -20,5 +20,8 @@ export default class RegisterTemplate extends BaseModel {
     public master: boolean
 
     @column()
+    public rollover: boolean
+
+    @column()
     public client_column_id: number
 }

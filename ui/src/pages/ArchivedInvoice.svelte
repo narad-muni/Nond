@@ -306,7 +306,7 @@
 
         <Label class="space-y-2">
             <span>Date</span>
-            <SveltyPicker format="M d, yyyy" required bind:value={actionsObject.date}/>
+            <SveltyPicker format="M d yyyy" required bind:value={actionsObject.date}/>
         </Label>
 
         <Label class="space-y-2">

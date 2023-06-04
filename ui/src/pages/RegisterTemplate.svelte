@@ -237,6 +237,7 @@
                             <Th {handler} orderBy="column_type">Type</Th>
                             <Th {handler} orderBy={e => e.client_column_id}>Client Column</Th>
                             <Th {handler} orderBy="master">Is Master</Th>
+                            <Th {handler} orderBy="rollover">Rollover</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -244,8 +245,9 @@
                             <ThSearch {handler} />
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
-                            <ThSearch {handler} filterBy={(e) => e.client_column_id!=null ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={(e) => e.client_column_id != null ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={row => row.master || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.rollover || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -273,6 +275,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.master=="true" || row.master}/>
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    <Checkbox disabled checked={row.rollover=="true" || row.rollover}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -313,6 +318,10 @@
             <span>&nbsp;</span>
             <Toggle bind:value={createdObject.master} bind:checked={createdObject.master}>Is Master</Toggle>
         </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={createdObject.rollover} bind:checked={createdObject.rollover}>Rollover</Toggle>
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -352,6 +361,10 @@
         <Label class="space-y-2">
             <span>&nbsp;</span>
             <Toggle bind:value={actionsObject.master} bind:checked={actionsObject.master}>Is Master</Toggle>
+        </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={actionsObject.rollover} bind:checked={actionsObject.rollover}>Rollover</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>

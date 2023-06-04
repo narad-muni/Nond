@@ -12,8 +12,8 @@ import Invoice from 'App/Models/Invoice';
 import ArchivedTask from 'App/Models/ArchivedTask';
 import ArchivedInvoice from 'App/Models/ArchivedInvoice';
 import RegisterTemplate from 'App/Models/RegisterTemplate';
-import { column } from '@ioc:Adonis/Lucid/Orm';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
+import { DateTime } from 'luxon';
 
 export default class SchedulerManager{
     
@@ -117,22 +117,28 @@ export default class SchedulerManager{
         
         for await (const job of jobs){
 
-            const old_register = old_registers.find(e => e.id == job.register_id);
-            const scheduler = schedulers.find(e => e.register_id == old_register?.id);
-            const register_template = register_templates.filter(e => e.table_id == old_register?.id);
+            const old_register = old_registers.find(e => e.id == job.register_id) || new RegisterMaster();
+            const scheduler = schedulers.find(e => e.register_id == old_register.id) || new Scheduler();
+            const register_template = register_templates.filter(e => e.table_id == old_register.id);
 
             let client_columns = "";
             let update_query_columns = "";
-            const serialized_columns: any = {table_id: old_register?.id, columns: []};
+            const serialized_columns: any = {table_id: old_register.id, columns: []};
+
+            const random = Math.random().toString(36).substr(2, 8);
+            const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
+            const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
+            //added random to avoid collision
+            const new_version = `${random} ${today} - ${next}` 
 
             if(job.data?.["rotation_strategy"] == "archive"){ // archive old register
 
                 //create new table
                 const new_reigster = await RegisterMaster
                     .create({
-                        name: old_register?.name,
-                        version: old_register?.version+1,
-                        service_id: old_register?.service_id,
+                        name: old_register.name,
+                        version: new_version,
+                        service_id: old_register.service_id,
                         active: true
                     });
                 
@@ -141,8 +147,8 @@ export default class SchedulerManager{
                     .rawQuery(
                         `create table ?? (like ?? including all);`,
                         [
-                            string.escapeHTML("register__"+old_register?.name+old_register?.version+1),
-                            string.escapeHTML("register__"+old_register?.name+old_register?.version)
+                            string.escapeHTML("register__"+old_register.name+new_version),
+                            string.escapeHTML("register__"+old_register.name+old_register.version)
                         ]
                     );
 
@@ -202,39 +208,27 @@ export default class SchedulerManager{
                 }
 
             }else{ // delete old register
+
                 //truncate old table
                 await Database.rawQuery(
-                    "truncate table ??",
-                    [string.escapeHTML("register__"+old_register?.name+old_register?.version)]
+                    "truncate table ?? restart identity",
+                    [string.escapeHTML("register__"+old_register.name+old_register.version)]
                 );
-
-                const old_version = old_register?.version;
-
-                //create new table
-                old_register.version += 1;
 
                 //rename old table
                 await Database.rawQuery(
                     "alter table ?? rename to ??",
-                    [string.escapeHTML("register__"+old_register?.name+old_version)
-                    ,string.escapeHTML("register__"+old_register?.name+old_register?.version)]
+                    [string.escapeHTML("register__"+old_register.name+old_register.version)
+                    ,string.escapeHTML("register__"+old_register.name+new_version)]
                 );
 
                 //update entry in register master
                 await RegisterMaster
                     .query()
-                    .update({"version": old_register?.version})
+                    .update({"version": old_register.version})
                     .where('id', old_register.id);
 
             }
-
-            //create new register master
-            //create table
-            //update scheduler to point to new register
-            //update register template to point to new register
-            
-            //copy register template to archive table
-            //archive old register
 
         }
     }

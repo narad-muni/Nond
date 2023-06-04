@@ -460,7 +460,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
+                        <SveltyPicker format="M d yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
@@ -516,7 +516,7 @@
             {#each services as service}
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker startDate={minNextDate} format="M d, yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
+                <SveltyPicker startDate={minNextDate} format="M d yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
             {/each}
         </div>
         

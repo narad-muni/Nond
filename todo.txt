@@ -9,8 +9,6 @@ Halted - waiting for information
 Raised - pending for review
 Bulk assign tasks
 Assign tasks from register
-Append >> in windows bat file
-Collision when renaming columns with same version and name
 spent money in tasks
 Task time management
 Add users to register bulk
@@ -21,6 +19,7 @@ reports
 client access to view data
 add lines in tables
 send iso dates from api, convert to js date long for filtering, sorting date objects
+check all filters and search boxes
 -----
 
 rewrite whole app
@@ -30,3 +29,12 @@ rewrite backend with opimizations and better structure & convention.
 rewrite with page filters stored in stores, so that they can be changed through redirect.
 
 -----------------
+
+
+rollover columns draft
+
+- keep a rollover table for each active register
+- update rollover columns in real time
+truncate and add new data for each register when rotating
+get rollover column data if nth row is available, else first, else null
+- file columns cannot be rollover
