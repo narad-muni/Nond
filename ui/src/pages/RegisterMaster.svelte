@@ -30,7 +30,7 @@
 
     const date = (new Date).toDateString().split(" ");// gives "Mon Apr 10 2023"
 
-    const currDate = date[1]+" "+date[2]+", "+date[3];// convert above to Apr 10, 2023
+    const currDate = date[1]+" "+date[2]+" "+date[3];// convert above to Apr 10, 2023
 
     let data, createdObject={version:currDate,next:""},services, actionsIndex, actionsObject;
     let handler, rows;

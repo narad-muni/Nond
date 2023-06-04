@@ -120,6 +120,8 @@ export default class SchedulerManager{
             const old_register = old_registers.find(e => e.id == job.register_id) || new RegisterMaster();
             const scheduler = schedulers.find(e => e.register_id == old_register.id) || new Scheduler();
             const register_template = register_templates.filter(e => e.table_id == old_register.id);
+            const rollover_register_template = register_templates.filter(e => e.table_id == old_register.id && e.rollover);
+            const rollover_register_columns = rollover_register_template.map(e => e.column_name);
 
             let client_columns = "";
             let update_query_columns = "";
@@ -130,6 +132,33 @@ export default class SchedulerManager{
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
             //added random to avoid collision
             const new_version = `${random} ${today} - ${next}` 
+
+            //truncate old rollover table
+            await Database.rawQuery(
+                "truncate table ?? restart identity",
+                [string.escapeHTML("rollover__register__"+old_register.name+old_register.version)]
+            );
+
+            //rename old rollover table
+            await Database.rawQuery(
+                "alter table ?? rename to ??",
+                [
+                    string.escapeHTML("rollover__register__"+old_register.name+old_register.version),
+                    string.escapeHTML("rollover__register__"+old_register.name+new_version)
+                ]
+            );
+
+            const select_rollover_column = rollover_register_columns.length ? ", "+rollover_register_columns.toString() : "";
+
+            //add data in new rollover table
+            await Database.rawQuery(
+                `insert into ??(id, client_id ${string.escapeHTML(select_rollover_column)})
+                select id, client_id ${string.escapeHTML(select_rollover_column)} from ??`,
+                [
+                    string.escapeHTML("rollover__register__"+old_register.name+new_version),
+                    string.escapeHTML("register__"+old_register.name+old_register.version)
+                ]
+            )
 
             if(job.data?.["rotation_strategy"] == "archive"){ // archive old register
 
