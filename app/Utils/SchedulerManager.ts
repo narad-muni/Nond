@@ -388,6 +388,9 @@ export default class SchedulerManager{
 
     static async AddEntries(jobs: Scheduler[]) {
 
+        const register_data = [];
+        const RegisterEntries: object = {};
+
         //get services
         const service_ids = jobs.map(job => job.service_id);
 
@@ -403,7 +406,12 @@ export default class SchedulerManager{
             .whereIn('service_id', service_ids)
             .where('active', true);
 
-        const RegisterEntries: object = {};
+        const register_ids = registers.map(e => e.id);
+
+        const rollover_columns = await RegisterTemplate
+            .query()
+            .select('id','column_name','table_id', 'rollover')
+            .whereIn('register_id', register_ids);
 
         registers.forEach(register => {
             RegisterEntries[string.escapeHTML("register__" + register?.name + register?.version)] = [];
