@@ -138,8 +138,23 @@ export default class Context {
     stringMatch(entry, value, filterType = "like") {
         if(value.length == 0) return true;
 
-        console.log(typeof entry);
-        
+        let date = false;
+
+        try{
+            new Date(entry);
+            new Date(value);
+            date = true;
+        }catch{}
+        finally{
+            if(date){
+                entry = new Date(entry);
+                value = new Date(value);
+                
+                entry.setHours(0,0,0,0);
+                value.setHours(0,0,0,0);
+            }
+        }
+
         if (typeof entry === 'string' || !entry) {
 
             if(filterType == "equals"){
@@ -215,8 +230,7 @@ export default class Context {
                     .replace(/[\u0300-\u036f]/g, "")
                 ) > -1;
             }
-        }
-        else if(typeof entry == 'number'){
+        }else if(typeof entry == 'number'){
             if(filterType == "equals"){
                 return entry == value;
             }else if(filterType == "not equals"){
@@ -249,6 +263,20 @@ export default class Context {
                     .normalize("NFD")
                     .replace(/[\u0300-\u036f]/g, "")
                 ) > -1;
+            }
+        }else if(date){
+            if(filterType == "equals"){
+                return +entry == +value;
+            }else if(filterType == "not equals"){
+                return +entry != +value;
+            }else if(filterType == "less than"){
+                return +entry < +value;
+            }else if(filterType == "greater than"){
+                return +entry > +value;
+            }else if(filterType == "not like"){
+                return +entry != +value;
+            }else{
+                return +entry == +value;
             }
         }
         else if (typeof entry === 'object') {
