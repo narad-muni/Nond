@@ -461,7 +461,7 @@
                             <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
-                                    <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
+                                    <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
                                 {/if}
                             {/each}
                         </tr>
@@ -475,7 +475,7 @@
                             <ThSearch {handler} filterBy={(row => row.group?.name || "-")}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
-                                    <ThSearch {handler} filterBy={header.column_name}/>
+                                    <ThSearch {handler} filterBy={row => row[header.column_name]}/>
                                 {/if}
                             {/each}
                         </tr>

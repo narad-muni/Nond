@@ -315,7 +315,7 @@
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="email">Pan</Th>
+                            <Th {handler} orderBy="pan">Pan</Th>
                             <Th {handler} orderBy="gst">GST</Th>
                             <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}

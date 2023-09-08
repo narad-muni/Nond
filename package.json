@@ -6,6 +6,7 @@
     "setup": "npm install && cd ui && npm install",
     "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently \"cd ui && npx vite\" \"node ace serve --watch\"",
     "dev-be": "node ace serve --watch",
+    "init-db": "node ace migration:refresh && node ace reseed",
     "dev-fe": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite",
     "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd .. && node ace build --production --ignore-ts-errors",
     "start": "node server.js"
@@ -33,6 +34,7 @@
     "concurrently": "^7.6.0",
     "crypto": "^1.0.1",
     "fast-folder-size": "^1.7.1",
+    "fs": "^0.0.1-security",
     "joi": "^17.7.0",
     "luxon": "^3.2.1",
     "nodemailer": "^6.9.2",

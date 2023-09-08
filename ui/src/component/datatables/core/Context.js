@@ -135,24 +135,44 @@ export default class Context {
             return $pages.length;
         });
     }
+    validJSDates(date) {
+        try{
+            const dateFormats = [
+                /^\d{1,2}\/\d{1,2}\/\d{4}$/,         // DD/MM/YYYY
+                /^\d{1,2}\.\d{1,2}\.\d{4}$/,         // DD.MM.YYYY
+                /^\d{1,2}-\d{1,2}-\d{4}$/,           // DD-MM-YYYY
+
+                /^\d{4}\/\d{1,2}\/\d{1,2}$/,         // YYYY/MM/DD
+                /^\d{4}\.\d{1,2}\.\d{1,2}$/,         // YYYY.MM.DD
+                /^\d{4}-\d{1,2}-\d{1,2}$/,           // YYYY-MM-DD
+
+                /^[A-Za-z]{3} \d{1,2}(\,)? \d{4}$/,     // Jan 06, 2019 |  Jan 06 2019
+                /^\d{4} [A-Za-z]{3} \d{1,2}$/,     // 2019 Jan 06
+                /^\d{1,2} [A-Za-z]{3} \d{4}$/      // 06 Jan 2019
+
+            ];
+
+            for (const format of dateFormats) {
+                const regex = new RegExp(format);
+                if (regex.test(date)) {
+                  return true; // Match found
+                }
+            }
+
+            return false;
+        }catch{
+            return false;
+        }
+    }
     stringMatch(entry, value, filterType = "like") {
         if(value.length == 0) return true;
 
         let date = false;
 
-        try{
-            new Date(entry);
-            new Date(value);
+        if(this.validJSDates(entry) && this.validJSDates(value)) {
+            value = new Date(value);
+            entry = new Date(entry);
             date = true;
-        }catch{}
-        finally{
-            if(date){
-                entry = new Date(entry);
-                value = new Date(value);
-                
-                entry.setHours(0,0,0,0);
-                value.setHours(0,0,0,0);
-            }
         }
 
         if (typeof entry === 'string' || !entry) {

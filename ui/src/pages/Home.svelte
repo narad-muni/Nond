@@ -24,11 +24,11 @@
     import ArchivedRegister from "./ArchivedRegister.svelte";
     
     import { loader } from "../global/stores.js";
-  import { Spinner } from "flowbite-svelte";
-  import ArchivedTask from "./ArchivedTask.svelte";
-  import ArchivedInvoice from "./ArchivedInvoice.svelte";
-  import DeletedCompanies from "./DeletedCompanies.svelte";
-  import DeletedEmployees from "./DeletedEmployees.svelte";
+    import { Spinner } from "flowbite-svelte";
+    import ArchivedTask from "./ArchivedTask.svelte";
+    import ArchivedInvoice from "./ArchivedInvoice.svelte";
+    import DeletedCompanies from "./DeletedCompanies.svelte";
+    import DeletedEmployees from "./DeletedEmployees.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){

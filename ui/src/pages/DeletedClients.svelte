@@ -329,7 +329,7 @@
                             <Th {handler} orderBy="name">Name</Th>
                             <Th {handler} orderBy="email">Email</Th>
                             <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy="gst">Pan</Th>
+                            <Th {handler} orderBy="pan">Pan</Th>
                             <Th {handler} orderBy={row => row.group?.name}>Group</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
