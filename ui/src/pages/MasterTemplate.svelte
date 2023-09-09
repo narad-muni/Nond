@@ -209,6 +209,7 @@
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
                             <Th {handler} orderBy="is_master">Is Master</Th>
+                            <Th {handler} orderBy="is_rollover">Is Rollover</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -217,6 +218,7 @@
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
                             <ThSearch {handler} filterBy={row => row.is_master || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.is_rollover || "-"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -237,6 +239,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    <Checkbox disabled checked={row.is_rollover=="true" || row.is_rollover}/>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -281,6 +286,10 @@
             <span>&nbsp;</span>
             <Toggle bind:checked={createdObject.is_master}>Is Master</Toggle>
         </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={createdObject.is_rollover}>Is Rollover</Toggle>
+        </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -310,6 +319,10 @@
         <Label class="space-y-2">
             <span>&nbsp;</span>
             <Toggle bind:checked={actionsObject.is_master}>Is Master</Toggle>
+        </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={actionsObject.is_rollover}>Is Rollover</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>

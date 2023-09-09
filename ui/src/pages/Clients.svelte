@@ -60,12 +60,6 @@
 
     let error="", users=[{name: "Unassigned", value:null}];
 
-    const minNextDate = new Date(
-            (new Date)
-                .setDate(new Date().getDate() + 1)
-        )
-        .toJSON().slice(0, 10);
-
     // fetch data
 
     (async ()=>{
@@ -612,7 +606,7 @@
             {#each services as service}
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker format="M d yyyy" startDate={minNextDate} required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].next}/>
+                <SveltyPicker format="M d yyyy" required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].next}/>
             {/each}
         </div>
 
@@ -686,7 +680,7 @@
 
         <Label class="space-y-2">
             <span>Service</span>
-            <SveltyPicker required startDate={minNextDate} format="M d yyyy" bind:value={setServiceObject.next} />
+            <SveltyPicker required format="M d yyyy" bind:value={setServiceObject.next} />
         </Label>
 
         <div class="col-span-2 grid gap-6 grid-cols-2">
@@ -847,7 +841,7 @@
             {#each services as service}
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker startDate={minNextDate} format="M d yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
+                <SveltyPicker format="M d yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
             {/each}
         </div>
         

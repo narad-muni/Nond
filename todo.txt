@@ -1,7 +1,7 @@
 pending stuff
 
 invoice send by email
-Rollover columns in registers
+rollover columns in registers
 Multiple entires in registers
 Auto add fields in registers when added service
 Halted - waiting for information
@@ -22,7 +22,7 @@ rewrite frontend with responsive and better usage of svelte stores.
 rewrite backend with opimizations and better structure & convention.
 rewrite with page filters stored in stores, so that they can be changed through redirect.
 use sqlite
-change template files folder structure so that they can be renamed or deleted when columns change
+change rollover files folder structure so that they can be renamed or deleted when columns change
 reports
 client access to view data
 add lines in tables
@@ -37,3 +37,7 @@ rollover columns draft
 - truncate and add new data for each register when rotating
 get rollover column data if nth row is available, else first, else null
 - file columns cannot be rollover
+
+--------------------
+
+add n entries in registers till scheduler date is more than today

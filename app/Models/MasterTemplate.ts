@@ -18,4 +18,7 @@ export default class MasterTemplate extends BaseModel {
 
     @column()
     public is_master: boolean
+
+    @column()
+    public is_rollover: boolean
 }
