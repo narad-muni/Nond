@@ -320,7 +320,7 @@
                             <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
-                                    <Th {handler} orderBy={header.column_name}>{header.display_name}</Th>
+                                    <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>{header.display_name}</Th>
                                 {/if}
                             {/each}
                         </tr>
@@ -334,7 +334,7 @@
                             <ThSearch {handler} filterBy={row => row.signature || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
-                                    <ThSearch {handler} filterBy={header.column_name}/>
+                                    <ThSearch {handler} filterBy={row => row[header.column_name]}/>
                                 {/if}
                             {/each}
                         </tr>
