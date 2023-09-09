@@ -87,7 +87,7 @@
             </p>
             <br/>
         </div>
-        <p class="text-2xl mt-3">Raised Tickets</p>
+        <p class="text-2xl mt-3">Pending For Review Tickets</p>
     </Card>
 
     <Card href="/#/task" class="!text-white !bg-amber-500 !items-center !justify-around">

@@ -4,8 +4,6 @@ invoice send by email
 rollover columns in registers
 Multiple entires in registers
 Auto add fields in registers when added service
-Halted - waiting for information
-Raised - pending for review
 Bulk assign tasks
 Assign tasks from register
 spent money in tasks

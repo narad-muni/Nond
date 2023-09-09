@@ -33,8 +33,8 @@
     const task_status = [
         {name:'Pending',value:0},
         {name:'In Process',value:1},
-        {name:'Halted',value:2},
-        {name:'Raised',value:3},
+        {name:'Waiting For Information',value:2},
+        {name:'Pending For Review',value:3},
         {name:'Completed',value:4}
     ];
 

@@ -47,8 +47,8 @@
     const task_status = [
         {name:'Pending',value:0},
         {name:'In Process',value:1},
-        {name:'Halted',value:2},
-        {name:'Raised',value:3},
+        {name:'Waiting For Information',value:2},
+        {name:'Pending For Review',value:3},
         {name:'Completed',value:4}
     ];
 
@@ -597,16 +597,18 @@
         {/each}
 
         <hr class="col-span-3"/>
-        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
-            <h2>Services</h2>
+        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+            <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
             <h2>Next Date</h2>
+            <h2>Count</h2>
         </div>
-        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
             {#each services as service}
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="M d yyyy" required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].next}/>
+                <Input min="1" required={createdObject.services[service.value].subscribed} type="number" bind:value={createdObject.services[service.value].count}/>
             {/each}
         </div>
 
@@ -832,16 +834,18 @@
         {/if}
 
         <hr class="col-span-3"/>
-        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
-            <h2>Services</h2>
+        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+            <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
             <h2>Next Date</h2>
+            <h2>Count</h2>
         </div>
-        <div class="col-span-3 grid grid-cols-3 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
             {#each services as service}
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="M d yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
+                <Input min="1" required={actionsObject.services[service.value].subscribed} type="number" bind:value={actionsObject.services[service.value].count}/>
             {/each}
         </div>
         
