@@ -3,8 +3,20 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Company from 'App/Models/Company';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
+import { DateTime } from 'luxon';
 
 export default class CompaniesController {
+
+    public static dateOptions = {
+        serialize: (value) => {
+            if(value){
+                return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
+            }else{
+                return value
+            }
+        }
+    }
+
     public async index({request, response}: HttpContextContract){
         try{
             const deleted = request.param('deleted',false);
@@ -14,7 +26,11 @@ export default class CompaniesController {
                 .where('table_name','companies');
 
             headers.forEach(header => {
-                Company.$addColumn(header.column_name,{});      
+                if(header.column_type == 'Date'){
+                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
+                }else{
+                    Company.$addColumn(header.column_name,{});
+                }
             });
 
             const data = await Company
@@ -41,11 +57,15 @@ export default class CompaniesController {
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies')
+                .where('table_name','companies');
 
             headers.forEach(header => {
                 if(header.is_master){
-                    Company.$addColumn(header.column_name,{});
+                    if(header.column_type == 'Date'){
+                        Company.$addColumn(header.column_name,CompaniesController.dateOptions);
+                    }else{
+                        Company.$addColumn(header.column_name,{});
+                    }
                 }            
             });
 
@@ -76,7 +96,11 @@ export default class CompaniesController {
                 .where('table_name','companies')
 
             headers.forEach(header => {
-                Company.$addColumn(header.column_name,{});
+                if(header.column_type == 'Date'){
+                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
+                }else{
+                    Company.$addColumn(header.column_name,{});
+                }
             });
 
             const data = await Company
@@ -187,7 +211,11 @@ export default class CompaniesController {
                 .where('table_name','companies');
 
             headers.forEach(header => {
-                Company.$addColumn(header.column_name,{});
+                if(header.column_type == 'Date'){
+                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
+                }else{
+                    Company.$addColumn(header.column_name,{});
+                }
             });
 
             const inserted = await Company.create(payload);
@@ -258,7 +286,11 @@ export default class CompaniesController {
                 .where('table_name','companies');
 
             headers.forEach(header => {
-                Company.$addColumn(header.column_name,{});
+                if(header.column_type == 'Date'){
+                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
+                }else{
+                    Company.$addColumn(header.column_name,{});
+                }
             });
 
             const old = await Company

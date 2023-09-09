@@ -31,7 +31,7 @@
         class="border-0 !rounded-none border-b-2"
         items = {filterTypeOptions}
         bind:value = {filterType}
-        on:input={() => handler.filter(value, filterBy, filterType)}
+        on:change={() => handler.filter(value, filterBy, filterType)}
     >
     </Select>
 </th>
