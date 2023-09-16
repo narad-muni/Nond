@@ -17,10 +17,7 @@ export default class AuthValidator{
                 .required()
         });
 
-
-
-        let response = schema.validate(requestData);
-        return response;
+        return schema.validate(requestData);
     }
 
 }

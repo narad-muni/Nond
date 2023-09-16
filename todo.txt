@@ -39,3 +39,7 @@ get rollover column data if nth row is available, else first, else null
 --------------------
 
 add n entries in registers till scheduler date is more than today
+
+------------------
+
+seperate logic into multiple files

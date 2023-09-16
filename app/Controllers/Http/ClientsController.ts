@@ -1,13 +1,16 @@
-import Application from '@ioc:Adonis/Core/Application'
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
+
+import fs from 'fs';
+import { DateTime } from 'luxon';
+
+import { string } from '@ioc:Adonis/Core/Helpers';
+import Application from '@ioc:Adonis/Core/Application';
+
 import Client from 'App/Models/Client';
 import DynamicRegister from 'App/Models/DynamicRegister';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import RegisterMaster from 'App/Models/RegisterMaster';
 import Scheduler from 'App/Models/Scheduler';
-import fs from 'fs';
-import { DateTime } from 'luxon';
-import { string } from '@ioc:Adonis/Core/Helpers';
 
 export default class ClientsController {
 
