@@ -58,6 +58,8 @@
         userList = await utils.get('/api/employee/options');
         data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter+'/'+selfTasks);
 
+        clients = clients?.data || [];
+
         if(data.status != 'success'){
             error = data.message;
             data = null;

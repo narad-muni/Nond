@@ -46,6 +46,8 @@
         company_list = await utils.get('/api/company/options/');
         data = await utils.get('/api/invoice/filter/'+filterStatus);
 
+        client_list = client_list?.data || [];
+
         emptyCreatedObject = {
             particulars:{
                 particulars:[]

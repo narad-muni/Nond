@@ -50,6 +50,7 @@
             data = await utils.get('/api/archived_register/'+register_id);
 
             headers = headers?.data?.columns || [];
+            client_list = client_list?.data || [];
 
             if(data.status != 'success'){
                 error = data.message;

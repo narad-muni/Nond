@@ -71,6 +71,8 @@
         all_services = await utils.get('/api/service/options/true');
         data = await utils.get('/api/client/master/false');
 
+        client_list = client_list?.data || [];
+
         if(data.status != 'success'){
             error = data.message;
             data = null;

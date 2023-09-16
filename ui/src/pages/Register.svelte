@@ -50,6 +50,8 @@
             headers = await utils.get('/api/register_template/options/'+register_id);
             data = await utils.get('/api/register/master/'+register_id);
 
+            client_list = client_list?.data || [];
+
             if(data.status != 'success'){
                 error = data.message;
                 data = null;
