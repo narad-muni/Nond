@@ -20,18 +20,18 @@ export default class RegisterMaster extends BaseModel {
 
     @column()
     public active: boolean
-    
-    @belongsTo(() => Service,{
+
+    @belongsTo(() => Service, {
         foreignKey: 'service_id'
     })
     public service: BelongsTo<typeof Service>
 
-    @hasOne(() => RegisterTemplate,{
+    @hasOne(() => RegisterTemplate, {
         foreignKey: 'master_id'
     })
     public template: HasOne<typeof RegisterTemplate>
 
-    @hasOne(() => Scheduler,{
+    @hasOne(() => Scheduler, {
         foreignKey: 'register_id'
     })
     public scheduler: HasOne<typeof Scheduler>
@@ -39,9 +39,9 @@ export default class RegisterMaster extends BaseModel {
     @beforeDelete()
     public static async cascadeDelete(registerMaster: RegisterMaster) {
         //delete files
-        try{
+        try {
             fs.removeSync(Application.makePath(`/file/register/${registerMaster.id}`));
-        }catch(err){}
+        } catch (err) { }
 
         //delete schedulers
         await Scheduler

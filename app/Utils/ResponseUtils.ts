@@ -1,14 +1,14 @@
 import { ResponseContract } from '@ioc:Adonis/Core/Response';
 
 export default class ResponseUtils {
-    public static CommonErrorResponse(response: ResponseContract){
+    public static CommonErrorResponse(response: ResponseContract) {
         response.send({
             status: "error",
             message: "some error occured"
         });
     }
 
-    public static ErrorResponse(response: ResponseContract, message: any){
+    public static ErrorResponse(response: ResponseContract, message: any) {
         response.send({
             status: "error",
             message: message

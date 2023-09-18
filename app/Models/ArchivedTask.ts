@@ -7,7 +7,7 @@ export default class ArchivedTask extends BaseModel {
 
     @column()
     public assigned_to: string
-    
+
     @column()
     public title: string
 
@@ -16,13 +16,13 @@ export default class ArchivedTask extends BaseModel {
 
     @column()
     public group: string
-    
+
     @column()
     public description: string
 
     @column()
     public service: string
-    
-    @column.date({ autoCreate:true })
+
+    @column.date({ autoCreate: true })
     public created: DateTime
 }

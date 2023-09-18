@@ -1,4 +1,4 @@
-import { BaseModel, beforeSave, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, beforeSave, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Role from './Role'
 import Crypto from 'crypto';
 
@@ -23,11 +23,11 @@ export default class Employee extends BaseModel {
     })
     public deleted: boolean
 
-    @belongsTo(() => Role,{
+    @belongsTo(() => Role, {
         foreignKey: 'role_id',
     })
     public role: BelongsTo<typeof Role>
-    
+
     @beforeSave()
     public static async hashPassword(user: Employee) {
         if (user.$dirty.password) {

@@ -1,16 +1,16 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 export default class Acl {
-    public async handle({request,response,session}: HttpContextContract, next: () => Promise<void>) {
+    public async handle({ request, response, session }: HttpContextContract, next: () => Promise<void>) {
         let req_url = request.url();
 
-        if(!req_url.endsWith('/')){
+        if (!req_url.endsWith('/')) {
             req_url += '/'
         }
 
-        const prefix_index = req_url.indexOf('/',2);
-        const url = req_url.substring(prefix_index+1);
-        const part = url.substring(0,url.indexOf('/'));
+        const prefix_index = req_url.indexOf('/', 2);
+        const url = req_url.substring(prefix_index + 1);
+        const part = url.substring(0, url.indexOf('/'));
         const method = request.method();
         const role = session.get('user').role;
         const not_permitted_err = {
@@ -18,54 +18,54 @@ export default class Acl {
             message: 'Permission denied'
         }
 
-        if(!role){
+        if (!role) {
             session.forget('user');
         }
 
-        if(method == 'GET' && url.includes('options') && role){
+        if (method == 'GET' && url.includes('options') && role) {
             await next();
             return;
         }
 
-        if(method == 'GET'){// Read Operation
+        if (method == 'GET') {// Read Operation
 
-            if(!role?.read[part]){
+            if (!role?.read[part]) {
                 response.send(not_permitted_err);
                 return;
             }
 
-        }else if(method == 'POST'){// Create Operation
+        } else if (method == 'POST') {// Create Operation
 
-            if(!role?.create[part]){
+            if (!role?.create[part]) {
                 response.send(not_permitted_err);
                 return;
             }
 
-        }else if(method == 'PUT'){// Update Operation
+        } else if (method == 'PUT') {// Update Operation
 
-            if(!role?.update[part]){
+            if (!role?.update[part]) {
                 response.send(not_permitted_err);
                 return;
             }
 
-        }else if(method == 'DELETE'){// Delete Operation
+        } else if (method == 'DELETE') {// Delete Operation
 
-            if(url.includes('destroy')){
-                if(!role?.destroy[part]){
+            if (url.includes('destroy')) {
+                if (!role?.destroy[part]) {
                     response.send(not_permitted_err);
                     return;
                 }
-            }else{
-                if(!role?.remove[part]){
+            } else {
+                if (!role?.remove[part]) {
                     response.send(not_permitted_err);
                     return;
                 }
             }
-            
+
         }
 
         // If none of these matches, then continue the request
         await next();
-    
+
     }
 }

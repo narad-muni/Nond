@@ -6,8 +6,8 @@ import Task from 'App/Models/Task'
 
 export default class RolesController {
 
-    public async index({response}: HttpContextContract) {
-        try{
+    public async index({ response }: HttpContextContract) {
+        try {
             const data = await Service
                 .query()
                 .preload('template', (query) => {
@@ -19,7 +19,7 @@ export default class RolesController {
                 data: data,
                 message: null
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -29,28 +29,28 @@ export default class RolesController {
         }
     }
 
-    public async get({request,response}: HttpContextContract) {
-        try{
+    public async get({ request, response }: HttpContextContract) {
+        try {
             const id = request.param('id');
             const data = await Service
                 .query()
-                .where('id',id)
+                .where('id', id)
                 .first();
 
-            if(data){
+            if (data) {
                 response.send({
                     status: 'success',
                     data: data,
                     message: null
                 });
-            }else{
+            } else {
                 response.send({
                     status: 'error',
-                    data:null,
+                    data: null,
                     message: 'Role not found'
                 });
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -60,15 +60,15 @@ export default class RolesController {
         }
     }
 
-    public async options({request,response}: HttpContextContract) {
-        try{
+    public async options({ request, response }: HttpContextContract) {
+        try {
 
-            const filter = request.param('all','true') == 'true' ? -5 : 0;
+            const filter = request.param('all', 'true') == 'true' ? -5 : 0;
 
             const data = await Service
                 .query()
-                .select('name','id')
-                .where('id','>=',filter);
+                .select('name', 'id')
+                .where('id', '>=', filter);
 
             const serilizedData = data.map(e => e.serialize())
 
@@ -80,7 +80,7 @@ export default class RolesController {
 
             response.send(serilizedData);
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -90,17 +90,17 @@ export default class RolesController {
         }
     }
 
-    public async options_gst({request,response}: HttpContextContract) {
-        try{
+    public async options_gst({ request, response }: HttpContextContract) {
+        try {
             const data = await Service
                 .query()
                 .select('gst')
-                .where('hsn',request.param('hsn',null))
+                .where('hsn', request.param('hsn', null))
                 .first();
 
             response.send(data?.gst || "");
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -110,8 +110,8 @@ export default class RolesController {
         }
     }
 
-    public async options_all({response}: HttpContextContract) {
-        try{
+    public async options_all({ response }: HttpContextContract) {
+        try {
             const data = await Service
                 .query()
 
@@ -125,7 +125,7 @@ export default class RolesController {
 
             response.send(serilizedData);
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -135,13 +135,13 @@ export default class RolesController {
         }
     }
 
-    public async create({request,response}: HttpContextContract) {
-        try{
+    public async create({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
-                if(payload[e] == "null" || String(payload[e]) == ""){
+                if (payload[e] == "null" || String(payload[e]) == "") {
                     payload[e] = null;
                 }
             });
@@ -150,13 +150,13 @@ export default class RolesController {
                 .create(payload);
 
             payload.id = data.id;
-            
+
             response.send({
                 status: 'success',
                 data: payload
             });
-        
-        }catch(e){
+
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -166,11 +166,11 @@ export default class RolesController {
         }
     }
 
-    public async update({request,response}: HttpContextContract) {
-        try{
+    public async update({ request, response }: HttpContextContract) {
+        try {
             const data = request.all();
 
-            if(data.id < 0){
+            if (data.id < 0) {
                 response.send({
                     status: "error",
                     message: "Cannot modify default services"
@@ -181,19 +181,19 @@ export default class RolesController {
 
             //set "null" to null
             Object.keys(data).forEach(e => {
-                if(data[e] == "null" || String(data[e]) == ""){
+                if (data[e] == "null" || String(data[e]) == "") {
                     data[e] = null;
                 }
             });
-            
-            await Service
-                .query()
-                .where('hsn',data.hsn)
-                .update({'gst':data.gst});
 
             await Service
                 .query()
-                .where('id',data.id)
+                .where('hsn', data.hsn)
+                .update({ 'gst': data.gst });
+
+            await Service
+                .query()
+                .where('id', data.id)
                 .update(data);
 
             response.send({
@@ -202,7 +202,7 @@ export default class RolesController {
                 data: data
             });
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -212,11 +212,11 @@ export default class RolesController {
         }
     }
 
-    public async destroy({request,response}: HttpContextContract) {
-        try{
+    public async destroy({ request, response }: HttpContextContract) {
+        try {
             const id = request.input('id');
 
-            if(id.filter(e => e <= 0).length){
+            if (id.filter(e => e <= 0).length) {
                 response.send({
                     status: 'error',
                     message: 'Cannot remove default services'
@@ -224,13 +224,13 @@ export default class RolesController {
 
                 return;
             }
-            
+
             //update delete tasks, schedulers, registers
-            
+
             //delete tasks
             await Task
                 .query()
-                .whereIn('service_id',id)
+                .whereIn('service_id', id)
                 .delete();
 
             //delete user entries scheduler
@@ -242,18 +242,18 @@ export default class RolesController {
             //delete registers
             await RegisterMaster
                 .query()
-                .whereIn('service_id',id)
+                .whereIn('service_id', id)
                 .delete();
 
             await Service
                 .query()
-                .whereIn('id',id)
+                .whereIn('id', id)
                 .delete();
-                
+
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

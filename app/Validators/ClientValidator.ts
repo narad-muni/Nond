@@ -1,8 +1,8 @@
 import Joi from "joi";
 
-export default class ClientValidator{
+export default class ClientValidator {
 
-    public static LoginValidator(requestData){
+    public static LoginValidator(requestData) {
 
         const schema = {
             username: Joi
@@ -11,7 +11,7 @@ export default class ClientValidator{
                 .min(3)
                 .max(20)
                 .required(),
-            
+
             password: Joi
                 .string()
                 .min(8)
@@ -24,7 +24,7 @@ export default class ClientValidator{
         return JoiObject.validate(requestData);
     }
 
-    public static indexValidator(body){
+    public static indexValidator(body) {
         const schema = {
             deleted: Joi
                 .boolean()
@@ -36,7 +36,7 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static indexMasterValidator(body){
+    public static indexMasterValidator(body) {
         const schema = {
             deleted: Joi
                 .boolean()
@@ -48,7 +48,7 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static getValidator(body){
+    public static getValidator(body) {
         const schema = {
             id: Joi
                 .number()
@@ -60,7 +60,7 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static createValidator(body){
+    public static createValidator(body) {
         const schema = {
             name: Joi
                 .string()
@@ -78,7 +78,7 @@ export default class ClientValidator{
         return JoiObject.validate(body.client);
     }
 
-    public static updateValidator(body){
+    public static updateValidator(body) {
         const schema = {
             name: Joi
                 .string()
@@ -96,7 +96,7 @@ export default class ClientValidator{
         return JoiObject.validate(body.client);
     }
 
-    public static bulkServiceUpdateClientValidator(body){
+    public static bulkServiceUpdateClientValidator(body) {
         const schedulerSchema = Joi
             .object()
             .pattern(
@@ -133,8 +133,8 @@ export default class ClientValidator{
                 )
                 .required(),
             remove_old: Joi
-                    .boolean()
-                    .required(),
+                .boolean()
+                .required(),
             schedulers: schedulerSchema,
         }
 
@@ -143,7 +143,7 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static removeClientValidator(body){
+    public static removeClientValidator(body) {
         const schema = {
             client_ids: Joi
                 .array()
@@ -156,7 +156,7 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static restoreClientValidator(body){
+    public static restoreClientValidator(body) {
         const schema = {
             client_ids: Joi
                 .array()
@@ -169,15 +169,15 @@ export default class ClientValidator{
         return JoiObject.validate(body);
     }
 
-    public static deleteClientValidator(body){
+    public static deleteClientValidator(body) {
         const schema = {
             client_ids: Joi
                 .array()
                 .items(
                     Joi
-                    .number()
-                    .min(1)
-                    .messages({ "number.min": "Cannot delete default users" })
+                        .number()
+                        .min(1)
+                        .messages({ "number.min": "Cannot delete default users" })
                 )
                 .required(),
         }
@@ -188,4 +188,3 @@ export default class ClientValidator{
     }
 
 }
-            

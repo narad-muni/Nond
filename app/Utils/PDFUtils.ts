@@ -14,7 +14,7 @@ const fonts = {
     }
 };
 
-export class PDFUtils{
+export class PDFUtils {
     static async generateInvoices(path: string, invoiceData: Invoice[]) {
         const generatedFiles: string[] = [];
 
@@ -24,9 +24,9 @@ export class PDFUtils{
             let qrBlock, billingBlock, taxBlock = {};
             const billingParticulars: any[] = [];
             let taxBreakup: any = {};
-            let taxBill: any = [["","","",""]];
+            let taxBill: any = [["", "", "", ""]];
 
-            if(data.company.upi){
+            if (data.company.upi) {
                 qrBlock = [
                     {
                         width: 65,
@@ -39,7 +39,7 @@ export class PDFUtils{
                         width: 90,
                     }
                 ]
-            }else{
+            } else {
                 qrBlock = [
                     {
                         width: 65,
@@ -62,10 +62,10 @@ export class PDFUtils{
                     e.amount || "-",
                 ]);
 
-                if(data.gst){
+                if (data.gst) {
                     e.tax = e.gst * e.amount * .01;
 
-                    if(taxBreakup[e.hsn]){
+                    if (taxBreakup[e.hsn]) {
                         // taxBreakup[e.hsn][0] += e.hsn;
                         taxBreakup[e.hsn][1] += e.amount;
                         // taxBreakup[e.hsn][2] += e.gst / 2;
@@ -73,7 +73,7 @@ export class PDFUtils{
                         // taxBreakup[e.hsn][4] += e.gst / 2;
                         taxBreakup[e.hsn][5] += (e.tax || 0) / 2;
                         taxBreakup[e.hsn][6] += e.tax || 0;
-                    }else{
+                    } else {
                         taxBreakup[e.hsn] = [];
 
                         taxBreakup[e.hsn][0] = e.hsn;
@@ -87,7 +87,7 @@ export class PDFUtils{
                 }
             });
 
-            if(data.gst){
+            if (data.gst) {
                 taxBill = [
                     [
                         {
@@ -144,11 +144,11 @@ export class PDFUtils{
                                 },
                             ],
                             [
-                                '','','Rate','Amount','Rate','Amount',''
+                                '', '', 'Rate', 'Amount', 'Rate', 'Amount', ''
                             ],
-                            Array(7).fill({text:"", colSpan: 7}),
+                            Array(7).fill({ text: "", colSpan: 7 }),
                             ...Object.values(taxBreakup),
-                            Array(7).fill({text:"", colSpan: 7}),
+                            Array(7).fill({ text: "", colSpan: 7 }),
                             [
                                 {
                                     text: "Total",
@@ -168,7 +168,7 @@ export class PDFUtils{
                                         {
                                             text: "Tax amount in words",
                                             fontSize: 9,
-                                            margin: [0,0,0,4]
+                                            margin: [0, 0, 0, 4]
                                         },
                                         {
                                             text: `INR ${StringUtils.inWords(data.tax || 0)} Only`,
@@ -197,11 +197,11 @@ export class PDFUtils{
                             "HSN/SAC",
                             "Amount"
                         ],
-                        Array(4).fill({text:"", colSpan: 4}),
+                        Array(4).fill({ text: "", colSpan: 4 }),
                         ...billingParticulars,
-                        Array(4).fill({text:"", colSpan: 4}),
+                        Array(4).fill({ text: "", colSpan: 4 }),
                         ...taxBill,
-                        Array(4).fill({text:"", colSpan: 4}),
+                        Array(4).fill({ text: "", colSpan: 4 }),
                         [
                             {
                                 text: "Total",
@@ -218,7 +218,7 @@ export class PDFUtils{
                                     {
                                         text: "Amount Chargeable (in words)",
                                         fontSize: 9,
-                                        margin: [0,0,0,4]
+                                        margin: [0, 0, 0, 4]
                                     },
                                     {
                                         text: `INR ${StringUtils.inWords(data.total + data.tax || 0)} Only`,
@@ -240,53 +240,53 @@ export class PDFUtils{
                 content: [
                     {
                         columns: [
-                        {
-                            image: "companyLogo",
-                            fit: [80, 80], // 135w 80 h,
-                            width: 80,
-                            alignment: "center"
-                        },
-                        {
-                            stack: [
-                                {
-                                    text: data.company.name,
-                                    bold: true,
-                                    fontSize: '13',
-                                    margin: [0,0,0,5]
-                                },
-                                {
-                                    columns: [
-                                        {
-                                            text: data.company.address,
-                                            fontSize: '10'
-                                        },
-                                        {
-                                            text: `GSTIN/UIN: ${data.company.gst || "-"}
+                            {
+                                image: "companyLogo",
+                                fit: [80, 80], // 135w 80 h,
+                                width: 80,
+                                alignment: "center"
+                            },
+                            {
+                                stack: [
+                                    {
+                                        text: data.company.name,
+                                        bold: true,
+                                        fontSize: '13',
+                                        margin: [0, 0, 0, 5]
+                                    },
+                                    {
+                                        columns: [
+                                            {
+                                                text: data.company.address,
+                                                fontSize: '10'
+                                            },
+                                            {
+                                                text: `GSTIN/UIN: ${data.company.gst || "-"}
                                             State Name : Maharashtra
                                             Code : 27
                                             E-Mail : ${data.company.email || "-"}`,
-                                            fontSize: '10'
-                                        },
+                                                fontSize: '10'
+                                            },
+                                        ],
+                                    },
+                                ],
+                                width: 'auto',
+                            },
+                            {
+                                layout: "lightHorizontalLines",
+                                table: {
+                                    body: [
+                                        ["", ""],
+                                        ["Invoice #", data.id],
+                                        ["", ""],
+                                        ["", ""],
+                                        ["Date ", data?.date.toLocaleString(DateTime.DATE_MED) || "-"],
+                                        ["", ""],
                                     ],
                                 },
-                            ],
-                            width: 'auto',
-                        },
-                        {
-                            layout: "lightHorizontalLines",
-                            table: {
-                            body: [
-                                ["", ""],
-                                ["Invoice #", data.id],
-                                ["", ""],
-                                ["", ""],
-                                ["Date ", data?.date.toLocaleString(DateTime.DATE_MED) || "-"],
-                                ["", ""],
-                            ],
+                                widths: ["auto"],
+                                width: '150'
                             },
-                            widths: ["auto"],
-                            width: '150'
-                        },
                         ],
                         columnGap: 10,
                         margin: 5,
@@ -305,7 +305,7 @@ export class PDFUtils{
                                         text: data.client.name,
                                         bold: true,
                                         fontSize: '13',
-                                        margin: [0,0,0,5]
+                                        margin: [0, 0, 0, 5]
                                     },
                                     {
                                         columns: [
@@ -367,7 +367,7 @@ export class PDFUtils{
                                                     {
                                                         stack: [
                                                             {
-                                                                text: `for `+data.company.name
+                                                                text: `for ` + data.company.name
                                                             },
                                                             {
                                                                 text: `${data.company.name}
@@ -382,8 +382,8 @@ export class PDFUtils{
                                                     {
                                                         image: 'companySignature',
                                                         alignment: "center",
-                                                        margin: [0,5,0,0],
-                                                        fit: data.client.logo ? [180,50] : [0,0]
+                                                        margin: [0, 5, 0, 0],
+                                                        fit: data.client.logo ? [180, 50] : [0, 0]
                                                     }
                                                 ]
                                             }
@@ -411,9 +411,9 @@ export class PDFUtils{
         return generatedFiles;
     }
 
-    static async generatePdf(path,data,fileName){
-        
-      
+    static async generatePdf(path, data, fileName) {
+
+
         if (!fs.existsSync(path)) {
             await fs.promises.mkdir(path, { recursive: true });
         }
@@ -425,17 +425,17 @@ export class PDFUtils{
         const chunks: any = [];
 
         const result: Buffer = await new Promise((resolve, reject) => {
-            doc.on('data', function (chunk) {
+            doc.on('data', function(chunk) {
                 chunks.push(chunk);
             });
-    
-            doc.on('end', function () {
+
+            doc.on('end', function() {
                 resolve(Buffer.concat(chunks))
             });
-    
+
             doc.end();
         });
-        
+
         await fs.promises.writeFile(`${path}/${fileName}`, result);
     }
 }

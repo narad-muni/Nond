@@ -148,7 +148,7 @@ export default class ClientsController {
             const files = body.files;
             const services = body.services;
             const client = body.client;
-            
+
             // set client columns TODO : will be changed.... to only set once and when schema changes
             const columns = await MasterTemplateDAO.getAllClientColumns();
             await ClientDAO.setClientModelColumns(columns);
@@ -194,16 +194,16 @@ export default class ClientsController {
 
             // Create schedulers object from service json
             const { schedulers, uncheckedSchedulers } = await SchedulerDAO.getSchedulersFromServiceJSON(services, client.id);
-            
+
             const { newSchedulers, updatedSchedulers, deletedSchedulerIds } = await SchedulerDAO.segregateSchedulers(schedulers, uncheckedSchedulers);
-            
+
             // Create New Schedulers
             await SchedulerDAO.createSchedulers(newSchedulers);
             // Update Schedulers
             await SchedulerDAO.updateSchedulers(updatedSchedulers);
             // Delete unchecked Schedulers
             await SchedulerDAO.deleteSchedulers(deletedSchedulerIds);
-            
+
             // Delete files
             await ClientDAO.removeDeletedClientFiles(columns, client, oldClient);
             // Update client
@@ -236,10 +236,10 @@ export default class ClientsController {
             const checked_service_ids = schedulers.map(e => e.service_id);
 
             // Delete Other schedulers if remove old is true
-            if(body.remove_old){
+            if (body.remove_old) {
                 await SchedulerDAO.deleteSchedulersByClientAndServiceId(body.client_ids, unchecked_service_ids);
             }
-            
+
             await SchedulerDAO.deleteSchedulersByClientAndServiceId(body.client_ids, checked_service_ids);
 
             await SchedulerDAO.createSchedulersForClients(body.client_ids, schedulers);

@@ -2,11 +2,11 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Lead from 'App/Models/Lead'
 
 export default class LeadsController {
-    public async index({response}: HttpContextContract){
-        try{
+    public async index({ response }: HttpContextContract) {
+        try {
             const data = await Lead
                 .query()
-                .preload('assigned_user',(query) => {
+                .preload('assigned_user', (query) => {
                     query.select('username')
                 })
 
@@ -14,7 +14,7 @@ export default class LeadsController {
                 status: 'success',
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -24,28 +24,28 @@ export default class LeadsController {
         }
     }
 
-    public async get({request,response}: HttpContextContract){
-        try{
+    public async get({ request, response }: HttpContextContract) {
+        try {
             const payload = request.param('id');
 
             const data = await Lead
                 .query()
-                .where('id',payload)
+                .where('id', payload)
                 .first();
 
-            if(data){
+            if (data) {
                 response.send({
                     status: 'success',
                     data: data
                 });
-            }else{
+            } else {
                 response.send({
                     status: 'error',
                     data: null,
                     message: 'Lead not found'
                 });
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -55,13 +55,13 @@ export default class LeadsController {
         }
     }
 
-    public async create({request,response}: HttpContextContract){
-        try{
+    public async create({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
-                if(payload[e] == "null" || String(payload[e]) == ""){
+                if (payload[e] == "null" || String(payload[e]) == "") {
                     payload[e] = null;
                 }
             });
@@ -74,7 +74,7 @@ export default class LeadsController {
                 status: 'success',
                 data: payload
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -84,27 +84,27 @@ export default class LeadsController {
         }
     }
 
-    public async update({request,response}: HttpContextContract){
-        try{
+    public async update({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
-                if(payload[e] == "null" || String(payload[e]) == ""){
+                if (payload[e] == "null" || String(payload[e]) == "") {
                     payload[e] = null;
                 }
             });
 
             await Lead
                 .query()
-                .where('id',payload.id)
+                .where('id', payload.id)
                 .update(payload);
 
             response.send({
                 status: 'success',
                 data: payload
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -114,19 +114,19 @@ export default class LeadsController {
         }
     }
 
-    public async destroy({request,response}: HttpContextContract){
-        try{
+    public async destroy({ request, response }: HttpContextContract) {
+        try {
             const payload = Object.values(request.all())[0];
 
             await Lead
                 .query()
-                .whereIn('id',payload)
+                .whereIn('id', payload)
                 .delete();
 
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

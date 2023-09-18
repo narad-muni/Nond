@@ -1,8 +1,8 @@
 import Joi from "joi";
 
-export default class AuthValidator{
+export default class AuthValidator {
 
-    public static LoginValidator(requestData){
+    public static LoginValidator(requestData) {
 
         const schema = Joi.object({
             username: Joi.string()
@@ -10,7 +10,7 @@ export default class AuthValidator{
                 .min(3)
                 .max(20)
                 .required(),
-            
+
             password: Joi.string()
                 .min(4)
                 .max(20)

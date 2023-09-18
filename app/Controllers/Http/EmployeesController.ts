@@ -4,23 +4,23 @@ import Employee from 'App/Models/Employee';
 import Crypto from 'crypto';
 
 export default class EmployeesController {
-    public async index({request, response}: HttpContextContract) {
-        try{
-            const deleted = request.param('deleted',false);
+    public async index({ request, response }: HttpContextContract) {
+        try {
+            const deleted = request.param('deleted', false);
 
             const data = await Employee
                 .query()
-                .preload('role',(query) => {
+                .preload('role', (query) => {
                     query.select('name')
                 })
-                .where('deleted',deleted);
+                .where('deleted', deleted);
 
             response.send({
                 status: 'success',
                 message: null,
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -30,21 +30,21 @@ export default class EmployeesController {
         }
     }
 
-    public async get({response,request}: HttpContextContract) {
-        try{
+    public async get({ response, request }: HttpContextContract) {
+        try {
             const data = await Employee
                 .query()
-                .where('deleted',false)
-                .where('id',request.param('id'))
+                .where('deleted', false)
+                .where('id', request.param('id'))
                 .first()
 
-            if(data){
+            if (data) {
                 response.send({
                     status: 'success',
                     message: null,
                     data: data
                 });
-            }else{
+            } else {
                 response.send({
                     status: 'error',
                     message: 'User not found',
@@ -52,7 +52,7 @@ export default class EmployeesController {
                 });
             }
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -62,21 +62,21 @@ export default class EmployeesController {
         }
     }
 
-    public async index_deleted({response}: HttpContextContract) {
-        try{
+    public async index_deleted({ response }: HttpContextContract) {
+        try {
             const data = await Employee
                 .query()
-                .preload('role',(query) => {
+                .preload('role', (query) => {
                     query.select('name')
                 })
-                .where('deleted',true)
+                .where('deleted', true)
 
             response.send({
                 status: 'success',
                 message: null,
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -86,19 +86,19 @@ export default class EmployeesController {
         }
     }
 
-    public async options({response}: HttpContextContract) {
-        try{
+    public async options({ response }: HttpContextContract) {
+        try {
             const data = await Database
                 .from('employees')
                 .select({
                     name: 'username',
                     value: 'id'
                 })
-                .where('deleted',false);
+                .where('deleted', false);
 
             response.send(data);
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -108,19 +108,19 @@ export default class EmployeesController {
         }
     }
 
-    public async restore({request,response}: HttpContextContract){
-        try{
+    public async restore({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             await Employee
                 .query()
-                .whereIn('id',payload.id)
-                .update({deleted: false});
+                .whereIn('id', payload.id)
+                .update({ deleted: false });
 
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -130,18 +130,18 @@ export default class EmployeesController {
         }
     }
 
-    public async create({request,response}: HttpContextContract) {
-        try{
+    public async create({ request, response }: HttpContextContract) {
+        try {
             const data = request.all();
 
             //set "null" to null
             Object.keys(data).forEach(e => {
-                if(data[e] == "null" || String(data[e]) == ""){
+                if (data[e] == "null" || String(data[e]) == "") {
                     data[e] = null;
                 }
             });
 
-            if(data.is_admin){
+            if (data.is_admin) {
                 data.role_id = -1;
             }
 
@@ -154,7 +154,7 @@ export default class EmployeesController {
                 message: null,
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -164,31 +164,31 @@ export default class EmployeesController {
         }
     }
 
-    public async update({request,response}: HttpContextContract) {
-        try{
+    public async update({ request, response }: HttpContextContract) {
+        try {
             const data = request.all();
 
             //set "null" to null
             Object.keys(data).forEach(e => {
-                if(data[e] == "null" || String(data[e]) == ""){
+                if (data[e] == "null" || String(data[e]) == "") {
                     data[e] = null;
                 }
             });
 
-            if(data.is_admin){
+            if (data.is_admin) {
                 data.role_id = -1;
             }
 
-            if(data.password == null){
+            if (data.password == null) {
                 delete data.password
-            }else{
+            } else {
                 data.password = Crypto.createHash('sha256').update(data.password).digest('hex');
             }
 
-            if(data.hasOwnProperty('id')){
+            if (data.hasOwnProperty('id')) {
                 await Employee
                     .query()
-                    .where('id',data.id)
+                    .where('id', data.id)
                     .update(data);
 
                 response.send({
@@ -196,13 +196,13 @@ export default class EmployeesController {
                     data: data,
                     message: null
                 });
-            }else{
+            } else {
                 response.send({
                     status: 'error',
                     message: 'Id field is required'
                 })
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -212,26 +212,26 @@ export default class EmployeesController {
         }
     }
 
-    public async remove({request,response}: HttpContextContract) {
-        try{
+    public async remove({ request, response }: HttpContextContract) {
+        try {
             const payload = Object.values(request.all())[0];
 
-            if(payload.includes(0)){
+            if (payload.includes(0)) {
                 response.send({
                     status: 'error',
                     message: 'Cannot remove admin user'
                 });
-            }else{
+            } else {
                 await Employee
                     .query()
-                    .whereIn('id',payload)
-                    .update({"deleted": true});
+                    .whereIn('id', payload)
+                    .update({ "deleted": true });
 
                 response.send({
                     status: 'success'
                 });
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -240,27 +240,27 @@ export default class EmployeesController {
             });
         }
     }
-    
-    public async destroy({request,response}: HttpContextContract) {
-        try{
+
+    public async destroy({ request, response }: HttpContextContract) {
+        try {
             const payload = Object.values(request.all())[0]
 
-            if(payload.includes(0)){
+            if (payload.includes(0)) {
                 response.send({
                     status: 'error',
                     message: 'Cannot remove admin user'
                 });
-            }else{
+            } else {
                 await Employee
                     .query()
-                    .whereIn('id',payload)
+                    .whereIn('id', payload)
                     .delete()
 
                 response.send({
                     status: 'success'
                 });
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

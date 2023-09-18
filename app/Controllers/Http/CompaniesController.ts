@@ -10,39 +10,39 @@ export default class CompaniesController {
 
     public static dateOptions = {
         serialize: (value) => {
-            if(value){
+            if (value) {
                 return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
-            }else{
+            } else {
                 return value
             }
         }
     }
 
-    public async index({request, response}: HttpContextContract){
-        try{
-            const deleted = request.param('deleted',false);
+    public async index({ request, response }: HttpContextContract) {
+        try {
+            const deleted = request.param('deleted', false);
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies');
+                .where('table_name', 'companies');
 
             headers.forEach(header => {
-                if(header.column_type == 'Date'){
-                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
-                }else{
-                    Company.$addColumn(header.column_name,{});
+                if (header.column_type == 'Date') {
+                    Company.$addColumn(header.column_name, CompaniesController.dateOptions);
+                } else {
+                    Company.$addColumn(header.column_name, {});
                 }
             });
 
             const data = await Company
                 .query()
-                .where('deleted',deleted)
+                .where('deleted', deleted)
 
             response.send({
                 status: 'success',
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -52,33 +52,33 @@ export default class CompaniesController {
         }
     }
 
-    public async indexMaster({request,response}: HttpContextContract){
-        try{
-            const deleted = request.param('deleted',false);
+    public async indexMaster({ request, response }: HttpContextContract) {
+        try {
+            const deleted = request.param('deleted', false);
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies');
+                .where('table_name', 'companies');
 
             headers.forEach(header => {
-                if(header.is_master){
-                    if(header.column_type == 'Date'){
-                        Company.$addColumn(header.column_name,CompaniesController.dateOptions);
-                    }else{
-                        Company.$addColumn(header.column_name,{});
+                if (header.is_master) {
+                    if (header.column_type == 'Date') {
+                        Company.$addColumn(header.column_name, CompaniesController.dateOptions);
+                    } else {
+                        Company.$addColumn(header.column_name, {});
                     }
-                }            
+                }
             });
 
             const data = await Company
                 .query()
-                .where('deleted',deleted);
+                .where('deleted', deleted);
 
             response.send({
                 status: 'success',
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -88,39 +88,39 @@ export default class CompaniesController {
         }
     }
 
-    public async get({request,response}: HttpContextContract){
-        try{
+    public async get({ request, response }: HttpContextContract) {
+        try {
             const payload = request.params()
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies')
+                .where('table_name', 'companies')
 
             headers.forEach(header => {
-                if(header.column_type == 'Date'){
-                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
-                }else{
-                    Company.$addColumn(header.column_name,{});
+                if (header.column_type == 'Date') {
+                    Company.$addColumn(header.column_name, CompaniesController.dateOptions);
+                } else {
+                    Company.$addColumn(header.column_name, {});
                 }
             });
 
             const data = await Company
                 .query()
-                .where('id',payload.id)
+                .where('id', payload.id)
                 .first()
 
-            if(data){
+            if (data) {
                 response.send({
                     status: 'success',
                     data: data
                 });
-            }else{
+            } else {
                 response.send({
                     status: 'error',
                     message: 'No data found'
                 })
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -130,12 +130,12 @@ export default class CompaniesController {
         }
     }
 
-    public async options({response}: HttpContextContract) {
-        try{
+    public async options({ response }: HttpContextContract) {
+        try {
             const data = await Company
                 .query()
-                .select('id','name')
-                .where('deleted',false)
+                .select('id', 'name')
+                .where('deleted', false)
 
             const serilizedData = data.map(e => e.serialize())
 
@@ -148,7 +148,7 @@ export default class CompaniesController {
 
             response.send(serilizedData);
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -158,19 +158,19 @@ export default class CompaniesController {
         }
     }
 
-    public async restore({request,response}: HttpContextContract){
-        try{
+    public async restore({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             await Company
                 .query()
-                .whereIn('id',payload.id)
-                .update({deleted: false});
+                .whereIn('id', payload.id)
+                .update({ deleted: false });
 
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -180,24 +180,24 @@ export default class CompaniesController {
         }
     }
 
-    public async create({request,response}: HttpContextContract){
-        try{
+    public async create({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
-                if(payload[e] == "null" || String(payload[e]) == ""){
+                if (payload[e] == "null" || String(payload[e]) == "") {
                     payload[e] = null;
                 }
             });
 
             const exists = await Company
                 .query()
-                .where('name',payload.name)
+                .where('name', payload.name)
                 .first();
 
-            if(exists){
+            if (exists) {
 
                 response.send({
                     status: 'error',
@@ -209,43 +209,43 @@ export default class CompaniesController {
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies');
+                .where('table_name', 'companies');
 
             headers.forEach(header => {
-                if(header.column_type == 'Date'){
-                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
-                }else{
-                    Company.$addColumn(header.column_name,{});
+                if (header.column_type == 'Date') {
+                    Company.$addColumn(header.column_name, CompaniesController.dateOptions);
+                } else {
+                    Company.$addColumn(header.column_name, {});
                 }
             });
 
             const inserted = await Company.create(payload);
 
             payload.id = inserted.id;
-            
+
             Object.values(files).forEach(file => {
                 const path = `/file/company/${inserted.id}/`;
                 const file_name = `${file.fieldName}.${file.extname}`
-                file.move(Application.makePath(path),{name:file_name});
-                payload[file.fieldName] = path+file_name;
+                file.move(Application.makePath(path), { name: file_name });
+                payload[file.fieldName] = path + file_name;
             });
 
             Object.keys(payload).forEach(key => {
-                if(payload[key] == 'null'){
+                if (payload[key] == 'null') {
                     payload[key] = null;
                 }
             });
 
             await Company
                 .query()
-                .where('id',inserted.id)
+                .where('id', inserted.id)
                 .update(payload);
 
             response.send({
                 status: 'success',
                 data: payload
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -255,24 +255,24 @@ export default class CompaniesController {
         }
     }
 
-    public async update({request,response}: HttpContextContract){
-        try{
+    public async update({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
-                if(payload[e] == "null" || String(payload[e]) == ""){
+                if (payload[e] == "null" || String(payload[e]) == "") {
                     payload[e] = null;
                 }
             });
 
             const exists = await Company
                 .query()
-                .where('name',payload.name)
+                .where('name', payload.name)
                 .first();
 
-            if(exists && exists?.id != payload.id){
+            if (exists && exists?.id != payload.id) {
 
                 response.send({
                     status: 'error',
@@ -284,47 +284,47 @@ export default class CompaniesController {
 
             const headers = await MasterTemplate
                 .query()
-                .where('table_name','companies');
+                .where('table_name', 'companies');
 
             headers.forEach(header => {
-                if(header.column_type == 'Date'){
-                    Company.$addColumn(header.column_name,CompaniesController.dateOptions);
-                }else{
-                    Company.$addColumn(header.column_name,{});
+                if (header.column_type == 'Date') {
+                    Company.$addColumn(header.column_name, CompaniesController.dateOptions);
+                } else {
+                    Company.$addColumn(header.column_name, {});
                 }
             });
 
             const old = await Company
                 .query()
-                .where('id',payload.id)
+                .where('id', payload.id)
                 .first()
 
             Object.values(files).forEach(file => {
                 const path = `/file/company/${payload.id}/`;
                 const file_name = `${file.fieldName}.${file.extname}`
 
-                try{
+                try {
                     fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
-                }catch(err){}
+                } catch (err) { }
 
-                file.move(Application.makePath(path),{name:file_name});
-                payload[file.fieldName] = path+file_name;
+                file.move(Application.makePath(path), { name: file_name });
+                payload[file.fieldName] = path + file_name;
             });
 
             Object.keys(payload).forEach(key => {
-                if(payload[key] == 'null'){
+                if (payload[key] == 'null') {
                     payload[key] = null;
                 }
             });
 
-            headers.forEach(header=>{
+            headers.forEach(header => {
                 //Delete null files
-                if(header.column_type == 'File'){
-                    if(old?.[header.column_name]){
-                        if(!payload[header.column_name]){
-                            try{
+                if (header.column_type == 'File') {
+                    if (old?.[header.column_name]) {
+                        if (!payload[header.column_name]) {
+                            try {
                                 fs.unlinkSync(Application.makePath(old[header.column_name]));
-                            }catch(err){}
+                            } catch (err) { }
                         }
                     }
                 }
@@ -332,7 +332,7 @@ export default class CompaniesController {
 
             await Company
                 .query()
-                .where('id',payload.id)
+                .where('id', payload.id)
                 .update(payload);
 
             response.send({
@@ -340,7 +340,7 @@ export default class CompaniesController {
                 data: payload
             });
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -350,19 +350,19 @@ export default class CompaniesController {
         }
     }
 
-    public async remove({request,response}: HttpContextContract){
-        try{
+    public async remove({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             await Company
                 .query()
-                .whereIn('id',payload.id)
-                .update({deleted: true});
+                .whereIn('id', payload.id)
+                .update({ deleted: true });
 
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -372,26 +372,26 @@ export default class CompaniesController {
         }
     }
 
-    public async destroy({request,response}: HttpContextContract){
-        try{
+    public async destroy({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
             //delete folders for above companies
             payload.id.forEach(id => {
-                try{
-                    fs.rmSync(Application.makePath(`/file/company/${id}`),{recursive: true, force: true});
-                }catch{}
+                try {
+                    fs.rmSync(Application.makePath(`/file/company/${id}`), { recursive: true, force: true });
+                } catch { }
             });
 
             await Company
                 .query()
-                .whereIn('id',payload.id)
+                .whereIn('id', payload.id)
                 .delete();
-            
+
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

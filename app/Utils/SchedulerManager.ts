@@ -15,9 +15,9 @@ import RegisterTemplate from 'App/Models/RegisterTemplate';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 import { DateTime } from 'luxon';
 
-export default class SchedulerManager{
-    
-    static async RunSchedulers(){
+export default class SchedulerManager {
+
+    static async RunSchedulers() {
 
         /**
          * Priorities
@@ -28,15 +28,15 @@ export default class SchedulerManager{
          * 5. Every Financial Year
          * 6. Create Tasks & Add Entryies
          */
-        
-        try{
-            const {default: Scheduler} = await import('App/Models/Scheduler');
+
+        try {
+            const { default: Scheduler } = await import('App/Models/Scheduler');
 
             const currentDate = new Date().toISOString().slice(0, 10);
 
             const scheduled_jobs = await Scheduler
                 .query()
-                .where('next','<=',currentDate)
+                .where('next', '<=', currentDate)
                 .orderBy('type', 'asc');
 
             const rotate_registers: Scheduler[] = [];
@@ -47,7 +47,7 @@ export default class SchedulerManager{
             let every_financial_year = false;
 
             scheduled_jobs.forEach(job => {
-                switch(job.type){
+                switch (job.type) {
                     case 1:// Rotate Registers
                         rotate_registers.push(job);
                         break;
@@ -79,27 +79,27 @@ export default class SchedulerManager{
             SchedulerManager.RotateRegisters(rotate_registers);
 
             // 3
-            if(delete_data){
+            if (delete_data) {
                 SchedulerManager.DeleteData();
             }
-            
+
             // 4
-            if(archive_data){
+            if (archive_data) {
                 SchedulerManager.ArchiveData();
             }
 
             // 5
-            if(every_financial_year){
+            if (every_financial_year) {
                 SchedulerManager.DeleteData();
                 SchedulerManager.ArchiveData();
                 SchedulerManager.everyFinancialYear();
             }
-            
+
             // 6
             SchedulerManager.AddEntries(add_entries);
             SchedulerManager.CreateTasks(create_tasks);
-            
-        }catch{};
+
+        } catch { };
     }
 
     static async RotateRegisters(jobs: Scheduler[]) {
@@ -107,18 +107,18 @@ export default class SchedulerManager{
         const register_ids = jobs.map(e => e.register_id);
 
         const old_registers = await RegisterMaster
-                .query()
-                .whereIn('id', register_ids);
+            .query()
+            .whereIn('id', register_ids);
 
         const schedulers = await Scheduler
             .query()
-            .whereIn('register_id',register_ids);
+            .whereIn('register_id', register_ids);
 
         const register_templates = await RegisterTemplate
             .query()
-            .whereIn('table_id',register_ids);
-        
-        for await (const job of jobs){
+            .whereIn('table_id', register_ids);
+
+        for await (const job of jobs) {
 
             const old_register = old_registers.find(e => e.id == job.register_id) || new RegisterMaster();
             const scheduler = schedulers.find(e => e.register_id == old_register.id) || new Scheduler();
@@ -128,42 +128,42 @@ export default class SchedulerManager{
 
             let client_columns = "";
             let update_query_columns = "";
-            const serialized_columns: any = {table_id: old_register.id, columns: []};
+            const serialized_columns: any = { table_id: old_register.id, columns: [] };
 
             const random = Math.random().toString(36).substr(2, 8);
             const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
             //added random to avoid collision
-            const new_version = `${random} ${today} - ${next}` 
+            const new_version = `${random} ${today} - ${next}`
 
             //truncate old rollover table
             await Database.rawQuery(
                 "truncate table ?? restart identity",
-                [string.escapeHTML("rollover__register__"+old_register.name+old_register.version)]
+                [string.escapeHTML("rollover__register__" + old_register.name + old_register.version)]
             );
 
             //rename old rollover table
             await Database.rawQuery(
                 "alter table ?? rename to ??",
                 [
-                    string.escapeHTML("rollover__register__"+old_register.name+old_register.version),
-                    string.escapeHTML("rollover__register__"+old_register.name+new_version)
+                    string.escapeHTML("rollover__register__" + old_register.name + old_register.version),
+                    string.escapeHTML("rollover__register__" + old_register.name + new_version)
                 ]
             );
 
-            const select_rollover_column = rollover_register_columns.length ? ", "+rollover_register_columns.toString() : "";
+            const select_rollover_column = rollover_register_columns.length ? ", " + rollover_register_columns.toString() : "";
 
             //add data in new rollover table
             await Database.rawQuery(
                 `insert into ??(id, client_id ${string.escapeHTML(select_rollover_column)})
                 select id, client_id ${string.escapeHTML(select_rollover_column)} from ??`,
                 [
-                    string.escapeHTML("rollover__register__"+old_register.name+new_version),
-                    string.escapeHTML("register__"+old_register.name+old_register.version)
+                    string.escapeHTML("rollover__register__" + old_register.name + new_version),
+                    string.escapeHTML("register__" + old_register.name + old_register.version)
                 ]
             )
 
-            if(job.data?.["rotation_strategy"] == "archive"){ // archive old register
+            if (job.data?.["rotation_strategy"] == "archive") { // archive old register
 
                 //create new table
                 const new_reigster = await RegisterMaster
@@ -173,38 +173,38 @@ export default class SchedulerManager{
                         service_id: old_register.service_id,
                         active: true
                     });
-                
+
                 //create new table with same structure
                 await Database
                     .rawQuery(
                         `create table ?? (like ?? including all);`,
                         [
-                            string.escapeHTML("register__"+old_register.name+new_version),
-                            string.escapeHTML("register__"+old_register.name+old_register.version)
+                            string.escapeHTML("register__" + old_register.name + new_version),
+                            string.escapeHTML("register__" + old_register.name + old_register.version)
                         ]
                     );
 
                 // remap scheduler to new register
                 await Scheduler
                     .query()
-                    .update({"register_id": new_reigster.id})
+                    .update({ "register_id": new_reigster.id })
                     .where("id", scheduler.id);
 
                 // create archived register tempalte
                 register_template.forEach(column => {
-        
-                    if(column.client_column_id != null){
-                        client_columns += "add column client__"+column.column_name+" varchar,";
-                        update_query_columns += "client__"+column.column_name+" = s."+column.column_name+",";
+
+                    if (column.client_column_id != null) {
+                        client_columns += "add column client__" + column.column_name + " varchar,";
+                        update_query_columns += "client__" + column.column_name + " = s." + column.column_name + ",";
                     }
-        
+
                     serialized_columns
                         .columns
                         .push(column);
                 });
 
                 //convert array to object for storing in db
-                serialized_columns.columns = {data:serialized_columns.columns};
+                serialized_columns.columns = { data: serialized_columns.columns };
 
                 //add to db
                 await ArchivedRegisterTemplate.create(serialized_columns);
@@ -212,52 +212,52 @@ export default class SchedulerManager{
                 // remap existing register tempalte
                 await RegisterTemplate
                     .query()
-                    .update({'table_id': new_reigster.id})
+                    .update({ 'table_id': new_reigster.id })
                     .where('table_id', old_register.id);
 
                 // mark old register as inactive
                 await RegisterMaster
                     .query()
-                    .update({"active": false})
+                    .update({ "active": false })
                     .where("id", old_register.id);
 
                 //check if there are any client linked columns
-                if(update_query_columns?.length && client_columns?.length){
+                if (update_query_columns?.length && client_columns?.length) {
 
-                    update_query_columns = update_query_columns.slice(0,-1);
-                    client_columns = client_columns.slice(0,-1);
+                    update_query_columns = update_query_columns.slice(0, -1);
+                    client_columns = client_columns.slice(0, -1);
 
                     //add client link columns to register
-                    await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name+old_register.version)}" ${client_columns}`);
-                    
+                    await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name + old_register.version)}" ${client_columns}`);
+
                     //add data to old register
                     await Database.rawQuery(`
-                        update "register__${string.escapeHTML(old_register.name+old_register.version)}"
+                        update "register__${string.escapeHTML(old_register.name + old_register.version)}"
                         set ${update_query_columns}
                         from clients s
                         where s.id = client_id
                     `);
                 }
 
-            }else{ // delete old register
+            } else { // delete old register
 
                 //truncate old table
                 await Database.rawQuery(
                     "truncate table ?? restart identity",
-                    [string.escapeHTML("register__"+old_register.name+old_register.version)]
+                    [string.escapeHTML("register__" + old_register.name + old_register.version)]
                 );
 
                 //rename old table
                 await Database.rawQuery(
                     "alter table ?? rename to ??",
-                    [string.escapeHTML("register__"+old_register.name+old_register.version)
-                    ,string.escapeHTML("register__"+old_register.name+new_version)]
+                    [string.escapeHTML("register__" + old_register.name + old_register.version)
+                        , string.escapeHTML("register__" + old_register.name + new_version)]
                 );
 
                 //update entry in register master
                 await RegisterMaster
                     .query()
-                    .update({"version": old_register.version})
+                    .update({ "version": old_register.version })
                     .where('id', old_register.id);
 
             }
@@ -270,21 +270,21 @@ export default class SchedulerManager{
 
         await ArchivedInvoice
             .query()
-            .where('date','<',StringUtils.getPreviousFinancialYearStart())
+            .where('date', '<', StringUtils.getPreviousFinancialYearStart())
             .delete();
 
         //delete 2 year old tasks
         await ArchivedTask
             .query()
-            .where('created','<',StringUtils.getPreviousFinancialYearStart())
+            .where('created', '<', StringUtils.getPreviousFinancialYearStart())
             .delete();
     }
 
-    static async everyFinancialYear(){
+    static async everyFinancialYear() {
         //reset invoice numbers
         await Company
             .query()
-            .update({'invoice_counter': 0});
+            .update({ 'invoice_counter': 0 });
     }
 
     static async ArchiveData() {
@@ -297,8 +297,8 @@ export default class SchedulerManager{
         //get all completed tasks older than current financial year
         const old_tasks = await Task
             .query()
-            .where('created','<',StringUtils.getCurrentFinancialYearStart())
-            .where('status',4)
+            .where('created', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('status', 4)
             .where('billed', true)
             .preload('assigned_user', query => {
                 query.select('username');
@@ -308,7 +308,7 @@ export default class SchedulerManager{
             })
             .preload('client', query => {
                 query
-                    .select('name','group_id')
+                    .select('name', 'group_id')
                     .preload('group', query2 => {
                         query2.select('name');
                     });
@@ -317,11 +317,11 @@ export default class SchedulerManager{
         //get all paid invoices older than current financial year
         const old_invoices = await Invoice
             .query()
-            .where('date','<',StringUtils.getCurrentFinancialYearStart())
+            .where('date', '<', StringUtils.getCurrentFinancialYearStart())
             .where('paid', true)
             .preload('client', query => {
                 query
-                    .select('name','group_id')
+                    .select('name', 'group_id')
                     .preload('group', query2 => {
                         query2.select('name');
                     });
@@ -374,14 +374,14 @@ export default class SchedulerManager{
         //remove tasks from active table
         await Task
             .query()
-            .where('created','<',StringUtils.getCurrentFinancialYearStart())
-            .where('status',4)
+            .where('created', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('status', 4)
             .delete();
 
         //remove invoices from active table
         await Invoice
             .query()
-            .where('date','<',StringUtils.getCurrentFinancialYearStart())
+            .where('date', '<', StringUtils.getCurrentFinancialYearStart())
             .where('paid', true)
             .delete();
     }
@@ -396,13 +396,13 @@ export default class SchedulerManager{
 
         const services = await Service
             .query()
-            .select('id','template_id')
-            .whereIn('id',service_ids);
+            .select('id', 'template_id')
+            .whereIn('id', service_ids);
 
         //registers
         const registers = await RegisterMaster
             .query()
-            .select('id','name','version', 'service_id')
+            .select('id', 'name', 'version', 'service_id')
             .whereIn('service_id', service_ids)
             .where('active', true);
 
@@ -410,7 +410,7 @@ export default class SchedulerManager{
 
         const rollover_columns = await RegisterTemplate
             .query()
-            .select('id','column_name','table_id', 'rollover')
+            .select('id', 'column_name', 'table_id', 'rollover')
             .whereIn('register_id', register_ids);
 
         registers.forEach(register => {
@@ -430,7 +430,7 @@ export default class SchedulerManager{
                 const data = {
                     client_id: job.client_id
                 };
-                
+
                 RegisterEntries[register_table_name].push(data);
             });
 
@@ -438,28 +438,28 @@ export default class SchedulerManager{
 
         //foreach doesn't work
         //insert data into registers
-        for await(const table_name of Object.keys(RegisterEntries)){
+        for await (const table_name of Object.keys(RegisterEntries)) {
             DynamicRegister.table = table_name;
             await DynamicRegister.createMany(RegisterEntries[table_name]);
         }
     }
 
-    static async CreateTasks(jobs: Scheduler[]){
+    static async CreateTasks(jobs: Scheduler[]) {
 
         //get services
         const service_ids = jobs.map(job => job.service_id);
 
         const services = await Service
             .query()
-            .select('id','template_id')
-            .whereIn('id',service_ids);
+            .select('id', 'template_id')
+            .whereIn('id', service_ids);
 
         //get templates
         const template_ids = services.map(e => e.template_id);
-        
+
         const templates = await TaskTemplate
             .query()
-            .whereIn('id',template_ids);
+            .whereIn('id', template_ids);
 
         const tasks: Task[] = [];
 

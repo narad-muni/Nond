@@ -18,7 +18,7 @@ export default class Lead extends BaseModel {
     @column()
     public assigned_to: number
 
-    @belongsTo(() => Employee,{
+    @belongsTo(() => Employee, {
         foreignKey: 'assigned_to',
     })
     public assigned_user: BelongsTo<typeof Employee>

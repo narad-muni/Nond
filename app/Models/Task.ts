@@ -10,16 +10,16 @@ export default class Task extends BaseModel {
 
     @column()
     public assigned_to: number
-    
+
     @column()
     public title: string
 
     @column()
     public client_id: number
-    
+
     @column()
     public description: string
-    
+
     @column()
     public status: number
 
@@ -31,24 +31,24 @@ export default class Task extends BaseModel {
 
     @column()
     public billed: boolean
-    
+
     @column.date({
-        autoCreate:true,
+        autoCreate: true,
         serialize: (value: DateTime) => value?.toLocaleString(DateTime.DATE_MED),
     })
     public created: DateTime
-    
-    @belongsTo(() => Service,{
+
+    @belongsTo(() => Service, {
         foreignKey: 'service_id'
     })
     public service: BelongsTo<typeof Service>
 
-    @belongsTo(() => Client,{
+    @belongsTo(() => Client, {
         foreignKey: 'client_id'
     })
     public client: BelongsTo<typeof Client>
 
-    @belongsTo(() => Employee,{
+    @belongsTo(() => Employee, {
         foreignKey: 'assigned_to'
     })
     public assigned_user: BelongsTo<typeof Employee>

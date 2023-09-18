@@ -11,7 +11,7 @@ export default class DynamicRegister extends BaseModel {
     @column()
     public client_id: number
 
-    @belongsTo(() => Client,{
+    @belongsTo(() => Client, {
         foreignKey: 'client_id'
     })
     public __client: BelongsTo<typeof Client>

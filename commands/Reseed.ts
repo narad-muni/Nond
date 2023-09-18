@@ -15,26 +15,26 @@ export default class Reseed extends BaseCommand {
     public static settings = {
         /**
          * Set the following value to true, if you want to load the application
-         * before running the command. Don't forget to call `node ace generate:manifest` 
+         * before running the command. Don't forget to call `node ace generate:manifest`
          * afterwards.
          */
         loadApp: true,
 
         /**
          * Set the following value to true, if you want this command to keep running until
-         * you manually decide to exit the process. Don't forget to call 
+         * you manually decide to exit the process. Don't forget to call
          * `node ace generate:manifest` afterwards.
          */
         stayAlive: false,
     }
 
-    public async initialize(){
+    public async initialize() {
 
         const { default: Employee } = await import('App/Models/Employee');
         const { default: Role } = await import('App/Models/Role');
-        const {default: Service} = await import('App/Models/Service');
-        const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
-        const {default: Scheduler} = await import('App/Models/Scheduler');
+        const { default: Service } = await import('App/Models/Service');
+        const { default: TaskTemplate } = await import('App/Models/TaskTemplate');
+        const { default: Scheduler } = await import('App/Models/Scheduler');
 
         await Employee.create({
             id: 0,
@@ -46,7 +46,7 @@ export default class Reseed extends BaseCommand {
 
         await Scheduler.create({
             id: -3,
-            data:{"info":"delete data"},
+            data: { "info": "delete data" },
             type: 2,
             next: DateTime.now(),
             frequency: '3 months'
@@ -54,7 +54,7 @@ export default class Reseed extends BaseCommand {
 
         await Scheduler.create({
             id: -2,
-            data:{"info":"archive data"},
+            data: { "info": "archive data" },
             type: 3,
             next: DateTime.now(),
             frequency: '3 months'
@@ -62,7 +62,7 @@ export default class Reseed extends BaseCommand {
 
         await Scheduler.create({
             id: -1,
-            data:{"info":"every financial year"},
+            data: { "info": "every financial year" },
             type: 4,
             next: DateTime.fromISO('2023-01-04'),
             frequency: '1 year'
@@ -80,7 +80,7 @@ export default class Reseed extends BaseCommand {
 
         await Service.create({
             id: -1,
-            hsn:0,
+            hsn: 0,
             name: 'Others',
             template_id: -1
         });
@@ -88,7 +88,7 @@ export default class Reseed extends BaseCommand {
         await Role.create({
             id: -2,
             name: 'viewer',
-            read: {"task":true},
+            read: { "task": true },
             create: {},
             update: {},
             remove: {},
@@ -98,30 +98,30 @@ export default class Reseed extends BaseCommand {
         await Role.create({
             id: -1,
             name: 'admin',
-            read: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            create: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            update: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
-            remove: {"client":true,"company":true,"employee":true},
-            destroy: {"client":true,"archived_register":true,"register_master":true,"service":true,"company":true,"employee":true,"register_template":true,"master_template":true,"task_template":true,"register":true,"role":true,"task":true,"lead":true,"invoice":true},
+            read: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
+            create: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
+            update: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
+            remove: { "client": true, "company": true, "employee": true },
+            destroy: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
         });
 
     }
 
-    public async de_initialize(){
+    public async de_initialize() {
 
         const { default: Employee } = await import('App/Models/Employee');
         const { default: Role } = await import('App/Models/Role');
-        const {default: Service} = await import('App/Models/Service');
-        const {default: TaskTemplate} = await import('App/Models/TaskTemplate');
-        const {default: Scheduler} = await import('App/Models/Scheduler');
-            
-        const user = await Employee.findBy('id',0);
-        const scheduler = await Scheduler.findBy('id',0);
-        const role1 = await Role.findBy('id',0);
-        const role2 = await Role.findBy('id',1);
-        const service = await Service.findBy('id',0);
-        const service_others = await Service.findBy('id',-1);
-        const task_template = await TaskTemplate.findBy('id',0);
+        const { default: Service } = await import('App/Models/Service');
+        const { default: TaskTemplate } = await import('App/Models/TaskTemplate');
+        const { default: Scheduler } = await import('App/Models/Scheduler');
+
+        const user = await Employee.findBy('id', 0);
+        const scheduler = await Scheduler.findBy('id', 0);
+        const role1 = await Role.findBy('id', 0);
+        const role2 = await Role.findBy('id', 1);
+        const service = await Service.findBy('id', 0);
+        const service_others = await Service.findBy('id', -1);
+        const task_template = await TaskTemplate.findBy('id', 0);
 
         await user?.delete();
         await scheduler?.delete();

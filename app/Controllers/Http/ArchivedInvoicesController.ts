@@ -2,8 +2,8 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import ArchivedInvoice from 'App/Models/ArchivedInvoice';
 
 export default class ArchivedInvoicesController {
-    public async index({response}: HttpContextContract){
-        try{
+    public async index({ response }: HttpContextContract) {
+        try {
 
             let invoices = await ArchivedInvoice
                 .query();
@@ -13,7 +13,7 @@ export default class ArchivedInvoicesController {
                 data: await invoices
             });
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -23,14 +23,14 @@ export default class ArchivedInvoicesController {
         }
     }
 
-    public async get({request,response}: HttpContextContract){
-        try{
+    public async get({ request, response }: HttpContextContract) {
+        try {
 
             const payload = request.params();
 
             const invoice = await ArchivedInvoice
                 .query()
-                .where('id',payload.id)
+                .where('id', payload.id)
                 .first()
 
             response.send({
@@ -38,7 +38,7 @@ export default class ArchivedInvoicesController {
                 data: invoice
             });
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

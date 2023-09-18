@@ -7,13 +7,13 @@ export default class TaskTemplate extends BaseModel {
 
     @column()
     public name: string
-    
+
     @column()
     public title: string
-    
+
     @column()
     public description: string
-    
+
     @column()
     public status: number
 
@@ -23,7 +23,7 @@ export default class TaskTemplate extends BaseModel {
     @column()
     public service_id: number
 
-    @belongsTo(() => Service,{
+    @belongsTo(() => Service, {
         foreignKey: 'service_id'
     })
     public service: BelongsTo<typeof Service>

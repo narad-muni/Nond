@@ -6,7 +6,7 @@ import Scheduler from 'App/Models/Scheduler';
 
 export default class ClientRequestsHandler {
 
-    public static indexClientHandler(request: RequestContract){
+    public static indexClientHandler(request: RequestContract) {
 
         // Schema
         interface indexClientSchema {
@@ -23,7 +23,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static indexMasterClientHandler(request: RequestContract){
+    public static indexMasterClientHandler(request: RequestContract) {
 
         // Schema
         interface indexMasterSchema {
@@ -40,8 +40,8 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static getClientHandler(request: RequestContract){
-       
+    public static getClientHandler(request: RequestContract) {
+
         // Schema
         interface getClientdySchema {
             id: number,
@@ -54,10 +54,10 @@ export default class ClientRequestsHandler {
         // Validation
         const validation = ClientValidator.getValidator(body);
 
-        return { validation, body }; 
+        return { validation, body };
     }
 
-    public static createClientHandler(request: RequestContract){
+    public static createClientHandler(request: RequestContract) {
         // Schema
         interface createClientSchema {
             client: Client,
@@ -73,7 +73,7 @@ export default class ClientRequestsHandler {
 
         // Clean Data
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || String(payload[e]) == ""){
+            if (payload[e] == "null" || String(payload[e]) == "") {
                 payload[e] = null;
             }
         });
@@ -85,7 +85,7 @@ export default class ClientRequestsHandler {
         delete payload._services;
 
         // Set client columns
-        for(const [field, value] of Object.entries(payload)){
+        for (const [field, value] of Object.entries(payload)) {
             client[field] = value;
         }
 
@@ -97,7 +97,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static updateClientHandler(request: RequestContract){
+    public static updateClientHandler(request: RequestContract) {
         // Schema
         interface updateClientSchema {
             client: Client,
@@ -113,7 +113,7 @@ export default class ClientRequestsHandler {
 
         // Clean Data
         Object.keys(payload).forEach(e => {
-            if(payload[e] == "null" || String(payload[e]) == ""){
+            if (payload[e] == "null" || String(payload[e]) == "") {
                 payload[e] = null;
             }
         });
@@ -128,7 +128,7 @@ export default class ClientRequestsHandler {
         delete payload.group;
 
         // Set client columns
-        for(const [field, value] of Object.entries(payload)){
+        for (const [field, value] of Object.entries(payload)) {
             client[field] = value;
         }
 
@@ -140,7 +140,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static bulkServiceUpdateClientHandler(request: RequestContract){
+    public static bulkServiceUpdateClientHandler(request: RequestContract) {
         // Schema
         interface bulkServiceUpdateClientSchema {
             schedulers: Scheduler[],
@@ -162,7 +162,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static removeClientHandler(request: RequestContract){
+    public static removeClientHandler(request: RequestContract) {
         // Schema
         interface bulkServiceUpdateClientSchema {
             client_ids: number[]
@@ -180,7 +180,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static restoreClientHandler(request: RequestContract){
+    public static restoreClientHandler(request: RequestContract) {
         // Schema
         interface restoreClientSchema {
             client_ids: number[]
@@ -198,7 +198,7 @@ export default class ClientRequestsHandler {
         return { validation, body };
     }
 
-    public static deleteClientHandler(request: RequestContract){
+    public static deleteClientHandler(request: RequestContract) {
         // Schema
         interface deleteClientSchema {
             client_ids: number[]

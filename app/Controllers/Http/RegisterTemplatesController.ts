@@ -7,19 +7,19 @@ import MasterTemplate from 'App/Models/MasterTemplate';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 
 export default class RegisterTemplatesController {
-    public async index({request,response}: HttpContextContract) {
-        try{
+    public async index({ request, response }: HttpContextContract) {
+        try {
             const payload = request.params();
 
             const data = await RegisterTemplate
                 .query()
-                .where('table_id',payload.table_id);
+                .where('table_id', payload.table_id);
 
             response.send({
                 status: 'success',
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -29,20 +29,20 @@ export default class RegisterTemplatesController {
         }
     }
 
-    public async get({request,response}: HttpContextContract) {
-        try{
+    public async get({ request, response }: HttpContextContract) {
+        try {
             const payload = request.params();
 
             const data = await RegisterTemplate
-            .query()
-            .where('id',payload.id)
-            .first();
+                .query()
+                .where('id', payload.id)
+                .first();
 
             response.send({
                 status: 'success',
                 data: data
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -52,23 +52,23 @@ export default class RegisterTemplatesController {
         }
     }
 
-    public async options({request,response}: HttpContextContract){
-        try{
+    public async options({ request, response }: HttpContextContract) {
+        try {
             const payload = request.params();
 
             const data = await RegisterTemplate
                 .query()
-                .where('table_id',payload.table_id);
+                .where('table_id', payload.table_id);
 
-            if(data.length){
+            if (data.length) {
                 response.send({
                     status: 'success',
                     data: data
                 });
-            }else{
+            } else {
                 const data = await ArchivedRegisterTemplate
                     .query()
-                    .where('table_id',payload.table_id)
+                    .where('table_id', payload.table_id)
                     .first();
 
                 response.send({
@@ -77,7 +77,7 @@ export default class RegisterTemplatesController {
                 });
             }
 
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -87,36 +87,36 @@ export default class RegisterTemplatesController {
         }
     }
 
-    public async create({request,response}: HttpContextContract) {
-        try{
+    public async create({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
 
-            if(payload.client_column_id != null){//client column
-                
+            if (payload.client_column_id != null) {//client column
+
                 payload.master = true;
 
                 const exist = await RegisterTemplate
                     .query()
-                    .where('client_column_id',payload.client_column_id)
-                    .where('table_id',payload.table_id)
+                    .where('client_column_id', payload.client_column_id)
+                    .where('table_id', payload.table_id)
                     .first();
 
-                if(exist){
+                if (exist) {
                     response.send({
                         status: 'error',
                         message: 'column with same name already exixts'
                     });
-                }else{
-                    if(payload.client_column_id < 0){//default client columns
-                        const column_name_arr = ["Name","Email","GST",""];
+                } else {
+                    if (payload.client_column_id < 0) {//default client columns
+                        const column_name_arr = ["Name", "Email", "GST", ""];
 
                         payload.display_name = column_name_arr[column_name_arr.length + parseInt(payload.client_column_id)];
                         payload.column_name = string.snakeCase(payload.display_name);
                         payload.column_type = "Text";
-                    }else{//dynamic client columns
+                    } else {//dynamic client columns
                         const client_column = await MasterTemplate
                             .query()
-                            .where('id',payload.client_column_id)
+                            .where('id', payload.client_column_id)
                             .first();
 
                         payload.display_name = client_column?.display_name;
@@ -133,47 +133,47 @@ export default class RegisterTemplatesController {
                         data: payload
                     });
                 }
-            }else{//dynamic column
+            } else {//dynamic column
                 payload.column_name = string.snakeCase(payload.display_name);
 
                 const exist = await RegisterTemplate
                     .query()
-                    .where('column_name',payload.column_name)
-                    .where('table_id',payload.table_id)
+                    .where('column_name', payload.column_name)
+                    .where('table_id', payload.table_id)
                     .whereNull('client_column_id')
                     .first();
 
-                if(exist){
+                if (exist) {
                     response.send({
                         status: 'error',
                         message: 'column with same name already exixts'
                     });
-                }else{
+                } else {
                     let c_type: string;
-                    
+
                     const table = await RegisterMaster
                         .query()
-                        .select('name','version')
-                        .where('id',payload.table_id)
+                        .select('name', 'version')
+                        .where('id', payload.table_id)
                         .firstOrFail();
 
-                    if(payload.column_type == 'File' || payload.column_type == 'Text'){
+                    if (payload.column_type == 'File' || payload.column_type == 'Text') {
                         c_type = 'varchar(255)'
-                    }else if(payload.column_type == 'Checkbox'){
+                    } else if (payload.column_type == 'Checkbox') {
                         c_type = 'boolean'
-                    }else{
+                    } else {
                         c_type = 'date'
                     }
 
                     //add column in rollover
-                    if(payload.column_type == 'File'){
+                    if (payload.column_type == 'File') {
                         payload.rolled = false;
-                    }else if(payload.column_type != 'File' && payload.rollover){
+                    } else if (payload.column_type != 'File' && payload.rollover) {
                         await Database
                             .rawQuery(
-                                'alter table ?? add column ?? '+string.escapeHTML(c_type),
+                                'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                                 [
-                                    string.escapeHTML("rollover__register__"+table.name+table.version),
+                                    string.escapeHTML("rollover__register__" + table.name + table.version),
                                     payload.column_name
                                 ]
                             );
@@ -181,9 +181,9 @@ export default class RegisterTemplatesController {
 
                     await Database
                         .rawQuery(
-                            'alter table ?? add column ?? '+string.escapeHTML(c_type),
+                            'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                             [
-                                string.escapeHTML("register__"+table.name+table.version),
+                                string.escapeHTML("register__" + table.name + table.version),
                                 payload.column_name
                             ]
                         );
@@ -198,7 +198,7 @@ export default class RegisterTemplatesController {
                     });
                 }
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -208,35 +208,35 @@ export default class RegisterTemplatesController {
         }
     }
 
-    public async update({request,response}: HttpContextContract) {
-        try{
+    public async update({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
             payload.column_name = string.snakeCase(payload.display_name);
 
             const exist = await RegisterTemplate
                 .query()
-                .whereNot('id',payload.id)
-                .where('column_name',payload.column_name)
-                .where('table_id',payload.table_id)
+                .whereNot('id', payload.id)
+                .where('column_name', payload.column_name)
+                .where('table_id', payload.table_id)
                 .first();
 
-            if(exist){
+            if (exist) {
                 response.send({
                     status: 'error',
                     message: 'column with same name already exixts'
                 });
-            }else{
+            } else {
                 let c_type: string;
 
                 const old = await RegisterTemplate
                     .query()
-                    .where('id',payload.id)
+                    .where('id', payload.id)
                     .firstOrFail();
 
                 const table = await RegisterMaster
                     .query()
-                    .select('name','version')
-                    .where('id',payload.table_id)
+                    .select('name', 'version')
+                    .where('id', payload.table_id)
                     .firstOrFail();
 
 
@@ -248,17 +248,17 @@ export default class RegisterTemplatesController {
                 //create new column file_name
                 //new column has old data
                 //updating old column deletes new data
-                if(old.column_type == 'File'){
-                    if(payload.column_type != 'File'){
+                if (old.column_type == 'File') {
+                    if (payload.column_type != 'File') {
 
                         response.send({
                             status: "error",
-                            message: "Cannot change column of type File to "+payload.column_type
+                            message: "Cannot change column of type File to " + payload.column_type
                         });
 
                         return;
-                    }else if(old.column_name != payload.column_name){
-                        
+                    } else if (old.column_name != payload.column_name) {
+
                         response.send({
                             status: "error",
                             message: "Cannot rename column of type File"
@@ -268,62 +268,62 @@ export default class RegisterTemplatesController {
                     }
                 }
 
-                if(payload.column_type == 'File' || payload.column_type == 'Text'){
+                if (payload.column_type == 'File' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
-                }else if(payload.column_type == 'Checkbox'){
+                } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
-                }else{
+                } else {
                     c_type = 'date'
                 }
 
                 //files cannot be rolled over
-                if(payload.column_type == 'File'){
+                if (payload.column_type == 'File') {
                     payload.rollover = false;
                 }
 
                 //update in rollover column
-                if(old.rollover != payload.rollover){
+                if (old.rollover != payload.rollover) {
                     //add column in rollover table
-                    if(payload.rollover){
+                    if (payload.rollover) {
                         await Database
                             .rawQuery(
-                                'alter table ?? add column ?? '+string.escapeHTML(c_type),
+                                'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                                 [
-                                    string.escapeHTML("rollover__register__"+table.name+table.version),
+                                    string.escapeHTML("rollover__register__" + table.name + table.version),
                                     payload.column_name
                                 ]
                             );
-                    }else{
+                    } else {
                         await Database
-                            .rawQuery('alter table ?? drop column ??',[string.escapeHTML("rollover__register__"+table.name+table.version), payload.column_name]);
+                            .rawQuery('alter table ?? drop column ??', [string.escapeHTML("rollover__register__" + table.name + table.version), payload.column_name]);
                     }
                 }
 
-                if(old.column_name !== payload.column_name){
+                if (old.column_name !== payload.column_name) {
                     await Database
-                        .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__"+table.name+table.version), old.column_name, payload.column_name]);
+                        .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__" + table.name + table.version), old.column_name, payload.column_name]);
 
                     //update rollover table
-                    if(payload.column_type != 'File'){
+                    if (payload.column_type != 'File') {
                         await Database
-                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__"+table.name+table.version), old.column_name, payload.column_name]);
+                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__" + table.name + table.version), old.column_name, payload.column_name]);
                     }
                 }
 
-                if(old.column_type !== payload.column_type){
+                if (old.column_type !== payload.column_type) {
                     await Database
-                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__"+table.name+table.version), payload.column_name]);
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__" + table.name + table.version), payload.column_name]);
 
                     //update rollover table
-                    if(payload.column_type != 'File'){
+                    if (payload.column_type != 'File') {
                         await Database
-                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__"+table.name+table.version), old.column_name, payload.column_name]);
+                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
                     }
                 }
 
                 await RegisterTemplate
                     .query()
-                    .where('id',payload.id)
+                    .where('id', payload.id)
                     .update(payload)
 
                 response.send({
@@ -331,7 +331,7 @@ export default class RegisterTemplatesController {
                     data: payload
                 });
             }
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({
@@ -341,43 +341,43 @@ export default class RegisterTemplatesController {
         }
     }
 
-    public async destroy({request,response}: HttpContextContract) {
-        try{
+    public async destroy({ request, response }: HttpContextContract) {
+        try {
             const payload = request.all();
-            
+
             const columns = await RegisterTemplate
                 .query()
-                .whereIn('id',payload.id);
+                .whereIn('id', payload.id);
 
             const table = await RegisterMaster
                 .query()
-                .select('name','version')
-                .where('id',columns[0].table_id)
+                .select('name', 'version')
+                .where('id', columns[0].table_id)
                 .firstOrFail();
 
             await RegisterTemplate
                 .query()
-                .whereIn('id',payload.id)
+                .whereIn('id', payload.id)
                 .delete();
 
 
             for await (const column of columns) {
-                if(column.client_column_id == null){
-                    
-                    if(column.rollover){
+                if (column.client_column_id == null) {
+
+                    if (column.rollover) {
                         await Database
-                            .rawQuery('alter table ?? drop column ??',[string.escapeHTML("rollover__register__"+table.name+table.version), column.column_name]);
+                            .rawQuery('alter table ?? drop column ??', [string.escapeHTML("rollover__register__" + table.name + table.version), column.column_name]);
                     }
 
                     await Database
-                        .rawQuery('alter table ?? drop column ??',[string.escapeHTML("register__"+table.name+table.version), column.column_name]);
+                        .rawQuery('alter table ?? drop column ??', [string.escapeHTML("register__" + table.name + table.version), column.column_name]);
                 }
             };
 
             response.send({
                 status: 'success'
             });
-        }catch(e){
+        } catch (e) {
             console.log(e);
 
             response.send({

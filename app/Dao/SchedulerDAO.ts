@@ -1,17 +1,17 @@
 import Scheduler from 'App/Models/Scheduler';
 
-export default class SchedulerDAO{
-    public static async getSchedulersFromServiceJSON(serviceJSON: object, client_id: number){
+export default class SchedulerDAO {
+    public static async getSchedulersFromServiceJSON(serviceJSON: object, client_id: number) {
         const schedulers: Scheduler[] = [];
         const uncheckedSchedulers: Scheduler[] = [];
 
         //create new scheduler objects
-        for(const [service_id, service] of Object.entries(serviceJSON)){
+        for (const [service_id, service] of Object.entries(serviceJSON)) {
 
             const scheduler = new Scheduler();
 
             // Set id if this is existing entry
-            if(service.id){
+            if (service.id) {
                 scheduler.id = service.id;
             }
 
@@ -23,9 +23,9 @@ export default class SchedulerDAO{
             scheduler.frequency = service.frequency;
             scheduler.count = service.count;
 
-            if(service.subscribed){
+            if (service.subscribed) {
                 schedulers.push(scheduler);
-            }else{
+            } else {
                 uncheckedSchedulers.push(scheduler);
             }
         }
@@ -33,18 +33,18 @@ export default class SchedulerDAO{
         return { schedulers, uncheckedSchedulers };
     }
 
-    public static async createScheduler(scheduler: Scheduler): Promise<Scheduler>{
+    public static async createScheduler(scheduler: Scheduler): Promise<Scheduler> {
         return await Scheduler.create(scheduler);
     }
 
-    public static async createSchedulers(schedulers: Scheduler[]): Promise<Scheduler[]>{
+    public static async createSchedulers(schedulers: Scheduler[]): Promise<Scheduler[]> {
         return await Scheduler.createMany(schedulers);
     }
 
-    public static async createSchedulerForClients(client_ids: number[], scheduler: Scheduler): Promise<Scheduler[]>{
+    public static async createSchedulerForClients(client_ids: number[], scheduler: Scheduler): Promise<Scheduler[]> {
         const schedulers: Scheduler[] = [];
 
-        for(const client_id of client_ids){
+        for (const client_id of client_ids) {
             schedulers.push({
                 client_id: client_id,
                 type: 5,
@@ -57,11 +57,11 @@ export default class SchedulerDAO{
         return await Scheduler.createMany(schedulers);
     }
 
-    public static async createSchedulersForClients(client_ids: number[], schedulers: Scheduler[]): Promise<Scheduler[]>{
+    public static async createSchedulersForClients(client_ids: number[], schedulers: Scheduler[]): Promise<Scheduler[]> {
         const new_schedulers: Scheduler[] = [];
 
-        for(const client_id of client_ids){
-            for(const scheduler of Object.values(schedulers)){
+        for (const client_id of client_ids) {
+            for (const scheduler of Object.values(schedulers)) {
                 new_schedulers.push({
                     client_id: client_id,
                     type: 5,
@@ -75,14 +75,14 @@ export default class SchedulerDAO{
         return await Scheduler.createMany(new_schedulers);
     }
 
-    public static async deleteSchedulers(ids: number[]){
+    public static async deleteSchedulers(ids: number[]) {
         await Scheduler
             .query()
             .whereIn('id', ids)
             .delete();
     }
 
-    public static async deleteSchedulersByClientAndServiceId(client_ids: number[], service_ids: number[]){
+    public static async deleteSchedulersByClientAndServiceId(client_ids: number[], service_ids: number[]) {
         await Scheduler
             .query()
             .whereIn('client_id', client_ids)
@@ -90,29 +90,29 @@ export default class SchedulerDAO{
             .delete();
     }
 
-    public static async updateSchedulers(schedulers: Scheduler[]): Promise<Scheduler[]>{
+    public static async updateSchedulers(schedulers: Scheduler[]): Promise<Scheduler[]> {
         return await Scheduler
-                .updateOrCreateMany(
-                    'id',
-                    schedulers
-                );
+            .updateOrCreateMany(
+                'id',
+                schedulers
+            );
     }
 
-    public static async segregateSchedulers(schedulers: Scheduler[], uncheckedSchedulers: Scheduler[]){
+    public static async segregateSchedulers(schedulers: Scheduler[], uncheckedSchedulers: Scheduler[]) {
         const newSchedulers: Scheduler[] = [];
         const updatedSchedulers: Scheduler[] = [];
         const deletedSchedulerIds: number[] = [];
 
-        for(const scheduler of schedulers){
-            if(scheduler.id == null){
+        for (const scheduler of schedulers) {
+            if (scheduler.id == null) {
                 newSchedulers.push(scheduler);
-            }else{
+            } else {
                 updatedSchedulers.push(scheduler);
             }
         }
 
-        for(const scheduler of uncheckedSchedulers){
-            if(scheduler.id != null){
+        for (const scheduler of uncheckedSchedulers) {
+            if (scheduler.id != null) {
                 deletedSchedulerIds.push(scheduler.id);
             }
         }
@@ -120,7 +120,7 @@ export default class SchedulerDAO{
         return { newSchedulers, updatedSchedulers, deletedSchedulerIds }
     }
 
-    public static async deleteSchedulersByClientId(client_ids: number[]){
+    public static async deleteSchedulersByClientId(client_ids: number[]) {
         await Scheduler
             .query()
             .whereIn('client_id', client_ids)

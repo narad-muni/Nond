@@ -36,7 +36,7 @@ export default class Company extends BaseModel {
 
     @column()
     public IFSC: string
-    
+
     @column()
     public pan: string
 
@@ -66,25 +66,25 @@ export default class Company extends BaseModel {
 
     @column()
     public deleted: boolean
-  
+
 
     @beforeSave()
-    public static async process(company: Company){
-        if(company.$dirty.signature != null){
-            company.signature = '/file/company/'+company.id+'/signature'+company.signature;
+    public static async process(company: Company) {
+        if (company.$dirty.signature != null) {
+            company.signature = '/file/company/' + company.id + '/signature' + company.signature;
         }
 
-        if(company.$dirty.logo != null){
-            company.logo = '/file/company/'+company.id+'/logo'+company.logo;
+        if (company.$dirty.logo != null) {
+            company.logo = '/file/company/' + company.id + '/logo' + company.logo;
         }
     }
 
     @beforeDelete()
     public static async cascadeDelete(company: Company) {
         //delete files
-        try{
+        try {
             fs.removeSync(Application.makePath(`/file/company/${company.id}`));
-        }catch(err){}
+        } catch (err) { }
 
         //delete Invoices
         await Invoice

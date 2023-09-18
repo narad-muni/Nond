@@ -40,24 +40,24 @@ export default class Invoice extends BaseModel {
     })
     public date: DateTime
 
-    @belongsTo(() => Client,{
+    @belongsTo(() => Client, {
         foreignKey: 'client_id'
     })
     public client: BelongsTo<typeof Client>
 
-    @belongsTo(() => Company,{
+    @belongsTo(() => Company, {
         foreignKey: 'company_id'
     })
     public company: BelongsTo<typeof Company>
 
     @beforeCreate()
-    public static async generateNextInvoiceNumber(payload: Invoice){
+    public static async generateNextInvoiceNumber(payload: Invoice) {
 
         const company_details = await Company
             .query()
-            .where('id',payload.company_id)
-            .increment('invoice_counter',1)
-            .update({},['prefix','invoice_counter']);
+            .where('id', payload.company_id)
+            .increment('invoice_counter', 1)
+            .update({}, ['prefix', 'invoice_counter']);
 
         payload.id = company_details[0].prefix + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
 

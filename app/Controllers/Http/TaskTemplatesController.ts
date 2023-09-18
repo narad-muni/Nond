@@ -57,7 +57,7 @@ export default class TaskTemplatesController {
     public async options({response}: HttpContextContract){
         try{
             const data = await TaskTemplate.all()
-            
+
             const serilizedData = data.map(e => e.serialize())
 
             serilizedData.map(e => {

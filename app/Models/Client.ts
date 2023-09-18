@@ -36,17 +36,17 @@ export default class Client extends BaseModel {
     @column()
     public deleted: boolean
 
-    @hasMany(() => Scheduler,{
+    @hasMany(() => Scheduler, {
         foreignKey: 'client_id'
     })
     public services: HasMany<typeof Scheduler>
 
-    @belongsTo(() => Client,{
+    @belongsTo(() => Client, {
         foreignKey: 'group_id'
     })
     public group: BelongsTo<typeof Client>
 
-    @hasMany(() => Client,{
+    @hasMany(() => Client, {
         localKey: 'id',
         foreignKey: 'group_id'
     })
@@ -55,9 +55,9 @@ export default class Client extends BaseModel {
     @beforeDelete()
     public static async cascadeDelete(client: Client) {
         //delete files
-        try{
+        try {
             fs.removeSync(Application.makePath(`/file/client/${client.id}`));
-        }catch(err){}
+        } catch (err) { }
 
         //delete schedulers
         await Scheduler

@@ -3,7 +3,7 @@ import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 export default class extends BaseSchema {
     protected tableName = 'archived_invoices'
 
-    public async up () {
+    public async up() {
         this.schema.createTable(this.tableName, (table) => {
             table.string('id').primary();
             table.string('client');
@@ -18,7 +18,7 @@ export default class extends BaseSchema {
         })
     }
 
-    public async down () {
+    public async down() {
         this.schema.dropTable(this.tableName)
     }
 }
