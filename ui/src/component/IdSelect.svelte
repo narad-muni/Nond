@@ -22,7 +22,11 @@
       {/if}
     
       {#each items as { value, name }}
-        <option {value}>{value} : {name}</option>
+        {#if value}
+            <option {value}>{value} : {name}</option>
+        {:else}
+            <option {value}>{name}</option>
+        {/if}
       {:else}
         <slot />
       {/each}

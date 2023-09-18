@@ -65,7 +65,7 @@
             error = data.message;
             data = null;
         }else{
-            client_list = [{name:"Self",value:"Self"},...client_list];
+            client_list = [{name:"Self",value:null},...client_list];
 
             data = data.data;
             data.forEach((v) => {

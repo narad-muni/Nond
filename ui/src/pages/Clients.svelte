@@ -33,6 +33,7 @@
 
     let headers, services, all_services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
     let emptyCreatedObject;
+    let bulkServiceData, removeOldServices;
     let handler, rows;
     const frequency = [
         {name: "Daily", value:"1 day"},
@@ -77,7 +78,7 @@
             error = data.message;
             data = null;
         }else{
-            client_list = [{name:"Self",value:"Self"},...client_list];
+            client_list = [{name:"Self",value:null},...client_list];
 
             data = data.data;
             data.forEach((v) => {
@@ -175,13 +176,29 @@
         }
     }
 
+    function openBulkSetService(){
+        bulkServiceData = {};
+        removeOldServices = false;
+
+        //set services in created object
+        services.forEach(service => {
+            bulkServiceData[service.value] = {service_id:service.value}
+        });
+
+        bulkServiceModal = true;
+    }
+
     async function bulkSetService(){
 
-        setServiceObject.ids = Array.from(selectedRows);
+        const data = {
+            schedulers: bulkServiceData,
+            client_ids: Array.from(selectedRows),
+            remove_old: removeOldServices,
+        }
+        
+        const resp = await utils.put_json('/api/client/bulk_service_update/',data);
 
-        const resp = await utils.put_json('/api/client/bulk_service_update/',setServiceObject);
-
-        if(resp.status = 'success'){
+        if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
                 if (selectedRows.has(data[i].id)) {
                     data[i]._selected = false;
@@ -356,6 +373,7 @@
     }
 
     async function createData(){
+        console.log(createdObject);
         createdObject._services  = JSON.stringify(createdObject.services);
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
 
@@ -397,7 +415,7 @@
                 Create Tasks
             </Button>
 
-            <Button disabled={buttonDisabled} gradient color="purple" on:click={()=> bulkServiceModal = true}>
+            <Button disabled={buttonDisabled} gradient color="purple" on:click={openBulkSetService}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 7.125C2.25 6.504 2.754 6 3.375 6h6c.621 0 1.125.504 1.125 1.125v3.75c0 .621-.504 1.125-1.125 1.125h-6a1.125 1.125 0 01-1.125-1.125v-3.75zM14.25 8.625c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v8.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-8.25zM3.75 16.125c0-.621.504-1.125 1.125-1.125h5.25c.621 0 1.125.504 1.125 1.125v2.25c0 .621-.504 1.125-1.125 1.125h-5.25a1.125 1.125 0 01-1.125-1.125v-2.25z" />
                 </svg>                                           
@@ -664,32 +682,38 @@
 </Modal>
 
 <Modal bind:open={bulkServiceModal} size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={bulkSetService}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Set Services</h3>
-        <p class="md:col-span-2"><span class="text-red-400">*</span> This will overwrite existing service dates</p>
-        <Label class="space-y-2">
+    <form class="grid gap-6 mb-6 md:grid-cols-4" on:submit|preventDefault={bulkSetService}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-4">Set Services</h3>
+        
+        <p class="col-span-3 my-auto"><span class="text-red-400">*</span> This will overwrite existing service dates</p>
+
+        <Label class="my-auto">
+            <span>&nbsp;</span>
+            <Toggle bind:checked={removeOldServices} >Remove old services</Toggle>
+        </Label>
+        
+        <Label class="space-y-2 col-span-4">
             <span class="mb-2">Client Id's</span>
             <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
         </Label>
+        
+        <div class="col-span-4 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+            <h2 class="text-left">Services</h2>
+            <h2>Frequency</h2>
+            <h2>Next Date</h2>
+            <h2>Count</h2>
+        </div>
+        
+        {#each services as service}
+            <Checkbox bind:checked={bulkServiceData[service.value].subscribed}>{service.name}</Checkbox>
+            <Select required={bulkServiceData[service.value].subscribed} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
+            <SveltyPicker format="M d yyyy" required={bulkServiceData[service.value].subscribed} bind:value={bulkServiceData[service.value].next}/>
+            <Input min="1" required={bulkServiceData[service.value].subscribed} type="number" bind:value={bulkServiceData[service.value].count}/>
+        {/each}
 
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={setServiceObject.service_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={frequency} bind:value={setServiceObject.frequency}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Service</span>
-            <SveltyPicker required format="M d yyyy" bind:value={setServiceObject.next} />
-        </Label>
-
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <div class="col-span-4 grid gap-6 grid-cols-2">
             <Button type="submit" disabled={actionsIndex < 0} class="w-full">Set</Button>
-            <Button on:click={()=>{setServiceObject={},bulkServiceModal=false}} color="alternative" class="w-full">Close</Button>
+            <Button on:click={()=>{bulkServiceModal=false}} color="alternative" class="w-full">Close</Button>
         </div>
         
     </form>
