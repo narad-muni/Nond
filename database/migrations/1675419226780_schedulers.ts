@@ -11,6 +11,7 @@ export default class extends BaseSchema {
             table.string('frequency');
             table.json('data');
             table.integer('client_id');
+            table.integer('count');
             table.integer('service_id');
             table.integer('register_id');
         })

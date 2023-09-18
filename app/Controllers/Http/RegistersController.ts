@@ -6,6 +6,7 @@ import { string } from '@ioc:Adonis/Core/Helpers';
 import { DateTime } from 'luxon';
 import Application from '@ioc:Adonis/Core/Application';
 import fs from 'fs';
+import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser';
 import Client from 'App/Models/Client';
 
 export default class RegistersController {
@@ -215,7 +216,7 @@ export default class RegistersController {
         try{
             const payload = request.params();
             const data = request.all();
-            const files = request.allFiles();
+            const files = request.allFiles() as any as MultipartFileContract[];
             const client_columns: any[] = [];
 
             //setup dynamic register
@@ -292,7 +293,7 @@ export default class RegistersController {
         try{
             const payload = request.params();
             const data = request.all();
-            const files = request.allFiles();
+            const files = request.allFiles() as any as MultipartFileContract[];
             const client_columns: any[] = [];
 
             //setup dynamic register

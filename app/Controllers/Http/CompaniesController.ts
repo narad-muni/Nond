@@ -4,6 +4,7 @@ import Company from 'App/Models/Company';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import fs from 'fs';
 import { DateTime } from 'luxon';
+import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser';
 
 export default class CompaniesController {
 
@@ -182,7 +183,7 @@ export default class CompaniesController {
     public async create({request,response}: HttpContextContract){
         try{
             const payload = request.all();
-            const files = request.allFiles();
+            const files = request.allFiles() as any as MultipartFileContract[];
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
@@ -257,7 +258,7 @@ export default class CompaniesController {
     public async update({request,response}: HttpContextContract){
         try{
             const payload = request.all();
-            const files = request.allFiles();
+            const files = request.allFiles() as any as MultipartFileContract[];
 
             //set "null" to null
             Object.keys(payload).forEach(e => {

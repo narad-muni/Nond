@@ -43,3 +43,7 @@ add n entries in registers till scheduler date is more than today
 ------------------
 
 seperate logic into multiple files
+
+--------------------
+
+allow setting multiple service and toggle button for unsettign existing services

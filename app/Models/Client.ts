@@ -1,4 +1,4 @@
-import { BaseModel, BelongsTo, HasMany, beforeDelete, beforeSave, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, HasMany, beforeCreate, beforeDelete, beforeSave, belongsTo, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Scheduler from './Scheduler'
 import Task from './Task';
 import Invoice from './Invoice';
@@ -51,17 +51,6 @@ export default class Client extends BaseModel {
         foreignKey: 'group_id'
     })
     public subsidiary: HasMany<typeof Client>
-
-    @beforeSave()
-    public static async process(client: Client){
-        if(client.$dirty.signature != null){
-            client.signature = '/file/client/'+client.id+'/signature'+client.signature;
-        }
-
-        if(client.$dirty.logo != null){
-            client.logo = '/file/client/'+client.id+'/logo'+client.logo;
-        }
-    }
 
     @beforeDelete()
     public static async cascadeDelete(client: Client) {
