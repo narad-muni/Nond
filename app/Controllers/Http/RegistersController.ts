@@ -7,7 +7,7 @@ import { DateTime } from 'luxon';
 import Application from '@ioc:Adonis/Core/Application';
 import fs from 'fs';
 import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser';
-import Client from 'App/Models/Client';
+import TableManager from 'App/Utils/TableManager';
 
 export default class RegistersController {
 
@@ -23,6 +23,8 @@ export default class RegistersController {
 
     public async index({ request, response }: HttpContextContract) {
         try {
+            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
             const payload = request.params();
             const client_columns: any[] = [];
 
@@ -95,6 +97,8 @@ export default class RegistersController {
 
     public async indexMaster({ request, response }: HttpContextContract) {
         try {
+            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
             const payload = request.params();
             const client_columns: any[] = [];
 
@@ -214,6 +218,8 @@ export default class RegistersController {
 
     public async create({ request, response }: HttpContextContract) {
         try {
+            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
             const payload = request.params();
             const data = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];
@@ -291,6 +297,8 @@ export default class RegistersController {
 
     public async update({ request, response }: HttpContextContract) {
         try {
+            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
             const payload = request.params();
             const data = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];

@@ -1,8 +1,11 @@
 import { RequestContract } from '@ioc:Adonis/Core/Request';
 import ClientValidator from 'App/Validators/ClientValidator';
 import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser';
-import Client from 'App/Models/Client';
 import Scheduler from 'App/Models/Scheduler';
+
+import TableManager from 'App/Utils/TableManager';
+
+const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
 
 export default class ClientRequestsHandler {
 
@@ -60,12 +63,12 @@ export default class ClientRequestsHandler {
     public static createClientHandler(request: RequestContract) {
         // Schema
         interface createClientSchema {
-            client: Client,
+            client: typeof Client,
             files: MultipartFileContract[],
             services: object,
         }
         const body = {} as createClientSchema;
-        const client = {} as Client;
+        const client = {} as typeof Client;
 
         // Get Data
         const payload = request.all();
@@ -98,9 +101,12 @@ export default class ClientRequestsHandler {
     }
 
     public static updateClientHandler(request: RequestContract) {
+
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        
         // Schema
         interface updateClientSchema {
-            client: Client,
+            client: typeof Client,
             files: MultipartFileContract[],
             services: object,
         }

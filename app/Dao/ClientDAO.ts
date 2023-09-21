@@ -1,10 +1,13 @@
 import fs from 'fs';
 import { DateTime } from 'luxon';
 
-import Client from 'App/Models/Client';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import { MultipartFileContract } from '@ioc:Adonis/Core/BodyParser';
 import Application from '@ioc:Adonis/Core/Application';
+import TableManager from 'App/Utils/TableManager';
+
+// For type checking
+const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
 
 export default class ClientDAO {
 
@@ -19,6 +22,9 @@ export default class ClientDAO {
     }
 
     public static async getClientIdAndNameMap() {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         const clients = await Client
             .query()
             .select('id', 'name');
@@ -35,6 +41,9 @@ export default class ClientDAO {
     }
 
     public static async getClientById(id: number) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         const client = await Client
             .query()
             .preload('group', (query) => {
@@ -53,6 +62,9 @@ export default class ClientDAO {
     }
 
     public static async getDeletedClients() {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         const clients = await Client
             .query()
             .preload('group', (query) => {
@@ -64,6 +76,9 @@ export default class ClientDAO {
     }
 
     public static async getActiveClients() {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         const clients = await Client
             .query()
             .preload('group', (query) => {
@@ -75,6 +90,9 @@ export default class ClientDAO {
     }
 
     public static async getAllClients() {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         const clients = await Client
             .query()
             .preload('group', (query) => {
@@ -84,17 +102,10 @@ export default class ClientDAO {
         return clients;
     }
 
-    public static async setClientModelColumns(columns: MasterTemplate[]) {
-        columns.forEach(column => {
-            if (column.column_type == 'Date') {
-                Client.$addColumn(column.column_name, this.DateOptions);
-            } else {
-                Client.$addColumn(column.column_name, {});
-            }
-        });
-    }
+    public static async createClient(client: typeof Client): Promise<typeof Client> {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
 
-    public static async createClient(client: Client): Promise<Client> {
         const insertedClient = await Client.create(client);
 
         insertedClient.group_id = insertedClient.group_id || insertedClient.id;
@@ -104,11 +115,17 @@ export default class ClientDAO {
         return insertedClient;
 
     }
-    public static async createClients(clients: Client[]): Promise<Client[]> {
+    public static async createClients(clients: typeof Client[]): Promise<typeof Client[]> {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        
         return await Client.createMany(clients);
     }
 
-    public static async addClientFiles(client: Client, files: MultipartFileContract[]): Promise<Client> {
+    public static async addClientFiles(client: typeof Client, files: MultipartFileContract[]): Promise<typeof Client> {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        
         Object.values(files).forEach(file => {
             const path = `/file/client/${client.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`;
@@ -124,7 +141,7 @@ export default class ClientDAO {
         return await client.save();
     }
 
-    public static async removeDeletedClientFiles(columns: MasterTemplate[], updatedClient: Client, oldClient: Client | null) {
+    public static async removeDeletedClientFiles(columns: MasterTemplate[], updatedClient: typeof Client, oldClient: typeof Client | null) {
 
         columns.push(
             {
@@ -164,7 +181,10 @@ export default class ClientDAO {
         });
     }
 
-    public static async updateClient(client: Client): Promise<Client> {
+    public static async updateClient(client: typeof Client): Promise<typeof Client> {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        
         const updatedClient = await Client.findByOrFail('id', client.id);
 
         return await updatedClient
@@ -173,6 +193,9 @@ export default class ClientDAO {
     }
 
     public static async removeClientByIds(client_ids: number[]) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         await Client
             .query()
             .whereIn('id', client_ids)
@@ -180,6 +203,9 @@ export default class ClientDAO {
     }
 
     public static async restoreClientByIds(client_ids: number[]) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         await Client
             .query()
             .whereIn('id', client_ids)
@@ -187,6 +213,9 @@ export default class ClientDAO {
     }
 
     public static async deleteClients(client_ids: number[]) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+
         await Client
             .query()
             .whereIn('id', client_ids)
@@ -194,6 +223,9 @@ export default class ClientDAO {
     }
 
     public static async removeGroupsFromClients(group_ids: number[]) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        
         await Client
             .query()
             .whereIn('group_id', group_ids)

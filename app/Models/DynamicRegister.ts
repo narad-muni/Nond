@@ -1,5 +1,5 @@
-import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import Client from './Client'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
+import Client from './Client';
 
 export default class DynamicRegister extends BaseModel {
 

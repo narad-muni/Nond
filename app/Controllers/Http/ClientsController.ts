@@ -5,13 +5,15 @@ import ResponseUtils from 'App/Utils/ResponseUtils';
 
 import ClientRequestsHandler from 'App/RequestHandlers/ClientRequestHandler';
 
-import Client from 'App/Models/Client';
+import TableManager from 'App/Utils/TableManager';
 
 import ClientDAO from 'App/Dao/ClientDAO';
 import MasterTemplateDAO from 'App/Dao/MasterTemplateDAO';
 import SchedulerDAO from 'App/Dao/SchedulerDAO';
 import DynamicRegisterDAO from 'App/Dao/DynamicRegisterDAO';
 import RegisterMasterDAO from 'App/Dao/RegisterMasterDAO';
+
+const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
 
 export default class ClientsController {
 
@@ -27,7 +29,7 @@ export default class ClientsController {
 
     public async index({ request, response }: HttpContextContract) {
         try {
-            let data: Client[] = [];
+            let data: typeof Client[] = [];
             const { validation, body } = ClientRequestsHandler.indexClientHandler(request);
 
             // Request Validation
@@ -35,12 +37,6 @@ export default class ClientsController {
                 ResponseUtils.ErrorResponse(response, validation.error.details[0].message);
                 return;
             }
-
-            // Get Client Columns
-            const columns = await MasterTemplateDAO.getAllClientColumns();
-
-            // Set Client Columns
-            ClientDAO.setClientModelColumns(columns);
 
             // Get clients
             if (body.deleted) {
@@ -59,7 +55,7 @@ export default class ClientsController {
 
     public async indexMaster({ request, response }: HttpContextContract) {
         try {
-            let data: Client[] = [];
+            let data: typeof Client[] = [];
             const { validation, body } = ClientRequestsHandler.indexMasterClientHandler(request);
 
             // Request Validation
@@ -67,12 +63,6 @@ export default class ClientsController {
                 ResponseUtils.ErrorResponse(response, validation.error.details[0].message);
                 return;
             }
-
-            // Get Client Columns
-            const columns = await MasterTemplateDAO.getMasterClientColumns();
-
-            // Set Client Columns
-            ClientDAO.setClientModelColumns(columns);
 
             // Get clients
             if (body.deleted) {
@@ -91,7 +81,7 @@ export default class ClientsController {
 
     public async get({ request, response }: HttpContextContract) {
         try {
-            let data: Client | null;
+            let data: typeof Client | null;
             const { validation, body } = ClientRequestsHandler.getClientHandler(request);
 
             // Request Validation
@@ -99,12 +89,6 @@ export default class ClientsController {
                 ResponseUtils.ErrorResponse(response, validation.error.details[0].message);
                 return;
             }
-
-            // Get Client Columns
-            const columns = await MasterTemplateDAO.getAllClientColumns();
-
-            // Set Client Columns
-            ClientDAO.setClientModelColumns(columns);
 
             // Get client by id
             data = await ClientDAO.getClientById(body.id);
@@ -149,10 +133,6 @@ export default class ClientsController {
             const services = body.services;
             const client = body.client;
 
-            // set client columns TODO : will be changed.... to only set once and when schema changes
-            const columns = await MasterTemplateDAO.getAllClientColumns();
-            await ClientDAO.setClientModelColumns(columns);
-
             // Add client
             const insertedClient = await ClientDAO.createClient(client);
             // Create schedulers object from service json
@@ -189,8 +169,7 @@ export default class ClientsController {
             const oldClient = await ClientDAO.getClientById(client.id);
 
             // set client columns TODO : will be changed.... to only set once and when schema changes
-            const columns = await MasterTemplateDAO.getAllClientColumns();
-            await ClientDAO.setClientModelColumns(columns);
+            const columns = await MasterTemplateDAO.getAllColumns("clients");
 
             // Create schedulers object from service json
             const { schedulers, uncheckedSchedulers } = await SchedulerDAO.getSchedulersFromServiceJSON(services, client.id);

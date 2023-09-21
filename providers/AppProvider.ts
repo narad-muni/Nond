@@ -15,10 +15,14 @@ export default class AppProvider {
     public async ready () {
 
         const {default: SchedulerManager} = await import('App/Utils/SchedulerManager');
+        const {default: TableManager} = await import('App/Utils/TableManager');
         const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
+        // Set table classes with columns on start
+        await TableManager.init();
+
         // Trigger scheduler manager on start
-        SchedulerManager.RunSchedulers();
+        await SchedulerManager.RunSchedulers();
 
         //trigger scheduler after 24h if server is running continuously
         setInterval(SchedulerManager.RunSchedulers,dayInMilliseconds);

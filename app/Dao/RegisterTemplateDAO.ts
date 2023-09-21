@@ -1,8 +1,8 @@
 import { DateTime } from 'luxon';
 import { BaseModel } from '@ioc:Adonis/Lucid/Orm';
-import MasterTemplate from 'App/Models/MasterTemplate';
+import RegisterTemplate from "App/Models/RegisterTemplate";
 
-export default class MasterTemplateDAO {
+export default class RegisterTemplateDAO{
 
     public static dateOptions = {
         serialize: (value) => {
@@ -14,33 +14,33 @@ export default class MasterTemplateDAO {
         }
     }
 
-    public static async getAllColumns(table_name: string) {
-        const columns = await MasterTemplate
+    public static async getAllColumns(table_id: number) {
+        const columns = await RegisterTemplate
             .query()
-            .where('table_name', table_name);
+            .where('table_id', table_id);
 
         return columns;
     }
 
-    public static async getTemplateColumns(table_name: string) {
-        const columns = await MasterTemplate
+    public static async getTemplateColumns(table_id: number) {
+        const columns = await RegisterTemplate
             .query()
-            .where('is_rollover', true)
-            .where('table_name', table_name);
+            .where('rollover', true)
+            .where('table_id', table_id);
 
         return columns;
     }
 
-    public static async getMasterColumns(table_name: string) {
-        const columns = await MasterTemplate
+    public static async getMasterColumns(table_id: number) {
+        const columns = await RegisterTemplate
             .query()
-            .where('is_master', true)
-            .where('table_name', table_name);
+            .where('master', true)
+            .where('table_id', table_id);
 
         return columns;
     }
 
-    public static async setColumns(table: typeof BaseModel, columns: MasterTemplate[]){
+    public static async setColumns(table: typeof BaseModel, columns: RegisterTemplate[]){
         for(const column of columns) {
 
             if (column.column_type == 'Date') {
@@ -51,5 +51,4 @@ export default class MasterTemplateDAO {
 
         }
     }
-
 }

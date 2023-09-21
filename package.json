@@ -6,6 +6,7 @@
     "setup": "npm install && cd ui && npm install",
     "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently \"cd ui && npx vite\" \"node ace serve --watch\"",
     "dev-be": "node ace serve --watch",
+    "debug": "adonis serve --dev --debug",
     "db": "node ace migration:refresh && node ace reseed",
     "dev-fe": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite",
     "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd .. && node ace build --production --ignore-ts-errors",
