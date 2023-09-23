@@ -5,7 +5,7 @@ import Scheduler from 'App/Models/Scheduler';
 
 import TableManager from 'App/Utils/TableManager';
 
-const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
 export default class ClientRequestsHandler {
 
@@ -102,7 +102,7 @@ export default class ClientRequestsHandler {
 
     public static updateClientHandler(request: RequestContract) {
 
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         // Schema
         interface updateClientSchema {

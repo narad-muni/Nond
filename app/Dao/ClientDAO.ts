@@ -7,7 +7,7 @@ import Application from '@ioc:Adonis/Core/Application';
 import TableManager from 'App/Utils/TableManager';
 
 // For type checking
-const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
 export default class ClientDAO {
 
@@ -23,7 +23,7 @@ export default class ClientDAO {
 
     public static async getClientIdAndNameMap() {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const clients = await Client
             .query()
@@ -42,7 +42,7 @@ export default class ClientDAO {
 
     public static async getClientById(id: number) {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const client = await Client
             .query()
@@ -63,7 +63,7 @@ export default class ClientDAO {
 
     public static async getDeletedClients() {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const clients = await Client
             .query()
@@ -77,7 +77,7 @@ export default class ClientDAO {
 
     public static async getActiveClients() {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const clients = await Client
             .query()
@@ -91,7 +91,7 @@ export default class ClientDAO {
 
     public static async getAllClients() {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const clients = await Client
             .query()
@@ -104,7 +104,7 @@ export default class ClientDAO {
 
     public static async createClient(client: typeof Client): Promise<typeof Client> {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         const insertedClient = await Client.create(client);
 
@@ -117,14 +117,14 @@ export default class ClientDAO {
     }
     public static async createClients(clients: typeof Client[]): Promise<typeof Client[]> {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         return await Client.createMany(clients);
     }
 
     public static async addClientFiles(client: typeof Client, files: MultipartFileContract[]): Promise<typeof Client> {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         Object.values(files).forEach(file => {
             const path = `/file/client/${client.id}/`;
@@ -183,7 +183,7 @@ export default class ClientDAO {
 
     public static async updateClient(client: typeof Client): Promise<typeof Client> {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         const updatedClient = await Client.findByOrFail('id', client.id);
 
@@ -194,7 +194,7 @@ export default class ClientDAO {
 
     public static async removeClientByIds(client_ids: number[]) {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         await Client
             .query()
@@ -204,7 +204,7 @@ export default class ClientDAO {
 
     public static async restoreClientByIds(client_ids: number[]) {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         await Client
             .query()
@@ -214,7 +214,7 @@ export default class ClientDAO {
 
     public static async deleteClients(client_ids: number[]) {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
         await Client
             .query()
@@ -224,7 +224,7 @@ export default class ClientDAO {
 
     public static async removeGroupsFromClients(group_ids: number[]) {
         // Get models
-        const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         await Client
             .query()

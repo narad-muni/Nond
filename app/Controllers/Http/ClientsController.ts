@@ -1,5 +1,4 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext';
-import { DateTime } from 'luxon';
 
 import ResponseUtils from 'App/Utils/ResponseUtils';
 
@@ -13,19 +12,9 @@ import SchedulerDAO from 'App/Dao/SchedulerDAO';
 import DynamicRegisterDAO from 'App/Dao/DynamicRegisterDAO';
 import RegisterMasterDAO from 'App/Dao/RegisterMasterDAO';
 
-const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
 export default class ClientsController {
-
-    public static dateOptions = {
-        serialize: (value) => {
-            if (value) {
-                return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
-            } else {
-                return value
-            }
-        }
-    }
 
     public async index({ request, response }: HttpContextContract) {
         try {

@@ -77,7 +77,7 @@ export default class InvoicesController {
 
     public async create({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
             
             const payload = request.all();
 
@@ -114,7 +114,7 @@ export default class InvoicesController {
 
     public async update({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
             
             const payload = request.all();
             const hsn_gst = {};

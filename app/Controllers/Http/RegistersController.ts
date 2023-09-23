@@ -23,7 +23,7 @@ export default class RegistersController {
 
     public async index({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
             const client_columns: any[] = [];
@@ -97,7 +97,7 @@ export default class RegistersController {
 
     public async indexMaster({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
             const client_columns: any[] = [];
@@ -218,7 +218,7 @@ export default class RegistersController {
 
     public async create({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
             const data = request.all();
@@ -297,7 +297,7 @@ export default class RegistersController {
 
     public async update({ request, response }: HttpContextContract) {
         try {
-            const Client = TableManager.getTable('clients', TableManager.MODES.FULL);
+            const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
             const data = request.all();
