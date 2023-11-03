@@ -173,7 +173,6 @@ export default class TableManager {
 
     // @ts-ignore
     public static getTable(table_name: string, mode: typeof TableManager.MODE[keyof typeof TableManager.MODE]): BaseModel{
-        console.log("hi");
         let table;
 
         if(mode == TableManager.MODE.FULL){

@@ -220,12 +220,16 @@
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
+            client_list = await utils.get('/api/client/options');
+            client_list = client_list?.data || [];
+            
             resp.data._selected = data[actionsIndex]._selected;
 
             resp.data.group = client_list.find(e => e.value == resp.data.group_id);
 
             data[actionsIndex] = resp.data;
             handler.setRows(data);
+
             actionsModals = false;
         }else{
             error = resp.message || "";
