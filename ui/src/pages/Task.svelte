@@ -15,6 +15,7 @@
         Textarea,
         Select,
         Toggle,
+        Popover
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
@@ -404,13 +405,19 @@
                 Download
             </Button>
 
-            <Button disabled={buttonDisabled || billingFilter!=0} gradient color="blue" on:click={()=> billModal = true}>
+            <Button id="billTaskBtn" disabled={buttonDisabled || billingFilter!=0} gradient color="blue" on:click={()=> billModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 &nbsp;
                 Bill Tasks
             </Button>
+
+            {#if (buttonDisabled || billingFilter!=0)}
+                <Popover class="w-64 text-sm font-light " triggeredBy="#billTaskBtn">
+                    Toggle Not Billed To Enable
+                </Popover>
+            {/if}
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">

@@ -1,17 +1,15 @@
 pending stuff
 
-invoice send by email
-rollover columns in registers
-Multiple entires in registers
 Auto add fields in registers when added service
 Bulk assign tasks
 Assign tasks from register
 spent money in tasks
 Task time management
 Add users to register bulk
-clean code for pdf creation
 bulk update things
 check all filters and search boxes
+clean code for pdf creation
+invoice send by email
 -----
 
 rewrite whole app
@@ -24,17 +22,6 @@ change rollover files folder structure so that they can be renamed or deleted wh
 reports
 client access to view data
 add lines in tables
-
------------------
-
-
-rollover columns draft
-
-- keep a rollover table for each active register
-- update rollover columns in real time
-- truncate and add new data for each register when rotating
-get rollover column data if nth row is available, else first, else null
-- file columns cannot be rollover
 
 --------------------
 
