@@ -262,7 +262,7 @@
                                     <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 {/if}
                                 <TableBodyCell>
-                                    {table.name + " " + table.version || "-"}
+                                    {table.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.display_name || "-"}

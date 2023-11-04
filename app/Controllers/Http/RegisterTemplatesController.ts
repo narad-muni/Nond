@@ -308,7 +308,7 @@ export default class RegisterTemplatesController {
                     //update rollover table
                     if (payload.column_type != 'File') {
                         await Database
-                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__" + table.name + table.version), old.column_name, payload.column_name]);
+                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
                     }
                 }
 

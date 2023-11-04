@@ -448,20 +448,43 @@ export default class SchedulerManager {
 
                 let rollover_data = await DynamicRegister
                     .query()
-                    .where("client_id", job.client_id);
+                    .where("client_id", job.client_id)
+                    .orderBy("id");
+
+                DynamicRegister.table = register_table_name;
+
+                let prev_data = await DynamicRegister
+                    .query()
+                    .count('client_id as total')
+                    .where("client_id", job.client_id)
+                    .groupBy("client_id")
+                    .first();
+
+                const curr_count = prev_data?.["$extras"]?.total || 0;
 
                 for(let i = 0; i < job.count; i++){
 
                     const rollover_add = {};
 
-                    for(let i = 0; i < rollover_columns_map[register.id.toString()]?.length; i++){
+                    for(let j = 0; j < rollover_columns_map[register.id.toString()]?.length; j++){
 
-                        const column = rollover_columns_map[register.id.toString()][i];
+                        const column = rollover_columns_map[register.id.toString()][j];
 
-                        let data = rollover_data[i]?.[column.column_name];
+                        let data = null;
 
-                        if(data == null){
-                            data = rollover_data[0]?.[column.column_name];
+                        if(curr_count < rollover_data.length ){
+                            data = rollover_data[i + curr_count]?.[column.column_name];
+
+                            if(!data){
+                                data = rollover_data[curr_count]?.[column.column_name];
+                            }
+
+                        }else{
+                            data = rollover_data[i]?.[column.column_name];
+
+                            if(!data){
+                                data = rollover_data[0]?.[column.column_name];
+                            }
                         }
 
                         rollover_add[column.column_name] = data;
