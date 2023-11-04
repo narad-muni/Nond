@@ -257,7 +257,7 @@ export default class SchedulerManager {
                 //update entry in register master
                 await RegisterMaster
                     .query()
-                    .update({ "version": old_register.version })
+                    .update({ "version": new_version })
                     .where('id', old_register.id);
 
             }
@@ -387,8 +387,6 @@ export default class SchedulerManager {
     }
 
     static async AddEntries(jobs: Scheduler[]) {
-
-        const register_data = [];
         const RegisterEntries: object = {};
 
         //get services
@@ -408,38 +406,99 @@ export default class SchedulerManager {
 
         const register_ids = registers.map(e => e.id);
 
-        const rollover_columns = await RegisterTemplate
+        let rollover_columns = await RegisterTemplate
             .query()
             .select('id', 'column_name', 'table_id', 'rollover')
-            .whereIn('register_id', register_ids);
+            .whereIn('table_id', register_ids);
+
+        const rollover_columns_map = {};
+
+        rollover_columns.forEach(r_column => {
+            if(!(r_column.table_id in rollover_columns_map)){
+                rollover_columns_map[r_column.table_id] = [];
+            }
+
+            rollover_columns_map[r_column.table_id].push(r_column);
+
+        });
 
         registers.forEach(register => {
             RegisterEntries[string.escapeHTML("register__" + register?.name + register?.version)] = [];
         });
 
-        jobs.forEach(job => {
+        for(const job of jobs){
             const service = services.find(e => e.id == job.service_id);
 
             const data_registers = registers.filter(e => e.service_id == service?.id);
 
             //add entries to register array
-            data_registers.forEach(register => {
+            for(const register of data_registers) {
 
                 const register_table_name = string.escapeHTML("register__" + register?.name + register?.version);
+                const rollover_register_table_name = "rollover__" + register_table_name;
 
-                const data = {
-                    client_id: job.client_id
-                };
+                DynamicRegister.table = rollover_register_table_name;
 
-                RegisterEntries[register_table_name].push(data);
-            });
+                rollover_columns_map[register.id].forEach(col => {
 
-        });
+                    if(col.column_name != "client_id"){
+                        DynamicRegister.$addColumn(col.column_name, {});
+                    }
+                });
+
+                let rollover_data = await DynamicRegister
+                    .query()
+                    .where("client_id", job.client_id);
+
+                for(let i = 0; i < job.count; i++){
+
+                    const rollover_add = {};
+
+                    for(let i = 0; i < rollover_columns_map[register.id.toString()]?.length; i++){
+
+                        const column = rollover_columns_map[register.id.toString()][i];
+
+                        let data = rollover_data[i]?.[column.column_name];
+
+                        if(data == null){
+                            data = rollover_data[0]?.[column.column_name];
+                        }
+
+                        rollover_add[column.column_name] = data;
+                    }
+                    
+                    let data = {
+                        client_id: job.client_id,
+                    };
+
+                    data = Object.assign({}, data, rollover_add);
+
+                    RegisterEntries[register_table_name].push(data);
+                }
+            };
+
+        };
 
         //foreach doesn't work
         //insert data into registers
         for await (const table_name of Object.keys(RegisterEntries)) {
             DynamicRegister.table = table_name;
+
+            if(RegisterEntries[table_name].length == 0){
+                continue;
+            }
+
+            const column_data = RegisterEntries[table_name][0];
+
+
+            Object.keys(column_data).forEach(col => {
+
+                if(col != "client_id"){
+                    DynamicRegister.$addColumn(col, {});
+                }
+            });
+
+
             await DynamicRegister.createMany(RegisterEntries[table_name]);
         }
     }

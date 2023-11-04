@@ -91,10 +91,17 @@ export default class SchedulerDAO {
     }
 
     public static async updateSchedulers(schedulers: Scheduler[]): Promise<Scheduler[]> {
+
+        const scheduler_objects: any = [];
+
+        schedulers.forEach(scheduler => {
+            scheduler_objects.push(scheduler.serialize());
+        });
+
         return await Scheduler
             .updateOrCreateMany(
                 'id',
-                schedulers
+                scheduler_objects
             );
     }
 

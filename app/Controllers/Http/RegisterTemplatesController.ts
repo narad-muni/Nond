@@ -91,7 +91,7 @@ export default class RegisterTemplatesController {
         try {
             const payload = request.all();
 
-            if (payload.client_column_id != null) {//client column
+            if (payload.client_column_id != null && payload.client_column_id != "") {//client column
 
                 payload.master = true;
 
@@ -150,6 +150,8 @@ export default class RegisterTemplatesController {
                     });
                 } else {
                     let c_type: string;
+
+                    payload.client_column_id = null;
 
                     const table = await RegisterMaster
                         .query()
