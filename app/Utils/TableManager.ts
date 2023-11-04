@@ -29,9 +29,13 @@ export default class TableManager {
     static TemplateTableMap = new Map<string, BaseModel>();
 
     public static async init(){
-        await this.loadClientsTable();
-        await this.loadCompaniesTable();
-        await this.loadTables();
+        try{
+            await this.loadClientsTable();
+            await this.loadCompaniesTable();
+            await this.loadTables();
+        }catch(e){
+            console.log("Error initating tables ", e);
+        }
     }
 
     public static async loadClientsTable(){
