@@ -182,6 +182,52 @@ export default class TasksController {
         }
     }
 
+    public async bulk_update({ request, response }: HttpContextContract) {
+        try {
+            const payload = request.all();
+
+            //set "null" to null
+            Object.keys(payload).forEach(e => {
+                if (payload[e] == "null" || String(payload[e]) == "") {
+                    delete payload[e];
+                }
+            });
+
+            const ids = payload.ids;
+
+            delete payload.client;
+            delete payload.ids;
+            delete payload.assigned_user;
+            delete payload.service;
+
+            if(Object.keys(payload).length == 0){
+                response.send({
+                    status: 'success',
+                    data: payload
+                });
+                
+                return;
+            }
+
+            await Task
+                .query()
+                .whereIn('id', ids)
+                .update(payload);
+
+            response.send({
+                status: 'success',
+                data: payload
+            });
+        } catch (e) {
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
     //once billed, archive completed task, keep task for last 2 years
     public async bill({ request, response }: HttpContextContract) {
         try {

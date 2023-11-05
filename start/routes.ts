@@ -248,6 +248,7 @@ Route.group(() => {
             Route.post('/','TasksController.create');
 
             Route.put('/','TasksController.update');
+            Route.put('/bulk','TasksController.bulk_update');
 
             Route.put('/bill','TasksController.bill');
 

@@ -1,7 +1,6 @@
 pending stuff
 
 Auto add fields in registers when added service
-Bulk assign tasks
 Assign tasks from register
 spent money in tasks
 Task time management

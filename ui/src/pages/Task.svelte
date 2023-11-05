@@ -27,10 +27,10 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal, bulkUpdateModal;
     let selectedRows = new Set();
 
-    let data, createdObject = {priority:1,status:0}, clients, actionsIndex, actionsObject, userList, taskTemplates, services, companies, billTaskObject = {};
+    let data, createdObject = {priority:1,status:0}, bulkUpdateObject = {}, clients, actionsIndex, actionsObject, userList, taskTemplates, services, companies, billTaskObject = {};
     let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
@@ -225,7 +225,6 @@
         }else{
             error = resp.message || "";
         }
-        
     }
 
     async function deleteSelected(){
@@ -325,7 +324,9 @@
             resp.data._selected = false;
 
             resp.data.assigned_user = userList.find(e => e.value == resp.data.assigned_to);
-            resp.data.assigned_user.username = resp.data.assigned_user.name;
+            if(resp.data.assigned_user){
+                resp.data.assigned_user.username = resp.data.assigned_user.name;
+            }
 
             resp.data.client = clients.find(e => e.value == resp.data.client_id);
 
@@ -340,6 +341,35 @@
             handler.setRows(data);
             createModal = false;
             createdObject = {priority:1,status:0}
+        }else{
+            error = resp.message || "";
+        }
+    }
+
+    async function bulkUpdateData(){
+        bulkUpdateObject.ids = Array.from(selectedRows);
+
+        const resp = await utils.put_json('/api/task/bulk/',bulkUpdateObject);
+
+        if(resp.status == 'success'){
+            data = await utils.get('/api/task/'+statusFilter+'/'+billingFilter+'/'+selfTasks);
+
+            if(data.status != 'success'){
+                error = data.message;
+                data = null;
+            }else{
+                data = data.data;
+
+                data.forEach((v) => {
+                    v["_selected"] = false;
+                });
+
+                handler.setRows(data);
+                selectedRows = new Set();
+            }
+
+            bulkUpdateModal = false;
+            bulkUpdateObject = {};
         }else{
             error = resp.message || "";
         }
@@ -418,6 +448,14 @@
                     Toggle Not Billed To Enable
                 </Popover>
             {/if}
+
+            <Button disabled={buttonDisabled} gradient color="blue" on:click={()=> bulkUpdateModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                &nbsp;
+                Bulk Update
+            </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -530,9 +568,54 @@
     </div>
 </Modal>
 
+<Modal bind:open={bulkUpdateModal} placement="top-center" size="lg">
+    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={bulkUpdateData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">
+            Update Tasks
+            <small class="text-sm font-light">(Leave empty for unchanged)</small>
+        </h3>
+        <Label class="space-y-2 col-span-3">
+            <span>Template</span>
+            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
+        </Label>
+        <Label class="space-y-2 col-span-2">
+            <span>Title</span>
+            <Input type="text" placeholder="Title" bind:value={bulkUpdateObject.title}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Service</span>
+            <Select items={services} bind:value={bulkUpdateObject.service_id} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Client</span>
+            <IdSelect items={clients} bind:value={bulkUpdateObject.client_id}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Assigned To</span>
+            <Select items={userList} bind:value={bulkUpdateObject.assigned_to} />
+        </Label>
+        <Label class="space-y-2">
+            <span>Status</span>
+            <Select items={task_status} bind:value={bulkUpdateObject.status}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Priority</span>
+            <Select items={priority} bind:value={bulkUpdateObject.priority}/>
+        </Label>
+        <Label class="space-y-2 col-span-3">
+            <span>Description</span>
+            <Textarea placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
+        </Label>
+        <div class="col-span-2 grid gap-6 grid-cols-2">
+            <Button type="submit" class="w-full">Update</Button>
+            <Button on:click={()=>{bulkUpdateModal=false;bulkUpdateObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
+        </div>
+    </form>
+</Modal>
+
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Task</h3>
         <Label class="space-y-2 col-span-3">
             <span>Template</span>
             <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
@@ -574,7 +657,7 @@
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Entry</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Task</h3>
         <Label class="space-y-2 col-span-2">
             <span>Title</span>
             <Input type="text" placeholder="Title" bind:value={actionsObject.title}/>
