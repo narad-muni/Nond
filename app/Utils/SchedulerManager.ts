@@ -34,11 +34,6 @@ export default class SchedulerManager {
 
             const currentDate = new Date().toISOString().slice(0, 10);
 
-            const scheduled_jobs = await Scheduler
-                .query()
-                .where('next', '<=', currentDate)
-                .orderBy('type', 'asc');
-
             const rotate_registers: Scheduler[] = [];
             const add_entries: Scheduler[] = [];
             const create_tasks: Scheduler[] = [];
@@ -46,33 +41,44 @@ export default class SchedulerManager {
             let archive_data = false;
             let every_financial_year = false;
 
-            scheduled_jobs.forEach(job => {
-                switch (job.type) {
-                    case 1:// Rotate Registers
-                        rotate_registers.push(job);
-                        break;
-                    case 2:// Delete old Data
-                        delete_data = true;
-                        break;
-                    case 3:// Archive old Data
-                        archive_data = true;
-                        break;
-                    case 4:// every_financial_year
-                        every_financial_year = true;
-                        break;
-                    case 5:// Create Tasks & Add Entries in Register
-                        add_entries.push(job);
-                        create_tasks.push(job);
-                        break;
+            while(true){
+                const scheduled_jobs = await Scheduler
+                    .query()
+                    .where('next', '<=', currentDate)
+                    .orderBy('type', 'asc');
+
+                if(scheduled_jobs.length == 0){
+                    break;
                 }
-            });
 
-            // 1
-            //update the next date
-            await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
+                scheduled_jobs.forEach(job => {
+                    switch (job.type) {
+                        case 1:// Rotate Registers
+                            rotate_registers.push(job);
+                            break;
+                        case 2:// Delete old Data
+                            delete_data = true;
+                            break;
+                        case 3:// Archive old Data
+                            archive_data = true;
+                            break;
+                        case 4:// every_financial_year
+                            every_financial_year = true;
+                            break;
+                        case 5:// Create Tasks & Add Entries in Register
+                            add_entries.push(job);
+                            create_tasks.push(job);
+                            break;
+                    }
+                });
 
-            //if for multiple days task is not created, then set next date = tommorow
-            await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
+                // 1
+                //update the next date
+                await Database.rawQuery('update schedulers set "next" = "next" + cast(schedulers.frequency as interval) where "next" <= current_date');
+            }
+
+            // //if for multiple days task is not created, then set next date = tommorow
+            // await Database.rawQuery('update schedulers set "next" = current_date + interval \'1 day\' where "next" <= current_date');
 
             //updating schedulers before this gives us next date calculated by sql
             // 2
@@ -438,6 +444,8 @@ export default class SchedulerManager {
                 const rollover_register_table_name = "rollover__" + register_table_name;
 
                 DynamicRegister.table = rollover_register_table_name;
+
+                rollover_columns_map[register.id] = rollover_columns_map[register.id] || [];
 
                 rollover_columns_map[register.id].forEach(col => {
 
