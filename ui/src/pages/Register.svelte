@@ -289,7 +289,7 @@
 
         <div class="min-h-0 pl-4 mt-4">
             <DataTable {handler}>
-                <Table id="table">
+                <Table id="table" noborder={false}>
                     <thead>
                         <tr>
                             <th>
@@ -297,6 +297,7 @@
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="client_id">Client Id</Th>
+                            <Th {handler} orderBy="entry_on">Entry On</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
                                     <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
@@ -307,6 +308,7 @@
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client_id || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.entry_on || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
                                     <ThSearch {handler} filterBy={row => row[header.column_name]}/>
@@ -322,6 +324,7 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>{row.client_id || "-"}</TableBodyCell>
+                                <TableBodyCell>{row.entry_on || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.master}
                                         {#if header.client_column_id == null}
@@ -401,6 +404,11 @@
             <IdSelect required items={client_list} bind:value={createdObject.client_id} />
         </Label>
 
+        <Label class="space-y-2">
+            <span>Entry On</span>
+            <SveltyPicker format="M d yyyy" bind:value={createdObject.entry_on} />
+        </Label>
+
         {#each headers.data as header}
             {#if header!="id" && header.client_column_id == null}
                 <Label class="space-y-2">
@@ -439,6 +447,11 @@
         <Label class="space-y-2">
             <span>Client ID</span>
             <IdSelect required items={client_list} bind:value={actionsObject.client_id} />
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Entry On</span>
+            <SveltyPicker format="M d yyyy" bind:value={actionsObject.entry_on} />
         </Label>
 
         {#each headers.data as header}

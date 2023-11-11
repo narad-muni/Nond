@@ -1,5 +1,6 @@
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm';
 import Client from './Client';
+import { DateTime } from 'luxon';
 
 export default class DynamicRegister extends BaseModel {
 
@@ -10,6 +11,11 @@ export default class DynamicRegister extends BaseModel {
 
     @column()
     public client_id: number
+
+    @column.date({
+        serialize: (value: DateTime) => value?.toLocaleString(DateTime.DATE_MED),
+    })
+    public entry_on: DateTime
 
     @belongsTo(() => Client, {
         foreignKey: 'client_id'
