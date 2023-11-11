@@ -22,15 +22,6 @@ export default class MasterTemplateDAO {
         return columns;
     }
 
-    public static async getTemplateColumns(table_name: string) {
-        const columns = await MasterTemplate
-            .query()
-            .where('is_rollover', true)
-            .where('table_name', table_name);
-
-        return columns;
-    }
-
     public static async getMasterColumns(table_name: string) {
         const columns = await MasterTemplate
             .query()
