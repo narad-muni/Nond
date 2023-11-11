@@ -33,6 +33,3 @@ seperate logic into multiple files
 --------------------
 
 allow setting multiple service and toggle button for unsettign existing services
-
-_________----
-Master templates not working

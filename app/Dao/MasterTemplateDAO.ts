@@ -6,7 +6,7 @@ export default class MasterTemplateDAO {
 
     public static dateOptions = {
         serialize: (value) => {
-            if (value) {
+            if (value instanceof Date) {
                 return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
             } else {
                 return value
