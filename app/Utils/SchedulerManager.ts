@@ -136,7 +136,7 @@ export default class SchedulerManager {
             let update_query_columns = "";
             const serialized_columns: any = { table_id: old_register.id, columns: [] };
 
-            const random = Math.random().toString(36).substr(2, 8);
+            const random = Math.random().toString(36).substr(2, 3);
             const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
             //added random to avoid collision
