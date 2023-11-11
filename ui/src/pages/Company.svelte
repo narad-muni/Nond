@@ -411,7 +411,7 @@
 </Modal>
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
         <Label class="space-y-2">
             <span>Name</span>
@@ -522,7 +522,7 @@
                 </Label>
             {/if}
         {/each}
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
         </div>
@@ -530,7 +530,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         <Label class="space-y-2">
             <span>ID</span>
@@ -696,7 +696,7 @@
             <Select items={smtpType} bind:value={actionsObject.smtp_type} />
         </Label>
         
-        <div class="col-span-2 grid gap-6 grid-cols-2">
+        <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
