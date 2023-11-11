@@ -140,7 +140,7 @@ export default class SchedulerManager {
             const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
             //added random to avoid collision
-            const new_version = `${random} ${today} - ${next}`
+            const new_version = `${today} - ${next} ${random}`
 
             //truncate old rollover table
             await Database.rawQuery(
