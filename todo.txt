@@ -1,6 +1,5 @@
 pending stuff
 
-Auto add fields in registers when added service
 Assign tasks from register
 spent money in tasks
 Task time management
@@ -23,10 +22,6 @@ client access to view data
 add lines in tables
 
 --------------------
-
-add n entries in registers till scheduler date is more than today
-
-------------------
 
 seperate logic into multiple files
 

@@ -328,7 +328,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Start date</span>
-            <SveltyPicker format="d M yyyy" bind:value={createdObject.started}/>
+            <SveltyPicker format="M d, yyyy" bind:value={createdObject.started}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>
@@ -358,7 +358,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Start date</span>
-            <SveltyPicker format="d M yyyy" bind:value={actionsObject.started}/>
+            <SveltyPicker format="M d, yyyy" bind:value={actionsObject.started}/>
         </Label>
         <Label class="space-y-2">
             <span>Assigned To</span>

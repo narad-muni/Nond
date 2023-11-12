@@ -341,7 +341,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <SveltyPicker on:change={setVersion} required format="d M yyyy" bind:value={createdObject.next} />
+            <SveltyPicker on:change={setVersion} required format="M d, yyyy" bind:value={createdObject.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>
@@ -375,7 +375,7 @@
         </Label>
         <Label class="space-y-2">
             <span>Next Rotation</span>
-            <SveltyPicker format="d M yyyy" bind:value={actionsObject.scheduler.next} />
+            <SveltyPicker format="M d, yyyy" bind:value={actionsObject.scheduler.next} />
         </Label>
         <Label class="space-y-2">
             <span>Rotation Frequency</span>

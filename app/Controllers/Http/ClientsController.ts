@@ -11,6 +11,7 @@ import MasterTemplateDAO from 'App/Dao/MasterTemplateDAO';
 import SchedulerDAO from 'App/Dao/SchedulerDAO';
 import DynamicRegisterDAO from 'App/Dao/DynamicRegisterDAO';
 import RegisterMasterDAO from 'App/Dao/RegisterMasterDAO';
+import SchedulerManager from 'App/Utils/SchedulerManager';
 
 const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
@@ -132,6 +133,8 @@ export default class ClientsController {
             // create files after client id is set
             await SchedulerDAO.createSchedulers(schedulers);
 
+            SchedulerManager.RunSchedulers();
+
             ResponseUtils.SuccessResponse(response, insertedClient);
         } catch (e) {
             console.log(e);
@@ -178,6 +181,8 @@ export default class ClientsController {
             const updatedClient = await ClientDAO.updateClient(client);
             // Insert new files
             await ClientDAO.addClientFiles(updatedClient, files);
+
+            SchedulerManager.RunSchedulers();
 
             ResponseUtils.SuccessResponse(response, client);
 
