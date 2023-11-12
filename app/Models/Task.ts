@@ -30,6 +30,18 @@ export default class Task extends BaseModel {
     public service_id: number
 
     @column()
+    public money: object[]
+
+    @column()
+    public time: object[]
+    
+    @column()
+    public total_time: string
+
+    @column()
+    public total_money: number
+
+    @column()
     public billed: boolean
 
     @column.date({

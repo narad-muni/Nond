@@ -13,6 +13,10 @@ export default class extends BaseSchema {
             table.integer('service_id');
             table.integer('status');
             table.integer('priority');
+            table.specificType('money', 'json[]');
+            table.specificType('time', 'json[]');
+            table.integer('total_money');
+            table.string('total_time');
             table.boolean('billed').defaultTo(false);
             table.date('created');
         })

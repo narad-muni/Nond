@@ -1,8 +1,6 @@
 pending stuff
 
-Assign tasks from register
-spent money in tasks
-Task time management
+Assign tasks from register (Not possible)
 Add users to register bulk
 bulk update things
 check all filters and search boxes
@@ -28,3 +26,6 @@ seperate logic into multiple files
 --------------------
 
 allow setting multiple service and toggle button for unsettign existing services
+
+spent money in tasks
+Task time management

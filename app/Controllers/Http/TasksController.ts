@@ -51,9 +51,16 @@ export default class TasksController {
                     .where('assigned_to', user_id);
             }
 
+            data = await data;
+
+            data.forEach((_, i) => {
+                data[i].money = data[i].money || [];
+                data[i].time = data[i].time || [];
+            });
+
             response.send({
                 status: 'success',
-                data: await data
+                data: data
             });
         } catch (e) {
             console.log(e);
@@ -83,6 +90,9 @@ export default class TasksController {
                 .first();
 
             if (data) {
+                data.money = data.money || [];
+                data.time = data.time || [];
+
                 response.send({
                     status: 'success',
                     data: data
