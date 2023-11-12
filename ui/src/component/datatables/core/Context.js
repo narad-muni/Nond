@@ -138,14 +138,14 @@ export default class Context {
     validJSDates(date) {
         try{
             const dateFormats = [
-                /^\d{1,2}[\/\.-]\d{1,2}[\/\.-]\d{2,4}$/,
+                /^\d{1,2}[\/\.\s-]\d{1,2}[\/\.\s-]\d{2,4}$/,
                 /* Above regex matches combinations of
                     DD/MM/YYYY
                     DD.MM.YYYY
                     DD-MM-YYYY 
                 */
 
-                /^\d{2,4}[\/\.-]\d{1,2}[\/\.-]\d{1,2}$/,
+                /^\d{2,4}[\/\.\s-]\d{1,2}[\/\.\s-]\d{1,2}$/,
                 /* Above regex matches combinations of
                     YYYY/MM/DD
                     YYYY.MM.DD
