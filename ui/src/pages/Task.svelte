@@ -105,6 +105,14 @@
     $: actionsObject.total_money = actionsObject?.money.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
     $: createdObject.total_money = createdObject?.money.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
 
+    $: actionsObject.your_total_time = actionsObject?.time.filter(e => e.user == $user.id).map(e => e.time).reduce((a,b) => {
+        a = a.split(":");
+        b = b.split(":");
+        return `${parseInt(a[0]) + parseInt(b[0])}:${parseInt(a[1]) + parseInt(b[1])}`;
+    }, "0:0");
+
+    $: actionsObject.your_total_money = actionsObject?.money.filter(e => e.user == $user.id).map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
+
     //Functions
 
     function addSelection(e){
@@ -167,6 +175,7 @@
 
     function addCreatedTime() {
         createdObject.time.push({
+            user: $user.id,
             time: "0:0"
         });
         createdObject.time = createdObject.time;
@@ -179,6 +188,7 @@
 
     function addActionTime() {
         actionsObject.time.push({
+            user: $user.id,
             time: "0:0"
         });
         actionsObject.time = actionsObject.time;
@@ -191,6 +201,7 @@
 
     function addCreatedMoney() {
         createdObject.money.push({
+            user: $user.id,
             amount: 0
         });
         createdObject.money = createdObject.money;
@@ -203,6 +214,7 @@
 
     function addActionMoney() {
         actionsObject.money.push({
+            user: $user.id,
             amount: 0
         });
         actionsObject.money = actionsObject.money;
@@ -732,15 +744,12 @@
 
             {#each createdObject.time as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
-                {#if $user.is_admin}
-                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
-                {:else}
-                    {particular.user = $user.id}
-                    <Input class="col-span-2" readonly value={userList.find(e => e.value == $user.id).name}/>
-                {/if}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
+                
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeCreatedTime(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -777,14 +786,12 @@
 
             {#each createdObject.money as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
-                {#if $user.is_admin}
-                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
-                {:else}
-                    {particular.user = $user.id}
-                    <Input class="col-span-2" readonly value={userList.find(e => e.value == $user.id).name}/>
-                {/if}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <Input disabled={!can_edit} required bind:value={particular.amount} />
+                
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeCreatedMoney(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -860,14 +867,12 @@
 
             {#each actionsObject.time as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
-                {#if $user.is_admin}
-                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
-                {:else}
-                    <Input class="col-span-2" readonly value={userList.find(e => e.value == particular.user).name}/>
-                {/if}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
+                
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeActionTime(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -884,6 +889,12 @@
                 </svg>
             </Button>
             
+            <span class="col-span-4"></span>
+            <span>Your Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={actionsObject.your_total_time}/>
+            </Label>
+
             <span class="col-span-4"></span>
             <span>Total</span>
             <Label class="space-y-2 text-center font-bold">
@@ -904,13 +915,12 @@
 
             {#each actionsObject.money as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
-                {#if $user.is_admin}
-                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
-                {:else}
-                    <Input class="col-span-2" readonly value={userList.find(e => e.value == particular.user).name}/>
-                {/if}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <Input disabled={!can_edit} required bind:value={particular.amount} />
+                
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeActionMoney(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -927,6 +937,12 @@
                 </svg>
             </Button>
             
+            <span class="col-span-4"></span>
+            <span>Your Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={actionsObject.your_total_money}/>
+            </Label>
+
             <span class="col-span-4"></span>
             <span>Total</span>
             <Label class="space-y-2 text-center font-bold">

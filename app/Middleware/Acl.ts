@@ -13,10 +13,6 @@ export default class Acl {
         const part = url.substring(0, url.indexOf('/'));
         const method = request.method();
         const role = session.get('user').role;
-        const not_permitted_err = {
-            status: 'error',
-            message: 'Permission denied'
-        }
 
         if (!role) {
             session.forget('user');
@@ -30,21 +26,30 @@ export default class Acl {
         if (method == 'GET') {// Read Operation
 
             if (!role?.read[part]) {
-                response.send(not_permitted_err);
+                response.send({
+                    status: 'error',
+                    message: 'You do not have permission to read'
+                });
                 return;
             }
 
         } else if (method == 'POST') {// Create Operation
 
             if (!role?.create[part]) {
-                response.send(not_permitted_err);
+                response.send({
+                    status: 'error',
+                    message: 'You do not have permission to create'
+                });
                 return;
             }
 
         } else if (method == 'PUT') {// Update Operation
 
             if (!role?.update[part]) {
-                response.send(not_permitted_err);
+                response.send({
+                    status: 'error',
+                    message: 'You do not have permission to update'
+                });
                 return;
             }
 
@@ -52,12 +57,18 @@ export default class Acl {
 
             if (url.includes('destroy')) {
                 if (!role?.destroy[part]) {
-                    response.send(not_permitted_err);
+                    response.send({
+                    status: 'error',
+                    message: 'You do not have permission to delete'
+                });
                     return;
                 }
             } else {
                 if (!role?.remove[part]) {
-                    response.send(not_permitted_err);
+                    response.send({
+                    status: 'error',
+                    message: 'You do not have permission to remove'
+                });
                     return;
                 }
             }

@@ -172,6 +172,9 @@ export default class TasksController {
             delete payload.client;
             delete payload.assigned_user;
             delete payload.service;
+            delete payload.service;
+            delete payload.your_total_time;
+            delete payload.your_total_money;
 
             await Task
                 .query()
