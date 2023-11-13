@@ -25,6 +25,7 @@
     import utils from '../utils';
     import IdSelect from "../component/IdSelect.svelte";
     import SveltyPicker from '../component/svelty-picker';
+    import { user } from '../global/stores.js'
 
     // Intialization
 
@@ -730,14 +731,23 @@
             </Label>
 
             {#each createdObject.time as particular,index}
-                <Input required class="col-span-2" bind:value={particular.user} />
-                <Input required class="col-span-3" bind:value={particular.description} />
-                <SveltyPicker format="hh:ii" bind:value={particular.time} />
-                <Button color="red" on:click={()=>removeCreatedTime(index)} class="col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                </Button>
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+                {#if $user.is_admin}
+                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
+                {:else}
+                    {particular.user = $user.id}
+                    <Input class="col-span-2" readonly value={userList.find(e => e.value == $user.id).name}/>
+                {/if}
+
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeCreatedTime(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
             {/each}
 
             <span class="col-span-6"></span>
@@ -766,14 +776,22 @@
             </Label>
 
             {#each createdObject.money as particular,index}
-                <Input required class="col-span-2" bind:value={particular.user} />
-                <Input required class="col-span-3" bind:value={particular.description} />
-                <Input required bind:value={particular.amount} />
-                <Button color="red" on:click={()=>removeCreatedMoney(index)} class="col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                </Button>
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+                {#if $user.is_admin}
+                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
+                {:else}
+                    {particular.user = $user.id}
+                    <Input class="col-span-2" readonly value={userList.find(e => e.value == $user.id).name}/>
+                {/if}
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <Input disabled={!can_edit} required bind:value={particular.amount} />
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeCreatedMoney(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
             {/each}
 
             <span class="col-span-6"></span>
@@ -841,14 +859,22 @@
             </Label>
 
             {#each actionsObject.time as particular,index}
-                <Input required class="col-span-2" bind:value={particular.user} />
-                <Input required class="col-span-3" bind:value={particular.description} />
-                <SveltyPicker format="hh:ii" bind:value={particular.time} />
-                <Button color="red" on:click={()=>removeActionTime(index)} class="col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                </Button>
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+                {#if $user.is_admin}
+                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
+                {:else}
+                    <Input class="col-span-2" readonly value={userList.find(e => e.value == particular.user).name}/>
+                {/if}
+
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeActionTime(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
             {/each}
 
             <span class="col-span-6"></span>
@@ -877,14 +903,21 @@
             </Label>
 
             {#each actionsObject.money as particular,index}
-                <Input required class="col-span-2" bind:value={particular.user} />
-                <Input required class="col-span-3" bind:value={particular.description} />
-                <Input required bind:value={particular.amount} />
-                <Button color="red" on:click={()=>removeActionMoney(index)} class="col-span-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                </Button>
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+                {#if $user.is_admin}
+                    <Select items={userList} class="col-span-2" bind:value={particular.user} />
+                {:else}
+                    <Input class="col-span-2" readonly value={userList.find(e => e.value == particular.user).name}/>
+                {/if}
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <Input disabled={!can_edit} required bind:value={particular.amount} />
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeActionMoney(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
             {/each}
 
             <span class="col-span-6"></span>
