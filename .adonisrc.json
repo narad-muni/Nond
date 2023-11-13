@@ -43,6 +43,10 @@
       "reloadServer": false
     },
     {
+        "pattern": "nond.vbs",
+        "reloadServer": false
+    },
+    {
       "pattern": ".env",
       "reloadServer": false
     }
