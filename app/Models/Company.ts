@@ -53,9 +53,6 @@ export default class Company extends BaseModel {
     public smtp_password: string
 
     @column()
-    public smtp_type: string
-
-    @column()
     public signature: string
 
     @column()

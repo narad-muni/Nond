@@ -498,11 +498,6 @@
             <Input type="text" bind:value={createdObject.smtp_password} />
         </Label>
 
-        <Label class="space-y-2">
-            <span>SMTP Type</span>
-            <Select items={smtpType} bind:value={createdObject.smtp_type} />
-        </Label>
-
         {#each headers.data as header}
             {#if header!="id"}
                 <Label class="space-y-2">
@@ -689,11 +684,6 @@
         <Label class="space-y-2">
             <span>SMTP Password</span>
             <Input type="text" bind:value={actionsObject.smtp_password} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Type</span>
-            <Select items={smtpType} bind:value={actionsObject.smtp_type} />
         </Label>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">

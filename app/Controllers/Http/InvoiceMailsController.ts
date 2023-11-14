@@ -23,7 +23,7 @@ export default class InvoiceMailsController {
 
             await PDFUtils.generateInvoices(tempInvoicePath, invoices);
 
-            const unique_client = new Set();
+            const unique_client: Set<number> = new Set();
 
             // Set invoices for clients
             invoices.forEach(invoice => {
@@ -85,17 +85,18 @@ export default class InvoiceMailsController {
                 ));
             };
 
-            await Promise.all(bulk_mail);
+            const resp = await Promise.all(bulk_mail);
 
             response.send({
                 status: "success",
+                data: resp
             })
 
             response.response.on("finish", async () => {
                 try {
                     await fs.rm(tempInvoicePath, { recursive: true });
                 } catch (err) {
-                    console.log(err)
+                    console.log(err);
                 }
             });
         } catch (err) {
