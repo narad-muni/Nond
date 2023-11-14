@@ -318,8 +318,6 @@
         const resp = await utils.post_json('/api/invoice/send_mail/',{ids:Array.from(selectedRows), send_to: send_to});
 
         if(resp.status == 'success'){
-            selectedRows.clear();
-            selectedRows = selectedRows;
             success = "Mail sent successfully";
         }else{
             error = resp.message;
@@ -489,8 +487,10 @@
 <Modal bind:open={deleteModal} size="xs" autoclose>
     <div class="text-center">
         <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-        <h3 class="mb-5 text-lg font-normal text-gray-500">Are you sure you want to delete selected rows?</h3>
-        <h3 class="mb-5 text-sm font-normal text-gray-500">Users with this role will be assigned default viewer role</h3>
+        <h3 class="mb-5 text-lg font-normal text-gray-500">
+            Are you sure you want to delete selected rows?
+            Users with this role will be assigned default viewer role
+        </h3>
         <Button color="red" on:click={deleteSelected} class="mr-2">Yes, I'm sure</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
@@ -503,6 +503,7 @@
         </svg>          
         <h3 class="mb-1 text-lg font-normal text-gray-500">Select whom to send these mails</h3>
         <h3 class="mb-5 text-sm font-normal text-red-500">Please make sure that email and smtp are configured</h3>
+        <h3 class="mb-5 text-sm font-normal text-red-500">Sending mail multiple clients may take time</h3>
         <Select class="mb-5" required items={receivers} bind:value={send_to}></Select>
         <Button color="green" on:click={sendMail} class="mr-2">Send</Button>
         <Button color='alternative'>No, cancel</Button>

@@ -61,6 +61,26 @@ export default class ClientDAO {
         return client;
     }
 
+    public static async getClientsByIds(ids: number[]) {
+        // Get models
+        const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
+
+        const client = await Client
+            .query()
+            .preload('group', (query) => {
+                query.select('id', 'name', 'email')
+            })
+            .preload('subsidiary', (query) => {
+                query.select('id', 'name', 'email')
+            })
+            .preload('services', (query) => {
+                query.select('id', 'next', 'frequency', 'service_id', 'client_id', 'count')
+            })
+            .whereIn('id', ids);
+
+        return client;
+    }
+
     public static async getDeletedClients() {
         // Get models
         const Client = TableManager.getTable('clients', TableManager.MODE.FULL);

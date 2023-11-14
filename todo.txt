@@ -1,8 +1,7 @@
 pending stuff
 
-check all filters and search boxes
 clean code for pdf creation
-invoice send by email
+check all filters and search boxes
 -----
 
 rewrite whole app
