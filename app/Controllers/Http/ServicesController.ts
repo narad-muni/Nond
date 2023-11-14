@@ -149,6 +149,11 @@ export default class RolesController {
             const data = await Service
                 .create(payload);
 
+            await Service
+                .query()
+                .where('hsn', data.hsn)
+                .update({ 'gst': data.gst });
+
             payload.id = data.id;
 
             response.send({
