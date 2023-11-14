@@ -46,6 +46,7 @@ export default class SchedulerManager {
                     .query()
                     .where('next', '<=', currentDate)
                     .whereNotNull('next')
+                    .whereNotNull('frequency')
                     .orderBy('type', 'asc');
 
                 if(scheduled_jobs.length == 0){
