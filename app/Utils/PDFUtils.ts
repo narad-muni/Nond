@@ -67,7 +67,7 @@ export class PDFUtils {
 
                     if (taxBreakup[e.hsn]) {
                         // taxBreakup[e.hsn][0] += e.hsn;
-                        taxBreakup[e.hsn][1] += e.amount;
+                        taxBreakup[e.hsn][1] += parseFloat(e.amount);
                         // taxBreakup[e.hsn][2] += e.gst / 2;
                         taxBreakup[e.hsn][3] += (e.tax || 0) / 2;
                         // taxBreakup[e.hsn][4] += e.gst / 2;
@@ -77,7 +77,7 @@ export class PDFUtils {
                         taxBreakup[e.hsn] = [];
 
                         taxBreakup[e.hsn][0] = e.hsn;
-                        taxBreakup[e.hsn][1] = e.amount;
+                        taxBreakup[e.hsn][1] = parseFloat(e.amount);
                         taxBreakup[e.hsn][2] = (e.gst || 0) / 2;
                         taxBreakup[e.hsn][3] = (e.tax || 0) / 2;
                         taxBreakup[e.hsn][4] = (e.gst || 0) / 2;
