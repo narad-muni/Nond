@@ -511,7 +511,7 @@
                         <Input type="text" bind:value={createdObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
@@ -641,7 +641,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>

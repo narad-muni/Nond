@@ -601,7 +601,7 @@
                         <Input type="text" bind:value={createdObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
@@ -626,7 +626,7 @@
 
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker format="M d, yyyy" {required} bind:value={createdObject.services[service.value].next}/>
+                <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].next}/>
                 <Input min="1" required={createdObject.services[service.value].subscribed} type="number" bind:value={createdObject.services[service.value].count}/>
             {/each}
         </div>
@@ -708,7 +708,7 @@
 
             <Checkbox bind:checked={bulkServiceData[service.value].subscribed}>{service.name}</Checkbox>
             <Select {required} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
-            <SveltyPicker format="M d, yyyy" {required} bind:value={bulkServiceData[service.value].next}/>
+            <SveltyPicker format="d M yyyy" {required} bind:value={bulkServiceData[service.value].next}/>
             <Input min="1" required={bulkServiceData[service.value].subscribed} type="number" bind:value={bulkServiceData[service.value].count}/>
         {/each}
 
@@ -812,7 +812,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
@@ -873,7 +873,7 @@
 
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker format="M d, yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
+                <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
                 <Input min="1" required={actionsObject.services[service.value].subscribed} type="number" bind:value={actionsObject.services[service.value].count}/>
             {/each}
         </div>

@@ -406,7 +406,7 @@
 
         <Label class="space-y-2">
             <span>Entry On</span>
-            <SveltyPicker format="M d, yyyy" bind:value={createdObject.entry_on} />
+            <SveltyPicker initialDate={new Date()} required format="d M yyyy" bind:value={createdObject.entry_on} />
         </Label>
 
         {#each headers.data as header}
@@ -417,7 +417,7 @@
                         <Input type="text" bind:value={createdObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={createdObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
@@ -451,7 +451,7 @@
 
         <Label class="space-y-2">
             <span>Entry On</span>
-            <SveltyPicker format="M d, yyyy" bind:value={actionsObject.entry_on} />
+            <SveltyPicker required format="d M yyyy" bind:value={actionsObject.entry_on} />
         </Label>
 
         {#each headers.data as header}
@@ -462,7 +462,7 @@
                         <Input bind:value={actionsObject[header.column_name]}/>
                     {:else if header.column_type=="Date"}
                         <span>{header.display_name}</span>
-                        <SveltyPicker format="M d, yyyy" bind:value={actionsObject[header.column_name]} />
+                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
