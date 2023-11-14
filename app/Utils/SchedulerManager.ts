@@ -34,7 +34,7 @@ export default class SchedulerManager {
 
             const currentDate = new Date().toISOString().slice(0, 10);
 
-            const rotate_registers: Scheduler[] = [];
+            const rotate_registers: Map<number, Scheduler> = new Map();
             const add_entries: Scheduler[] = [];
             const create_tasks: Scheduler[] = [];
             let delete_data = false;
@@ -56,7 +56,7 @@ export default class SchedulerManager {
                 scheduled_jobs.forEach(job => {
                     switch (job.type) {
                         case 1:// Rotate Registers
-                            rotate_registers.push(job);
+                            rotate_registers.set(job.register_id, job);
                             break;
                         case 2:// Delete old Data
                             delete_data = true;
@@ -84,7 +84,7 @@ export default class SchedulerManager {
 
             //updating schedulers before this gives us next date calculated by sql
             // 2
-            SchedulerManager.RotateRegisters(rotate_registers);
+            SchedulerManager.RotateRegisters(Array.from(rotate_registers.values()));
 
             // 3
             if (delete_data) {
