@@ -1,8 +1,5 @@
 pending stuff
 
-Assign tasks from register (Not possible)
-Add users to register bulk
-bulk update things
 check all filters and search boxes
 clean code for pdf creation
 invoice send by email
@@ -24,8 +21,3 @@ add lines in tables
 seperate logic into multiple files
 
 --------------------
-
-allow setting multiple service and toggle button for unsettign existing services
-
-spent money in tasks
-Task time management

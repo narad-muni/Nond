@@ -42,7 +42,8 @@
         {name: "Monthly", value:"1 month"},
         {name: "Quarterly", value:"3 months"},
         {name: "Half Yearly", value:"6 months"},
-        {name: "Yearly", value:"1 year"}
+        {name: "Yearly", value:"1 year"},
+        {name: "One Time", value: null}
     ];
 
     const task_status = [
@@ -199,15 +200,6 @@
         const resp = await utils.put_json('/api/client/bulk_service_update/',data);
 
         if(resp.status == 'success'){
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
-                    data[i]._selected = false;
-                }
-            }
-
-            selectedRows.clear();
-            handler.setRows(data);
-            selectedRows = selectedRows;
             bulkServiceModal = false;
             setServiceObject = {};
         }else{
@@ -630,9 +622,11 @@
         </div>
         <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
             {#each services as service}
+                {@const required = createdObject.services[service.value].subscribed && createdObject.services[service.value].frequency != null}
+
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
-                <Select required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker format="M d, yyyy" required={createdObject.services[service.value].subscribed} bind:value={createdObject.services[service.value].next}/>
+                <Select {required} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
+                <SveltyPicker format="M d, yyyy" {required} bind:value={createdObject.services[service.value].next}/>
                 <Input min="1" required={createdObject.services[service.value].subscribed} type="number" bind:value={createdObject.services[service.value].count}/>
             {/each}
         </div>
@@ -710,9 +704,11 @@
         </div>
         
         {#each services as service}
+            {@const required = bulkServiceData[service.value].subscribed && bulkServiceData[service.value].frequency != null}
+
             <Checkbox bind:checked={bulkServiceData[service.value].subscribed}>{service.name}</Checkbox>
-            <Select required={bulkServiceData[service.value].subscribed} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
-            <SveltyPicker format="M d, yyyy" required={bulkServiceData[service.value].subscribed} bind:value={bulkServiceData[service.value].next}/>
+            <Select {required} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
+            <SveltyPicker format="M d, yyyy" {required} bind:value={bulkServiceData[service.value].next}/>
             <Input min="1" required={bulkServiceData[service.value].subscribed} type="number" bind:value={bulkServiceData[service.value].count}/>
         {/each}
 
@@ -873,9 +869,11 @@
         </div>
         <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
             {#each services as service}
+                {@const required = actionsObject.services[service.value].subscribed && actionsObject.services[service.value].frequency != null}
+
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
-                <Select required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
-                <SveltyPicker format="M d, yyyy" required={actionsObject.services[service.value].subscribed} bind:value={actionsObject.services[service.value].next}/>
+                <Select {required} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
+                <SveltyPicker format="M d, yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
                 <Input min="1" required={actionsObject.services[service.value].subscribed} type="number" bind:value={actionsObject.services[service.value].count}/>
             {/each}
         </div>

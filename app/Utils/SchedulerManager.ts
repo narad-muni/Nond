@@ -45,6 +45,7 @@ export default class SchedulerManager {
                 const scheduled_jobs = await Scheduler
                     .query()
                     .where('next', '<=', currentDate)
+                    .whereNotNull('next')
                     .orderBy('type', 'asc');
 
                 if(scheduled_jobs.length == 0){

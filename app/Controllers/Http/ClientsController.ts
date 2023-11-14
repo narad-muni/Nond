@@ -133,6 +133,13 @@ export default class ClientsController {
             // create files after client id is set
             await SchedulerDAO.createSchedulers(schedulers);
 
+            for(const scheduler of schedulers){
+                if(scheduler.next == null){
+                    await SchedulerManager.CreateTasks([scheduler]);
+                    await SchedulerManager.AddEntries([scheduler]);
+                }
+            };
+
             SchedulerManager.RunSchedulers();
 
             ResponseUtils.SuccessResponse(response, insertedClient);
@@ -181,6 +188,13 @@ export default class ClientsController {
             const updatedClient = await ClientDAO.updateClient(client);
             // Insert new files
             await ClientDAO.addClientFiles(updatedClient, files);
+
+            for(const scheduler of newSchedulers){
+                if(scheduler.next == null){
+                    await SchedulerManager.CreateTasks([scheduler]);
+                    await SchedulerManager.AddEntries([scheduler]);
+                }
+            };
 
             SchedulerManager.RunSchedulers();
 
