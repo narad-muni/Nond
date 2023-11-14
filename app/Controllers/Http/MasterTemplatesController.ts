@@ -3,6 +3,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import MasterTemplate from 'App/Models/MasterTemplate'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import RegisterTemplate from 'App/Models/RegisterTemplate'
+import TableManager from 'App/Utils/TableManager'
 
 export default class MasterTemplatesController {
     public async index({ response }: HttpContextContract) {
@@ -153,6 +154,8 @@ export default class MasterTemplatesController {
                     .create(payload);
 
                 payload.id = data.id;
+
+                TableManager.loadClientsTable();
 
                 response.send({
                     status: 'success',
