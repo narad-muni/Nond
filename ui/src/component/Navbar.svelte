@@ -71,6 +71,8 @@
             <NavLi href="/#/invoice" class="cursor-pointer">Invoice</NavLi>
         {/if}
 
+        <NavLi href="/#/automator" class="cursor-pointer">Automator</NavLi>
+
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
             {#if $user.role.read.client}
                 <DropdownItem href="/#/client">Client</DropdownItem>
@@ -142,15 +144,6 @@
             {/if}
             {#if $user.role.read.task_template}
                 <DropdownItem href="/#/task_template">Task Template</DropdownItem>
-            {/if}
-        </Dropdown>
-    
-        <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#billing">
-            {#if $user.role.read.invoice}
-                <DropdownItem href="/#/">Invoice</DropdownItem>
-            {/if}
-            {#if $user.role.read.invoice}
-                <DropdownItem href="/#/">Pending Invoice</DropdownItem>
             {/if}
         </Dropdown>
     

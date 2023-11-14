@@ -318,7 +318,22 @@
         const resp = await utils.post_json('/api/invoice/send_mail/',{ids:Array.from(selectedRows), send_to: send_to});
 
         if(resp.status == 'success'){
-            success = "Mail sent successfully";
+            const data = resp.data;
+            let err_msg = "";
+
+            if(data?.filter(e => e.success == false)?.length == 0){
+                success = "Mail sent successfully";
+                return
+            }
+
+            data.forEach(e => {
+                if(e.success == false){
+                    err_msg += `<br/>${e.message}`
+                }
+            });
+
+            error = err_msg;
+
         }else{
             error = resp.message;
         }
@@ -502,8 +517,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
         </svg>          
         <h3 class="mb-1 text-lg font-normal text-gray-500">Select whom to send these mails</h3>
-        <h3 class="mb-5 text-sm font-normal text-red-500">Please make sure that email and smtp are configured</h3>
-        <h3 class="mb-5 text-sm font-normal text-red-500">Sending mail multiple clients may take time</h3>
+        <h3 class="mb-1 text-sm font-normal text-red-500">Please make sure that email and smtp are configured.</h3>
+        <h3 class="mb-1 text-sm font-normal text-orange-500">Sending mail might take several minutes.</h3>
         <Select class="mb-5" required items={receivers} bind:value={send_to}></Select>
         <Button color="green" on:click={sendMail} class="mr-2">Send</Button>
         <Button color='alternative'>No, cancel</Button>
@@ -797,7 +812,8 @@
         <Alert class="mx-auto mt-4 h-fit" color="red" dismissable on:close={()=>error=""}>
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
-            <span class="font-medium">Error!</span> {error}
+            <span class="font-medium">Error!</span>
+            {@html error}
         </Alert>
     </div>
 {/if}

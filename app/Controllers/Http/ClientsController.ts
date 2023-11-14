@@ -196,7 +196,7 @@ export default class ClientsController {
                 }
             };
 
-            SchedulerManager.RunSchedulers();
+            await SchedulerManager.RunSchedulers();
 
             ResponseUtils.SuccessResponse(response, client);
 

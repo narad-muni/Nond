@@ -52,6 +52,8 @@ export default class InvoiceMailsController {
 
             const bulk_mail: Promise<any>[] = [];
 
+            const mail_status: any[] = [];
+
             // Set mail to
             for(const invoice of invoices) {
                 const self_ = client_list.get(invoice.client_id);
@@ -59,6 +61,16 @@ export default class InvoiceMailsController {
                 const parent_email = self_?.group?.email;
                 const to: string[] = [];
                 const company = company_list.get(invoice.company_id);
+
+                if([company.smtp_host,company.smtp_port,company.smtp_email,company.smtp_password].filter(e => e == null).length > 0){
+                    mail_status.push({
+                        invoice: invoice.id,
+                        success: false,
+                        message: "SMTP Parameters not set correctly."
+                    });
+
+                    continue;
+                }
 
                 if (send_to == "Both") { // send to individual as well as parent
                     to.push(self_email);
@@ -72,7 +84,18 @@ export default class InvoiceMailsController {
                     to.push(self_email);
                 }
 
+                if(to.filter(e => e == null).length > 0){
+                    mail_status.push({
+                        invoice: invoice.id,
+                        success: false,
+                        message: `Failed to send invoice ${invoice.id}, email not set correctly for this client.`
+                    });
+
+                    continue;
+                }
+
                 bulk_mail.push(this.mail(
+                    invoice.id,
                     company.smtp_host,
                     company.smtp_port,
                     company.smtp_email,
@@ -85,11 +108,33 @@ export default class InvoiceMailsController {
                 ));
             };
 
-            const resp = await Promise.all(bulk_mail);
+            const resp: any[] = await Promise.all(bulk_mail);
+
+            resp.forEach(e => {
+                const invoice = e[0];
+                const error = e[1];
+                let success = false;
+                let message = "";
+
+                if(error?.accepted?.length > 0 && (error?.rejected?.length || 0) == 0){
+                    success = true;
+                    message = `Invoice ${invoice} sent successfully.`;
+                }else if((error?.rejected?.length || 0) > 0){
+                    message = `Failed to send invoice ${invoice} to ${error?.rejected}.`;
+                }else{
+                    message = `Failed to send invoice ${invoice}. ${error}.`;
+                }
+
+                mail_status.push({
+                    invoice: invoice,
+                    success: success,
+                    message: message
+                });
+            });
 
             response.send({
                 status: "success",
-                data: resp
+                data: mail_status
             })
 
             response.response.on("finish", async () => {
@@ -103,12 +148,16 @@ export default class InvoiceMailsController {
             console.log(err);
 
             response.send({
-                "Error": err
+                message: err
             });
         }
     }
 
-    public async mail(smtp_host, smtp_port, smtp_email, smtp_password, to, subject, attachments, message, attachment_path){
+    public async mailStatusHandler(bulk_mail){
+        
+    }
+
+    public async mail(identifier, smtp_host, smtp_port, smtp_email, smtp_password, to, subject, attachments, message, attachment_path){
         try{
             const transporter = nodemailer.createTransport({
                 host: smtp_host,
@@ -140,9 +189,9 @@ export default class InvoiceMailsController {
                 attachments: file_list
             });
 
-            return info;
+            return [identifier, info];
         }catch(e){
-            return e;
+            return [identifier, e];
         }
     }
 }
