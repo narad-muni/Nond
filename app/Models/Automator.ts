@@ -1,6 +1,6 @@
 import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
-import Client from './Client'
 import { DateTime } from 'luxon'
+import Employee from './Employee'
 
 export default class Automator extends BaseModel {
     @column({ isPrimary: true })
@@ -13,7 +13,7 @@ export default class Automator extends BaseModel {
     public triggered_by: number
 
     @column()
-    public status: "Pending" | "Completed" | "Failed"
+    public status: "Pending" | "Successfull" | "Failed" | "Partially Successfull"
 
     @column()
     public message: string
@@ -21,11 +21,11 @@ export default class Automator extends BaseModel {
     @column()
     public data: object
 
-    @column()
+    @column.dateTime({ autoCreate: true })
     public created_on: DateTime
 
-    @belongsTo(() => Client, {
+    @belongsTo(() => Employee, {
         foreignKey: 'triggered_by'
     })
-    public group: BelongsTo<typeof Client>
+    public user: BelongsTo<typeof Employee>
 }

@@ -318,21 +318,7 @@
         const resp = await utils.post_json('/api/invoice/send_mail/',{ids:Array.from(selectedRows), send_to: send_to});
 
         if(resp.status == 'success'){
-            const data = resp.data;
-            let err_msg = "";
-            let success_msg = "";
-
-            data.forEach(e => {
-                if(e.success == false){
-                    err_msg += `<br/>${e.message}`
-                }else{
-                    success_msg += `<br/>${e.message}`
-                }
-            });
-
-            error = err_msg;
-            success = success_msg;
-
+            success = resp.message;
         }else{
             error = resp.message;
         }

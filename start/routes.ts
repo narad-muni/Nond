@@ -271,6 +271,12 @@ Route.group(() => {
         })
         .prefix('/task/archived');
 
+        Route.group(() => {
+            Route.get('/','AutomatorsController.index');
+            Route.delete('/:id','AutomatorsController.destroy');
+        })
+        .prefix('/automator');
+
         /*
         | task_template routes
         */

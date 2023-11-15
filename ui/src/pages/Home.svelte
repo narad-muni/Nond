@@ -29,6 +29,7 @@
     import ArchivedInvoice from "./ArchivedInvoice.svelte";
     import DeletedCompanies from "./DeletedCompanies.svelte";
     import DeletedEmployees from "./DeletedEmployees.svelte";
+    import Automator from "./Automator.svelte";
 
     if($location == '/'){
         if(!$user.is_admin){
@@ -57,6 +58,7 @@
         '/deleted/client':DeletedClients,
         '/deleted/employee':DeletedEmployees,
         '/deleted/company':DeletedCompanies,
+        '/automator': Automator,
         '*':Error
     }
 

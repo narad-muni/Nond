@@ -256,6 +256,7 @@
                 <Checkbox bind:checked={createdObject.read.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.read.invoice} >Invoice</Checkbox>
+                <Checkbox bind:checked={createdObject.read.automator} >Automator</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">
@@ -318,6 +319,7 @@
                 <Checkbox bind:checked={createdObject.destroy.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.destroy.invoice} >Invoice</Checkbox>
+                <Checkbox bind:checked={createdObject.destroy.automator} >Automator</Checkbox>
             </div>
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">
@@ -354,6 +356,7 @@
                 <Checkbox bind:checked={actionsObject.read.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.invoice} >Invoice</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.automator} >Automator</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">
@@ -416,6 +419,7 @@
                 <Checkbox bind:checked={actionsObject.destroy.task_template} >Task Template</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.destroy.invoice} >Invoice</Checkbox>
+                <Checkbox bind:checked={actionsObject.destroy.automator} >Automator</Checkbox>
             </div>
         </Label>
         <div class="col-span-3 grid gap-6 grid-cols-2">

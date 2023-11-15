@@ -6,6 +6,8 @@ import nodemailer from 'nodemailer';
 import fs from 'fs/promises';
 import ClientDAO from 'App/Dao/ClientDAO';
 import CompanyDAO from 'App/Dao/CompanyDAO';
+import AutomatorDAO from 'App/Dao/AutomatorDAO';
+import Automator from 'App/Models/Automator';
 
 export default class InvoiceMailsController {
     public async sendMail({ request, response, session }: HttpContextContract) {
@@ -50,9 +52,11 @@ export default class InvoiceMailsController {
                 );
             });
 
-            const bulk_mail: Promise<any>[] = [];
+            const bulk_mail_data: any[] = [];
 
-            const mail_status: any[] = [];
+            const mail_status: object = {
+                "temp_invoice_path": tempInvoicePath
+            };
 
             // Set mail to
             for(const invoice of invoices) {
@@ -63,11 +67,10 @@ export default class InvoiceMailsController {
                 const company = company_list.get(invoice.company_id);
 
                 if([company.smtp_host,company.smtp_port,company.smtp_email,company.smtp_password].filter(e => e == null).length > 0){
-                    mail_status.push({
-                        invoice: invoice.id,
+                    mail_status[invoice.id] = {
                         success: false,
                         message: "SMTP Parameters not set correctly."
-                    });
+                    };
 
                     continue;
                 }
@@ -85,79 +88,142 @@ export default class InvoiceMailsController {
                 }
 
                 if(to.filter(e => e == null).length > 0){
-                    mail_status.push({
-                        invoice: invoice.id,
+                    mail_status[invoice.id] = {
                         success: false,
                         message: `Failed to send invoice ${invoice.id}, email not set correctly for this client.`
-                    });
+                    };
 
                     continue;
                 }
 
-                bulk_mail.push(this.mail(
-                    invoice.id,
-                    company.smtp_host,
-                    company.smtp_port,
-                    company.smtp_email,
-                    company.smtp_password,
-                    to,
-                    "Invoice",
-                    [invoice.id + "_" + self_?.name],
-                    "Please find attached invoice.",
-                    tempInvoicePath
-                ));
+                bulk_mail_data.push({
+                    identifier: invoice.id,
+                    smtp_host: company.smtp_host,
+                    smtp_port: company.smtp_port,
+                    smtp_email: company.smtp_email,
+                    smtp_password: company.smtp_password,
+                    to: to,
+                    subject: "Invoice",
+                    attachments: [invoice.id + "_" + self_?.name],
+                    message: "Please find attached invoice.",
+                    attachment_path: tempInvoicePath
+                })
             };
 
-            const resp: any[] = await Promise.all(bulk_mail);
+            const automator = new Automator();
 
-            resp.forEach(e => {
-                const invoice = e[0];
-                const error = e[1];
-                let success = false;
-                let message = "";
+            automator.name = "Mailer";
+            automator.triggered_by = session.get("user").id;
+            automator.status = "Pending";
+            automator.message = "Your mails are getting sent!";
+            automator.data = mail_status;
 
-                if(error?.accepted?.length > 0 && (error?.rejected?.length || 0) == 0){
-                    success = true;
-                    message = `Invoice ${invoice} sent successfully.`;
-                }else if((error?.rejected?.length || 0) > 0){
-                    message = `Failed to send invoice ${invoice} to ${error?.rejected}.`;
-                }else{
-                    message = `Failed to send invoice ${invoice}. ${error}.`;
-                }
+            await AutomatorDAO.createAutomators([automator]);
 
-                mail_status.push({
-                    invoice: invoice,
-                    success: success,
-                    message: message
-                });
-            });
+            InvoiceMailsController.bulkMailAutomator(bulk_mail_data, automator);
 
             response.send({
                 status: "success",
-                data: mail_status
+                message: "Sending Mails from automator"
             })
-
-            response.response.on("finish", async () => {
-                try {
-                    await fs.rm(tempInvoicePath, { recursive: true });
-                } catch (err) {
-                    console.log(err);
-                }
-            });
         } catch (err) {
             console.log(err);
 
             response.send({
+                status: "error",
                 message: err
             });
         }
     }
 
-    public async mailStatusHandler(bulk_mail){
-        
+    public static async bulkMailAutomator(bulk_mail, automator){
+        const tempInvoicePath = automator.data.temp_invoice_path;
+        try{
+            const line: Promise<any>[] = [];
+
+            async function mailAutomator(mail_data){
+                try{
+                    
+                    automator.data[mail_data.identifier] = {
+                        message: 'In Progress'
+                    };
+                    await AutomatorDAO.updateAutomatorById(automator);
+
+                    const resp = await InvoiceMailsController.mail(
+                        mail_data.smtp_host,
+                        mail_data.smtp_port,
+                        mail_data.smtp_email,
+                        mail_data.smtp_password,
+                        mail_data.to,
+                        mail_data.subject,
+                        mail_data.attachments,
+                        mail_data.message,
+                        mail_data.attachment_path
+                    );
+
+                    if(resp?.accepted?.length > 0 && (resp?.rejected?.length || 0) == 0){
+                        automator.data[mail_data.identifier] = {
+                            success: true,
+                            message: `Invoice ${mail_data.identifier} sent successfully.`
+                        };
+                    }else if((resp?.rejected?.length || 0) > 0){
+                        automator.data[mail_data.identifier] = {
+                            success: false,
+                            message: `Failed to send invoice ${mail_data.identifier} to ${resp.rejected}.`
+                        };
+                    }else{
+                        automator.data[mail_data.identifier] = {
+                            success: false,
+                            message: `Failed to send invoice ${mail_data.identifier}. ${resp}.`
+                        };
+                    }
+
+                    await AutomatorDAO.updateAutomatorById(automator);
+
+                }catch(e){
+                    automator.data[mail_data.identifier] = {
+                        success: false,
+                        message: `Failed to send invoice ${mail_data.identifier}. ${e}.`
+                    };
+                    await AutomatorDAO.updateAutomatorById(automator);
+                }
+            }
+
+            for(const i of bulk_mail){
+                line.push(mailAutomator(i));
+            }
+
+            await Promise.all(line);
+
+            if(Object.values(automator.data).filter(e => e.success == false).length == 0){
+                automator.status = 'Successfull';
+                automator.message = 'All mails executed successfully, Please check logs';
+            }else if(Object.values(automator.data).filter(e => e.success == true).length > 0){
+                automator.status = 'Partially Successfull';
+                automator.message = 'Some mails failed, Please check logs';
+            }else{
+                automator.status = 'Failed';
+                automator.message = 'All mails failed, Please check logs';
+            }
+
+            await AutomatorDAO.updateAutomatorById(automator);
+        }catch(e){
+            console.log(e);
+
+            automator.status = 'Failed';
+            automator.message = e;
+            
+            await AutomatorDAO.updateAutomatorById(automator);
+        }finally{
+            try {
+                await fs.rm(tempInvoicePath, { recursive: true });
+            } catch (err) {
+                console.log(err);
+            }
+        }
     }
 
-    public async mail(identifier, smtp_host, smtp_port, smtp_email, smtp_password, to, subject, attachments, message, attachment_path){
+    public static async mail(smtp_host, smtp_port, smtp_email, smtp_password, to, subject, attachments, message, attachment_path){
         try{
             const transporter = nodemailer.createTransport({
                 host: smtp_host,
@@ -189,9 +255,9 @@ export default class InvoiceMailsController {
                 attachments: file_list
             });
 
-            return [identifier, info];
+            return info;
         }catch(e){
-            return [identifier, e];
+            return e;
         }
     }
 }

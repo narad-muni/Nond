@@ -14,11 +14,20 @@ export default class Acl {
         const method = request.method();
         const role = session.get('user').role;
 
+        const open_sections: string[] = [];
+
         if (!role) {
             session.forget('user');
         }
 
+        // Options is open for all logged in users
         if (method == 'GET' && url.includes('options') && role) {
+            await next();
+            return;
+        }
+
+        // Open sections for all logged in users
+        if (open_sections.includes(part) && role) {
             await next();
             return;
         }
@@ -28,7 +37,7 @@ export default class Acl {
             if (!role?.read[part]) {
                 response.send({
                     status: 'error',
-                    message: 'You do not have permission to read'
+                    message: 'You do not have permission to read ' + part
                 });
                 return;
             }
@@ -38,7 +47,7 @@ export default class Acl {
             if (!role?.create[part]) {
                 response.send({
                     status: 'error',
-                    message: 'You do not have permission to create'
+                    message: 'You do not have permission to create ' + part
                 });
                 return;
             }
@@ -48,7 +57,7 @@ export default class Acl {
             if (!role?.update[part]) {
                 response.send({
                     status: 'error',
-                    message: 'You do not have permission to update'
+                    message: 'You do not have permission to update ' + part
                 });
                 return;
             }
@@ -59,7 +68,7 @@ export default class Acl {
                 if (!role?.destroy[part]) {
                     response.send({
                     status: 'error',
-                    message: 'You do not have permission to delete'
+                    message: 'You do not have permission to delete ' + part
                 });
                     return;
                 }
@@ -67,7 +76,7 @@ export default class Acl {
                 if (!role?.remove[part]) {
                     response.send({
                     status: 'error',
-                    message: 'You do not have permission to remove'
+                    message: 'You do not have permission to remove ' + part
                 });
                     return;
                 }

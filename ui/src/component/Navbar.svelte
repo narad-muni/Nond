@@ -14,6 +14,7 @@
 
     import utils from '../utils';
     import { user, active_registers, archived_registers } from '../global/stores.js';
+  import Automator from '../pages/Automator.svelte';
 
     let _active_registers, _archived_registers;
 
@@ -71,7 +72,9 @@
             <NavLi href="/#/invoice" class="cursor-pointer">Invoice</NavLi>
         {/if}
 
-        <NavLi href="/#/automator" class="cursor-pointer">Automator</NavLi>
+        {#if $user.role.read.automator}
+            <NavLi href="/#/automator" class="cursor-pointer">Automator</NavLi>
+        {/if}
 
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
             {#if $user.role.read.client}
