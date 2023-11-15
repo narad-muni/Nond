@@ -14,6 +14,7 @@ import ArchivedInvoice from 'App/Models/ArchivedInvoice';
 import RegisterTemplate from 'App/Models/RegisterTemplate';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 import { DateTime } from 'luxon';
+import Automator from 'App/Models/Automator';
 
 export default class SchedulerManager {
 
@@ -275,10 +276,18 @@ export default class SchedulerManager {
 
     static async DeleteData() {
         //delete 2 year old invoices
-
         await ArchivedInvoice
             .query()
             .where('date', '<', StringUtils.getPreviousFinancialYearStart())
+            .delete();
+
+        //delete 1 month old automator tasks
+        const one_month_back = new Date();
+        one_month_back.setMonth(one_month_back.getMonth() - 1);
+
+        await Automator
+            .query()
+            .where('created_on', '<', one_month_back)
             .delete();
 
         //delete 2 year old tasks
