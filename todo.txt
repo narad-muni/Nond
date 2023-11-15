@@ -1,7 +1,5 @@
 pending stuff
 
-send mail in background using automator
-
 clean code for pdf creation
 check all filters and search boxes
 -----
