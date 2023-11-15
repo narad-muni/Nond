@@ -460,22 +460,22 @@
 
         <Label class="space-y-2">
             <span>Account Holder Name</span>
-            <Input type="text" bind:value={createdObject.AHName} />
+            <Input type="text" bind:value={createdObject.ah_name} />
         </Label>
 
         <Label class="space-y-2">
             <span>Bank Name</span>
-            <Input type="text" bind:value={createdObject.BankName} />
+            <Input type="text" bind:value={createdObject.bank_name} />
         </Label>
 
         <Label class="space-y-2">
             <span>Account Number</span>
-            <Input type="text" bind:value={createdObject.AccountNo} />
+            <Input type="text" bind:value={createdObject.account_no} />
         </Label>
 
         <Label class="space-y-2">
             <span>IFSC & Branch</span>
-            <Input type="text" bind:value={createdObject.IFSC} />
+            <Input type="text" bind:value={createdObject.ifsc} />
         </Label>
         
         <Label class="space-y-2">
@@ -564,22 +564,22 @@
 
         <Label class="space-y-2">
             <span>Account Holder Name</span>
-            <Input type="text" bind:value={actionsObject.AHName} />
+            <Input type="text" bind:value={actionsObject.ah_name} />
         </Label>
 
         <Label class="space-y-2">
             <span>Bank Name</span>
-            <Input type="text" bind:value={actionsObject.BankName} />
+            <Input type="text" bind:value={actionsObject.bank_name} />
         </Label>
 
         <Label class="space-y-2">
             <span>Account Number</span>
-            <Input type="text" bind:value={actionsObject.AccountNo} />
+            <Input type="text" bind:value={actionsObject.account_no} />
         </Label>
 
         <Label class="space-y-2">
             <span>IFSC & Branch</span>
-            <Input type="text" bind:value={actionsObject.IFSC} />
+            <Input type="text" bind:value={actionsObject.ifsc} />
         </Label>
 
         <Label class="space-y-2">
