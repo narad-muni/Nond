@@ -544,7 +544,7 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>Note</span>
+            <span>Note for self</span>
             <Textarea bind:value={createdObject.note}/>
         </Label>
 
@@ -684,7 +684,7 @@
         </Label>
 
         <Label class="space-y-2">
-            <span>Note</span>
+            <span>Note for self</span>
             <Textarea bind:value={actionsObject.note}/>
         </Label>
 

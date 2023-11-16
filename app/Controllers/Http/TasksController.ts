@@ -245,7 +245,6 @@ export default class TasksController {
     public async bill({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
-            const to_arhive: Task[] = [];
             const tasks = await Task
                 .query()
                 .preload('service', (query) => {
@@ -253,24 +252,11 @@ export default class TasksController {
                 })
                 .whereIn('id', payload.ids);
 
-            //filter out arhciveable
-            tasks.forEach(task => {
-                if (task.status == 4) {
-                    to_arhive.push(task);
-                }
-            });
-
-            //mark remaining tasks billed
-            await Task
-                .query()
-                .whereIn('id', payload.ids)
-                .update({ billed: true });
-
             // generate bill
             const tempInvoiceObject = {
                 client_id: 0,
                 company_id: payload.company_id,
-                particulars: {},
+                particulars: [],
                 paid: null,
                 total: null,
                 remarks: '',
@@ -279,50 +265,62 @@ export default class TasksController {
             }
 
             const invoice_list_obj = {};
-            const high_low = {};
+            const start_end = {};
 
             //get high low date range for client tasks based on services
             tasks.forEach(task => {
                 if (task.service_id >= 0) {
-                    if (high_low[task.client_id]) {//exisiting entry
+                    if (start_end[task.client_id]) {//exisiting entry
 
-                        if (high_low[task.client_id][task.service_id]) {//existing entry
+                        if (start_end[task.client_id][task.service_id]) {//existing entry
 
                             //update previous dates
-                            if (high_low[task.client_id][task.service_id]['high'] < task.created.toISODate()) {
-                                high_low[task.client_id][task.service_id]['high'] = task.created.toISODate();
-                            } else if (high_low[task.client_id][task.service_id]['low'] > task.created.toISODate()) {
-                                high_low[task.client_id][task.service_id]['low'] = task.created.toISODate();
+                            if (start_end[task.client_id][task.service_id]['high'] < task.created.toISODate()) {
+                                start_end[task.client_id][task.service_id]['high'] = task.created.toISODate();
+                            } else if (start_end[task.client_id][task.service_id]['low'] > task.created.toISODate()) {
+                                start_end[task.client_id][task.service_id]['low'] = task.created.toISODate();
                             }
 
                         } else {
-                            high_low[task.client_id][task.service_id] = {//new entry
+                            start_end[task.client_id][task.service_id] = {//new entry
                                 high: task.created.toISODate(),
                                 low: task.created.toISODate(),
                             }
                         }
 
                     } else {//new entry
-                        high_low[task.client_id] = {}
-                        high_low[task.client_id][task.service_id] = { high: task.created.toISODate(), low: task.created.toISODate(), }
+                        start_end[task.client_id] = {}
+                        start_end[task.client_id][task.service_id] = { high: task.created.toISODate(), low: task.created.toISODate(), }
                     }
                 }
             });
 
             //add task in particulars with price
             tasks.forEach(task => {
-                let date_range;
+                let date_range = "";
 
                 if (task.service_id >= 0) {
-                    date_range = high_low[task.client_id][task.service_id]["low"] + " to " + high_low[task.client_id][task.service_id]["high"];
+                    date_range = start_end[task.client_id][task.service_id]["low"] + " to " + start_end[task.client_id][task.service_id]["high"];
                 }
 
                 if (invoice_list_obj[task.client_id]) {//client already in invoice list
 
                     if (task.service_id < 0) {//other task
-                        invoice_list_obj[task.client_id].particulars[task.title + "  on  " + task.created.toISODate()] = { amount: 0, hsn: "", gst: 0, description: task.created.toISODate() };
+                        invoice_list_obj[task.client_id].particulars.push({
+                            master: task.title + "  on  " + task.created.toISODate(),
+                            amount: 0,
+                            hsn: "",
+                            gst: 0,
+                            description: task.created.toISODate()
+                        });
                     } else {
-                        invoice_list_obj[task.client_id].particulars[task.service.name + "      " + date_range] = { amount: 0, hsn: task.service.hsn, gst: task.service.gst, description: date_range };
+                        invoice_list_obj[task.client_id].particulars.push({
+                            master: task.service.name + "      " + date_range,
+                            amount: 0,
+                            hsn: "",
+                            gst: 0,
+                            description: date_range
+                        });
                     }
                 } else {
                     const temp = tempInvoiceObject;
@@ -330,35 +328,64 @@ export default class TasksController {
                     temp.client_id = task.client_id;
 
                     if (task.service_id < 0) {//other task
-                        temp.particulars[task.title + "  on  " + task.created.toISODate()] = { amount: 0, hsn: "", gst: 0, description: task.created.toISODate() };
+                        temp.particulars.push({
+                            master: task.title + "  on  " + task.created.toISODate(),
+                            amount: 0,
+                            hsn: task.service.hsn,
+                            gst: task.service.gst,
+                            description: task.created.toISODate()
+                        });
                     } else {
-                        temp.particulars[task.service.name + "      " + date_range] = { amount: 0, hsn: task.service.hsn, gst: task.service.gst, description: date_range };
+                        temp.particulars.push({
+                            master: task.service.name + "      " + date_range,
+                            amount: 0,
+                            hsn: task.service.hsn,
+                            gst: task.service.gst,
+                            description: date_range
+                        });
                     }
 
                     invoice_list_obj[task.client_id] = temp;
                 }
+
+                task.money = task.money || [];
+                task.time = task.time || [];
+
+                task.money.forEach(spent => {
+                    invoice_list_obj[task.client_id].particulars.push({
+                        master: "Expense",
+                        amount: parseFloat(spent.amount) || 0,
+                        hsn: task.service.hsn,
+                        gst: task.service.gst,
+                        description: spent.description
+                    });
+                });
+
+                task.time.forEach(time => {
+                    const [hours, minutes] = time.time.split(":");
+
+                    invoice_list_obj[task.client_id].particulars.push({
+                        master: "Time spent",
+                        amount: 0,
+                        hsn: task.service.hsn,
+                        gst: task.service.gst,
+                        description: `${time.description} - ${hours} Hours and ${minutes} Minutes Spent`
+                    });
+                });
+
             });
 
             Object.keys(invoice_list_obj).forEach(client_id => {
-                const temp_particular_list = [];
-                Object.keys(invoice_list_obj[client_id].particulars).forEach(particular => {
-                    const temp_particular = {};
-
-                    temp_particular["master"] = particular;
-                    temp_particular["amount"] = invoice_list_obj[client_id].particulars[particular].amount;
-                    temp_particular["description"] = invoice_list_obj[client_id].particulars[particular].description;
-
-                    if (invoice_list_obj[client_id].gst) {
-                        temp_particular["hsn"] = invoice_list_obj[client_id].particulars[particular].hsn;
-                        temp_particular["gst"] = invoice_list_obj[client_id].particulars[particular].gst;
-                    }
-
-                    temp_particular_list.push(temp_particular);
-                });
-                invoice_list_obj[client_id].particulars = { "particulars": temp_particular_list };
+                invoice_list_obj[client_id].particulars = { "particulars": invoice_list_obj[client_id].particulars };
             });
 
             await Invoice.createMany(Object.values(invoice_list_obj));
+
+            //mark tasks billed
+            await Task
+                .query()
+                .whereIn('id', payload.ids)
+                .update({ billed: true });
 
             response.send({
                 status: "success"

@@ -33,7 +33,7 @@
     let selectedRows = new Set();
 
     let data, createdObject = {priority:1,status:0, money:[], time:[]}, bulkUpdateObject = {}, clients, actionsIndex, actionsObject = {money:[], time:[]}, userList, taskTemplates, services, companies, billTaskObject = {};
-    let handler, rows, statusFilter = 0, billingFilter = 1, selfTasks = true, billModal = false;
+    let handler, rows, statusFilter = 1, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
         {name:'Pending',value:0},
@@ -67,6 +67,7 @@
             error = data.message;
             data = null;
         }else{
+            userList = [{name: "Unassigned", value: null}, ...userList];
             data = data.data;
 
             data.forEach((v) => {
@@ -517,6 +518,14 @@
                 Download
             </Button>
 
+            <Button disabled={buttonDisabled} gradient color="green" on:click={()=> bulkUpdateModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m-6 3.75l3 3m0 0l3-3m-3 3V1.5m6 9h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
+                </svg>                  
+                &nbsp;
+                Bulk Update
+            </Button>
+
             <Button id="billTaskBtn" disabled={buttonDisabled || billingFilter!=0} gradient color="blue" on:click={()=> billModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -530,14 +539,6 @@
                     Toggle Not Billed To Enable
                 </Popover>
             {/if}
-
-            <Button disabled={buttonDisabled} gradient color="blue" on:click={()=> bulkUpdateModal = true}>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 8.25H9m6 3H9m3 6l-3-3h1.5a3 3 0 100-6M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                &nbsp;
-                Bulk Update
-            </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">

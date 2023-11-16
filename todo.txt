@@ -1,7 +1,13 @@
 pending stuff
 
-clean code for pdf creation
+fail and delete pending automators on restart
+
+automator ui
+better invoice pdf
 check all filters and search boxes
+
+bulk mail to same client
+clean code for pdf creation
 -----
 
 rewrite whole app
