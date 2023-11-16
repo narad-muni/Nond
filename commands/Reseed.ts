@@ -98,7 +98,7 @@ export default class Reseed extends BaseCommand {
         await Role.create({
             id: -1,
             name: 'admin',
-            read: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true, "automator": true },
+            read: { "client": true, "report": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true, "automator": true },
             create: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
             update: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true },
             remove: { "client": true, "company": true, "employee": true },

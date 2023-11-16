@@ -298,6 +298,14 @@ Route.group(() => {
         })
         .prefix('/task_template');
 
+        Route.group(() => {
+
+            Route.get('/','ReportsController.index');
+            Route.get('/:report_name','ReportsController.load');
+
+        })
+        .prefix('/report');
+
 
         /*
         | role routes

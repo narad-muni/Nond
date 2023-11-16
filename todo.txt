@@ -1,12 +1,10 @@
 pending stuff
 
-fail and delete pending automators on restart
-
 automator ui
 better invoice pdf
 check all filters and search boxes
 
-bulk mail to same client
+reports
 clean code for pdf creation
 -----
 
