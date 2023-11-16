@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 import Automator from "App/Models/Automator";
 
 export default class AutomatorDAO {
@@ -43,5 +44,29 @@ export default class AutomatorDAO {
             .whereIn('id', ids)
             .whereNot('status', 'Pending')
             .delete();
+    }
+
+    public static async failPendingAutomators(): Promise<void>{
+        const pending_automators = await Automator
+            .query()
+            .where('status', 'Pending');
+
+        // Delte Automator mail files
+        for(const automator of pending_automators){
+            const tempInvoicePath = automator?.data?.temp_path;
+            try {
+                await fs.rm(tempInvoicePath, { recursive: true });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+
+        await Automator
+            .query()
+            .where('status', 'Pending')
+            .update({
+                status: 'Failed',
+                message: 'Automator failed because too long pending state, Please check logs.'
+            });
     }
 }

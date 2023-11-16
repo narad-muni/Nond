@@ -55,7 +55,7 @@ export default class InvoiceMailsController {
             const bulk_mail_data: any[] = [];
 
             const mail_status: object = {
-                "temp_invoice_path": tempInvoicePath
+                "temp_path": tempInvoicePath
             };
 
             // Set mail to
@@ -137,7 +137,7 @@ export default class InvoiceMailsController {
     }
 
     public static async bulkMailAutomator(bulk_mail, automator){
-        const tempInvoicePath = automator.data.temp_invoice_path;
+        const tempInvoicePath = automator?.data?.temp_path;
         try{
             const line: Promise<any>[] = [];
 

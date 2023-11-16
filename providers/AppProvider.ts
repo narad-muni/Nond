@@ -16,6 +16,7 @@ export default class AppProvider {
 
         const {default: SchedulerManager} = await import('App/Utils/SchedulerManager');
         const {default: TableManager} = await import('App/Utils/TableManager');
+        const {default: AutomatorDAO} = await import('App/Dao/AutomatorDAO');
         const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
         // Set table classes with columns on start
@@ -23,6 +24,9 @@ export default class AppProvider {
 
         // Trigger scheduler manager on start
         await SchedulerManager.RunSchedulers();
+
+        // Fail and delte automator files
+        await AutomatorDAO.failPendingAutomators();
 
         //trigger scheduler after 24h if server is running continuously
         setInterval(SchedulerManager.RunSchedulers,dayInMilliseconds);

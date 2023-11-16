@@ -18,7 +18,7 @@
     }
 
     async function deleteAutomatorLog(id){
-        await utils._delete(`/api/automator/${id}`);
+        await utils._delete(`/api/automator/destroy/${id}`);
         await refresh_status();
     }
 
@@ -40,7 +40,7 @@
                 <AccordionItem>
                     <span slot="header">Logs</span>
                     {#each Object.entries(automator.data) as [invoice, data]}
-                        {#if invoice != 'temp_invoice_path'}
+                        {#if invoice != 'temp_path'}
                             {#if data.success == true}
                                 <p class="text-green-500">{invoice} - {data.message}</p>
                             {:else}

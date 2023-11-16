@@ -273,7 +273,7 @@ Route.group(() => {
 
         Route.group(() => {
             Route.get('/','AutomatorsController.index');
-            Route.delete('/:id','AutomatorsController.destroy');
+            Route.delete('/destroy/:id','AutomatorsController.destroy');
         })
         .prefix('/automator');
 
