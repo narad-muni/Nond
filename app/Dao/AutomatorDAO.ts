@@ -11,6 +11,16 @@ export default class AutomatorDAO {
             });
     }
 
+    public static async getAutomatorsById(ids: number[]): Promise<Automator[]>{
+        return await Automator
+            .query()
+            .whereIn('id', ids)
+            .orderBy('created_on', 'desc')
+            .preload('user', (query) => {
+                query.select('id', 'username')
+            });
+    }
+
     public static async createAutomators(automator: Automator[]): Promise<Automator[]>{
         const created = await Automator
             .createMany(automator);

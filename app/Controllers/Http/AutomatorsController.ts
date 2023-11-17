@@ -16,6 +16,19 @@ export default class AutomatorsController {
         }
     }
 
+    public async get({ request, response }: HttpContextContract) {
+        try {
+            let id = request.param('id');
+            let data: Automator[] = await AutomatorDAO.getAutomatorsById([id]);
+
+            ResponseUtils.SuccessResponse(response, data[0]);
+        } catch (e) {
+            console.log(e);
+
+            ResponseUtils.CommonErrorResponse(response);
+        }
+    }
+
     public async destroy({ request, response }: HttpContextContract) {
         try {
             const id = request.param('id');
