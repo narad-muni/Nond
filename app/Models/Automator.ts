@@ -21,7 +21,10 @@ export default class Automator extends BaseModel {
     @column()
     public data: object
 
-    @column.dateTime({ autoCreate: true })
+    @column.dateTime({
+        autoCreate: true,
+        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy')
+    })
     public created_on: DateTime
 
     @belongsTo(() => Employee, {

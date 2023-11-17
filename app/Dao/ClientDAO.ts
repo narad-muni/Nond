@@ -14,7 +14,7 @@ export default class ClientDAO {
     public static DateOptions = {
         serialize: (value) => {
             if (value) {
-                return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
             } else {
                 return value
             }

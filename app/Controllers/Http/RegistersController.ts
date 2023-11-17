@@ -14,7 +14,7 @@ export default class RegistersController {
     public static dateOptions = {
         serialize: (value) => {
             if (value instanceof Date) {
-                return DateTime.fromJSDate(value).toLocaleString(DateTime.DATE_MED);
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
             } else {
                 return value
             }

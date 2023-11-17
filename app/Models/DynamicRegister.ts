@@ -13,7 +13,7 @@ export default class DynamicRegister extends BaseModel {
     public client_id: number
 
     @column.date({
-        serialize: (value: DateTime) => value?.toLocaleString(DateTime.DATE_MED),
+        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy'),
     })
     public entry_on: DateTime
 

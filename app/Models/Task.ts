@@ -46,7 +46,7 @@ export default class Task extends BaseModel {
 
     @column.date({
         autoCreate: true,
-        serialize: (value: DateTime) => value?.toLocaleString(DateTime.DATE_MED),
+        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy'),
     })
     public created: DateTime
 
