@@ -1,0 +1,523 @@
+// playground requires you to assign document definition to a variable called dd
+
+var dd = {
+    "content": [
+        {
+            "columns": [
+                {
+                    "image": "companyLogo",
+                    "fit": [
+                        80,
+                        80
+                    ],
+                    "width": 80,
+                    "alignment": "center"
+                },
+                {
+                    "alignment": "left",
+                    "stack": [
+                        {
+                            "text": "Chotu",
+                            "bold": true,
+                            "fontSize": "13",
+                            "margin": [
+                                0,0,0,5
+                            ]
+                        },
+                        {
+                            "text": null,
+                            "fontSize": "10",
+                        },
+                        {
+                            "text": "GSTIN/UIN: -\n                                            State Name : Maharashtra\n                                            Code : 27\n                                            E-Mail : -",
+                            "fontSize": "10",
+                        }
+                    ],
+                    "width": "*"
+                },
+                {
+                    "layout": "lightHorizontalLines",
+                    "table": {
+                        "body": [
+                            [
+                                "",
+                                ""
+                            ],
+                            [
+                                "Invoice #",
+                                "CHO-2324-4"
+                            ],
+                            [
+                                "",
+                                ""
+                            ],
+                            [
+                                "",
+                                ""
+                            ],
+                            [
+                                "Date ",
+                                "Nov 7, 2023"
+                            ],
+                            [
+                                "",
+                                ""
+                            ]
+                        ]
+                    },
+                    "widths": [
+                        "auto"
+                    ],
+                    "width": "auto"
+                }
+            ],
+            "columnGap": 10,
+            "margin": 5
+        },
+        {
+            "columns": [
+                {
+                    "image": "clientLogo",
+                    "fit": [
+                        80,
+                        80
+                    ],
+                    "width": 80,
+                    "alignment": "center"
+                },
+                {
+                    "stack": [
+                        {
+                            "text": "Saumil",
+                            "bold": true,
+                            "fontSize": "13",
+                            "margin": [
+                                0,
+                                0,
+                                0,
+                                5
+                            ]
+                        },
+                        {
+                            "text": "GSTIN/UIN: -\n                                                State Name : Maharashtra\n                                                Code : 27\n                                                E-Mail : saumillinux@gmail.com",
+                            "fontSize": "10"
+                        }
+                    ],
+                    "width": "*"
+                },
+                {
+                    "columns": [
+                        {
+                            "width": 65,
+                            "margin": [
+                                0,
+                                25,
+                                0,
+                                0
+                            ],
+                            "text": "Scan to pay"
+                        },
+                        {
+                            "qr": "upi://pay?pa=me@fam&cu=INR",
+                            "fit": 80,
+                            "width": "auto",
+                        }
+                    ],
+                    "width": "auto",
+                    "alignment": "left"
+                }
+            ],
+            "columnGap": 10,
+            "margin": 5
+        },
+        {
+            "table": {
+                "headerRows": 1,
+                "body": [
+                    [
+                        "Service",
+                        "Description",
+                        "HSN/SAC",
+                        "Amount"
+                    ],
+                    [
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        }
+                    ],
+                    [
+                        "sa",
+                        "sasa",
+                        "1",
+                        "101"
+                    ],
+                    [
+                        "Hello",
+                        "kJHKJda",
+                        "12",
+                        "090"
+                    ],
+                    [
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        }
+                    ],
+                    [
+                        {
+                            "text": "CGST",
+                            "colSpan": 2,
+                            "alignment": "right"
+                        },
+                        "",
+                        "",
+                        9.045
+                    ],
+                    [
+                        {
+                            "text": "SGST",
+                            "colSpan": 2,
+                            "alignment": "right"
+                        },
+                        "",
+                        "",
+                        9.045
+                    ],
+                    [
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 4
+                        }
+                    ],
+                    [
+                        {
+                            "text": "Total",
+                            "colSpan": 2,
+                            "alignment": "right"
+                        },
+                        "",
+                        "",
+                        "₹ 209.09"
+                    ],
+                    [
+                        {
+                            "stack": [
+                                {
+                                    "text": "Amount Chargeable (in words)",
+                                    "fontSize": 9,
+                                    "margin": [
+                                        0,
+                                        0,
+                                        0,
+                                        4
+                                    ]
+                                },
+                                {
+                                    "text": "INR Two Hundred Nine Rupees And Nine Paise Only",
+                                    "fontSize": 12,
+                                    "bold": true
+                                }
+                            ],
+                            "colSpan": 4
+                        },
+                        [
+                            "",
+                            "",
+                            ""
+                        ]
+                    ]
+                ],
+                "widths": "*"
+            },
+            "margin": [
+                0,
+                15,
+                0,
+                15
+            ]
+        },
+        {
+            "table": {
+                "headerRows": 2,
+                "body": [
+                    [
+                        {
+                            "text": "HSN/SAC",
+                            "rowSpan": 2
+                        },
+                        {
+                            "text": "Taxable Value",
+                            "rowSpan": 2,
+                            "alignment": "center"
+                        },
+                        {
+                            "text": "State Tax",
+                            "colSpan": 2,
+                            "alignment": "center"
+                        },
+                        "",
+                        {
+                            "text": "Central Tax",
+                            "colSpan": 2,
+                            "alignment": "center"
+                        },
+                        "",
+                        {
+                            "text": "Total Taxable Amount",
+                            "rowSpan": 2,
+                            "alignment": "center"
+                        }
+                    ],
+                    [
+                        "",
+                        "",
+                        "Rate",
+                        "Amount",
+                        "Rate",
+                        "Amount",
+                        ""
+                    ],
+                    [
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        }
+                    ],
+                    [
+                        "1",
+                        101,
+                        4.5,
+                        4.545,
+                        4.5,
+                        4.545,
+                        9.09
+                    ],
+                    [
+                        "12",
+                        90,
+                        5,
+                        4.5,
+                        5,
+                        4.5,
+                        9
+                    ],
+                    [
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        },
+                        {
+                            "text": "",
+                            "colSpan": 7
+                        }
+                    ],
+                    [
+                        {
+                            "text": "Total",
+                            "alignment": "right",
+                            "bold": true
+                        },
+                        191,
+                        "",
+                        9.045,
+                        "",
+                        9.045,
+                        18.09
+                    ],
+                    [
+                        {
+                            "stack": [
+                                {
+                                    "text": "Tax amount in words",
+                                    "fontSize": 9,
+                                    "margin": [
+                                        0,
+                                        0,
+                                        0,
+                                        4
+                                    ]
+                                },
+                                {
+                                    "text": "INR Eighteen Rupees And Nine Paise Only",
+                                    "fontSize": 12,
+                                    "bold": true
+                                }
+                            ],
+                            "colSpan": 7
+                        },
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                    ]
+                ],
+                "widths": "*"
+            },
+            "margin": [
+                0,
+                0,
+                0,
+                15
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "text": "Company’s Bank Details\n                                A/c Holder’s Name : -\n                                Bank Name : -\n                                A/c No. : -\n                                Branch & IFS Code : -\n                                ",
+                    "width": "*"
+                },
+                {
+                    "text": "Company’s PAN : -",
+                    "width": "*"
+                }
+            ],
+            "margin": [
+                0,
+                0,
+                0,
+                15
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "stack": [
+                        {}
+                    ],
+                    "width": "*"
+                },
+                {
+                    "table": {
+                        "body": [
+                            [
+                                {
+                                    "stack": [
+                                        {
+                                            "stack": [
+                                                {
+                                                    "text": "for Chotu"
+                                                },
+                                                {
+                                                    "text": "Chotu\n                                                                Digitally Signed on 2023-11-07T00:00:00.000+05:30",
+                                                    "fontSize": 10
+                                                },
+                                                {
+                                                    "text": "Authorised Signatory"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "image": "companySignature",
+                                            "alignment": "center",
+                                            "margin": [
+                                                0,
+                                                5,
+                                                0,
+                                                0
+                                            ],
+                                            fit: [
+                                                60,
+                                                230
+                                            ],
+                                        }
+                                    ]
+                                }
+                            ]
+                        ]
+                    },
+                    "width": "auto"
+                }
+            ]
+        }
+    ],
+    "pageMargins": 10,
+    "images": {
+        "companyLogo": "https://picsum.photos/200",
+        "companySignature": "https://picsum.photos/200",
+        "clientLogo": "https://picsum.photos/200",
+        "emptyImage": "https://picsum.photos/200"
+    }
+}
