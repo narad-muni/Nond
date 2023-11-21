@@ -1,7 +1,5 @@
 pending stuff
 
-invoice update increments invoice number - need to fix
-
 better invoice pdf
 check all filters and search boxes
 

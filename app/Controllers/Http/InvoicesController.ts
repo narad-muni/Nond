@@ -152,10 +152,15 @@ export default class InvoicesController {
                 return;
             }
 
-            const old_company_prefix = payload.id.split(" ")[0];
             const old_id = payload.id;
 
-            if (old_company_prefix != StringUtils.shortName(payload.company.name)) {
+            const old_company = await Company
+                    .query()
+                    .select('name')
+                    .where('id', payload.company_id)
+                    .firstOrFail();
+
+            if (old_company.name != payload.company.name) {
 
                 const company_details = await Company
                     .query()
