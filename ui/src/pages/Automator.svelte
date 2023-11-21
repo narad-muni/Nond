@@ -1,8 +1,6 @@
 <script>
-    import { onMount ,onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     import utils from "../utils";
-    import { user } from '../global/stores';
-    import { Accordion, AccordionItem, Card } from 'flowbite-svelte';
     import { DataHandler } from '../component/datatables';
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
@@ -15,9 +13,10 @@
         TableBodyCell,
         TableBodyRow,
         Alert,
+        Modal
     } from "flowbite-svelte";
     
-    let automators = [], error = "", handler, rows;
+    let automators = [], error = "", handler, rows, deleteId, logs, viewLogModal;
 
     async function refresh_status(){
         const resp = await utils.get("/api/automator");
@@ -37,13 +36,20 @@
         }
     }
 
-    async function viewLogs(logs){
-        console.log(logs)
-    }
-
     async function deleteAutomatorLog(id){
         await utils._delete(`/api/automator/destroy/${id}`);
         await refresh_status();
+        deleteId = false;
+    }
+
+    async function viewLogs(id){
+        const resp = await utils.get(`/api/automator/${id}`);
+
+        if(resp.status == 'success'){
+            logs = resp.data.data;
+        }else{
+            error = resp.message;
+        }
     }
 
     onMount(async () => {
@@ -86,9 +92,9 @@
                                 <TableBodyCell>{row.name || "-"}</TableBodyCell>
                                 <TableBodyCell>{row.status || "-"}</TableBodyCell>
                                 <TableBodyCell>{row.created_on || "-"}</TableBodyCell>
-                                <TableBodyCell><Button on:click={() => viewLogs(row.data)}>view logs</Button></TableBodyCell>
+                                <TableBodyCell><Button on:click={() => viewLogs(row.id)}>view logs</Button></TableBodyCell>
                                 <TableBodyCell>
-                                    <Button color="red" on:click={() => deleteAutomatorLog(row.id)}>Delete</Button>
+                                    <Button color="red" on:click={() => deleteId = row.id}>Delete</Button>
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -99,31 +105,34 @@
     </main>
 {/if}
 
-<div class="mt-5 mx-5">
-    {#each automators as automator}
-        <Card>
-            <p>{automator.name}</p>
-            <p>{automator.message}</p>
-            <p>{automator.status}</p>
-            <p>{automator.created_on}</p>
-            <Button color="red" on:click={() => deleteAutomatorLog(automator.id)}>Delete</Button>
-            <Accordion>
-                <AccordionItem>
-                    <span slot="header">Logs</span>
-                    {#each Object.entries(automator.data) as [invoice, data]}
-                        {#if invoice != 'temp_path'}
-                            {#if data.success == true}
-                                <p class="text-green-500">{invoice} - {data.message}</p>
-                            {:else}
-                                <p class="text-red-500">{invoice} - {data.message}</p>
-                            {/if}
-                        {/if}
-                    {/each}
-                </AccordionItem>
-            </Accordion>
-        </Card>
-    {/each}
-</div>
+<Modal bind:open={deleteId} size="xs" autoclose>
+    <div class="text-center">
+        <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this log?</h3>
+        <Button color="red" on:click={() => deleteAutomatorLog(deleteId)} class="mr-2">Yes, I'm sure</Button>
+        <Button color='alternative'>No, cancel</Button>
+    </div>
+</Modal>
+
+<Modal bind:open={logs} size="xl" autoclose>
+    <div class="text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+        </svg>
+
+        {#each Object.entries(logs) as [invoice, data]}
+            {#if invoice != 'temp_path'}
+                {#if data.success == true}
+                    <p class="text-left text-green-500">{invoice} - {data.message}</p>
+                {:else}
+                    <p class="text-left text-red-500">{invoice} - {data.message}</p>
+                {/if}
+            {/if}
+        {/each}
+
+        <Button class="mt-5" on:click={() => logs = false} color='alternative'>Close</Button>
+    </div>
+</Modal>
 
 {#if error.length > 0}
     <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">

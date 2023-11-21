@@ -273,6 +273,7 @@ Route.group(() => {
 
         Route.group(() => {
             Route.get('/','AutomatorsController.index');
+            Route.get('/:id','AutomatorsController.get');
             Route.delete('/destroy/:id','AutomatorsController.destroy');
         })
         .prefix('/automator');
@@ -297,6 +298,14 @@ Route.group(() => {
 
         })
         .prefix('/task_template');
+
+        Route.group(() => {
+
+            Route.get('/','ReportsController.index');
+            Route.get('/:report_name','ReportsController.load');
+
+        })
+        .prefix('/report');
 
 
         /*

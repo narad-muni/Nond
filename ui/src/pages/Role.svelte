@@ -257,6 +257,7 @@
                 <Checkbox bind:checked={createdObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={createdObject.read.invoice} >Invoice</Checkbox>
                 <Checkbox bind:checked={createdObject.read.automator} >Automator</Checkbox>
+                <Checkbox bind:checked={createdObject.read.report} >Reports</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">
@@ -357,6 +358,7 @@
                 <Checkbox bind:checked={actionsObject.read.lead} >Lead</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.invoice} >Invoice</Checkbox>
                 <Checkbox bind:checked={actionsObject.read.automator} >Automator</Checkbox>
+                <Checkbox bind:checked={actionsObject.read.report} >reports</Checkbox>
             </div>
         </Label>
         <Label class="space-y-2">

@@ -76,6 +76,10 @@
             <NavLi href="/#/automator" class="cursor-pointer">Automator</NavLi>
         {/if}
 
+        {#if $user.role.read.report}
+            <NavLi href="/#/report" class="cursor-pointer">Reports</NavLi>
+        {/if}
+
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#master">
             {#if $user.role.read.client}
                 <DropdownItem href="/#/client">Client</DropdownItem>
