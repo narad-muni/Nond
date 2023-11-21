@@ -247,30 +247,34 @@ export class PDFUtils {
                                 alignment: "center"
                             },
                             {
-                                stack: [
-                                    {
-                                        text: data.company.name,
-                                        bold: true,
-                                        fontSize: '13',
-                                        margin: [0, 0, 0, 5]
-                                    },
-                                    {
-                                        columns: [
-                                            {
-                                                text: data.company.address,
-                                                fontSize: '10'
+                                columns: [{
+                                        "alignment": "left",
+                                        "stack": [{
+                                                "text": data.company.name,
+                                                "bold": true,
+                                                "fontSize": "13",
+                                                "margin": [
+                                                    0, 0, 0, 5
+                                                ]
                                             },
                                             {
-                                                text: `GSTIN/UIN: ${data.company.gst || "-"}
+                                                "text": data.company.address,
+                                                "fontSize": "10",
+                                                "italics": true
+                                            }
+                                        ],
+                                        "width": "*"
+                                    },
+                                    {
+                                        "alignment": "left",
+                                        text: `GSTIN/UIN: ${data.company.gst || "-"}
                                             State Name : Maharashtra
                                             Code : 27
                                             E-Mail : ${data.company.email || "-"}`,
-                                                fontSize: '10'
-                                            },
-                                        ],
+                                        "width": "*",
+                                        fontSize: '10'
                                     },
-                                ],
-                                width: 'auto',
+                                ]
                             },
                             {
                                 layout: "lightHorizontalLines",
@@ -300,30 +304,34 @@ export class PDFUtils {
                                 alignment: "center"
                             },
                             {
-                                stack: [
-                                    {
-                                        text: data.client.name,
-                                        bold: true,
-                                        fontSize: '13',
-                                        margin: [0, 0, 0, 5]
-                                    },
-                                    {
-                                        columns: [
-                                            {
-                                                text: data.client.address,
-                                                fontSize: '10'
+                                columns: [{
+                                        "alignment": "left",
+                                        "stack": [{
+                                                "text": data.client.name,
+                                                "bold": true,
+                                                "fontSize": "13",
+                                                "margin": [
+                                                    0, 0, 0, 5
+                                                ]
                                             },
                                             {
-                                                text: `GSTIN/UIN: ${data.client.gst || "-"}
-                                                State Name : Maharashtra
-                                                Code : 27
-                                                E-Mail : ${data.client.email || "-"}`,
-                                                fontSize: '10'
-                                            },
+                                                "text": data.client.address,
+                                                "fontSize": "10",
+                                                "italics": true
+                                            }
                                         ],
+                                        "width": "*"
                                     },
-                                ],
-                                width: 'auto',
+                                    {
+                                        "alignment": "left",
+                                        text: `GSTIN/UIN: ${data.client.gst || "-"}
+                                        State Name : Maharashtra
+                                        Code : 27
+                                        E-Mail : ${data.client.email || "-"}`,
+                                        fontSize: '10',
+                                        "width": "*"
+                                    },
+                                ]
                             },
                             ...qrBlock
                         ],
@@ -353,10 +361,8 @@ export class PDFUtils {
                     {
                         columns: [
                             {
-                                stack: [
-                                    {}
-                                ],
-                                width: "*"
+                                text: `Remarks : ${data.remarks}`,
+                                bold: true
                             },
                             {
                                 table: {
@@ -380,10 +386,18 @@ export class PDFUtils {
                                                         ]
                                                     },
                                                     {
-                                                        image: 'companySignature',
-                                                        alignment: "center",
-                                                        margin: [0, 5, 0, 0],
-                                                        fit: data.client.logo ? [180, 50] : [0, 0]
+                                                        "image": "companySignature",
+                                                        "alignment": "center",
+                                                        "margin": [
+                                                            0,
+                                                            5,
+                                                            0,
+                                                            0
+                                                        ],
+                                                        fit: [
+                                                            60,
+                                                            230
+                                                        ],
                                                     }
                                                 ]
                                             }

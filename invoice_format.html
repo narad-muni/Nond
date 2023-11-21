@@ -1,10 +1,8 @@
 // playground requires you to assign document definition to a variable called dd
 
 var dd = {
-    "content": [
-        {
-            "columns": [
-                {
+    "content": [{
+            "columns": [{
                     "image": "companyLogo",
                     "fit": [
                         80,
@@ -14,26 +12,33 @@ var dd = {
                     "alignment": "center"
                 },
                 {
-                    "alignment": "left",
-                    "stack": [
-                        {
-                            "text": "Chotu",
-                            "bold": true,
-                            "fontSize": "13",
-                            "margin": [
-                                0,0,0,5
-                            ]
+                    columns: [{
+                            "alignment": "left",
+                            "stack": [{
+                                    "text": "Chotu",
+                                    "bold": true,
+                                    "fontSize": "13",
+                                    "margin": [
+                                        0, 0, 0, 5
+                                    ]
+                                },
+                                {
+                                    "text": "Shop No 4, Ground Floor.Sargam CHS, Near Shivsena Office,Charai, Thane West 400601",
+                                    "fontSize": "10",
+                                    "italics": true
+                                }
+                            ],
+                            "width": "*"
                         },
                         {
-                            "text": null,
-                            "fontSize": "10",
+                            "alignment": "left",
+                            "stack": [{
+                                "text": "GSTIN/UIN: lsdfgldsfgflsgddsfhjl\n                                            State Name : Maharashtra\n                                            Code : 27\n                                            E-Mail : lsdfgldsfgflsgddsfhjl@kjhfad/.",
+                                "fontSize": "10",
+                            }],
+                            "width": "*"
                         },
-                        {
-                            "text": "GSTIN/UIN: -\n                                            State Name : Maharashtra\n                                            Code : 27\n                                            E-Mail : -",
-                            "fontSize": "10",
-                        }
-                    ],
-                    "width": "*"
+                    ]
                 },
                 {
                     "layout": "lightHorizontalLines",
@@ -44,8 +49,8 @@ var dd = {
                                 ""
                             ],
                             [
-                                "Invoice #",
-                                "CHO-2324-4"
+                                "#",
+                                "CHO-2324-5664"
                             ],
                             [
                                 "",
@@ -68,15 +73,14 @@ var dd = {
                     "widths": [
                         "auto"
                     ],
-                    "width": "auto"
+                    "width": 130
                 }
             ],
             "columnGap": 10,
             "margin": 5
         },
         {
-            "columns": [
-                {
+            "columns": [{
                     "image": "clientLogo",
                     "fit": [
                         80,
@@ -86,28 +90,36 @@ var dd = {
                     "alignment": "center"
                 },
                 {
-                    "stack": [
-                        {
-                            "text": "Saumil",
-                            "bold": true,
-                            "fontSize": "13",
-                            "margin": [
-                                0,
-                                0,
-                                0,
-                                5
-                            ]
+                    columns: [{
+                            "alignment": "left",
+                            "stack": [{
+                                    "text": "Saumil",
+                                    "bold": true,
+                                    "fontSize": "13",
+                                    "margin": [
+                                        0, 0, 0, 5
+                                    ]
+                                },
+                                {
+                                    "text": "Flat No 1403, Lifescapes Mirage CHS,Plot No 269, Senapati Bapat Marg, Matunga,West,400016",
+                                    "fontSize": "10",
+                                    "italics": true
+                                }
+                            ],
+                            "width": "*"
                         },
                         {
-                            "text": "GSTIN/UIN: -\n                                                State Name : Maharashtra\n                                                Code : 27\n                                                E-Mail : saumillinux@gmail.com",
-                            "fontSize": "10"
-                        }
-                    ],
-                    "width": "*"
+                            "alignment": "left",
+                            "stack": [{
+                                "text": "GSTIN/UIN: lsdfgldsfgflsgddsfhjl\n                                            State Name : Maharashtra\n                                            Code : 27\n                                            E-Mail : lsdfgldsfgflsgddsfhjl@kjhfad/.",
+                                "fontSize": "10",
+                            }],
+                            "width": "*"
+                        },
+                    ]
                 },
                 {
-                    "columns": [
-                        {
+                    "columns": [{
                             "width": 65,
                             "margin": [
                                 0,
@@ -140,8 +152,7 @@ var dd = {
                         "HSN/SAC",
                         "Amount"
                     ],
-                    [
-                        {
+                    [{
                             "text": "",
                             "colSpan": 4
                         },
@@ -170,8 +181,7 @@ var dd = {
                         "12",
                         "090"
                     ],
-                    [
-                        {
+                    [{
                             "text": "",
                             "colSpan": 4
                         },
@@ -188,8 +198,7 @@ var dd = {
                             "colSpan": 4
                         }
                     ],
-                    [
-                        {
+                    [{
                             "text": "CGST",
                             "colSpan": 2,
                             "alignment": "right"
@@ -198,8 +207,7 @@ var dd = {
                         "",
                         9.045
                     ],
-                    [
-                        {
+                    [{
                             "text": "SGST",
                             "colSpan": 2,
                             "alignment": "right"
@@ -208,8 +216,7 @@ var dd = {
                         "",
                         9.045
                     ],
-                    [
-                        {
+                    [{
                             "text": "",
                             "colSpan": 4
                         },
@@ -226,8 +233,7 @@ var dd = {
                             "colSpan": 4
                         }
                     ],
-                    [
-                        {
+                    [{
                             "text": "Total",
                             "colSpan": 2,
                             "alignment": "right"
@@ -236,10 +242,8 @@ var dd = {
                         "",
                         "₹ 209.09"
                     ],
-                    [
-                        {
-                            "stack": [
-                                {
+                    [{
+                            "stack": [{
                                     "text": "Amount Chargeable (in words)",
                                     "fontSize": 9,
                                     "margin": [
@@ -277,8 +281,7 @@ var dd = {
             "table": {
                 "headerRows": 2,
                 "body": [
-                    [
-                        {
+                    [{
                             "text": "HSN/SAC",
                             "rowSpan": 2
                         },
@@ -314,8 +317,7 @@ var dd = {
                         "Amount",
                         ""
                     ],
-                    [
-                        {
+                    [{
                             "text": "",
                             "colSpan": 7
                         },
@@ -362,8 +364,7 @@ var dd = {
                         4.5,
                         9
                     ],
-                    [
-                        {
+                    [{
                             "text": "",
                             "colSpan": 7
                         },
@@ -392,8 +393,7 @@ var dd = {
                             "colSpan": 7
                         }
                     ],
-                    [
-                        {
+                    [{
                             "text": "Total",
                             "alignment": "right",
                             "bold": true
@@ -405,10 +405,8 @@ var dd = {
                         9.045,
                         18.09
                     ],
-                    [
-                        {
-                            "stack": [
-                                {
+                    [{
+                            "stack": [{
                                     "text": "Tax amount in words",
                                     "fontSize": 9,
                                     "margin": [
@@ -444,8 +442,7 @@ var dd = {
             ]
         },
         {
-            "columns": [
-                {
+            "columns": [{
                     "text": "Company’s Bank Details\n                                A/c Holder’s Name : -\n                                Bank Name : -\n                                A/c No. : -\n                                Branch & IFS Code : -\n                                ",
                     "width": "*"
                 },
@@ -462,50 +459,43 @@ var dd = {
             ]
         },
         {
-            "columns": [
-                {
-                    "stack": [
-                        {}
-                    ],
-                    "width": "*"
+            "columns": [{
+                    text: "Remarks : hellow please pay on time, you are very late",
+                    bold: true
                 },
                 {
                     "table": {
                         "body": [
-                            [
-                                {
-                                    "stack": [
-                                        {
-                                            "stack": [
-                                                {
-                                                    "text": "for Chotu"
-                                                },
-                                                {
-                                                    "text": "Chotu\n                                                                Digitally Signed on 2023-11-07T00:00:00.000+05:30",
-                                                    "fontSize": 10
-                                                },
-                                                {
-                                                    "text": "Authorised Signatory"
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            "image": "companySignature",
-                                            "alignment": "center",
-                                            "margin": [
-                                                0,
-                                                5,
-                                                0,
-                                                0
-                                            ],
-                                            fit: [
-                                                60,
-                                                230
-                                            ],
-                                        }
-                                    ]
-                                }
-                            ]
+                            [{
+                                "stack": [{
+                                        "stack": [{
+                                                "text": "for Chotu"
+                                            },
+                                            {
+                                                "text": "Chotu\n                                                                Digitally Signed on 2023-11-07T00:00:00.000+05:30",
+                                                "fontSize": 10
+                                            },
+                                            {
+                                                "text": "Authorised Signatory"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "image": "companySignature",
+                                        "alignment": "center",
+                                        "margin": [
+                                            0,
+                                            5,
+                                            0,
+                                            0
+                                        ],
+                                        fit: [
+                                            60,
+                                            230
+                                        ],
+                                    }
+                                ]
+                            }]
                         ]
                     },
                     "width": "auto"
