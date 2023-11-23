@@ -17,8 +17,13 @@ export default class AppProvider {
         const {default: SchedulerManager} = await import('App/Utils/SchedulerManager');
         const {default: TableManager} = await import('App/Utils/TableManager');
         const {default: AutomatorDAO} = await import('App/Dao/AutomatorDAO');
+        const {default: PG} = await import('App/Utils/EmbededPG');
+
         const dayInMilliseconds = 1000 * 60 * 60 * 24;
 
+        // Start Postgres
+        await PG.startPG();
+        
         // Set table classes with columns on start
         await TableManager.init();
 
@@ -34,5 +39,8 @@ export default class AppProvider {
 
     public async shutdown () {
         // Cleanup, since app is going down
+        const {default: PG} = await import('App/Utils/EmbededPG');
+
+        await PG.stopPG();
     }
 }
