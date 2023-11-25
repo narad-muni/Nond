@@ -22,3 +22,7 @@ seperate logic into multiple files
 --------------------
 
 billed toggle in task with link to generated invoice
+
+dropdown as column type
+order of columns
+design of columns as asked
