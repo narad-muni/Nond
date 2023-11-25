@@ -43,7 +43,7 @@ export default class Task extends BaseModel {
     public total_money: number
 
     @column()
-    public invoice_id: number
+    public invoice_id: string
 
     @column()
     public billed: boolean

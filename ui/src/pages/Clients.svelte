@@ -81,6 +81,11 @@
         }else{
             client_list = [{name:"Self",value:null},...client_list];
 
+            headers.data.forEach((column,i) => {
+                headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+            });
+
             data = data.data;
             data.forEach((v) => {
                 v["_selected"] = false;
@@ -522,6 +527,8 @@
                                                 {/if}
                                             {:else if header.column_type == 'Date'}
                                                 {row[header.column_name] || "-"}
+                                            {:else if header.column_type == 'Dropdown'}
+                                                {row[header.column_name] || "-"}
                                             {:else}
                                                 <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                             {/if}
@@ -605,6 +612,9 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span>{header.display_name}</span>
+                        <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
                         <p>{header.display_name}</p>
                         <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
@@ -799,7 +809,7 @@
                     <Button on:click={() => {actionsObject.logo = null}} gradient color="red">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>                                  
+                        </svg>
                     </Button>
                 </div>
             {:else}
@@ -820,6 +830,9 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span>{header.display_name}</span>
+                        <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
                         {#if typeof(actionsObject[header.column_name]) == 'string'}
                             <span>{header.display_name}</span>

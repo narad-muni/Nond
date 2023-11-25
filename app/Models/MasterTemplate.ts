@@ -14,7 +14,10 @@ export default class MasterTemplate extends BaseModel {
     public display_name: string
 
     @column()
-    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox'
+    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox' | 'Dropdown'
+
+    @column()
+    public column_info: object
 
     @column()
     public is_master: boolean

@@ -159,7 +159,7 @@ export default class RegisterTemplatesController {
                         .where('id', payload.table_id)
                         .firstOrFail();
 
-                    if (payload.column_type == 'File' || payload.column_type == 'Text') {
+                    if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                         c_type = 'varchar(255)'
                     } else if (payload.column_type == 'Checkbox') {
                         c_type = 'boolean'
@@ -270,7 +270,7 @@ export default class RegisterTemplatesController {
                     }
                 }
 
-                if (payload.column_type == 'File' || payload.column_type == 'Text') {
+                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
@@ -306,7 +306,7 @@ export default class RegisterTemplatesController {
                         .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__" + table.name + table.version), old.column_name, payload.column_name]);
 
                     //update rollover table
-                    if (payload.column_type != 'File') {
+                    if (payload.column_type != 'File' && payload.rollover) {
                         await Database
                             .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
                     }
@@ -317,9 +317,9 @@ export default class RegisterTemplatesController {
                         .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__" + table.name + table.version), payload.column_name]);
 
                     //update rollover table
-                    if (payload.column_type != 'File') {
+                    if (payload.column_type != 'File' && payload.rollover) {
                         await Database
-                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("rollover__register__" + table.name + table.version), payload.column_name]);
                     }
                 }
 

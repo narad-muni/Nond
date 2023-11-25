@@ -27,7 +27,7 @@
     let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, createdObject={}, actionsIndex, actionsObject;
+    let data, createdObject={column_info:{options:[""]}}, actionsIndex, actionsObject;
     let handler, rows;
 
     let error="", success="";
@@ -36,6 +36,7 @@
         {name: 'Date',value: 'Date'},
         {name: 'File',value: 'File'},
         {name: 'Checkbox',value: 'Checkbox'},
+        {name: 'Dropdown',value: 'Dropdown'},
     ];
     const table_name = [
         {name: 'Client',value: 'clients'},
@@ -169,7 +170,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
-            createdObject = {};
+            createdObject = {column_info:{options:[""]}};
         }else{
             error = resp.message || "";
         }
@@ -277,13 +278,39 @@
             <span>Column Type</span>
             <Select required items={type_list} bind:value={createdObject.column_type} />
         </Label>
+
+        {#if createdObject.column_type == 'Dropdown'}
+
+            {#each createdObject.column_info.options as  option, i }
+                <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
+                    <Input required bind:value={createdObject.column_info.options[i]} class="col-span-3"></Input>
+                    {#if i > 0}
+                        <Button class="m-0" on:click={() => {createdObject.column_info.options.splice(i, 1), createdObject = createdObject}} color="red">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </Button>
+                    {/if}
+                </Label>
+            {/each}
+
+            <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
+                <span class="col-span-3"></span>
+                <Button on:click={() => {createdObject.column_info.options.push(""), createdObject = createdObject}} class="m-0" color="blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>                  
+                </Button>
+            </Label>
+        {/if}
+
         <Label class="space-y-2">
             <span>&nbsp;</span>
             <Toggle bind:checked={createdObject.is_master}>Is Master</Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
-            <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{createModal=false;createdObject={column_info:{options:[""]}}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
@@ -307,6 +334,32 @@
             <span>Column Type</span>
             <Select required items={type_list} bind:value={actionsObject.column_type} />
         </Label>
+
+        {#if actionsObject.column_type == 'Dropdown'}
+
+            {#each actionsObject.column_info.options as  option, i }
+                <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
+                    <Input required bind:value={actionsObject.column_info.options[i]} class="col-span-3"></Input>
+                    {#if i > 0}
+                        <Button class="m-0" on:click={() => {actionsObject.column_info.options.splice(i, 1), actionsObject = actionsObject}} color="red">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </Button>
+                    {/if}
+                </Label>
+            {/each}
+
+            <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
+                <span class="col-span-3"></span>
+                <Button on:click={() => {actionsObject.column_info.options.push(""), actionsObject = actionsObject}} class="m-0" color="blue">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>                  
+                </Button>
+            </Label>
+        {/if}
+
         <Label class="space-y-2">
             <span>&nbsp;</span>
             <Toggle bind:checked={actionsObject.is_master}>Is Master</Toggle>

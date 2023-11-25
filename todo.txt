@@ -1,8 +1,12 @@
 pending stuff
 
-reports
-clean code for pdf creation
------
+billed toggle in task with link to generated invoice
+
+order of columns
+design of columns as asked
+create installer
+license key validator using jwt
+-----------------------
 
 rewrite whole app
 
@@ -15,14 +19,6 @@ reports
 client access to view data
 add lines in tables
 
---------------------
-
 seperate logic into multiple files
 
---------------------
-
-billed toggle in task with link to generated invoice
-
-dropdown as column type
-order of columns
-design of columns as asked
+-------------------

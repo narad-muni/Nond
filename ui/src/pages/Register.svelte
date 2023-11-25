@@ -14,6 +14,7 @@
         Input,
         Toggle,
         Alert,
+        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
@@ -57,6 +58,12 @@
                 data = null;
             }else{
                 headers.data = headers.data || [];
+
+                headers.data.forEach((column,i) => {
+                    headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                    headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                });
+
                 data = data.data;
                 data.forEach((v) => {
                     v["_selected"] = false;
@@ -345,6 +352,8 @@
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
                                                     {row[header.column_name] || "-"}
+                                                {:else if header.column_type == 'Dropdown'}
+                                                    {row[header.column_name] || "-"}
                                                 {:else}
                                                     <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                                 {/if}
@@ -421,6 +430,9 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span>{header.display_name}</span>
+                        <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
                         <p>{header.display_name}</p>
                         <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
@@ -466,6 +478,9 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span>{header.display_name}</span>
+                        <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
                         {#if typeof(actionsObject[header.column_name]) == 'string'}
                             <span>{header.display_name}</span>

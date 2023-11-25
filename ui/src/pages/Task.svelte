@@ -589,7 +589,7 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>
-                                    {row.title || "-"}
+                                    {(row.title || "-").substring(0,20)}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.client?.name || "-"}

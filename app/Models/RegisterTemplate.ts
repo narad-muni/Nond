@@ -14,7 +14,13 @@ export default class RegisterTemplate extends BaseModel {
     public display_name: string
 
     @column()
-    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox'
+    public column_type: 'Text' | 'File' | 'Date' | 'Checkbox' | 'Dropdown'
+
+    @column()
+    public column_info: object
+
+    @column()
+    public order: number
 
     @column()
     public master: boolean

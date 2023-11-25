@@ -133,7 +133,7 @@ export default class MasterTemplatesController {
             } else {
                 let c_type: string;
 
-                if (payload.column_type == 'File' || payload.column_type == 'Text') {
+                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
@@ -200,7 +200,7 @@ export default class MasterTemplatesController {
 
                 let c_type: string;
 
-                if (payload.column_type == 'File' || payload.column_type == 'Text') {
+                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
