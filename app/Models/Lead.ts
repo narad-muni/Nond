@@ -24,7 +24,15 @@ export default class Lead extends BaseModel {
     public assigned_user: BelongsTo<typeof Employee>
 
     @column.date({
-        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy'),
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },,
     })
     public started: DateTime
 }

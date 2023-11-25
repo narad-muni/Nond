@@ -27,7 +27,15 @@ export default class Scheduler extends BaseModel {
     public frequency: '1 day' | '1 week' | '2 weeks' | '1 month' | '3 months' | '6 months' | '1 year' | null
 
     @column.date({
-        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy'),
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },
     })
     public next: DateTime
 }

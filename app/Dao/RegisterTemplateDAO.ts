@@ -6,8 +6,10 @@ export default class RegisterTemplateDAO{
 
     public static dateOptions = {
         serialize: (value) => {
-            if (value) {
+            if (value instanceof Date) {
                 return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
             } else {
                 return value
             }

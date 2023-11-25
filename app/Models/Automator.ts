@@ -23,7 +23,15 @@ export default class Automator extends BaseModel {
 
     @column.dateTime({
         autoCreate: true,
-        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy')
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },
     })
     public created_on: DateTime
 

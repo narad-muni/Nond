@@ -13,7 +13,15 @@ export default class DynamicRegister extends BaseModel {
     public client_id: number
 
     @column.date({
-        serialize: (value: DateTime) => value?.toFormat('d LLL yyyy'),
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },,
     })
     public entry_on: DateTime
 
