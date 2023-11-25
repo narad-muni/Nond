@@ -4,3 +4,4 @@ export const user = writable();
 export const archived_registers = writable();
 export const active_registers = writable();
 export const loader = writable();
+export const filter_visible = writable("hidden");

@@ -25,6 +25,3 @@ seperate logic into multiple files
 --------------------
 
 billed toggle in task with link to generated invoice
-hide / unhide filter from table
-service start/stop date 
-invoice amount is null

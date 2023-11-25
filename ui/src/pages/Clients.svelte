@@ -614,19 +614,21 @@
         {/each}
 
         <hr class="col-span-3"/>
-        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
             <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
             <h2>Next Date</h2>
+            <h2>End Date</h2>
             <h2>Count</h2>
         </div>
-        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
             {#each services as service}
                 {@const required = createdObject.services[service.value].subscribed && createdObject.services[service.value].frequency != null}
 
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].next}/>
+                <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].end_date}/>
                 <Input min="1" required={createdObject.services[service.value].subscribed} type="number" bind:value={createdObject.services[service.value].count}/>
             {/each}
         </div>
@@ -700,6 +702,7 @@
             <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
             <h2>Next Date</h2>
+            <h2>End Date</h2>
             <h2>Count</h2>
         </div>
         
@@ -709,6 +712,7 @@
             <Checkbox bind:checked={bulkServiceData[service.value].subscribed}>{service.name}</Checkbox>
             <Select {required} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
             <SveltyPicker format="d M yyyy" {required} bind:value={bulkServiceData[service.value].next}/>
+            <SveltyPicker format="d M yyyy" {required} bind:value={bulkServiceData[service.value].end_date}/>
             <Input min="1" required={bulkServiceData[service.value].subscribed} type="number" bind:value={bulkServiceData[service.value].count}/>
         {/each}
 
@@ -861,19 +865,21 @@
         {/if}
 
         <hr class="col-span-3"/>
-        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
             <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
             <h2>Next Date</h2>
+            <h2>End Date</h2>
             <h2>Count</h2>
         </div>
-        <div class="col-span-3 grid grid-cols-4 text-center gap-x-3 gap-y-5">
+        <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
             {#each services as service}
                 {@const required = actionsObject.services[service.value].subscribed && actionsObject.services[service.value].frequency != null}
 
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
+                <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].end_date}/>
                 <Input min="1" required={actionsObject.services[service.value].subscribed} type="number" bind:value={actionsObject.services[service.value].count}/>
             {/each}
         </div>

@@ -1,5 +1,6 @@
 <script>
     import { Input, Select } from "flowbite-svelte";
+    import { filter_visible } from '../global/stores';
 
     export let handler
     export let filterBy = null
@@ -18,7 +19,7 @@
 </script>
 
 
-<th>
+<th class={$filter_visible}>
     <Input
         class="border-0 !rounded-none border-b-[1px]"
         type="text"

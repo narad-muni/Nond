@@ -134,7 +134,8 @@ export default class ClientsController {
             await SchedulerDAO.createSchedulers(schedulers);
 
             for(const scheduler of schedulers){
-                if(scheduler.next == null){
+                // Run one time scheduler
+                if(scheduler.frequency == null){
                     await SchedulerManager.CreateTasks([scheduler]);
                     await SchedulerManager.AddEntries([scheduler]);
                 }
@@ -190,7 +191,8 @@ export default class ClientsController {
             await ClientDAO.addClientFiles(updatedClient, files);
 
             for(const scheduler of newSchedulers){
-                if(scheduler.next == null){
+                // Run one time scheduler
+                if(scheduler.frequency == null){
                     await SchedulerManager.CreateTasks([scheduler]);
                     await SchedulerManager.AddEntries([scheduler]);
                 }

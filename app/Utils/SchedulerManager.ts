@@ -28,6 +28,7 @@ export default class SchedulerManager {
          * 4. Arhive Tasks/Invoices
          * 5. Every Financial Year
          * 6. Create Tasks & Add Entryies
+         * 7. End Schedulers
          */
 
         try {
@@ -49,6 +50,14 @@ export default class SchedulerManager {
                     .whereNotNull('next')
                     .whereNotNull('frequency')
                     .orderBy('type', 'asc');
+
+                const end_jobs = await Scheduler
+                    .query()
+                    .where('end_date', '<=', currentDate)
+                    .whereNotNull('end_date')
+                    .orderBy('type', 'asc');
+
+                await SchedulerManager.EndJobs(end_jobs);
 
                 if(scheduled_jobs.length == 0){
                     break;
@@ -586,6 +595,15 @@ export default class SchedulerManager {
         });
 
         await Task.createMany(tasks);
+    }
+
+    static async EndJobs(jobs: Scheduler[]){
+        const ids = jobs.map(e => e.id);
+
+        await Scheduler
+            .query()
+            .whereIn('id', ids)
+            .delete();
     }
 
 }

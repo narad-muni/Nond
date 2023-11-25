@@ -55,7 +55,7 @@ export default class ClientDAO {
                 query.select('id', 'name')
             })
             .preload('services', (query) => {
-                query.select('id', 'next', 'frequency', 'service_id', 'client_id', 'count')
+                query.select('id', 'next', 'frequency', 'service_id', 'client_id', 'count', 'end_date')
             })
             .where('id', id)
             .first();
@@ -76,7 +76,7 @@ export default class ClientDAO {
                 query.select('id', 'name', 'email')
             })
             .preload('services', (query) => {
-                query.select('id', 'next', 'frequency', 'service_id', 'client_id', 'count')
+                query.select('id', 'next', 'frequency', 'service_id', 'client_id', 'count', 'end_date')
             })
             .whereIn('id', ids);
 

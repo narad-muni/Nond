@@ -38,4 +38,17 @@ export default class Scheduler extends BaseModel {
         },
     })
     public next: DateTime
+
+    @column.date({
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },
+    })
+    public end_date: DateTime
 }

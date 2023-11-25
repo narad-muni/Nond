@@ -20,6 +20,7 @@ export default class SchedulerDAO {
             scheduler.service_id = Number(service_id);
             scheduler.register_id = service.register_id;
             scheduler.next = service.next;
+            scheduler.end_date = service.end_date;
             scheduler.frequency = service.frequency;
             scheduler.count = service.count;
 
@@ -50,7 +51,8 @@ export default class SchedulerDAO {
                 type: 5,
                 service_id: scheduler.service_id,
                 frequency: scheduler.frequency,
-                next: scheduler.next
+                next: scheduler.next,
+                end_date: scheduler.end_date
             } as Scheduler);
         }
 
@@ -67,7 +69,8 @@ export default class SchedulerDAO {
                     type: 5,
                     service_id: scheduler.service_id,
                     frequency: scheduler.frequency,
-                    next: scheduler.next
+                    next: scheduler.next,
+                    end_date: scheduler.end_date,
                 } as Scheduler);
             }
         }

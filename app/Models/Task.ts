@@ -3,6 +3,7 @@ import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
 import Client from './Client'
 import Employee from './Employee'
 import Service from './Service'
+import Invoice from './Invoice'
 
 export default class Task extends BaseModel {
     @column({ isPrimary: true })
@@ -42,6 +43,9 @@ export default class Task extends BaseModel {
     public total_money: number
 
     @column()
+    public invoice_id: number
+
+    @column()
     public billed: boolean
 
     @column.date({
@@ -67,6 +71,11 @@ export default class Task extends BaseModel {
         foreignKey: 'client_id'
     })
     public client: BelongsTo<typeof Client>
+
+    @belongsTo(() => Invoice, {
+        foreignKey: 'invoice_id'
+    })
+    public invoice: BelongsTo<typeof Invoice>
 
     @belongsTo(() => Employee, {
         foreignKey: 'assigned_to'

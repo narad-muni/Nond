@@ -8,6 +8,7 @@ export default class extends BaseSchema {
             table.increments('id');
             table.integer('type');
             table.date('next');
+            table.date('end_date');
             table.string('frequency');
             table.json('data');
             table.integer('client_id');

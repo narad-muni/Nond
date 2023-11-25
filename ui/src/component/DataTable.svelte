@@ -3,6 +3,8 @@
     import RowsPerPage from './RowsPerPage.svelte';
     import RowCount from './RowCount.svelte';
     import Pagination from './Pagination.svelte';
+    import { Button } from 'flowbite-svelte';
+    import { filter_visible } from '../global/stores';
 
     export let handler;
     let element;
@@ -20,6 +22,13 @@
 <section bind:clientWidth={clientWidth}>
     <header>
         <TableSearch {handler}/>
+        <Button on:click={() => $filter_visible = $filter_visible == 'hidden' ? '' : 'hidden'}>
+            {#if $filter_visible == 'hidden'}
+                Show Filters
+            {:else}
+                Hide Filters
+            {/if}
+        </Button>
         <RowsPerPage {handler}/>
     </header>
 
