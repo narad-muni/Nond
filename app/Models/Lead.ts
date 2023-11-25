@@ -32,7 +32,7 @@ export default class Lead extends BaseModel {
             } else {
                 return value
             }
-        },,
+        },
     })
     public started: DateTime
 }

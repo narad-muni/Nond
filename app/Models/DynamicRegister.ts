@@ -21,7 +21,7 @@ export default class DynamicRegister extends BaseModel {
             } else {
                 return value
             }
-        },,
+        },
     })
     public entry_on: DateTime
 

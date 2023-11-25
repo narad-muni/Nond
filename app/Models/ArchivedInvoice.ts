@@ -38,7 +38,7 @@ export default class ArchivedInvoice extends BaseModel {
             } else {
                 return value
             }
-        },,
+        },
     })
     public date: DateTime
 

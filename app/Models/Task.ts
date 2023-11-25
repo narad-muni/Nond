@@ -54,7 +54,7 @@ export default class Task extends BaseModel {
             } else {
                 return value
             }
-        },,
+        },
     })
     public created: DateTime
 

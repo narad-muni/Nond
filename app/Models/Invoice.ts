@@ -44,7 +44,7 @@ export default class Invoice extends BaseModel {
             } else {
                 return value
             }
-        },,
+        },
     })
     public date: DateTime
 
