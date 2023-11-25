@@ -1,8 +1,5 @@
 pending stuff
 
-better invoice pdf
-check all filters and search boxes
-
 reports
 clean code for pdf creation
 -----
