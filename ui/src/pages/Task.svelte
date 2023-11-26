@@ -32,7 +32,7 @@
     let createModal, actionsModals, deleteModal, bulkUpdateModal;
     let selectedRows = new Set();
 
-    let data, createdObject = {priority:1,status:0, money:[], time:[]}, bulkUpdateObject = {}, clients, actionsIndex, actionsObject = {money:[], time:[]}, userList, taskTemplates, services, companies, billTaskObject = {};
+    let data, invoiceActionsModals, invoiceActionsObject={}, createdObject = {priority:1,status:0, money:[], time:[]}, bulkUpdateObject = {}, clients, actionsIndex, actionsObject = {money:[], time:[]}, userList, taskTemplates, services, companies, billTaskObject = {};
     let handler, rows, statusFilter = 1, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
@@ -91,6 +91,9 @@
     $: indeterminate = selectedRows.size > 0 && !checked;
     $: buttonDisabled = selectedRows.size == 0;
 
+    $: invoiceActionsObject.total = invoiceActionsObject?.particulars?.particulars.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
+    $: invoiceActionsObject.tax = invoiceActionsObject?.particulars?.particulars.reduce((a,b) => a+ (b.amount*b.gst*.01), 0);
+
     $: createdObject.total_time = createdObject?.time.map(e => e.time).reduce((a,b) =>{
         a = a.split(":");
         b = b.split(":");
@@ -115,6 +118,69 @@
     $: actionsObject.your_total_money = actionsObject?.money.filter(e => e.user == $user.id).map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
 
     //Functions
+
+    async function openInvoiceActionsModal(id){
+
+        if(!id){
+            error = "Invoice not found";
+            return;
+        }
+
+        invoiceActionsObject = await utils.get('/api/invoice/'+id);
+
+        if(invoiceActionsObject.status != 'success'){
+            error = invoiceActionsObject.message;
+            return;
+        }else if(!invoiceActionsObject.data){
+            error = "Invoice not found";
+            return;
+        }
+
+        invoiceActionsObject = invoiceActionsObject.data;
+        
+        invoiceActionsModals = true;
+    }
+
+    function removeParticularActions(index){
+        invoiceActionsObject.particulars.particulars.splice(index,1);
+        invoiceActionsObject.particulars.particulars = invoiceActionsObject.particulars.particulars;
+    }
+
+    function addParticularInActions(isGST){
+        if(isGST){
+            invoiceActionsObject.particulars.particulars.push({
+                master:'',
+                description:'',
+                gst:0,
+                hsn:'',
+                amount:0
+            });
+        }else{
+            invoiceActionsObject.particulars.particulars.push({
+                master:'',
+                description:'',
+                amount:0
+            });
+        }
+
+        invoiceActionsObject.particulars.particulars = invoiceActionsObject.particulars.particulars;
+    }
+
+    async function invoiceUpdateData(){
+
+        invoiceActionsObject.company = companies.find(e => e.value == invoiceActionsObject.company_id);
+
+        const resp = await utils.put_json('/api/invoice/',invoiceActionsObject);
+
+        if(resp.status == 'success'){
+            invoiceActionsModals = false;
+
+            invoiceActionsObject = {};
+        }else{
+            error = resp.message || "";
+        }
+
+    }
 
     function addSelection(e){
         
@@ -685,6 +751,20 @@
             <span>Priority</span>
             <Select items={priority} bind:value={bulkUpdateObject.priority}/>
         </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={bulkUpdateObject.billed} bind:checked={bulkUpdateObject.billed}>Billed</Toggle>
+        </Label>
+        <Label class="space-y-2">
+            <span class="flex">Billed Invoice
+                <a on:click={() => openInvoiceActionsModal(bulkUpdateObject.invoice_id)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                </a>
+            </span>
+            <Input bind:value={bulkUpdateObject.invoice_id}></Input>
+        </Label>
         <Label class="space-y-2 col-span-3">
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
@@ -726,6 +806,20 @@
         <Label class="space-y-2">
             <span>Priority</span>
             <Select required items={priority} bind:value={createdObject.priority}/>
+        </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={createdObject.billed} bind:checked={createdObject.billed}>Billed</Toggle>
+        </Label>
+        <Label class="space-y-2">
+            <span class="flex">Billed Invoice
+                <a on:click={() => openInvoiceActionsModal(createdObject.invoice_id)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>                      
+                </a>
+            </span>
+            <Input bind:value={createdObject.invoice_id}></Input>
         </Label>
         <Label class="space-y-2 col-span-3">
             <span>Description</span>
@@ -850,6 +944,20 @@
             <span>Priority</span>
             <Select required items={priority} bind:value={actionsObject.priority}/>
         </Label>
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={actionsObject.billed} bind:checked={actionsObject.billed}>Billed</Toggle>
+        </Label>
+        <Label class="space-y-2">
+            <span class="flex">Billed Invoice
+                <a on:click={() => openInvoiceActionsModal(actionsObject.invoice_id)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>                      
+                </a>
+            </span>
+            <Input bind:value={actionsObject.invoice_id}></Input>
+        </Label>
         <Label class="space-y-2 col-span-3">
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
@@ -954,6 +1062,150 @@
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
+        </div>
+    </form>
+</Modal>
+
+<Modal bind:open={invoiceActionsModals} placement="top-center" size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={invoiceUpdateData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">View/Update Entry</h3>
+        <Label class="space-y-2">
+            <span>Invoice ID</span>
+            <Input value={invoiceActionsObject.id} readonly/>
+        </Label>
+        <Label class="space-y-2">
+            <span>Client</span>
+            <IdSelect items={clients} required bind:value={invoiceActionsObject.client_id}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Company</span>
+            <IdSelect items={companies} required bind:value={invoiceActionsObject.company_id}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Date</span>
+            <SveltyPicker format="d M yyyy" required bind:value={invoiceActionsObject.date}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={invoiceActionsObject.paid} bind:checked={invoiceActionsObject.paid}>Paid</Toggle>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>&nbsp;</span>
+            <Toggle bind:value={invoiceActionsObject.gst} bind:checked={invoiceActionsObject.gst}>GST</Toggle>
+        </Label>
+        
+        <Label class="space-y-2">
+            <span>Remarks</span>
+            <Textarea bind:value={invoiceActionsObject.remarks}/>
+        </Label>
+
+        <Label class="space-y-2">
+            <span>Note for self</span>
+            <Textarea bind:value={invoiceActionsObject.note}/>
+        </Label>
+
+        {#if invoiceActionsObject.gst}
+            <div class="grid gap-2 col-span-3 grid-cols-10">
+                <Label class="space-y-2 text-center col-span-2">
+                    <span>Master</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-4">
+                    <span>Description</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>GST</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>HSN</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>Amount</span>
+                </Label>
+                {#each invoiceActionsObject.particulars.particulars as particular,index}
+                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-4" bind:value={particular.description} />
+                    <Input required class="col-span-1" bind:value={particular.gst} />
+                    <Input required class="col-span-1" bind:value={particular.hsn} />
+                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/each}
+
+                <span class="col-span-9"></span>
+                <Button on:click={()=>addParticularInActions(invoiceActionsObject.gst)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </Button>
+
+                <span class="col-span-7"></span>
+                <span>Sub Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={invoiceActionsObject.total}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Tax</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={invoiceActionsObject.tax}/>
+                </Label>
+
+                <span class="col-span-7"></span>
+                <span>Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={invoiceActionsObject.tax+invoiceActionsObject.total}/>
+                </Label>
+            </div>
+        {:else}
+            <div class="grid gap-2 col-span-3 grid-cols-7">
+                <Label class="space-y-2 text-center col-span-2">
+                    <span>Master</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-3">
+                    <span>Description</span>
+                </Label>
+                <Label class="space-y-2 text-center col-span-1">
+                    <span>Amount</span>
+                </Label>
+                {#each invoiceActionsObject.particulars.particulars as particular,index}
+                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-3" bind:value={particular.description} />
+                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/each}
+
+                <span class="col-span-6"></span>
+                <Button on:click={()=>addParticularInActions(invoiceActionsObject.gst)}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                </Button>
+                
+                <span class="col-span-4"></span>
+                <span>Total</span>
+                <Label class="space-y-2 text-center font-bold">
+                    <Input readonly value={invoiceActionsObject.total}/>
+                </Label>
+            </div>
+        {/if}
+
+        <div class="col-span-2 grid gap-6 grid-cols-3">
+            <Button type="submit" class="w-full">Update</Button>
+            {#if invoiceActionsObject?.id}
+                <Button type="button" href={"/api/invoice?ids="+invoiceActionsObject.id} target="_blank" class="w-full">Download</Button>
+            {/if}
+            <Button on:click={()=>invoiceActionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
 </Modal>

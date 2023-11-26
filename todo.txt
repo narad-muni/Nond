@@ -1,7 +1,5 @@
 pending stuff
 
-billed toggle in task with link to generated invoice
-
 order of columns
 design of columns as asked
 create installer

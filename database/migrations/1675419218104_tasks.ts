@@ -13,7 +13,7 @@ export default class extends BaseSchema {
             table.integer('service_id');
             table.integer('status');
             table.integer('priority');
-            table.integer('invoice_id');
+            table.string('invoice_id');
             table.specificType('money', 'json[]');
             table.specificType('time', 'json[]');
             table.integer('total_money');

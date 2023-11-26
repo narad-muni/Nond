@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import InvoiceDAO from 'App/Dao/InvoiceDAO';
 import Invoice from 'App/Models/Invoice';
 import Task from 'App/Models/Task'
 
@@ -261,6 +262,7 @@ export default class TasksController {
                 total: null,
                 remarks: '',
                 gst: payload.gst,
+                tasks: [],
                 date: new Date().toJSON().slice(0, 10)
             }
 
@@ -305,6 +307,8 @@ export default class TasksController {
 
                 if (invoice_list_obj[task.client_id]) {//client already in invoice list
 
+                    invoice_list_obj[task.client_id].tasks.push(task.id);
+
                     if (task.service_id < 0) {//other task
                         invoice_list_obj[task.client_id].particulars.push({
                             master: task.title + "  on  " + task.created.toISODate(),
@@ -326,6 +330,7 @@ export default class TasksController {
                     const temp = tempInvoiceObject;
 
                     temp.client_id = task.client_id;
+                    temp.tasks.push(task.id);
 
                     if (task.service_id < 0) {//other task
                         temp.particulars.push({
@@ -379,7 +384,7 @@ export default class TasksController {
                 invoice_list_obj[client_id].particulars = { "particulars": invoice_list_obj[client_id].particulars };
             });
 
-            await Invoice.createMany(Object.values(invoice_list_obj));
+            await InvoiceDAO.createInvoicesLinkTasks(Object.values(invoice_list_obj));
 
             //mark tasks billed
             await Task
