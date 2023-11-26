@@ -32,7 +32,7 @@
     let createModal, actionsModals, deleteModal, bulkUpdateModal;
     let selectedRows = new Set();
 
-    let data, invoiceActionsModals, invoiceActionsObject={}, createdObject = {priority:1,status:0, money:[], time:[]}, bulkUpdateObject = {}, clients, actionsIndex, actionsObject = {money:[], time:[]}, userList, taskTemplates, services, companies, billTaskObject = {};
+    let data, invoiceActionsModals, invoiceActionsObject={}, createdObject = {priority:1,status:0, money:[], time:[]}, bulkUpdateObject = {money:[], time:[]}, clients, actionsIndex, actionsObject = {money:[], time:[]}, userList, taskTemplates, services, companies, billTaskObject = {};
     let handler, rows, statusFilter = 1, billingFilter = 1, selfTasks = true, billModal = false;
 
     const task_status = [
@@ -100,6 +100,12 @@
         return `${parseInt(a[0]) + parseInt(b[0])}:${parseInt(a[1]) + parseInt(b[1])}`;
     }, "0:0");
 
+    $: bulkUpdateObject.total_time = bulkUpdateObject?.time?.map(e => e.time).reduce((a,b) =>{
+        a = a.split(":");
+        b = b.split(":");
+        return `${parseInt(a[0]) + parseInt(b[0])}:${parseInt(a[1]) + parseInt(b[1])}`;
+    }, "0:0");
+
     $: actionsObject.total_time = actionsObject?.time.map(e => e.time).reduce((a,b) =>{
         a = a.split(":");
         b = b.split(":");
@@ -107,6 +113,7 @@
     }, "0:0");
 
     $: actionsObject.total_money = actionsObject?.money.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
+    $: bulkUpdateObject.total_money = bulkUpdateObject?.money?.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
     $: createdObject.total_money = createdObject?.money.map(e => parseInt(e.amount)).reduce((a,b) => a+b, 0);
 
     $: actionsObject.your_total_time = actionsObject?.time.filter(e => e.user == $user.id).map(e => e.time).reduce((a,b) => {
@@ -248,6 +255,19 @@
         createdObject.time = createdObject.time;
     }
 
+    function removeBulkTime(idx) {
+        bulkUpdateObject.time.splice(idx,1);
+        bulkUpdateObject.time = bulkUpdateObject.time;
+    }
+
+    function addBulkTime() {
+        bulkUpdateObject.time.push({
+            user: $user.id,
+            time: "0:0"
+        });
+        bulkUpdateObject.time = bulkUpdateObject.time;
+    }
+
     function removeActionTime(idx) {
         actionsObject.time.splice(idx,1);
         actionsObject.time = actionsObject.time;
@@ -272,6 +292,19 @@
             amount: 0
         });
         createdObject.money = createdObject.money;
+    }
+
+    function removeBulkMoney(idx) {
+        bulkUpdateObject.money.splice(idx,1);
+        bulkUpdateObject.money = bulkUpdateObject.money;
+    }
+
+    function addBulkMoney() {
+        bulkUpdateObject.money.push({
+            user: $user.id,
+            amount: 0
+        });
+        bulkUpdateObject.money = bulkUpdateObject.money;
     }
 
     function removeActionMoney(idx) {
@@ -518,7 +551,7 @@
             }
 
             bulkUpdateModal = false;
-            bulkUpdateObject = {};
+            bulkUpdateObject = {money:[], time:[]};
         }else{
             error = resp.message || "";
         }
@@ -717,7 +750,7 @@
     </div>
 </Modal>
 
-<Modal bind:open={bulkUpdateModal} placement="top-center" size="lg">
+<Modal bind:open={bulkUpdateModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={bulkUpdateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">
             Update Tasks
@@ -769,14 +802,99 @@
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
         </Label>
+
+        <div class="grid gap-2 col-span-3 grid-cols-7">
+            <Label class="space-y-2 text-center col-span-2">
+                <span>User</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-3">
+                <span>Description</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-1">
+                <span>Time (Hrs)</span>
+            </Label>
+
+            {#each bulkUpdateObject.time as particular,index}
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
+                
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeBulkTime(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
+            {/each}
+
+            <span class="col-span-6"></span>
+            <Button on:click={()=>addBulkTime()}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            </Button>
+            
+            <span class="col-span-4"></span>
+            <span>Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={bulkUpdateObject.total_time}/>
+            </Label>
+        </div>
+
+        <div class="grid gap-2 col-span-3 grid-cols-7">
+            <Label class="space-y-2 text-center col-span-2">
+                <span>User</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-3">
+                <span>Description</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-1">
+                <span>Amount</span>
+            </Label>
+
+            {#each bulkUpdateObject.money as particular,index}
+                {@const can_edit = $user.is_admin || particular.user == $user.id}
+
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                
+                <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
+                <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
+                
+                {#if can_edit}
+                    <Button color="red" on:click={()=>removeBulkMoney(index)} class="col-span-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                        </svg>
+                    </Button>
+                {/if}
+            {/each}
+
+            <span class="col-span-6"></span>
+            <Button on:click={()=>addBulkMoney()}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+            </Button>
+            
+            <span class="col-span-4"></span>
+            <span>Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={bulkUpdateObject.total_money}/>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>
-            <Button on:click={()=>{bulkUpdateModal=false;bulkUpdateObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
+            <Button on:click={()=>{bulkUpdateModal=false;bulkUpdateObject={money:[], time:[]}}} color="alternative" class="w-full">Cancel</Button>
         </div>
     </form>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="lg">
+<Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Task</h3>
         <Label class="space-y-2 col-span-3">
@@ -885,7 +1003,7 @@
                 <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
                 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
-                <Input disabled={!can_edit} required bind:value={particular.amount} />
+                <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
                 
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeCreatedMoney(index)} class="col-span-1">
@@ -1028,7 +1146,7 @@
                 <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
                 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
-                <Input disabled={!can_edit} required bind:value={particular.amount} />
+                <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
                 
                 {#if can_edit}
                     <Button color="red" on:click={()=>removeActionMoney(index)} class="col-span-1">
@@ -1130,7 +1248,7 @@
                     <Input required class="col-span-4" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.gst} />
                     <Input required class="col-span-1" bind:value={particular.hsn} />
-                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Input required class="col-span-1" bind:value={particular.amount} type="number" />
                     <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
@@ -1177,7 +1295,7 @@
                 {#each invoiceActionsObject.particulars.particulars as particular,index}
                     <Input required class="col-span-2" bind:value={particular.master} />
                     <Input required class="col-span-3" bind:value={particular.description} />
-                    <Input required class="col-span-1" bind:value={particular.amount} />
+                    <Input required class="col-span-1" bind:value={particular.amount} type="number" />
                     <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
