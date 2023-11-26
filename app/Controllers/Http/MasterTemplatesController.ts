@@ -30,6 +30,7 @@ export default class MasterTemplatesController {
             const data = await MasterTemplate
                 .query()
                 .select('id', 'display_name')
+                .orderBy('order')
                 .where('table_name', 'clients');
 
             const serilizedData = data.map(e => e.serialize())
@@ -62,6 +63,7 @@ export default class MasterTemplatesController {
             const data = await MasterTemplate
                 .query()
                 .where('table_name', payload.table_name)
+                .orderBy('order')
 
             response.send({
                 status: 'success',
@@ -132,6 +134,14 @@ export default class MasterTemplatesController {
                 });
             } else {
                 let c_type: string;
+
+                let max = await MasterTemplate
+                    .query()
+                    .max('order')
+                    .where('table_name', payload.table_name)
+                    .first();
+
+                payload.order = (max.$extras.max || 0) + 1;
 
                 if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'

@@ -58,7 +58,8 @@ export default class RegisterTemplatesController {
 
             const data = await RegisterTemplate
                 .query()
-                .where('table_id', payload.table_id);
+                .where('table_id', payload.table_id)
+                .orderBy('order');
 
             if (data.length) {
                 response.send({
@@ -91,6 +92,14 @@ export default class RegisterTemplatesController {
         try {
             const payload = request.all();
 
+            let max = await RegisterTemplate
+                .query()
+                .max('order')
+                .where('table_id', payload.table_id)
+                .first();
+
+            payload.order = (max.$extras.max || 0) + 1;
+
             if (payload.client_column_id != null && payload.client_column_id != "") {//client column
 
                 payload.master = true;
@@ -107,6 +116,7 @@ export default class RegisterTemplatesController {
                         message: 'column with same name already exixts'
                     });
                 } else {
+
                     if (payload.client_column_id < 0) {//default client columns
                         const column_name_arr = ["Name", "Email", "GST", ""];
 

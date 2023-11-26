@@ -1,6 +1,6 @@
 pending stuff
 
-order of columns
+order of columns - add default columns to templates (make them immutable)
 design of columns as asked
 create installer
 license key validator using jwt

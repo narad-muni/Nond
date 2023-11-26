@@ -209,6 +209,7 @@
                             <Th {handler} orderBy="table_name">Table</Th>
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
+                            <Th {handler} orderBy="order">Order</Th>
                             <Th {handler} orderBy="is_master">Is Master</Th>
                         </tr>
                         <tr>
@@ -217,6 +218,7 @@
                             <ThSearch {handler} filterBy={row => row.table_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.order || "-"}/>
                             <ThSearch {handler} filterBy={row => row.is_master || "-"}/>
                         </tr>
                     </thead>
@@ -235,6 +237,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.column_type || "-"}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.order || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>

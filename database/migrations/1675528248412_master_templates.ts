@@ -10,6 +10,7 @@ export default class extends BaseSchema {
             table.string('column_name');
             table.string('display_name');
             table.string('column_type');
+            table.integer('order');
             table.json('column_info');
             table.boolean('is_master');
             table.boolean('is_rollover');

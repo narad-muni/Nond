@@ -236,6 +236,7 @@
                             <Th {handler} orderBy="display_name">Column Name</Th>
                             <Th {handler} orderBy="column_type">Type</Th>
                             <Th {handler} orderBy={e => e.client_column_id}>Client Column</Th>
+                            <Th {handler} orderBy="order">Order</Th>
                             <Th {handler} orderBy="master">Is Master</Th>
                             <Th {handler} orderBy="rollover">Rollover</Th>
                         </tr>
@@ -246,6 +247,7 @@
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
                             <ThSearch {handler} filterBy={(e) => e.client_column_id != null ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.order || "-"}/>
                             <ThSearch {handler} filterBy={row => row.master || "-"}/>
                             <ThSearch {handler} filterBy={row => row.rollover || "-"}/>
                         </tr>
@@ -256,7 +258,7 @@
                                 <TableBodyCell>
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
-                                {#if row.client_column_id!=null}
+                                {#if row.client_column_id != null}
                                     <TableBodyCell class="cursor-not-allowed bg-gray-100 hover:bg-gray-200" >{row.id}</TableBodyCell>
                                 {:else}
                                     <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
@@ -271,7 +273,10 @@
                                     {row.column_type || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.client_column_id!=null ? "Yes" : "No"}
+                                    {row.client_column_id != null ? "Yes" : "No"}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.order || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     <Checkbox disabled checked={row.master=="true" || row.master}/>

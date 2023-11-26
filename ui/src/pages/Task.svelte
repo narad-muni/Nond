@@ -633,9 +633,9 @@
                 Bill Tasks
             </Button>
 
-            {#if (buttonDisabled || billingFilter!=0)}
+            {#if (billingFilter!=0)}
                 <Popover class="w-64 text-sm font-light " triggeredBy="#billTaskBtn">
-                    Toggle Not Billed To Enable
+                    Toggle to Not Billed
                 </Popover>
             {/if}
 
