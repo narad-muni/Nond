@@ -13,8 +13,13 @@
         Input,
         Toggle,
         Alert,
-        Select
+        Select,
+
+        Card
+
     } from "flowbite-svelte";
+
+    import { sortable } from 'svelte-agnostic-draggable';
 
     import { DataHandler } from '../component/datatables';
     import Th from "../component/Th.svelte";
@@ -24,10 +29,10 @@
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal, changeOrderRegisterModal, changeOrderModal;
     let selectedRows = new Set();
 
-    let data, createdObject={column_info:{options:[""]}}, actionsIndex, actionsObject;
+    let data, createdObject={column_info:{options:[""]}}, actionsIndex, actionsObject, orderable_columns = [];
     let handler, rows;
 
     let error="", success="";
@@ -109,6 +114,16 @@
         handler.setRows(data);
     }
 
+    Array.prototype.move = function(from, to) {
+        this.splice(to, 0, this.splice(from, 1)[0]);
+    };
+
+    async function openOrderModal(table_name){
+        orderable_columns = $rows.filter(e => e.table_name == table_name);
+        orderable_columns.sort((a,b) => {a.order - b.order})
+        changeOrderModal = true;
+    }
+
     async function openActionsModal(e){
         let oid = e.target.innerText;
         data.find((e,i) => {
@@ -186,6 +201,14 @@
                 </svg>                        
                 &nbsp;
                 Create
+            </Button>
+
+            <Button gradient color="blue" on:click={()=> changeOrderRegisterModal = true}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+                </svg>
+                &nbsp;
+                Change Order
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -374,6 +397,41 @@
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
+</Modal>
+
+<Modal bind:open={changeOrderRegisterModal} placement="top-center" size="lg">
+    <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Select Register to change column orders</h3>
+    <div class="flex flex-col mt-5 gap-4">
+        <Button on:click={() => openOrderModal('clients')}>Client</Button>
+        <Button on:click={() => openOrderModal('companies')}>Company</Button>
+    </div>
+
+    <div class="col-span-2 grid gap-6">
+        <Button on:click={()=>changeOrderRegisterModal=false} color="alternative" class="w-full">Close</Button>
+    </div>
+</Modal>
+
+<Modal bind:open={changeOrderModal} placement="top-center" size="xl">
+    <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Drag columns to change order</h3>
+    <div class="flex flex-col gap-4" on:sortable:update={e => orderable_columns.move(e.detail.previousIndex, e.detail.newIndex)} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
+        {#each orderable_columns as column, i}
+            <Card>
+                <span class="flex justify-between items-end">
+                    {i + 1} {column.display_name}
+                    <span class="text-xs italic">
+                        {#if column.is_master}
+                            (master)
+                        {/if}
+                    </span>
+                </span>
+            </Card>
+        {/each}
+    </div>
+
+    <div class="col-span-2 grid gap-6 grid-cols-2">
+        <Button on:click={()=>{}} class="w-full">Update</Button>
+        <Button on:click={()=>changeOrderModal=false} color="alternative" class="w-full">Close</Button>
+    </div>
 </Modal>
 
 <!--Alerts-->

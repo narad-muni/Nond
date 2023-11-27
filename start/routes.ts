@@ -146,6 +146,8 @@ Route.group(() => {
 
             Route.put('/','RegisterTemplatesController.update');
 
+            Route.put('/set_order','RegisterTemplatesController.set_order');
+
             Route.delete('/destroy','RegisterTemplatesController.destroy');
         })
         .prefix('/register_template');
@@ -165,6 +167,7 @@ Route.group(() => {
             Route.post('/','MasterTemplatesController.create');
 
             Route.put('/','MasterTemplatesController.update');
+            Route.put('/set_options','MasterTemplatesController.set_options');
 
             Route.delete('/destroy','MasterTemplatesController.destroy');
         })

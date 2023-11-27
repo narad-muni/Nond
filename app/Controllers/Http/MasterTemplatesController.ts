@@ -290,18 +290,36 @@ export default class MasterTemplatesController {
         }
     }
 
+    public async set_order({ request, response }: HttpContextContract) {
+        try{
+
+            const payload = request.all();
+
+            for(const order of payload.orders){
+                await MasterTemplate
+                    .query()
+                    .where('id', order.id)
+                    .update('order', order.order);
+            }
+
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
     public async destroy({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
 
             const columns = await MasterTemplate
                 .query()
-                .whereIn('id', payload.id);
-
-            for await (const column of columns) {
-                await Database
-                    .rawQuery('alter table ?? drop column ??', [column.table_name, column.column_name]);
-            };
+                .whereIn('id', payload.id)
+                .orderBy('order', 'desc');
 
             await MasterTemplate
                 .query()
@@ -312,6 +330,17 @@ export default class MasterTemplatesController {
                 .query()
                 .whereIn('client_column_id', payload.id)
                 .delete();
+
+            for await (const column of columns) {
+                await Database
+                    .rawQuery('alter table ?? drop column ??', [column.table_name, column.column_name]);
+                    
+                await MasterTemplate
+                    .query()
+                    .where('order', '>', column.order)
+                    .where('table_name', column.table_name)
+                    .decrement('order', 1);
+            }
 
             response.send({
                 status: 'success'

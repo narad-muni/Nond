@@ -353,12 +353,35 @@ export default class RegisterTemplatesController {
         }
     }
 
+    public async set_order({ request, response }: HttpContextContract) {
+        try{
+
+            const payload = request.all();
+
+            for(const order of payload.orders){
+                await RegisterTemplate
+                    .query()
+                    .where('id', order.id)
+                    .update('order', order.order);
+            }
+
+        }catch(e){
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
     public async destroy({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
 
             const columns = await RegisterTemplate
                 .query()
+                .whereIn('id', payload.id)
                 .whereIn('id', payload.id);
 
             const table = await RegisterMaster
@@ -383,6 +406,14 @@ export default class RegisterTemplatesController {
 
                     await Database
                         .rawQuery('alter table ?? drop column ??', [string.escapeHTML("register__" + table.name + table.version), column.column_name]);
+                }
+
+                for await (const column of columns) {
+                    await RegisterTemplate
+                        .query()
+                        .where('order', '>', column.order)
+                        .where('table_id', column.table_id)
+                        .decrement('order', 1);
                 }
             };
 
