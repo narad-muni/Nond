@@ -9,7 +9,8 @@ export default class MasterTemplatesController {
     public async index({ response }: HttpContextContract) {
         try {
             const data = await MasterTemplate
-                .all()
+                .query()
+                .orderBy('id', 'asc');
 
             response.send({
                 status: 'success',
@@ -30,7 +31,7 @@ export default class MasterTemplatesController {
             const data = await MasterTemplate
                 .query()
                 .select('id', 'display_name')
-                .orderBy('order')
+                .orderBy('id', 'asc')
                 .where('table_name', 'clients');
 
             const serilizedData = data.map(e => e.serialize())
@@ -63,7 +64,7 @@ export default class MasterTemplatesController {
             const data = await MasterTemplate
                 .query()
                 .where('table_name', payload.table_name)
-                .orderBy('order')
+                .orderBy('id', 'asc')
 
             response.send({
                 status: 'success',
@@ -295,12 +296,21 @@ export default class MasterTemplatesController {
 
             const payload = request.all();
 
-            for(const order of payload.orders){
+            let i = 1;
+            
+            for(const column of payload.columns){
                 await MasterTemplate
                     .query()
-                    .where('id', order.id)
-                    .update('order', order.order);
+                    .where('id', column.id)
+                    .update('order', i);
+
+                i++;
             }
+
+            response.send({
+                status: 'success',
+                data: {}
+            });
 
         }catch(e){
             console.log(e);
@@ -319,7 +329,7 @@ export default class MasterTemplatesController {
             const columns = await MasterTemplate
                 .query()
                 .whereIn('id', payload.id)
-                .orderBy('order', 'desc');
+                .orderBy('id', 'asc');
 
             await MasterTemplate
                 .query()

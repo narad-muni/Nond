@@ -167,7 +167,7 @@ Route.group(() => {
             Route.post('/','MasterTemplatesController.create');
 
             Route.put('/','MasterTemplatesController.update');
-            Route.put('/set_options','MasterTemplatesController.set_options');
+            Route.put('/set_order','MasterTemplatesController.set_order');
 
             Route.delete('/destroy','MasterTemplatesController.destroy');
         })

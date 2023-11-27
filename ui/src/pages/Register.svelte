@@ -64,6 +64,8 @@
                     headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
                 });
 
+                headers.data.sort((a,b) => a.order > b.order ? 1 : -1);
+
                 data = data.data;
                 data.forEach((v) => {
                     v["_selected"] = false;

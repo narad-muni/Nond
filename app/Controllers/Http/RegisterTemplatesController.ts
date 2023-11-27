@@ -13,6 +13,7 @@ export default class RegisterTemplatesController {
 
             const data = await RegisterTemplate
                 .query()
+                .orderBy('id', 'asc')
                 .where('table_id', payload.table_id);
 
             response.send({
@@ -59,7 +60,7 @@ export default class RegisterTemplatesController {
             const data = await RegisterTemplate
                 .query()
                 .where('table_id', payload.table_id)
-                .orderBy('order');
+                .orderBy('id', 'asc');
 
             if (data.length) {
                 response.send({
@@ -358,12 +359,21 @@ export default class RegisterTemplatesController {
 
             const payload = request.all();
 
-            for(const order of payload.orders){
+            let i = 1;
+            
+            for(const column of payload.columns){
                 await RegisterTemplate
                     .query()
-                    .where('id', order.id)
-                    .update('order', order.order);
+                    .where('id', column.id)
+                    .update('order', i);
+
+                i++;
             }
+
+            response.send({
+                status: 'success',
+                data: {}
+            });
 
         }catch(e){
             console.log(e);

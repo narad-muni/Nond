@@ -13,7 +13,8 @@
         Input,
         Toggle,
         Alert,
-        Select
+        Select,
+        Card,
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
@@ -22,14 +23,15 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
+    import { sortable } from 'svelte-agnostic-draggable';
 
     // Intialization
 
-    let createModal, actionsModals, deleteModal, createLinked;
+    let createModal, actionsModals, deleteModal, createLinked, changeOrderModal;
     let selectedRows = new Set();
 
     let data, createdObject={column_info:{options: [""]}}, actionsIndex, actionsObject, table, client_columns;
-    let handler, rows;
+    let handler, rows, orderable_columns = [];
 
     let error="", success="";
     const type_list = [
@@ -125,6 +127,52 @@
         handler.setRows(data);
     }
 
+    function changeOrder(e){
+        const from = e.detail.previousIndex;
+        const to = e.detail.newIndex;
+
+        orderable_columns.splice(to, 0, orderable_columns.splice(from, 1)[0]);
+        orderable_columns = orderable_columns;
+    }
+
+    async function updateOrder(){
+        const resp = await utils.put_json('/api/register_template/set_order',{columns: orderable_columns});
+
+        if(resp.status == 'success'){
+            changeOrderModal = false;
+
+            data = await utils.get('/api/register_template/'+register_id);
+
+            if(data.status != 'success'){
+                error = data.message;
+                data = null;
+            }else{
+                data = data.data;
+
+                data.forEach((v) => {
+                    v["_selected"] = false;
+                });
+
+                handler = new DataHandler(
+                    data,
+                    {
+                        rowsPerPage:50
+                    }
+                )
+
+                rows = handler.getRows();
+            }
+        }else{
+            error = resp.message;
+        }
+    }
+
+    async function openOrderModal(){
+        orderable_columns = $rows;
+        orderable_columns.sort((a,b) => a.order > b.order ? 1 : -1)
+        changeOrderModal = true;
+    }
+
     async function openActionsModal(e){
         let oid = e.target.innerText;
         data.find((e,i) => {
@@ -164,15 +212,27 @@
         const resp = await utils._delete('/api/register_template/destroy/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
-                    data.splice(i, 1);
-                    i--;
-                }
+            data = await utils.get('/api/register_template/'+register_id);
+
+            if(data.status != 'success'){
+                error = data.message;
+                data = null;
+            }else{
+                data = data.data;
+
+                data.forEach((v) => {
+                    v["_selected"] = false;
+                });
+
+                handler = new DataHandler(
+                    data,
+                    {
+                        rowsPerPage:50
+                    }
+                )
+
+                rows = handler.getRows();
             }
-            selectedRows.clear();
-            handler.setRows(data);
-            selectedRows = selectedRows;
         }else{
             error = resp.message;
         }
@@ -212,6 +272,14 @@
                 </svg>                                          
                 &nbsp;
                 Link
+            </Button>
+
+            <Button gradient color="blue" on:click={()=> openOrderModal()}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+                </svg>
+                &nbsp;
+                Change Order
             </Button>
 
             <Button disabled={buttonDisabled} gradient color="red" on:click={()=> deleteModal = true}>
@@ -429,6 +497,31 @@
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
+</Modal>
+
+<Modal bind:open={changeOrderModal} placement="top-center" size="xl">
+    <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Drag columns to change order</h3>
+    {#key orderable_columns}
+        <div class="flex flex-col gap-4" on:sortable:update={changeOrder} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
+            {#each orderable_columns as column, i}
+                <Card>
+                    <span class="flex justify-between items-end">
+                        {i + 1} {column.display_name}
+                        <span class="text-xs italic">
+                            {#if column.is_master}
+                                (master)
+                            {/if}
+                        </span>
+                    </span>
+                </Card>
+            {/each}
+        </div>
+    {/key}
+
+    <div class="col-span-2 grid gap-6 grid-cols-2">
+        <Button on:click={()=>{updateOrder()}} class="w-full">Update</Button>
+        <Button on:click={()=>changeOrderModal=false} color="alternative" class="w-full">Close</Button>
+    </div>
 </Modal>
 
 <!--Alerts-->

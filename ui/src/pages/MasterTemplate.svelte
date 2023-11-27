@@ -114,13 +114,50 @@
         handler.setRows(data);
     }
 
-    Array.prototype.move = function(from, to) {
-        this.splice(to, 0, this.splice(from, 1)[0]);
-    };
+    function changeOrder(e){
+        const from = e.detail.previousIndex;
+        const to = e.detail.newIndex;
+
+        orderable_columns.splice(to, 0, orderable_columns.splice(from, 1)[0]);
+        orderable_columns = orderable_columns;
+    }
+
+    async function updateOrder(){
+        const resp = await utils.put_json('/api/master_template/set_order',{columns: orderable_columns});
+
+        if(resp.status == 'success'){
+            changeOrderModal = false;
+            changeOrderRegisterModal = false;
+
+            data = await utils.get('/api/master_template/');
+
+            if(data.status != 'success'){
+                error = data.message;
+                data = null;
+            }else{
+                data = data.data;
+
+                data.forEach((v) => {
+                    v["_selected"] = false;
+                });
+
+                handler = new DataHandler(
+                    data,
+                    {
+                        rowsPerPage:50
+                    }
+                )
+
+                rows = handler.getRows();
+            }
+        }else{
+            error = resp.message;
+        }
+    }
 
     async function openOrderModal(table_name){
         orderable_columns = $rows.filter(e => e.table_name == table_name);
-        orderable_columns.sort((a,b) => {a.order - b.order})
+        orderable_columns.sort((a,b) => a.order > b.order ? 1 : -1)
         changeOrderModal = true;
     }
 
@@ -172,6 +209,28 @@
             selectedRows.clear();
             handler.setRows(data);
             selectedRows = selectedRows;
+
+            data = await utils.get('/api/master_template/');
+
+            if(data.status != 'success'){
+                error = data.message;
+                data = null;
+            }else{
+                data = data.data;
+
+                data.forEach((v) => {
+                    v["_selected"] = false;
+                });
+
+                handler = new DataHandler(
+                    data,
+                    {
+                        rowsPerPage:50
+                    }
+                )
+
+                rows = handler.getRows();
+            }
         }else{
             error = resp.message;
         }
@@ -413,23 +472,25 @@
 
 <Modal bind:open={changeOrderModal} placement="top-center" size="xl">
     <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Drag columns to change order</h3>
-    <div class="flex flex-col gap-4" on:sortable:update={e => orderable_columns.move(e.detail.previousIndex, e.detail.newIndex)} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
-        {#each orderable_columns as column, i}
-            <Card>
-                <span class="flex justify-between items-end">
-                    {i + 1} {column.display_name}
-                    <span class="text-xs italic">
-                        {#if column.is_master}
-                            (master)
-                        {/if}
+    {#key orderable_columns}
+        <div class="flex flex-col gap-4" on:sortable:update={changeOrder} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
+            {#each orderable_columns as column, i}
+                <Card>
+                    <span class="flex justify-between items-end">
+                        {i + 1} {column.display_name}
+                        <span class="text-xs italic">
+                            {#if column.is_master}
+                                (master)
+                            {/if}
+                        </span>
                     </span>
-                </span>
-            </Card>
-        {/each}
-    </div>
+                </Card>
+            {/each}
+        </div>
+    {/key}
 
     <div class="col-span-2 grid gap-6 grid-cols-2">
-        <Button on:click={()=>{}} class="w-full">Update</Button>
+        <Button on:click={()=>{updateOrder()}} class="w-full">Update</Button>
         <Button on:click={()=>changeOrderModal=false} color="alternative" class="w-full">Close</Button>
     </div>
 </Modal>
