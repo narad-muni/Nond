@@ -60,8 +60,10 @@
                 headers.data = headers.data || [];
 
                 headers.data.forEach((column,i) => {
-                    headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
-                    headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                    if(column.column_type == 'Dropdown'){
+                        headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                        headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                    }
                 });
 
                 headers.data.sort((a,b) => a.order > b.order ? 1 : -1);
@@ -306,7 +308,6 @@
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
                             <Th {handler} orderBy="client_id">Client Id</Th>
-                            <Th {handler} orderBy="entry_on">Entry On</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
                                     <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
@@ -317,7 +318,6 @@
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client_id || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.entry_on || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
                                     <ThSearch {handler} filterBy={row => row[header.column_name]}/>
@@ -333,7 +333,6 @@
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
                                 <TableBodyCell>{row.client_id || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.entry_on || "-"}</TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.master}
                                         {#if header.client_column_id == null}
@@ -415,11 +414,6 @@
             <IdSelect required items={client_list} bind:value={createdObject.client_id} />
         </Label>
 
-        <Label class="space-y-2">
-            <span>Entry On</span>
-            <SveltyPicker initialDate={new Date()} required format="d M yyyy" bind:value={createdObject.entry_on} />
-        </Label>
-
         {#each headers.data as header}
             {#if header!="id" && header.client_column_id == null}
                 <Label class="space-y-2">
@@ -462,12 +456,7 @@
             <span>Client ID</span>
             <IdSelect required items={client_list} bind:value={actionsObject.client_id} />
         </Label>
-
-        <Label class="space-y-2">
-            <span>Entry On</span>
-            <SveltyPicker required format="d M yyyy" bind:value={actionsObject.entry_on} />
-        </Label>
-
+        
         {#each headers.data as header}
             {#if header!="id" && header.client_column_id == null}
                 <Label class="space-y-2">

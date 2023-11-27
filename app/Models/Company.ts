@@ -11,7 +11,7 @@ export default class Company extends BaseModel {
     public name: string
 
     @column()
-    public prefix: string
+    public invoice_prefix: string
 
     @column()
     public gst: string
@@ -26,16 +26,16 @@ export default class Company extends BaseModel {
     public address: string
 
     @column()
-    public AHName: string
+    public account_holder_name: string
 
     @column()
-    public BankName: string
+    public bank_name: string
 
     @column()
-    public AccountNo: string
+    public account_number: string
 
     @column()
-    public IFSC: string
+    public ifsc_branch: string
 
     @column()
     public pan: string

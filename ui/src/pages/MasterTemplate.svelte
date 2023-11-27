@@ -306,27 +306,29 @@
                     </thead>
                     <TableBody>
                         {#each $rows as row, index}
-                            <TableBodyRow>
-                                <TableBodyCell>
-                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                                </TableBodyCell>
-                                <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>
-                                    {row.table_name || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.display_name || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.column_type || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.order || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>
-                                </TableBodyCell>
-                            </TableBodyRow>
+                            {#if row.id >= 0}
+                                <TableBodyRow>
+                                    <TableBodyCell>
+                                        <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                    </TableBodyCell>
+                                    <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.table_name || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.display_name || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.column_type || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.order || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        <Checkbox disabled checked={row.is_master=="true" || row.is_master}/>
+                                    </TableBodyCell>
+                                </TableBodyRow>
+                            {/if}
                         {/each}
                     </TableBody>
                 </Table>
@@ -354,7 +356,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         <Label class="space-y-2">
-            <span>Table Name</span>
+            <span>Register Name</span>
             <Select required items={table_name} bind:value={createdObject.table_name} />
         </Label>
         <Label class="space-y-2">
@@ -410,7 +412,7 @@
             <Input readonly bind:value={actionsObject.id} />
         </Label>
         <Label class="space-y-2">
-            <span>Table Name</span>
+            <span>Register Name</span>
             <Select disabled required items={table_name} bind:value={actionsObject.table_name} />
         </Label>
         <Label class="space-y-2">

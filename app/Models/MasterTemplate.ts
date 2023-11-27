@@ -5,7 +5,7 @@ export default class MasterTemplate extends BaseModel {
     public id: number
 
     @column()
-    public table_name: 'client' | 'company'
+    public table_name: 'clients' | 'companies'
 
     @column()
     public column_name: string

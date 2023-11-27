@@ -344,10 +344,10 @@ export class PDFUtils {
                         columns: [
                             {
                                 text: `Company’s Bank Details
-                                A/c Holder’s Name : ${data.company.AHName || "-"}
-                                Bank Name : ${data.company.BankName || "-"}
-                                A/c No. : ${data.company.AccountNo || "-"}
-                                Branch & IFS Code : ${data.company.IFSC || "-"}
+                                A/c Holder’s Name : ${data.company.account_holder_name || "-"}
+                                Bank Name : ${data.company.bank_name || "-"}
+                                A/c No. : ${data.company.account_number || "-"}
+                                Branch & IFS Code : ${data.company.ifsc_branch_branch || "-"}
                                 `,
                                 width: "*"
                             },

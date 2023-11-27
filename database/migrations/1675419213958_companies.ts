@@ -7,7 +7,7 @@ export default class extends BaseSchema {
         this.schema.createTable(this.tableName, (table) => {
             table.increments('id');
             table.string('name');
-            table.string('prefix');
+            table.string('invoice_prefix');
             table.string('gst');
             table.string('upi');
             table.string('email');
@@ -17,10 +17,10 @@ export default class extends BaseSchema {
             table.string('logo');
             table.integer('invoice_counter').defaultTo(0);
 
-            table.string("ah_name");
+            table.string("account_holder_name");
             table.string("bank_name");
-            table.string("account_no");
-            table.string("ifsc");
+            table.string("account_number");
+            table.string("ifsc_branch");
 
             table.string('smtp_host');
             table.string('smtp_port');

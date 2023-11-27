@@ -166,9 +166,9 @@ export default class InvoicesController {
                     .query()
                     .where('id', payload.company_id)
                     .increment('invoice_counter', 1)
-                    .update({}, ['prefix', 'invoice_counter']);
+                    .update({}, ['invoice_prefix', 'invoice_counter']);
 
-                payload.id = company_details[0].prefix + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
+                payload.id = company_details[0].invoice_prefix + "-" + StringUtils.getFinancialYear() + "-" + company_details[0]['invoice_counter'];
             }
 
             delete payload.client;

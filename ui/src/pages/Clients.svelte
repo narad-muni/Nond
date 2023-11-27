@@ -82,8 +82,10 @@
             client_list = [{name:"Self",value:null},...client_list];
 
             headers.data.forEach((column,i) => {
-                headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
-                headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                if(column.column_type == 'Dropdown'){
+                    headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                    headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                }
             });
 
             headers.data.sort((a,b) => a.order > b.order ? 1 : -1);
@@ -377,7 +379,6 @@
     }
 
     async function createData(){
-        console.log(createdObject);
         createdObject._services  = JSON.stringify(createdObject.services);
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
 
@@ -472,13 +473,10 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy="pan">Pan</Th>
-                            <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>
                             {#each headers.data as header}
-                                {#if allColumns || header.is_master}
+                                {#if header.column_name == 'group'}
+                                    <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>
+                                {:else if allColumns || header.is_master}
                                     <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
                                 {/if}
                             {/each}
@@ -486,13 +484,10 @@
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.email || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.gst || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.pan || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.group?.name || "-")}/>
                             {#each headers.data as header}
-                                {#if allColumns || header.is_master}
+                                {#if header.column_name == 'group'}
+                                    <ThSearch {handler} filterBy={(row => row.group?.name || "-")}/>
+                                {:else if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={row => row[header.column_name]}/>
                                 {/if}
                             {/each}
@@ -505,13 +500,10 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" oid={row.id} on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.group?.name || "-"}</TableBodyCell>
                                 {#each headers.data as header}
-                                    {#if allColumns || header.is_master}
+                                    {#if header.column_name == 'group'}
+                                        <TableBodyCell>{row.group?.name || "-"}</TableBodyCell>
+                                    {:else if allColumns || header.is_master}
                                         <TableBodyCell>
                                             {#if header.column_type == 'Text'}
                                                 {row[header.column_name] || "-"}
@@ -562,48 +554,13 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required type="text" bind:value={createdObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={createdObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Group</span>
-            <IdSelect required items={client_list} bind:value={createdObject.group_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="text" bind:value={createdObject.gst} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Pan</span>
-            <Input type="text" bind:value={createdObject.pan} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Address</span>
-            <Input type="text" bind:value={createdObject.address} />
-        </Label>
-
-        <Label class="space-y-2">
-            <p>Signature</p>
-            <input type="file" accept="image/*" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        </Label>
-
-        <Label class="space-y-2">
-            <p>Logo</p>
-            <input type="file" accept="image/*" on:input={event => createdObject["logo"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        </Label>
-
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header.column_name == 'group'}
+                <Label class="space-y-2">
+                    <span>Group</span>
+                    <IdSelect required items={client_list} bind:value={createdObject.group_id}/>
+                </Label>
+            {:else}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>
@@ -744,84 +701,13 @@
             <Input readonly type="text" bind:value={actionsObject.id} />
         </Label>
 
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required type="text" bind:value={actionsObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={actionsObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Group</span>
-            <IdSelect required items={client_list} bind:value={actionsObject.group_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="text" bind:value={actionsObject.gst} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Pan</span>
-            <Input type="text" bind:value={actionsObject.pan} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Address</span>
-            <Input type="text" bind:value={actionsObject.address} />
-        </Label>
-
-        <Label class="space-y-2">
-            {#if actionsObject.signature}
-                <span>Signature</span>
-                <div class="flex justify-between">
-                    <A target="_blank" href={actionsObject.signature}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        &nbsp;
-                        Signature
-                    </A>
-                    <Button on:click={() => {actionsObject.signature = null}} gradient color="red">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>                                  
-                    </Button>
-                </div>
-            {:else}
-                <p>Signature</p>
-                <input type="file" accept="image/*" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-            {/if}
-        </Label>
-
-        <Label class="space-y-2">
-            {#if actionsObject.logo}
-                <span>Logo</span>
-                <div class="flex justify-between">
-                    <A target="_blank" href={actionsObject.logo}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        &nbsp;
-                        Logo
-                    </A>
-                    <Button on:click={() => {actionsObject.logo = null}} gradient color="red">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>
-                    </Button>
-                </div>
-            {:else}
-                <p>logo</p>
-                <input type="file" accept="image/*" on:input={event => actionsObject["logo"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-            {/if}
-        </Label>
-
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header.column_name == 'group'}
+                <Label class="space-y-2">
+                    <span>Group</span>
+                    <IdSelect required items={client_list} bind:value={actionsObject.group_id}/>
+                </Label>
+            {:else}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>

@@ -162,7 +162,20 @@ export default class RegistersController {
                     scheduler.type = -1;
                 }
 
-                await Scheduler.create(scheduler);
+                const new_scheduler = await Scheduler.create(scheduler);
+
+                await RegisterTemplate.create({
+                    id: -1,
+                    table_id: new_scheduler.id,
+                    column_name: "entry_on",
+                    display_name: "Entry On",
+                    column_type: "Date",
+                    column_info: {},
+                    order: 1,
+                    master: true,
+                    rollover: false,
+                    client_column_id: null,
+                });
 
                 response.send({
                     status: 'success',

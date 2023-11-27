@@ -322,37 +322,39 @@
                     </thead>
                     <TableBody>
                         {#each $rows as row, index}
-                            <TableBodyRow>
-                                <TableBodyCell>
-                                    <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
-                                </TableBodyCell>
-                                {#if row.client_column_id != null}
-                                    <TableBodyCell class="cursor-not-allowed bg-gray-100 hover:bg-gray-200" >{row.id}</TableBodyCell>
-                                {:else}
-                                    <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                {/if}
-                                <TableBodyCell>
-                                    {table.name || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.display_name || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.column_type || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.client_column_id != null ? "Yes" : "No"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    {row.order || "-"}
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    <Checkbox disabled checked={row.master=="true" || row.master}/>
-                                </TableBodyCell>
-                                <TableBodyCell>
-                                    <Checkbox disabled checked={row.rollover=="true" || row.rollover}/>
-                                </TableBodyCell>
-                            </TableBodyRow>
+                            {#if row.id >= 0}
+                                <TableBodyRow>
+                                    <TableBodyCell>
+                                        <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
+                                    </TableBodyCell>
+                                    {#if row.client_column_id != null}
+                                        <TableBodyCell class="cursor-not-allowed bg-gray-100 hover:bg-gray-200" >{row.id}</TableBodyCell>
+                                    {:else}
+                                        <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
+                                    {/if}
+                                    <TableBodyCell>
+                                        {table.name || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.display_name || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.column_type || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.client_column_id != null ? "Yes" : "No"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        {row.order || "-"}
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        <Checkbox disabled checked={row.master=="true" || row.master}/>
+                                    </TableBodyCell>
+                                    <TableBodyCell>
+                                        <Checkbox disabled checked={row.rollover=="true" || row.rollover}/>
+                                    </TableBodyCell>
+                                </TableBodyRow>
+                            {/if}
                         {/each}
                     </TableBody>
                 </Table>

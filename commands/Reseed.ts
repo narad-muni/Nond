@@ -35,6 +35,8 @@ export default class Reseed extends BaseCommand {
         const { default: Service } = await import('App/Models/Service');
         const { default: TaskTemplate } = await import('App/Models/TaskTemplate');
         const { default: Scheduler } = await import('App/Models/Scheduler');
+        const { default: MasterTemplate } = await import('App/Models/MasterTemplate');
+        const { default: RegisterTemplate } = await import('App/Models/RegisterTemplate');
 
         await Employee.create({
             id: 0,
@@ -105,6 +107,239 @@ export default class Reseed extends BaseCommand {
             destroy: { "client": true, "archived_register": true, "register_master": true, "service": true, "company": true, "employee": true, "register_template": true, "master_template": true, "task_template": true, "register": true, "role": true, "task": true, "lead": true, "invoice": true, "automator": true },
         });
 
+        await MasterTemplate.createMany([
+            {
+                id: -1,
+                table_name: "clients",
+                column_name: "name",
+                display_name: "Name",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -2,
+                table_name: "clients",
+                column_name: "email",
+                display_name: "Email",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -3,
+                table_name: "clients",
+                column_name: "group",
+                display_name: "Group",
+                order: 1,
+                column_type: "Dropdown",
+                column_info: {options:[]},
+                is_master: true,
+            },{
+                id: -4,
+                table_name: "clients",
+                column_name: "gst",
+                display_name: "GST",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -5,
+                table_name: "clients",
+                column_name: "pan",
+                display_name: "Pan",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -6,
+                table_name: "clients",
+                column_name: "address",
+                display_name: "Address",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -7,
+                table_name: "clients",
+                column_name: "signature",
+                display_name: "Signature",
+                order: 1,
+                column_type: "File",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -8,
+                table_name: "clients",
+                column_name: "logo",
+                display_name: "Logo",
+                order: 1,
+                column_type: "File",
+                column_info: {},
+                is_master: true,
+            }
+        ]);
+
+        await MasterTemplate.createMany([
+            {
+                id: -9,
+                table_name: "companies",
+                column_name: "name",
+                display_name: "Name",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -10,
+                table_name: "companies",
+                column_name: "invoice_prefix",
+                display_name: "Invoice Prefix",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -11,
+                table_name: "companies",
+                column_name: "email",
+                display_name: "Email",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -12,
+                table_name: "companies",
+                column_name: "address",
+                display_name: "Address",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -13,
+                table_name: "companies",
+                column_name: "pan",
+                display_name: "Pan",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -14,
+                table_name: "companies",
+                column_name: "gst",
+                display_name: "GST",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -15,
+                table_name: "companies",
+                column_name: "upi",
+                display_name: "UPI",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: true,
+            },{
+                id: -16,
+                table_name: "companies",
+                column_name: "signature",
+                display_name: "Signature",
+                order: 1,
+                column_type: "File",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -17,
+                table_name: "companies",
+                column_name: "logo",
+                display_name: "Logo",
+                order: 1,
+                column_type: "File",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -18,
+                table_name: "companies",
+                column_name: "account_holder_name",
+                display_name: "Account Holder Name",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -19,
+                table_name: "companies",
+                column_name: "bank_name",
+                display_name: "Bank Name",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -20,
+                table_name: "companies",
+                column_name: "account_number",
+                display_name: "Account Number",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -21,
+                table_name: "companies",
+                column_name: "ifsc_branch",
+                display_name: "IFSC & Branch",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -22,
+                table_name: "companies",
+                column_name: "smtp_host",
+                display_name: "SMTP Host",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -23,
+                table_name: "companies",
+                column_name: "smtp_port",
+                display_name: "SMTP Port",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -24,
+                table_name: "companies",
+                column_name: "smtp_email",
+                display_name: "SMTP Email",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            },{
+                id: -25,
+                table_name: "companies",
+                column_name: "smtp_password",
+                display_name: "SMTP Password",
+                order: 1,
+                column_type: "Text",
+                column_info: {},
+                is_master: false,
+            }
+        ]);
+
     }
 
     public async de_initialize() {
@@ -114,22 +349,16 @@ export default class Reseed extends BaseCommand {
         const { default: Service } = await import('App/Models/Service');
         const { default: TaskTemplate } = await import('App/Models/TaskTemplate');
         const { default: Scheduler } = await import('App/Models/Scheduler');
+        const { default: MasterTemplate } = await import('App/Models/MasterTemplate');
+        const { default: RegisterTemplate } = await import('App/Models/RegisterTemplate');
 
-        const user = await Employee.findBy('id', 0);
-        const scheduler = await Scheduler.findBy('id', 0);
-        const role1 = await Role.findBy('id', 0);
-        const role2 = await Role.findBy('id', 1);
-        const service = await Service.findBy('id', 0);
-        const service_others = await Service.findBy('id', -1);
-        const task_template = await TaskTemplate.findBy('id', 0);
-
-        await user?.delete();
-        await scheduler?.delete();
-        await role1?.delete();
-        await role2?.delete();
-        await service?.delete();
-        await service_others?.delete();
-        await task_template?.delete();
+        await Employee.query().delete();
+        await Scheduler.query().delete();
+        await Role.query().delete();
+        await Service.query().delete();
+        await TaskTemplate.query().delete();
+        await MasterTemplate.query().delete();
+        await RegisterTemplate.query().delete();
 
     }
 

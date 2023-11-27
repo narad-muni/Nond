@@ -50,8 +50,10 @@
             data = null;
         }else{
             headers.data.forEach((column,i) => {
-                headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
-                headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                if(column.column_type == 'Dropdown'){
+                    headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                    headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                }
             });
 
             headers.data.sort((a,b) => a.order > b.order ? 1 : -1);
@@ -245,8 +247,8 @@
     }
 
     function capitalizePrefix(){
-        createdObject.prefix = createdObject.prefix.toUpperCase().trim();
-        createdObject.prefix = createdObject.prefix.split(/[^a-zA-Z0-9 ]/).join('');
+        createdObject.invoice_invoice_prefix = createdObject.invoice_prefix.toUpperCase().trim();
+        createdObject.invoice_prefix = createdObject.invoice_prefix.split(/[^a-zA-Z0-9 ]/).join('');
     }
 
     async function createData(){
@@ -320,11 +322,6 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="pan">Pan</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
@@ -334,11 +331,6 @@
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.email || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.pan || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.gst || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.signature || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={row => row[header.column_name]}/>
@@ -353,23 +345,6 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
-                                <TableBodyCell>
-                                    {#if row.signature}
-                                        <A target="_blank" href={row.signature}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                            </svg>
-                                            &nbsp;
-                                            Signature
-                                        </A>
-                                    {:else}
-                                        -
-                                    {/if}
-                                </TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
@@ -421,94 +396,20 @@
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Add new entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Invoice Prefix</span>
-            <Input on:input={capitalizePrefix} required type="text" bind:value={createdObject.prefix} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={createdObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Address</span>
-            <Input type="text" bind:value={createdObject.address} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Pan</span>
-            <Input type="text" bind:value={createdObject.pan} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="text" bind:value={createdObject.gst} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>UPI</span>
-            <Input type="text" bind:value={createdObject.upi} />
-        </Label>
-
-        <Label class="space-y-2">
-            <p>Signature</p>
-            <input type="file" accept="image/*" on:input={event => createdObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        </Label>
-
-        <Label class="space-y-2">
-            <p>Logo</p>
-            <input type="file" accept="image/*" on:input={event => createdObject["logo"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Account Holder Name</span>
-            <Input type="text" bind:value={createdObject.ah_name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Bank Name</span>
-            <Input type="text" bind:value={createdObject.bank_name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Account Number</span>
-            <Input type="text" bind:value={createdObject.account_no} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>IFSC & Branch</span>
-            <Input type="text" bind:value={createdObject.ifsc} />
-        </Label>
-        
-        <Label class="space-y-2">
-            <span>SMTP Host</span>
-            <Input type="text" bind:value={createdObject.smtp_host} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Port</span>
-            <Input type="text" bind:value={createdObject.smtp_port} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Email</span>
-            <Input type="text" bind:value={createdObject.smtp_email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Password</span>
-            <Input type="text" bind:value={createdObject.smtp_password} />
-        </Label>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
 
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header.column_name == 'invoice_prefix'}
+                <Label class="space-y-2">
+                    <span>Invoice Prefix</span>
+                    <Input on:input={capitalizePrefix} required type="text" bind:value={createdObject.invoice_prefix} />
+                </Label>
+            {:else if header.column_name == 'name'}
+                <Label class="space-y-2">
+                    <span>Name</span>
+                    <Input on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
+                </Label>
+            {:else}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>
@@ -576,7 +477,7 @@
 
         <Label class="space-y-2">
             <span>Account Holder Name</span>
-            <Input type="text" bind:value={actionsObject.ah_name} />
+            <Input type="text" bind:value={actionsObject.account_holder_name} />
         </Label>
 
         <Label class="space-y-2">
@@ -586,12 +487,12 @@
 
         <Label class="space-y-2">
             <span>Account Number</span>
-            <Input type="text" bind:value={actionsObject.account_no} />
+            <Input type="text" bind:value={actionsObject.account_number} />
         </Label>
 
         <Label class="space-y-2">
             <span>IFSC & Branch</span>
-            <Input type="text" bind:value={actionsObject.ifsc} />
+            <Input type="text" bind:value={actionsObject.ifsc_branch} />
         </Label>
 
         <Label class="space-y-2">
@@ -641,7 +542,12 @@
         </Label>
 
         {#each headers.data as header}
-            {#if header!="id"}
+            {#if header.column_name == 'name'}
+                <Label class="space-y-2">
+                    <span>Name</span>
+                    <Input type="text" bind:value={actionsObject.name} />
+                </Label>
+            {:else if header.column_name != 'invoice_prefix'}
                 <Label class="space-y-2">
                     {#if header.column_type=="Text"}
                         <span>{header.display_name}</span>
