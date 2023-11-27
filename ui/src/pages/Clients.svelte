@@ -554,33 +554,35 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        {#each headers.data as header}
-            {#if header.column_name == 'group'}
-                <Label class="space-y-2">
-                    <span>Group</span>
-                    <IdSelect required items={client_list} bind:value={createdObject.group_id}/>
-                </Label>
-            {:else}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input type="text" bind:value={createdObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else if header.column_type=="Dropdown"}
-                        <span>{header.display_name}</span>
-                        <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
-                    {:else}
-                        <p>{header.display_name}</p>
-                        <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
+        <div class="grid grid-cols-3 col-span-3 gap-3">
+            {#each headers.data as header}
+                {#if header.column_name == 'group'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                        <span class="justify-self-end">Group</span>
+                        <IdSelect class="col-span-2" required items={client_list} bind:value={createdObject.group_id}/>
+                    </Label>
+                {:else}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                        {#if header.column_type=="Text"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Input class="col-span-2" type="text" bind:value={createdObject[header.column_name]}/>
+                        {:else if header.column_type=="Date"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <SveltyPicker class="col-span-2" format="d M yyyy" bind:value={createdObject[header.column_name]} />
+                        {:else if header.column_type=="Checkbox"}
+                            <span class="justify-self-end">&nbsp;</span>
+                            <Toggle class="col-span-2" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                        {:else if header.column_type=="Dropdown"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Select class="col-span-2" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
+                        {:else}
+                            <p class="justify-self-end">{header.display_name}</p>
+                            <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer" />
+                        {/if}
+                    </Label>
+                {/if}
+            {/each}
+        </div>
 
         <hr class="col-span-3"/>
         <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
@@ -696,56 +698,58 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input readonly type="text" bind:value={actionsObject.id} />
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-3">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+               <span class="justify-self-end">ID</span>
+                <Input class="col-span-2" readonly type="text" bind:value={actionsObject.id} />
+            </Label>
 
-        {#each headers.data as header}
-            {#if header.column_name == 'group'}
-                <Label class="space-y-2">
-                    <span>Group</span>
-                    <IdSelect required items={client_list} bind:value={actionsObject.group_id}/>
-                </Label>
-            {:else}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input bind:value={actionsObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else if header.column_type=="Dropdown"}
-                        <span>{header.display_name}</span>
-                        <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
-                    {:else}
-                        {#if typeof(actionsObject[header.column_name]) == 'string'}
-                            <span>{header.display_name}</span>
-                            <div class="flex justify-between">
-                                <A target="_blank" href={actionsObject[header.column_name]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                    </svg>
-                                    &nbsp;
-                                    {header.display_name}
-                                </A>
-                                <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>                                  
-                                </Button>
-                            </div>
+            {#each headers.data as header}
+                {#if header.column_name == 'group'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                       <span class="justify-self-end">Group</span>
+                        <IdSelect class="col-span-2" required items={client_list} bind:value={actionsObject.group_id}/>
+                    </Label>
+                {:else}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                        {#if header.column_type=="Text"}
+                           <span class="justify-self-end">{header.display_name}</span>
+                            <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>
+                        {:else if header.column_type=="Date"}
+                           <span class="justify-self-end">{header.display_name}</span>
+                            <SveltyPicker class="col-span-2" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
+                        {:else if header.column_type=="Checkbox"}
+                           <span class="justify-self-end">&nbsp;</span>
+                            <Toggle class="col-span-2"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                        {:else if header.column_type=="Dropdown"}
+                           <span class="justify-self-end">{header.display_name}</span>
+                            <Select class="col-span-2" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
-                            <p>{header.display_name}</p>
-                            <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                            {#if typeof(actionsObject[header.column_name]) == 'string'}
+                               <span class="justify-self-end">{header.display_name}</span>
+                                <div class="flex justify-between">
+                                    <A target="_blank" href={actionsObject[header.column_name]}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                        </svg>
+                                        &nbsp;
+                                        {header.display_name}
+                                    </A>
+                                    <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>                                  
+                                    </Button>
+                                </div>
+                            {:else}
+                                <p class="justify-self-end">{header.display_name}</p>
+                                <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer col-span-2" />
+                            {/if}
                         {/if}
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
+                    </Label>
+                {/if}
+            {/each}
+        </div>
 
         {#if actionsObject.group && actionsObject.group.id != actionsObject.id}
             <hr class="col-span-3"/>
