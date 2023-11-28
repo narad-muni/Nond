@@ -713,26 +713,26 @@
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                       <span class="justify-self-end">Group</span>
+                        <span class="justify-self-end">Group</span>
                         <IdSelect class="col-span-2" required items={client_list} bind:value={actionsObject.group_id}/>
                     </Label>
                 {:else}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
-                           <span class="justify-self-end">{header.display_name}</span>
+                            <span class="justify-self-end">{header.display_name}</span>
                             <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
-                           <span class="justify-self-end">{header.display_name}</span>
+                            <span class="justify-self-end">{header.display_name}</span>
                             <SveltyPicker class="col-span-2" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                           <span class="justify-self-end">&nbsp;</span>
+                            <span class="justify-self-end">&nbsp;</span>
                             <Toggle class="col-span-2"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
                         {:else if header.column_type=="Dropdown"}
-                           <span class="justify-self-end">{header.display_name}</span>
+                            <span class="justify-self-end">{header.display_name}</span>
                             <Select class="col-span-2" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {#if typeof(actionsObject[header.column_name]) == 'string'}
-                               <span class="justify-self-end">{header.display_name}</span>
+                                <span class="justify-self-end">{header.display_name}</span>
                                 <div class="flex justify-between">
                                     <A target="_blank" href={actionsObject[header.column_name]}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">

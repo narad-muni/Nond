@@ -243,7 +243,7 @@
     }
 
     function updatePrefix(){
-        createdObject.prefix = utils.shortName(createdObject.name);
+        createdObject.invoice_prefix = utils.shortName(createdObject.name);
     }
 
     function capitalizePrefix(){
@@ -394,42 +394,45 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="lg">
+<Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
+        
+        <div class="grid grid-cols-3 col-span-3 gap-3">
+            {#each headers.data as header}
+                {#if header.column_name == 'invoice_prefix'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="justify-self-end">Invoice Prefix</span>
+                        <Input class="col-span-2" on:input={capitalizePrefix} required type="text" bind:value={createdObject.invoice_prefix} />
+                    </Label>
+                {:else if header.column_name == 'name'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="justify-self-end">Name</span>
+                        <Input class="col-span-2" on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
+                    </Label>
+                {:else}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        {#if header.column_type=="Text"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Input class="col-span-2" type="text" bind:value={createdObject[header.column_name]}/>
+                        {:else if header.column_type=="Date"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
+                        {:else if header.column_type=="Checkbox"}
+                            <span class="justify-self-end">&nbsp;</span>
+                            <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                        {:else if header.column_type=="Dropdown"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
+                        {:else}
+                            <p class="justify-self-end">{header.display_name}</p>
+                            <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer col-span-2" />
+                        {/if}
+                    </Label>
+                {/if}
+            {/each}
+        </div>
 
-        {#each headers.data as header}
-            {#if header.column_name == 'invoice_prefix'}
-                <Label class="space-y-2">
-                    <span>Invoice Prefix</span>
-                    <Input on:input={capitalizePrefix} required type="text" bind:value={createdObject.invoice_prefix} />
-                </Label>
-            {:else if header.column_name == 'name'}
-                <Label class="space-y-2">
-                    <span>Name</span>
-                    <Input on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
-                </Label>
-            {:else}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input type="text" bind:value={createdObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else if header.column_type=="Dropdown"}
-                        <span>{header.display_name}</span>
-                        <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
-                    {:else}
-                        <p>{header.display_name}</p>
-                        <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -437,175 +440,62 @@
     </form>
 </Modal>
 
-<Modal bind:open={actionsModals} placement="top-center" size="lg">
+<Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input readonly type="text" bind:value={actionsObject.id} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input type="text" bind:value={actionsObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={actionsObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Address</span>
-            <Input type="text" bind:value={actionsObject.address} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Pan</span>
-            <Input type="text" bind:value={actionsObject.pan} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="text" bind:value={actionsObject.gst} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>UPI</span>
-            <Input type="text" bind:value={actionsObject.upi} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Account Holder Name</span>
-            <Input type="text" bind:value={actionsObject.account_holder_name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Bank Name</span>
-            <Input type="text" bind:value={actionsObject.bank_name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Account Number</span>
-            <Input type="text" bind:value={actionsObject.account_number} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>IFSC & Branch</span>
-            <Input type="text" bind:value={actionsObject.ifsc_branch} />
-        </Label>
-
-        <Label class="space-y-2">
-            {#if actionsObject.signature}
-                <span>Signature</span>
-                <div class="flex justify-between">
-                    <A target="_blank" href={actionsObject.signature}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        &nbsp;
-                        Signature
-                    </A>
-                    <Button on:click={() => {actionsObject.signature = null}} gradient color="red">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>                                  
-                    </Button>
-                </div>
-            {:else}
-                <p>Signature</p>
-                <input type="file" accept="image/*" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-            {/if}
-        </Label>
-
-        <Label class="space-y-2">
-            {#if actionsObject.logo}
-                <span>Logo</span>
-                <div class="flex justify-between">
-                    <A target="_blank" href={actionsObject.logo}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        &nbsp;
-                        Logo
-                    </A>
-                    <Button on:click={() => {actionsObject.logo = null}} gradient color="red">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>                                  
-                    </Button>
-                </div>
-            {:else}
-                <p>logo</p>
-                <input type="file" accept="image/*" on:input={event => actionsObject["logo"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-            {/if}
-        </Label>
-
-        {#each headers.data as header}
-            {#if header.column_name == 'name'}
-                <Label class="space-y-2">
-                    <span>Name</span>
-                    <Input type="text" bind:value={actionsObject.name} />
-                </Label>
-            {:else if header.column_name != 'invoice_prefix'}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input bind:value={actionsObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else if header.column_type=="Dropdown"}
-                        <span>{header.display_name}</span>
-                        <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
-                    {:else}
-                        {#if typeof(actionsObject[header.column_name]) == 'string'}
-                            <span>{header.display_name}</span>
-                            <div class="flex justify-between">
-                                <A target="_blank" href={actionsObject[header.column_name]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                    </svg>
-                                    &nbsp;
-                                    {header.display_name}
-                                </A>
-                                <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>                                  
-                                </Button>
-                            </div>
+        
+        <div class="grid grid-cols-3 col-span-3 gap-3">
+            {#each headers.data as header}
+                {#if header.column_name == 'name'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="justify-self-end">Name</span>
+                        <Input class="col-span-2" type="text" bind:value={actionsObject.name} />
+                    </Label>
+                {:else if header.column_name == 'invoice_prefix'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="justify-self-end">Invoice Prefix</span>
+                        <Input class="col-span-2" type="text" readonly value={actionsObject.invoice_prefix} />
+                    </Label>
+                {:else}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        {#if header.column_type=="Text"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>
+                        {:else if header.column_type=="Date"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
+                        {:else if header.column_type=="Checkbox"}
+                            <span class="justify-self-end">&nbsp;</span>
+                            <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                        {:else if header.column_type=="Dropdown"}
+                            <span class="justify-self-end">{header.display_name}</span>
+                            <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
-                            <p>{header.display_name}</p>
-                            <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
+                            {#if typeof(actionsObject[header.column_name]) == 'string'}
+                                <span class="justify-self-end">{header.display_name}</span>
+                                <div class="flex justify-between">
+                                    <A target="_blank" href={actionsObject[header.column_name]}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                        </svg>
+                                        &nbsp;
+                                        {header.display_name}
+                                    </A>
+                                    <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>                                  
+                                    </Button>
+                                </div>
+                            {:else}
+                                <p class="justify-self-end">{header.display_name}</p>
+                                <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer" />
+                            {/if}
                         {/if}
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
-
-        <Label class="space-y-2">
-            <span>SMTP Host</span>
-            <Input type="text" bind:value={actionsObject.smtp_host} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Port</span>
-            <Input type="text" bind:value={actionsObject.smtp_port} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Email</span>
-            <Input type="text" bind:value={actionsObject.smtp_email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Password</span>
-            <Input type="text" bind:value={actionsObject.smtp_password} />
-        </Label>
+                    </Label>
+                {/if}
+            {/each}
+        </div>
         
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>

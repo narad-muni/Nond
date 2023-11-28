@@ -3,7 +3,8 @@ pending stuff
 design of columns as asked in all pages.
 check in main svelte page using api
 show upload and machine id if license expire
-add changes to archived and deleted pages
+add changes to archived and deleted pages.
+change sortable module
 -----------------------
 
 rewrite whole app
