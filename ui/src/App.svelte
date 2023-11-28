@@ -11,9 +11,12 @@
     import Login from './pages/Login.svelte';
 
     let loaded = false;
+    // let license;
     let routes;
 
     (async ()=>{
+        // license = await utils.get('/api/auth/get_user');
+
         const resp = await utils.get('/api/auth/get_user');
         user.set(resp.data)
 

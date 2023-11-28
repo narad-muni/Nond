@@ -22,6 +22,7 @@ export default class SchedulerManager {
 
         /**
          * Priorities
+         * 0. Validate License
          * 1. update scheduler dates
          * 2. Rotate Registers
          * 3. Delete Tasks
@@ -33,6 +34,10 @@ export default class SchedulerManager {
 
         try {
             const { default: Scheduler } = await import('App/Models/Scheduler');
+            const { default: GlobalState } = await import('./GlobalState');
+            const { default: LicenseValidator } = await import('./LicenseValidator');
+
+            [GlobalState.is_license_valid, GlobalState.license_message] = await LicenseValidator.isLicenseValid();
 
             const currentDate = new Date().toISOString().slice(0, 10);
 

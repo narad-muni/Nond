@@ -42,5 +42,6 @@ Server.middleware.register([
 */
 Server.middleware.registerNamed({
     auth: 'App/Middleware/Auth',
-    acl: 'App/Middleware/Acl'
+    acl: 'App/Middleware/Acl',
+    validate_license: 'App/Middleware/LicenseValidator'
 })

@@ -1,8 +1,9 @@
 pending stuff
 
-design of columns as asked
-create installer
+design of columns as asked - changed in clients ask if design is ok.
 license key validator using jwt
+check in main svelte page using api
+stop other apis if license not valid
 -----------------------
 
 rewrite whole app

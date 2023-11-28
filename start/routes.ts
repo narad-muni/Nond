@@ -23,6 +23,7 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
+import GlobalState from 'App/Utils/GlobalState';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
@@ -30,12 +31,12 @@ const isDevEnv = Env.get('NODE_ENV') === 'development';
 | API route group
 */
 
+
 Route.get('/file/*','FilesController.get')
     .middleware('auth')
     .middleware('acl');
 
-Route.group(() => {
-  
+Route.group(() => {  
 
     /*
     | auth routes
@@ -459,6 +460,7 @@ Route.group(() => {
     });
 
 })
+.middleware('validate_license')
 .prefix('/api');
 
 // Serve vite resources on dev mode
