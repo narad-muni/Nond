@@ -475,7 +475,7 @@
 <Modal bind:open={changeOrderModal} placement="top-center" size="xl">
     <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Drag columns to change order</h3>
     {#key orderable_columns}
-        <div class="flex flex-col gap-4" on:sortable:update={changeOrder} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
+        <div class="grid grid-cols-3 gap-4" on:sortable:update={changeOrder} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
             {#each orderable_columns as column, i}
                 <Card>
                     <span class="flex justify-between items-end">
