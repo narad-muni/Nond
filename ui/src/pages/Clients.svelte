@@ -557,12 +557,12 @@
         <div class="grid grid-cols-3 col-span-3 gap-3">
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
-                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         <span class="justify-self-end">Group</span>
                         <IdSelect class="col-span-2" required items={client_list} bind:value={createdObject.group_id}/>
                     </Label>
                 {:else}
-                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
                             <span class="justify-self-end">{header.display_name}</span>
                             <Input class="col-span-2" type="text" bind:value={createdObject[header.column_name]}/>
@@ -614,38 +614,44 @@
 <Modal bind:open={createTasksModal} size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createTasks}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
-        <Label class="space-y-2 col-span-3">
-            <span>Template</span>
-            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Title</span>
-            <Input required type="text" placeholder="Title" bind:value={createTasksObject.title}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={all_services} bind:value={createTasksObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Client Ids</span>
-            <Input readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={users} bind:value={createTasksObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={task_status} bind:value={createTasksObject.status}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select required items={priority} bind:value={createTasksObject.priority}/>
-        </Label>
-        <Label class="space-y-2 col-span-3">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={createTasksObject.description}/>
-        </Label>
+            
+        <div class="grid grid-cols-3 col-span-3 gap-3">
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="justify-self-end">Template</span>
+                <Select class="col-span-8" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="justify-self-end">Title</span>
+                <Input class="col-span-8" required type="text" placeholder="Title" bind:value={createTasksObject.title}/>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="justify-self-end">Service</span>
+                <Select class="col-span-2" required items={all_services} bind:value={createTasksObject.service_id} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="justify-self-end">Client Ids</span>
+                <Input class="col-span-2" readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="justify-self-end">Assigned To</span>
+                <Select class="col-span-2" items={users} bind:value={createTasksObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="justify-self-end">Status</span>
+                <Select class="col-span-2" required items={task_status} bind:value={createTasksObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="justify-self-end">Priority</span>
+                <Select class="col-span-2" required items={priority} bind:value={createTasksObject.priority}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="justify-self-end">Description</span>
+                <Textarea class="col-span-8" placeholder="Description" rows="4" bind:value={createTasksObject.description}/>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createTasksModal=false;createTasksObject={priority:1,status:0}}} color="alternative" class="w-full">Cancel</Button>
@@ -660,7 +666,7 @@
         <p class="col-span-3 my-auto"><span class="text-red-400">*</span> This will overwrite existing service dates</p>
 
         <Label class="my-auto">
-            <span>&nbsp;</span>
+            <span class="justify-self-end">&nbsp;</span>
             <Toggle bind:checked={removeOldServices} >Remove old services</Toggle>
         </Label>
         
@@ -699,19 +705,19 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
         <div class="grid grid-cols-3 col-span-3 gap-3">
-            <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                <span class="justify-self-end">ID</span>
                 <Input class="col-span-2" readonly type="text" bind:value={actionsObject.id} />
             </Label>
 
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
-                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                        <span class="justify-self-end">Group</span>
                         <IdSelect class="col-span-2" required items={client_list} bind:value={actionsObject.group_id}/>
                     </Label>
                 {:else}
-                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 cols-span-1 items-center">
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
                            <span class="justify-self-end">{header.display_name}</span>
                             <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>

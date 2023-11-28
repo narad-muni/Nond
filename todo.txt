@@ -1,9 +1,9 @@
 pending stuff
 
-design of columns as asked - changed in clients ask if design is ok.
-license key validator using jwt
+design of columns as asked in all pages.
 check in main svelte page using api
-stop other apis if license not valid
+show upload and machine id if license expire
+add changes to archived and deleted pages
 -----------------------
 
 rewrite whole app
