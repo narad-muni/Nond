@@ -513,40 +513,45 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 col-span-1">Create Invoice</h3>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect items={client_list} required bind:value={createdObject.client_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Company</span>
-            <IdSelect items={company_list} required bind:value={createdObject.company_id}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Date</span>
-            <SveltyPicker format="d M yyyy" required bind:value={createdObject.date}/>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={createdObject.paid} bind:checked={createdObject.paid}>Paid</Toggle>
-        </Label>
-
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={createdObject.gst} bind:checked={createdObject.gst}>GST</Toggle>
-        </Label>
         
-        <Label class="space-y-2">
-            <span>Remarks</span>
-            <Textarea bind:value={createdObject.remarks}/>
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client</span>
+                <IdSelect class="col-span-2 !m-0" items={client_list} required bind:value={createdObject.client_id}/>
+            </Label>
 
-        <Label class="space-y-2">
-            <span>Note for self</span>
-            <Textarea bind:value={createdObject.note}/>
-        </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Company</span>
+                <IdSelect class="col-span-2 !m-0" items={company_list} required bind:value={createdObject.company_id}/>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Date</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" required bind:value={createdObject.date}/>
+            </Label>
+            
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Remarks</span>
+                <Textarea class="col-span-2 !m-0" bind:value={createdObject.remarks}/>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Note for self</span>
+                <Textarea class="col-span-2 !m-0" bind:value={createdObject.note}/>
+            </Label>
+
+            <span class="col-span-1"></span>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Paid</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.paid} bind:checked={createdObject.paid}></Toggle>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">GST</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.gst} bind:checked={createdObject.gst}></Toggle>
+            </Label>
+        </div>
 
         {#if createdObject.gst}
             <div class="grid gap-2 col-span-3 grid-cols-10">
@@ -649,44 +654,47 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Invoice ID</span>
-            <Input value={actionsObject.id} readonly/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect items={client_list} required bind:value={actionsObject.client_id}/>
-        </Label>
 
-        <Label class="space-y-2">
-            <span>Company</span>
-            <IdSelect items={company_list} required bind:value={actionsObject.company_id}/>
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Invoice ID</span>
+                <Input value={actionsObject.id} readonly/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client</span>
+                <IdSelect class="col-span-2 !m-0" items={client_list} required bind:value={actionsObject.client_id}/>
+            </Label>
 
-        <Label class="space-y-2">
-            <span>Date</span>
-            <SveltyPicker format="d M yyyy" required bind:value={actionsObject.date}/>
-        </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Company</span>
+                <IdSelect class="col-span-2 !m-0" items={company_list} required bind:value={actionsObject.company_id}/>
+            </Label>
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={actionsObject.paid} bind:checked={actionsObject.paid}>Paid</Toggle>
-        </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Date</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" required bind:value={actionsObject.date}/>
+            </Label>
+            
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Remarks</span>
+                <Textarea class="col-span-2 !m-0" bind:value={actionsObject.remarks}/>
+            </Label>
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={actionsObject.gst} bind:checked={actionsObject.gst}>GST</Toggle>
-        </Label>
-        
-        <Label class="space-y-2">
-            <span>Remarks</span>
-            <Textarea bind:value={actionsObject.remarks}/>
-        </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Note for self</span>
+                <Textarea class="col-span-2 !m-0" bind:value={actionsObject.note}/>
+            </Label>
 
-        <Label class="space-y-2">
-            <span>Note for self</span>
-            <Textarea bind:value={actionsObject.note}/>
-        </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Paid</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.paid} bind:checked={actionsObject.paid}></Toggle>
+            </Label>
+
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">GST</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.gst} bind:checked={actionsObject.gst}></Toggle>
+            </Label>
+        </div>
 
         {#if actionsObject.gst}
             <div class="grid gap-2 col-span-3 grid-cols-10">

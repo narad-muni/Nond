@@ -382,7 +382,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
 
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Column Name</span>
                 <Input class="col-span-2 !m-0" required bind:value={createdObject.display_name}/>
@@ -419,12 +419,12 @@
             {/if}
 
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2" bind:value={createdObject.master} bind:checked={createdObject.master}>Is Master</Toggle>
+                <span class="text-end">Is Master</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.master} bind:checked={createdObject.master}></Toggle>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2" bind:value={createdObject.rollover} bind:checked={createdObject.rollover}>Rollover</Toggle>
+                <span class="text-end">Rollover</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.rollover} bind:checked={createdObject.rollover}></Toggle>
             </Label>
         </div>
 
@@ -438,7 +438,7 @@
 <Modal bind:open={createLinked} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Linked Column</h3>
-        <Label class="space-y-2 col-span-2">
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-2 items-center">
             <span class="text-end">Column Name</span>
             <Select class="col-span-2 !m-0" items={client_columns} bind:value={createdObject.client_column_id}/>
         </Label>
@@ -453,7 +453,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Id</span>
                 <Input class="col-span-2 !m-0" readonly bind:value={actionsObject.id} />
@@ -493,12 +493,12 @@
             {/if}
 
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2" bind:value={actionsObject.master} bind:checked={actionsObject.master}>Is Master</Toggle>
+                <span class="text-end">Is Master</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.master} bind:checked={actionsObject.master}></Toggle>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2" bind:value={actionsObject.rollover} bind:checked={actionsObject.rollover}>Rollover</Toggle>
+                <span class="text-end">Rollover</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.rollover} bind:checked={actionsObject.rollover}></Toggle>
             </Label>
         </div>
 

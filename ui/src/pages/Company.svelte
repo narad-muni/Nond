@@ -398,7 +398,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
         
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             {#each headers.data as header}
                 {#if header.column_name == 'invoice_prefix'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
@@ -419,8 +419,8 @@
                             <span class="text-end">{header.display_name}</span>
                             <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="text-end">&nbsp;</span>
-                            <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">{header.display_name}</span>
+                            <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
                             <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
@@ -444,7 +444,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             {#each headers.data as header}
                 {#if header.column_name == 'name'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
@@ -465,8 +465,8 @@
                             <span class="text-end">{header.display_name}</span>
                             <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="text-end">&nbsp;</span>
-                            <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">{header.display_name}</span>
+                            <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
                             <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>

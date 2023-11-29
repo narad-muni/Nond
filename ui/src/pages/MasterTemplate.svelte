@@ -355,24 +355,24 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Register Name</span>
-            <Select required items={table_name} bind:value={createdObject.table_name} />
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Register Name</span>
+            <Select class="col-span-2 !m-0" required items={table_name} bind:value={createdObject.table_name} />
         </Label>
-        <Label class="space-y-2">
-            <span>Column Name</span>
-            <Input required bind:value={createdObject.display_name}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Column Name</span>
+            <Input class="col-span-2 !m-0" required bind:value={createdObject.display_name}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Column Type</span>
-            <Select required items={type_list} bind:value={createdObject.column_type} />
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Column Type</span>
+            <Select class="col-span-2 !m-0" required items={type_list} bind:value={createdObject.column_type} />
         </Label>
 
         {#if createdObject.column_type == 'Dropdown'}
 
             {#each createdObject.column_info.options as  option, i }
                 <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
-                    <Input required bind:value={createdObject.column_info.options[i]} class="col-span-3"></Input>
+                    <Input required bind:value={createdObject.column_info.options[i]} class="col-span-3 !m-0"></Input>
                     {#if i > 0}
                         <Button class="m-0" on:click={() => {createdObject.column_info.options.splice(i, 1), createdObject = createdObject}} color="red">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -393,9 +393,9 @@
             </Label>
         {/if}
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:checked={createdObject.is_master}>Is Master</Toggle>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Is Master</span>
+            <Toggle bind:checked={createdObject.is_master}></Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
@@ -407,28 +407,28 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Id</span>
-            <Input readonly bind:value={actionsObject.id} />
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Id</span>
+            <Input class="col-span-2 !m-0" readonly bind:value={actionsObject.id} />
         </Label>
-        <Label class="space-y-2">
-            <span>Register Name</span>
-            <Select disabled required items={table_name} bind:value={actionsObject.table_name} />
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Register Name</span>
+            <Select class="col-span-2 !m-0" disabled required items={table_name} bind:value={actionsObject.table_name} />
         </Label>
-        <Label class="space-y-2">
-            <span>Column Name</span>
-            <Input required bind:value={actionsObject.display_name}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Column Name</span>
+            <Input class="col-span-2 !m-0" required bind:value={actionsObject.display_name}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Column Type</span>
-            <Select required items={type_list} bind:value={actionsObject.column_type} />
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Column Type</span>
+            <Select class="col-span-2 !m-0" required items={type_list} bind:value={actionsObject.column_type} />
         </Label>
 
         {#if actionsObject.column_type == 'Dropdown'}
 
             {#each actionsObject.column_info.options as  option, i }
                 <Label class="space-y-2 grid gap-6 grid-cols-4 col-span-2">
-                    <Input required bind:value={actionsObject.column_info.options[i]} class="col-span-3"></Input>
+                    <Input required bind:value={actionsObject.column_info.options[i]} class="col-span-3 !m-0"></Input>
                     {#if i > 0}
                         <Button class="m-0" on:click={() => {actionsObject.column_info.options.splice(i, 1), actionsObject = actionsObject}} color="red">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -449,9 +449,9 @@
             </Label>
         {/if}
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:checked={actionsObject.is_master}>Is Master</Toggle>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Is Master</span>
+            <Toggle bind:checked={actionsObject.is_master}></Toggle>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>

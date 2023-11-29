@@ -277,29 +277,29 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required type="text" placeholder="Title" bind:value={createdObject.name}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Name</span>
+            <Input class="col-span-2 !m-0" required type="text" placeholder="Title" bind:value={createdObject.name}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Title</span>
-            <Input type="text" placeholder="Title" bind:value={createdObject.title}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Title</span>
+            <Input class="col-span-2 !m-0" type="text" placeholder="Title" bind:value={createdObject.title}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={task_status} bind:value={createdObject.status}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Status</span>
+            <Select class="col-span-2 !m-0" required items={task_status} bind:value={createdObject.status}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={createdObject.service_id}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Service</span>
+            <Select class="col-span-2 !m-0" required items={services} bind:value={createdObject.service_id}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select required items={priority} bind:value={createdObject.priority}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Priority</span>
+            <Select class="col-span-2 !m-0" required items={priority} bind:value={createdObject.priority}/>
         </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={createdObject.description}/>
+        <Label class="space-y-2 grid grid-cols-6 gap-x-3 col-span-2 items-center">
+            <span class="text-end">Description</span>
+            <Textarea class="col-span-5 !m-0" placeholder="Description" rows="4" bind:value={createdObject.description}/>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
@@ -309,31 +309,31 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input type="text" placeholder="Title" bind:value={actionsObject.name}/>
+    <form class="grid gap-6 mb-6 grid-cols-2" on:submit|preventDefault={updateData}>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 col-span-2">View/Update Entry</h3>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Name</span>
+            <Input class="col-span-2 !m-0" type="text" placeholder="Title" bind:value={actionsObject.name}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Title</span>
-            <Input type="text" placeholder="Title" bind:value={actionsObject.title}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Title</span>
+            <Input class="col-span-2 !m-0" type="text" placeholder="Title" bind:value={actionsObject.title}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={task_status} bind:value={actionsObject.status}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Status</span>
+            <Select class="col-span-2 !m-0" required items={task_status} bind:value={actionsObject.status}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={actionsObject.service_id}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Service</span>
+            <Select class="col-span-2 !m-0" required items={services} bind:value={actionsObject.service_id}/>
         </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select required items={priority} bind:value={actionsObject.priority}/>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Priority</span>
+            <Select class="col-span-2 !m-0" required items={priority} bind:value={actionsObject.priority}/>
         </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
+        <Label class="space-y-2 grid grid-cols-6 gap-x-3 col-span-2 items-center">
+            <span class="text-end">Description</span>
+            <Textarea class="col-span-5 !m-0" placeholder="Description" rows="4" bind:value={actionsObject.description}/>
         </Label>
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>

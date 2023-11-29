@@ -554,7 +554,7 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
@@ -570,8 +570,8 @@
                             <span class="text-end">{header.display_name}</span>
                             <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={createdObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="text-end">&nbsp;</span>
-                            <Toggle class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">{header.display_name}</span>
+                            <Toggle class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
                             <Select class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
@@ -615,7 +615,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createTasks}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
             
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
                 <span class="text-end">Template</span>
                 <Select class="col-span-8" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
@@ -704,7 +704,7 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">ID</span>
                 <Input class="col-span-2 !m-0" readonly type="text" bind:value={actionsObject.id} />
@@ -725,8 +725,8 @@
                             <span class="text-end">{header.display_name}</span>
                             <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="text-end">&nbsp;</span>
-                            <Toggle class="col-span-2 !m-0"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">{header.display_name}</span>
+                            <Toggle class="col-span-2 !m-0"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
                             <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>

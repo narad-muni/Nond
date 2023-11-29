@@ -279,7 +279,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
         
-        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Name</span>
                 <Input class="col-span-2 !m-0" required bind:value={createdObject.name}/>
@@ -309,7 +309,7 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
         
-        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">ID</span>
                 <Input class="col-span-2 !m-0" value={actionsObject.id} readonly/>

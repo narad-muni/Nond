@@ -760,38 +760,38 @@
             Update Tasks
             <small class="text-sm font-light">(Leave empty for unchanged)</small>
         </h3>
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span>Template</span>
+                <span class="text-start">Template</span>
                 <Select class="col-span-8 !m-0" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span>Title</span>
+                <span class="text-start">Title</span>
                 <Input class="col-span-8 !m-0" type="text" placeholder="Title" bind:value={bulkUpdateObject.title}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>Service</span>
+                <span class="text-start">Service</span>
                 <Select items={services} bind:value={bulkUpdateObject.service_id} />
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>Client</span>
+                <span class="text-start">Client</span>
                 <IdSelect items={clients} bind:value={bulkUpdateObject.client_id}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>Assigned To</span>
+                <span class="text-start">Assigned To</span>
                 <Select items={userList} bind:value={bulkUpdateObject.assigned_to} />
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>Status</span>
+                <span class="text-start">Status</span>
                 <Select items={task_status} bind:value={bulkUpdateObject.status}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>Priority</span>
+                <span class="text-start">Priority</span>
                 <Select items={priority} bind:value={bulkUpdateObject.priority}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span>&nbsp;</span>
-                <Toggle bind:value={bulkUpdateObject.billed} bind:checked={bulkUpdateObject.billed}>Billed</Toggle>
+                <span class="text-start">Billed</span>
+                <Toggle bind:value={bulkUpdateObject.billed} bind:checked={bulkUpdateObject.billed}></Toggle>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="flex text-end">Billed Invoice
@@ -804,7 +804,7 @@
                 <Input bind:value={bulkUpdateObject.invoice_id}></Input>
             </Label>
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span>Description</span>
+                <span class="text-start">Description</span>
                 <Textarea class="col-span-8 !m-0" placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
             </Label>
         </div>
@@ -903,7 +903,7 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Task</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
                 <span class="text-end">Template</span>
                 <Select class="col-span-8 !m-0" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
@@ -933,8 +933,8 @@
                 <Select class="col-span-2 !m-0" required items={priority} bind:value={createdObject.priority}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2 !m-0" bind:value={createdObject.billed} bind:checked={createdObject.billed}>Billed</Toggle>
+                <span class="text-end">Billed</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.billed} bind:checked={createdObject.billed}></Toggle>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="flex text-end">Billed Invoice
@@ -1046,7 +1046,7 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Task</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
                 <span class="text-end">Title</span>
                 <Input class="col-span-8 !m-0" type="text" placeholder="Title" bind:value={actionsObject.title}/>
@@ -1072,8 +1072,8 @@
                 <Select class="col-span-2 !m-0" required items={priority} bind:value={actionsObject.priority}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="text-end">&nbsp;</span>
-                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.billed} bind:checked={actionsObject.billed}>Billed</Toggle>
+                <span class="text-end">Billed</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.billed} bind:checked={actionsObject.billed}></Toggle>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="flex text-end">Billed Invoice
@@ -1217,13 +1217,13 @@
         </Label>
 
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-            <span class="text-end">&nbsp;</span>
-            <Toggle bind:value={invoiceActionsObject.paid} bind:checked={invoiceActionsObject.paid}>Paid</Toggle>
+            <span class="text-end">Paid</span>
+            <Toggle bind:value={invoiceActionsObject.paid} bind:checked={invoiceActionsObject.paid}></Toggle>
         </Label>
 
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-            <span class="text-end">&nbsp;</span>
-            <Toggle bind:value={invoiceActionsObject.gst} bind:checked={invoiceActionsObject.gst}>GST</Toggle>
+            <span class="text-end">GST</span>
+            <Toggle bind:value={invoiceActionsObject.gst} bind:checked={invoiceActionsObject.gst}></Toggle>
         </Label>
         
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
