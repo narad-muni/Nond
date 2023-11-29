@@ -398,31 +398,31 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
         
-        <div class="grid grid-cols-3 col-span-3 gap-3">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
             {#each headers.data as header}
                 {#if header.column_name == 'invoice_prefix'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Invoice Prefix</span>
-                        <Input class="col-span-2" on:input={capitalizePrefix} required type="text" bind:value={createdObject.invoice_prefix} />
+                        <span class="text-end">Invoice Prefix</span>
+                        <Input class="col-span-2 !m-0" on:input={capitalizePrefix} required type="text" bind:value={createdObject.invoice_prefix} />
                     </Label>
                 {:else if header.column_name == 'name'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Name</span>
-                        <Input class="col-span-2" on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
+                        <span class="text-end">Name</span>
+                        <Input class="col-span-2 !m-0" on:input={updatePrefix} required type="text" bind:value={createdObject.name} />
                     </Label>
                 {:else}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Input class="col-span-2" type="text" bind:value={createdObject[header.column_name]}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Input class="col-span-2 !m-0" type="text" bind:value={createdObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
-                            <span class="justify-self-end">{header.display_name}</span>
+                            <span class="text-end">{header.display_name}</span>
                             <SveltyPicker format="d M yyyy" bind:value={createdObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="justify-self-end">&nbsp;</span>
+                            <span class="text-end">&nbsp;</span>
                             <Toggle bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
                         {:else if header.column_type=="Dropdown"}
-                            <span class="justify-self-end">{header.display_name}</span>
+                            <span class="text-end">{header.display_name}</span>
                             <Select bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             <p class="justify-self-end">{header.display_name}</p>
@@ -444,35 +444,35 @@
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         
-        <div class="grid grid-cols-3 col-span-3 gap-3">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
             {#each headers.data as header}
                 {#if header.column_name == 'name'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Name</span>
-                        <Input class="col-span-2" type="text" bind:value={actionsObject.name} />
+                        <span class="text-end">Name</span>
+                        <Input class="col-span-2 !m-0" type="text" bind:value={actionsObject.name} />
                     </Label>
                 {:else if header.column_name == 'invoice_prefix'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Invoice Prefix</span>
-                        <Input class="col-span-2" type="text" readonly value={actionsObject.invoice_prefix} />
+                        <span class="text-end">Invoice Prefix</span>
+                        <Input class="col-span-2 !m-0" type="text" readonly value={actionsObject.invoice_prefix} />
                     </Label>
                 {:else}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Input class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
-                            <span class="justify-self-end">{header.display_name}</span>
+                            <span class="text-end">{header.display_name}</span>
                             <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="justify-self-end">&nbsp;</span>
+                            <span class="text-end">&nbsp;</span>
                             <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
                         {:else if header.column_type=="Dropdown"}
-                            <span class="justify-self-end">{header.display_name}</span>
+                            <span class="text-end">{header.display_name}</span>
                             <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {#if typeof(actionsObject[header.column_name]) == 'string'}
-                                <span class="justify-self-end">{header.display_name}</span>
+                                <span class="text-end">{header.display_name}</span>
                                 <div class="flex justify-between">
                                     <A target="_blank" href={actionsObject[header.column_name]}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -489,7 +489,7 @@
                                 </div>
                             {:else}
                                 <p class="justify-self-end">{header.display_name}</p>
-                                <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer" />
+                                <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer !m-0" />
                             {/if}
                         {/if}
                     </Label>

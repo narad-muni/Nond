@@ -738,11 +738,15 @@
         <form on:submit|preventDefault={billSelected}>
             <svg aria-hidden="true" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
             <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to bill selected rows?</h3>
-            <Label class="space-y-2 mb-5 text-left">
-                <span>Company</span>
-                <Select required items={companies} bind:value={billTaskObject.company_id}/>
+            
+            <Label class="space-y-2 mb-5 text-left grid grid-cols-4 gap-x-3 items-center">
+                <span class="text-start">Company</span>
+                <Select class="col-span-3 !m-0" required items={companies} bind:value={billTaskObject.company_id}/>
             </Label>
-            <Toggle class="mb-5" bind:checked={billTaskObject.gst}>GST</Toggle>
+            <Label class="space-y-2 mb-5 text-left grid grid-cols-4 gap-x-3 items-center">
+                <span class="text-start">GST</span>
+                <Toggle class="col-span-3 !m-0 mb-5" bind:checked={billTaskObject.gst}></Toggle>
+            </Label>
 
             <Button color="green" type="submit" class="mr-2">Yes, I'm sure</Button>
             <Button color='alternative' on:click={() => billModal=false}>No, cancel</Button>
@@ -756,52 +760,54 @@
             Update Tasks
             <small class="text-sm font-light">(Leave empty for unchanged)</small>
         </h3>
-        <Label class="space-y-2 col-span-3">
-            <span>Template</span>
-            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Title</span>
-            <Input type="text" placeholder="Title" bind:value={bulkUpdateObject.title}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select items={services} bind:value={bulkUpdateObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect items={clients} bind:value={bulkUpdateObject.client_id}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={userList} bind:value={bulkUpdateObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select items={task_status} bind:value={bulkUpdateObject.status}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select items={priority} bind:value={bulkUpdateObject.priority}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={bulkUpdateObject.billed} bind:checked={bulkUpdateObject.billed}>Billed</Toggle>
-        </Label>
-        <Label class="space-y-2">
-            <span class="flex">Billed Invoice
-                <a on:click={() => openInvoiceActionsModal(bulkUpdateObject.invoice_id)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>
-                </a>
-            </span>
-            <Input bind:value={bulkUpdateObject.invoice_id}></Input>
-        </Label>
-        <Label class="space-y-2 col-span-3">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span>Template</span>
+                <Select class="col-span-8 !m-0" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span>Title</span>
+                <Input class="col-span-8 !m-0" type="text" placeholder="Title" bind:value={bulkUpdateObject.title}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>Service</span>
+                <Select items={services} bind:value={bulkUpdateObject.service_id} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>Client</span>
+                <IdSelect items={clients} bind:value={bulkUpdateObject.client_id}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>Assigned To</span>
+                <Select items={userList} bind:value={bulkUpdateObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>Status</span>
+                <Select items={task_status} bind:value={bulkUpdateObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>Priority</span>
+                <Select items={priority} bind:value={bulkUpdateObject.priority}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span>&nbsp;</span>
+                <Toggle bind:value={bulkUpdateObject.billed} bind:checked={bulkUpdateObject.billed}>Billed</Toggle>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="flex text-end">Billed Invoice
+                    <a class="text-end" on:click={() => openInvoiceActionsModal(bulkUpdateObject.invoice_id)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer text-end">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                    </a>
+                </span>
+                <Input bind:value={bulkUpdateObject.invoice_id}></Input>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span>Description</span>
+                <Textarea class="col-span-8 !m-0" placeholder="Description" rows="4" bind:value={bulkUpdateObject.description}/>
+            </Label>
+        </div>
 
         <div class="grid gap-2 col-span-3 grid-cols-7">
             <Label class="space-y-2 text-center col-span-2">
@@ -817,7 +823,7 @@
             {#each bulkUpdateObject.time as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
@@ -859,7 +865,7 @@
             {#each bulkUpdateObject.money as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
                 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
@@ -897,52 +903,54 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Task</h3>
-        <Label class="space-y-2 col-span-3">
-            <span>Template</span>
-            <Select items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Title</span>
-            <Input required type="text" placeholder="Title" bind:value={createdObject.title}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={createdObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect required items={clients} bind:value={createdObject.client_id}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={userList} bind:value={createdObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={task_status} bind:value={createdObject.status}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select required items={priority} bind:value={createdObject.priority}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={createdObject.billed} bind:checked={createdObject.billed}>Billed</Toggle>
-        </Label>
-        <Label class="space-y-2">
-            <span class="flex">Billed Invoice
-                <a on:click={() => openInvoiceActionsModal(createdObject.invoice_id)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>                      
-                </a>
-            </span>
-            <Input bind:value={createdObject.invoice_id}></Input>
-        </Label>
-        <Label class="space-y-2 col-span-3">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={createdObject.description}/>
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="text-end">Template</span>
+                <Select class="col-span-8 !m-0" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="text-end">Title</span>
+                <Input class="col-span-8 !m-0" required type="text" placeholder="Title" bind:value={createdObject.title}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Service</span>
+                <Select class="col-span-2 !m-0" required items={services} bind:value={createdObject.service_id} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client</span>
+                <IdSelect class="col-span-2 !m-0" required items={clients} bind:value={createdObject.client_id}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Assigned To</span>
+                <Select class="col-span-2 !m-0" items={userList} bind:value={createdObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Status</span>
+                <Select class="col-span-2 !m-0" required items={task_status} bind:value={createdObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Priority</span>
+                <Select class="col-span-2 !m-0" required items={priority} bind:value={createdObject.priority}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">&nbsp;</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.billed} bind:checked={createdObject.billed}>Billed</Toggle>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="flex text-end">Billed Invoice
+                    <a on:click={() => openInvoiceActionsModal(createdObject.invoice_id)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer text-end">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>                      
+                    </a>
+                </span>
+                <Input bind:value={createdObject.invoice_id}></Input>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span>Description</span>
+                <Textarea class="col-span-8 !m-0" placeholder="Description" rows="4" bind:value={createdObject.description}/>
+            </Label>
+        </div>
 
         <div class="grid gap-2 col-span-3 grid-cols-7">
             <Label class="space-y-2 text-center col-span-2">
@@ -958,7 +966,7 @@
             {#each createdObject.time as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
@@ -982,7 +990,7 @@
             <span class="col-span-4"></span>
             <span>Total</span>
             <Label class="space-y-2 text-center font-bold">
-                <Input readonly value={createdObject.total_time}/>
+                <Input class="col-span-2 !m-0" readonly value={createdObject.total_time}/>
             </Label>
         </div>
 
@@ -1000,7 +1008,7 @@
             {#each createdObject.money as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
                 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
@@ -1038,48 +1046,50 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Task</h3>
-        <Label class="space-y-2 col-span-2">
-            <span>Title</span>
-            <Input type="text" placeholder="Title" bind:value={actionsObject.title}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select items={services} bind:value={actionsObject.service_id} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Client</span>
-            <IdSelect items={clients} required bind:value={actionsObject.client_id}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={userList} bind:value={actionsObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={task_status} bind:value={actionsObject.status}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Priority</span>
-            <Select required items={priority} bind:value={actionsObject.priority}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={actionsObject.billed} bind:checked={actionsObject.billed}>Billed</Toggle>
-        </Label>
-        <Label class="space-y-2">
-            <span class="flex">Billed Invoice
-                <a on:click={() => openInvoiceActionsModal(actionsObject.invoice_id)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                    </svg>                      
-                </a>
-            </span>
-            <Input bind:value={actionsObject.invoice_id}></Input>
-        </Label>
-        <Label class="space-y-2 col-span-3">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
-        </Label>
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="text-end">Title</span>
+                <Input class="col-span-8 !m-0" type="text" placeholder="Title" bind:value={actionsObject.title}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Service</span>
+                <Select class="col-span-2 !m-0" items={services} bind:value={actionsObject.service_id} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client</span>
+                <IdSelect class="col-span-2 !m-0" items={clients} required bind:value={actionsObject.client_id}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Assigned To</span>
+                <Select class="col-span-2 !m-0" items={userList} bind:value={actionsObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Status</span>
+                <Select class="col-span-2 !m-0" required items={task_status} bind:value={actionsObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Priority</span>
+                <Select class="col-span-2 !m-0" required items={priority} bind:value={actionsObject.priority}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">&nbsp;</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.billed} bind:checked={actionsObject.billed}>Billed</Toggle>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="flex text-end">Billed Invoice
+                    <a class="text-end" on:click={() => openInvoiceActionsModal(actionsObject.invoice_id)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="ms-1 w-4 h-4 text-blue-500 cursor-pointer text-end">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>                      
+                    </a>
+                </span>
+                <Input class="col-span-2 !m-0" bind:value={actionsObject.invoice_id}></Input>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
+                <span class="text-end">Description</span>
+                <Textarea class="col-span-8 !m-0" placeholder="Description" rows="4" bind:value={actionsObject.description}/>
+            </Label>
+        </div>
 
         <div class="grid gap-2 col-span-3 grid-cols-7">
             <Label class="space-y-2 text-center col-span-2">
@@ -1095,7 +1105,7 @@
             {#each actionsObject.time as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <SveltyPicker disabled={!can_edit} format="hh:ii" bind:value={particular.time} />
@@ -1143,7 +1153,7 @@
             {#each actionsObject.money as particular,index}
                 {@const can_edit = $user.is_admin || particular.user == $user.id}
 
-                <Select disabled={!$user.is_admin} items={userList} class="col-span-2" bind:value={particular.user} />
+                <Select disabled={!$user.is_admin} items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
                 
                 <Input disabled={!can_edit} required class="col-span-3" bind:value={particular.description} />
                 <Input disabled={!can_edit} required bind:value={particular.amount} type="number" />
@@ -1187,42 +1197,42 @@
 <Modal bind:open={invoiceActionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={invoiceUpdateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-1">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Invoice ID</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Invoice ID</span>
             <Input value={invoiceActionsObject.id} readonly/>
         </Label>
-        <Label class="space-y-2">
-            <span>Client</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Client</span>
             <IdSelect items={clients} required bind:value={invoiceActionsObject.client_id}/>
         </Label>
 
-        <Label class="space-y-2">
-            <span>Company</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Company</span>
             <IdSelect items={companies} required bind:value={invoiceActionsObject.company_id}/>
         </Label>
 
-        <Label class="space-y-2">
-            <span>Date</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Date</span>
             <SveltyPicker format="d M yyyy" required bind:value={invoiceActionsObject.date}/>
         </Label>
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">&nbsp;</span>
             <Toggle bind:value={invoiceActionsObject.paid} bind:checked={invoiceActionsObject.paid}>Paid</Toggle>
         </Label>
 
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">&nbsp;</span>
             <Toggle bind:value={invoiceActionsObject.gst} bind:checked={invoiceActionsObject.gst}>GST</Toggle>
         </Label>
         
-        <Label class="space-y-2">
-            <span>Remarks</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Remarks</span>
             <Textarea bind:value={invoiceActionsObject.remarks}/>
         </Label>
 
-        <Label class="space-y-2">
-            <span>Note for self</span>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Note for self</span>
             <Textarea bind:value={invoiceActionsObject.note}/>
         </Label>
 
@@ -1244,7 +1254,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each invoiceActionsObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-4" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.gst} />
                     <Input required class="col-span-1" bind:value={particular.hsn} />
@@ -1293,7 +1303,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each invoiceActionsObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-3" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.amount} type="number" />
                     <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">

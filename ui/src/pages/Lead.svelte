@@ -322,26 +322,30 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Client Name</span>
-            <Input required bind:value={createdObject.client}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Start date</span>
-            <SveltyPicker format="d M yyyy" bind:value={createdObject.started}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select required items={userList} bind:value={createdObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select required items={leadStatus} bind:value={createdObject.status}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={createdObject.description}/>
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={createdObject.client}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Start date</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={createdObject.started}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Assigned To</span>
+                <Select class="col-span-2 !m-0" required items={userList} bind:value={createdObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Status</span>
+                <Select class="col-span-2 !m-0" required items={leadStatus} bind:value={createdObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-6 gap-x-3 col-span-2 items-center">
+                <span class="text-end">Description</span>
+                <Textarea class="col-span-5" placeholder="Description" rows="4" bind:value={createdObject.description}/>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -352,26 +356,30 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Client Name</span>
-            <Input required bind:value={actionsObject.client}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Start date</span>
-            <SveltyPicker format="d M yyyy" bind:value={actionsObject.started}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Assigned To</span>
-            <Select items={userList} bind:value={actionsObject.assigned_to} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Status</span>
-            <Select items={leadStatus} bind:value={actionsObject.status}/>
-        </Label>
-        <Label class="space-y-2 col-span-2">
-            <span>Description</span>
-            <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Client Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.client}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Start date</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject.started}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Assigned To</span>
+                <Select class="col-span-2 !m-0" items={userList} bind:value={actionsObject.assigned_to} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Status</span>
+                <Select class="col-span-2 !m-0" items={leadStatus} bind:value={actionsObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-6 gap-x-3 col-span-2 items-center">
+                <span class="text-end">Description</span>
+                <Textarea class="col-span-5" placeholder="Description" rows="4" bind:value={actionsObject.description}/>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>

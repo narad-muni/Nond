@@ -340,7 +340,7 @@
   tabindex="0"
   {name} {disabled} {required} {value} {placeholder}
   autocomplete="off"
-  class={inputClasses + tailwindInputClasses}
+  class={inputClasses + " " + tailwindInputClasses}
   readonly={isFocused}
   use:inputAction={inputActionParams}
   on:focus={onInputFocus}
@@ -355,7 +355,7 @@
 {/if}
 {#if pickerVisible && isFocused }
   <div
-    class="std-calendar-wrap is-popup {theme}"
+    class="std-calendar-wrap is-popup {theme} {inputClasses}"
     transition:fadeFn|local={{ duration: 200 }}
     use:positionFn={{ inputEl, visible: internalVisibility, inputRect }}
     on:mousedown|preventDefault

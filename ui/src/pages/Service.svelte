@@ -278,22 +278,26 @@
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={createdObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>HSN/SAC</span>
-            <Input on:change={set_gst} type="number" required bind:value={createdObject.hsn}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="number" required bind:value={createdObject.gst}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Task Template</span>
-            <Select required items={taskTemplates} bind:value={createdObject.template_id} />
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={createdObject.name}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">HSN/SAC</span>
+                <Input class="col-span-2 !m-0" on:change={set_gst} type="number" required bind:value={createdObject.hsn}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">GST</span>
+                <Input class="col-span-2 !m-0" type="number" required bind:value={createdObject.gst}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Task Template</span>
+                <Select class="col-span-2 !m-0" required items={taskTemplates} bind:value={createdObject.template_id} />
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={}}} color="alternative" class="w-full">Cancel</Button>
@@ -304,26 +308,30 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input value={actionsObject.id} readonly/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={actionsObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>HSN/SAC</span>
-            <Input on:change={set_gst} type="number" required bind:value={actionsObject.hsn}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="number" required bind:value={actionsObject.gst}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Task Template</span>
-            <Select required items={taskTemplates} bind:value={actionsObject.template_id} />
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">ID</span>
+                <Input class="col-span-2 !m-0" value={actionsObject.id} readonly/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.name}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">HSN/SAC</span>
+                <Input class="col-span-2 !m-0" on:change={set_gst} type="number" required bind:value={actionsObject.hsn}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">GST</span>
+                <Input class="col-span-2 !m-0" type="number" required bind:value={actionsObject.gst}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Task Template</span>
+                <Select class="col-span-2 !m-0" required items={taskTemplates} bind:value={actionsObject.template_id} />
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>

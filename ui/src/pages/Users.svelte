@@ -310,22 +310,25 @@
 
 <Modal bind:open={createModal} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createData}>
-        <Label class="space-y-2">
-            <span>Username</span>
-            <Input required bind:value={createdObject.username}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Password</span>
-            <Input type="password" required bind:value={createdObject.password}/>
-        </Label>
-        <Label>
-            <span>Role</span>
-            <Select required items={role_options} bind:value={createdObject.role_id}></Select>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp;</span>
-            <Toggle bind:value={createdObject.is_admin} bind:checked={createdObject.is_admin}>Admin</Toggle>
-        </Label>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Entry</h3>
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Username</span>
+                <Input class="col-span-2 !m-0" required bind:value={createdObject.username}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Password</span>
+                <Input class="col-span-2 !m-0" type="password" required bind:value={createdObject.password}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Role</span>
+                <Select class="col-span-2 !m-0" required items={role_options} bind:value={createdObject.role_id}></Select>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Admin</span>
+                <Toggle class="col-span-2 !m-0" bind:value={createdObject.is_admin} bind:checked={createdObject.is_admin}></Toggle>
+            </Label>
+        </div>
 
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
@@ -337,26 +340,30 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input value={actionsObject.id} readonly/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Username</span>
-            <Input required bind:value={actionsObject.username}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Password</span>
-            <Input type="password" bind:value={actionsObject.password}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Role</span>
-            <Select required items={role_options} bind:value={actionsObject.role_id}></Select>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp</span>
-            <Toggle bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} >Admin</Toggle>
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-5">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">ID</span>
+                <Input class="col-span-2 !m-0" value={actionsObject.id} readonly/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Username</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.username}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Password</span>
+                <Input class="col-span-2 !m-0" type="password" bind:value={actionsObject.password}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Role</span>
+                <Select class="col-span-2 !m-0" required items={role_options} bind:value={actionsObject.role_id}></Select>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Admin</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} ></Toggle>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>

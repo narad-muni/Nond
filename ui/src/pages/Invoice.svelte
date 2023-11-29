@@ -566,7 +566,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each createdObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-4" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.gst} />
                     <Input required class="col-span-1" bind:value={particular.hsn} />
@@ -614,7 +614,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each createdObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-3" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.amount} />
                     <Button color="red" on:click={()=>removeParticularCreated(index)} class="col-span-1">
@@ -706,7 +706,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each actionsObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-4" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.gst} />
                     <Input required class="col-span-1" bind:value={particular.hsn} />
@@ -755,7 +755,7 @@
                     <span>Amount</span>
                 </Label>
                 {#each actionsObject.particulars.particulars as particular,index}
-                    <Input required class="col-span-2" bind:value={particular.master} />
+                    <Input required class="col-span-2 !m-0" bind:value={particular.master} />
                     <Input required class="col-span-3" bind:value={particular.description} />
                     <Input required class="col-span-1" bind:value={particular.amount} />
                     <Button color="red" on:click={()=>removeParticularActions(index)} class="col-span-1">

@@ -332,33 +332,37 @@
     </div>
 </Modal>
 
-<Modal bind:open={createModal} placement="top-center" size="lg">
+<Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Create Register</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={createdObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Next Rotation</span>
-            <SveltyPicker on:change={setVersion} required format="d M yyyy" bind:value={createdObject.next} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Frequency</span>
-            <Select required items={frequency} bind:value={createdObject.frequency} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Strategy</span>
-            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={createdObject.rotation_strategy} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Version</span>
-            <Input required bind:value={createdObject.version}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={createdObject.service_id} />
-        </Label>
+        
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={createdObject.name}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Next Rotation</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" on:change={setVersion} required format="d M yyyy" bind:value={createdObject.next} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Rotation Frequency</span>
+                <Select class="col-span-2 !m-0" required items={frequency} bind:value={createdObject.frequency} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Rotation Strategy</span>
+                <Select class="col-span-2 !m-0" required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={createdObject.rotation_strategy} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Version</span>
+                <Input class="col-span-2 !m-0" required bind:value={createdObject.version}/>
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Service</span>
+                <Select class="col-span-2 !m-0" required items={services} bind:value={createdObject.service_id} />
+            </Label>
+        </div>
+
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject={version:currDate,next:""}}} color="alternative" class="w-full">Cancel</Button>
@@ -369,30 +373,34 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input required bind:value={actionsObject.name}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Next Rotation</span>
-            <SveltyPicker format="d M yyyy" bind:value={actionsObject.scheduler.next} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Frequency</span>
-            <Select items={frequency} bind:value={actionsObject.scheduler.frequency} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Rotation Strategy</span>
-            <Select required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={actionsObject.scheduler.data.rotation_strategy} />
-        </Label>
-        <Label class="space-y-2">
-            <span>Version</span>
-            <Input required bind:value={actionsObject.version}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Service</span>
-            <Select required items={services} bind:value={actionsObject.service_id} />
-        </Label>
+        
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Name</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.name}/>
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Next Rotation</span>
+                <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject.scheduler.next} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Rotation Frequency</span>
+                <Select class="col-span-2 !m-0" items={frequency} bind:value={actionsObject.scheduler.frequency} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Rotation Strategy</span>
+                <Select class="col-span-2 !m-0" required items={[{name:"Delete",value:"delete"},{name:"Archive",value:"archive"}]} bind:value={actionsObject.scheduler.data.rotation_strategy} />
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Version</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.version}/>
+            </Label>
+             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Service</span>
+                <Select class="col-span-2 !m-0" required items={services} bind:value={actionsObject.service_id} />
+            </Label>
+        </div>
+
         <div class="col-span-3 grid gap-6 grid-cols-2">
             <Button  type="submit" class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>

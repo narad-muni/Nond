@@ -554,30 +554,30 @@
 <Modal bind:open={createModal} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={createData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">Add new entry</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-3">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Group</span>
-                        <IdSelect class="col-span-2" required items={client_list} bind:value={createdObject.group_id}/>
+                        <span class="text-end">Group</span>
+                        <IdSelect class="col-span-2 !m-0" required items={client_list} bind:value={createdObject.group_id}/>
                     </Label>
                 {:else}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Input class="col-span-2" type="text" bind:value={createdObject[header.column_name]}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Input class="col-span-2 !m-0" type="text" bind:value={createdObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <SveltyPicker class="col-span-2" format="d M yyyy" bind:value={createdObject[header.column_name]} />
+                            <span class="text-end">{header.display_name}</span>
+                            <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={createdObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="justify-self-end">&nbsp;</span>
-                            <Toggle class="col-span-2" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">&nbsp;</span>
+                            <Toggle class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}>{header.display_name}</Toggle>
                         {:else if header.column_type=="Dropdown"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Select class="col-span-2" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Select class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             <p class="justify-self-end">{header.display_name}</p>
-                            <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer" />
+                            <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer !m-0" />
                         {/if}
                     </Label>
                 {/if}
@@ -615,39 +615,39 @@
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault={createTasks}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Create Tasks</h3>
             
-        <div class="grid grid-cols-3 col-span-3 gap-3">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span class="justify-self-end">Template</span>
+                <span class="text-end">Template</span>
                 <Select class="col-span-8" items={taskTemplates} value={0} on:change={loadTaskTemplate}/>
             </Label>
 
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span class="justify-self-end">Title</span>
+                <span class="text-end">Title</span>
                 <Input class="col-span-8" required type="text" placeholder="Title" bind:value={createTasksObject.title}/>
             </Label>
 
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="justify-self-end">Service</span>
-                <Select class="col-span-2" required items={all_services} bind:value={createTasksObject.service_id} />
+                <span class="text-end">Service</span>
+                <Select class="col-span-2 !m-0" required items={all_services} bind:value={createTasksObject.service_id} />
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="justify-self-end">Client Ids</span>
-                <Input class="col-span-2" readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
+                <span class="text-end">Client Ids</span>
+                <Input class="col-span-2 !m-0" readonly value={JSON.stringify([...selectedRows]).slice(1,-1)}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="justify-self-end">Assigned To</span>
-                <Select class="col-span-2" items={users} bind:value={createTasksObject.assigned_to} />
+                <span class="text-end">Assigned To</span>
+                <Select class="col-span-2 !m-0" items={users} bind:value={createTasksObject.assigned_to} />
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="justify-self-end">Status</span>
-                <Select class="col-span-2" required items={task_status} bind:value={createTasksObject.status}/>
+                <span class="text-end">Status</span>
+                <Select class="col-span-2 !m-0" required items={task_status} bind:value={createTasksObject.status}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                <span class="justify-self-end">Priority</span>
-                <Select class="col-span-2" required items={priority} bind:value={createTasksObject.priority}/>
+                <span class="text-end">Priority</span>
+                <Select class="col-span-2 !m-0" required items={priority} bind:value={createTasksObject.priority}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-9 gap-x-3 col-span-3 items-center">
-                <span class="justify-self-end">Description</span>
+                <span class="text-end">Description</span>
                 <Textarea class="col-span-8" placeholder="Description" rows="4" bind:value={createTasksObject.description}/>
             </Label>
         </div>
@@ -666,7 +666,7 @@
         <p class="col-span-3 my-auto"><span class="text-red-400">*</span> This will overwrite existing service dates</p>
 
         <Label class="my-auto">
-            <span class="justify-self-end">&nbsp;</span>
+            <span class="text-end">&nbsp;</span>
             <Toggle bind:checked={removeOldServices} >Remove old services</Toggle>
         </Label>
         
@@ -704,35 +704,35 @@
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
-        <div class="grid grid-cols-3 col-span-3 gap-3">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-5">
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-               <span class="justify-self-end">ID</span>
-                <Input class="col-span-2" readonly type="text" bind:value={actionsObject.id} />
+                <span class="text-end">ID</span>
+                <Input class="col-span-2 !m-0" readonly type="text" bind:value={actionsObject.id} />
             </Label>
 
             {#each headers.data as header}
                 {#if header.column_name == 'group'}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
-                        <span class="justify-self-end">Group</span>
-                        <IdSelect class="col-span-2" required items={client_list} bind:value={actionsObject.group_id}/>
+                        <span class="text-end">Group</span>
+                        <IdSelect class="col-span-2 !m-0" required items={client_list} bind:value={actionsObject.group_id}/>
                     </Label>
                 {:else}
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Input class="col-span-2" bind:value={actionsObject[header.column_name]}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Input class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <SveltyPicker class="col-span-2" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
+                            <span class="text-end">{header.display_name}</span>
+                            <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
-                            <span class="justify-self-end">&nbsp;</span>
-                            <Toggle class="col-span-2"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                            <span class="text-end">&nbsp;</span>
+                            <Toggle class="col-span-2 !m-0"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
                         {:else if header.column_type=="Dropdown"}
-                            <span class="justify-self-end">{header.display_name}</span>
-                            <Select class="col-span-2" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
+                            <span class="text-end">{header.display_name}</span>
+                            <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {#if typeof(actionsObject[header.column_name]) == 'string'}
-                                <span class="justify-self-end">{header.display_name}</span>
+                                <span class="text-end">{header.display_name}</span>
                                 <div class="flex justify-between">
                                     <A target="_blank" href={actionsObject[header.column_name]}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
