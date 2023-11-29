@@ -23,7 +23,7 @@
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
     import utils from '../utils';
-    import { sortable } from 'svelte-agnostic-draggable';
+    import { SortableList } from '@jhubbardsf/svelte-sortablejs';
 
     // Intialization
 
@@ -128,8 +128,8 @@
     }
 
     function changeOrder(e){
-        const from = e.detail.previousIndex;
-        const to = e.detail.newIndex;
+        const from = e.oldIndex;
+        const to = e.newIndex;
 
         orderable_columns.splice(to, 0, orderable_columns.splice(from, 1)[0]);
         orderable_columns = orderable_columns;
@@ -504,7 +504,7 @@
 <Modal bind:open={changeOrderModal} placement="top-center" size="xl">
     <h3 class="text-xl mt-4 font-medium text-gray-900 dark:text-white p-0 md:col-span-2">Drag columns to change order</h3>
     {#key orderable_columns}
-        <div class="grid grid-cols-3 gap-4" on:sortable:update={changeOrder} use:sortable={{ cursor:'grabbing', zIndex:10 }}>
+        <SortableList onSort={changeOrder} class="grid grid-cols-3 gap-4">
             {#each orderable_columns as column, i}
                 <Card>
                     <span class="flex justify-between items-end">
@@ -517,7 +517,7 @@
                     </span>
                 </Card>
             {/each}
-        </div>
+        </SortableList>
     {/key}
 
     <div class="col-span-2 grid gap-6 grid-cols-2">

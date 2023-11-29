@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@jhubbardsf/svelte-sortablejs": "^1.1.0",
     "@popperjs/core": "^2.11.6",
     "@sveltejs/vite-plugin-svelte": "^2.0.0",
     "autoprefixer": "^10.4.7",
@@ -23,7 +24,6 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "svelte-agnostic-draggable": "^0.2.0",
     "svelte-spa-router": "^3.3.0"
   }
 }
