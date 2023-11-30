@@ -14,7 +14,7 @@ export default class Acl {
         const method = request.method();
         const role = session.get('user').role;
 
-        const open_sections: string[] = [];
+        const open_sections: string[] = ["open"];
 
         if (!role) {
             session.forget('user');
@@ -26,8 +26,8 @@ export default class Acl {
             return;
         }
 
-        // Open sections for all logged in users
-        if (open_sections.includes(part) && role) {
+        // Open sections for everyone
+        if (open_sections.includes(part)) {
             await next();
             return;
         }

@@ -106,6 +106,12 @@ export default class RegistersController {
         try {
             const payload = request.all();
 
+            payload.name = payload.name.replaceAll(".", "");
+            payload.name = payload.name.replaceAll(",", "");
+
+            payload.version = payload.name.replaceAll(".", "");
+            payload.version = payload.name.replaceAll(",", "");
+
             //set "null" to null
             Object.keys(payload).forEach(e => {
                 if (payload[e] == "null" || String(payload[e]) == "") {
@@ -164,8 +170,13 @@ export default class RegistersController {
 
                 const new_scheduler = await Scheduler.create(scheduler);
 
+                const min = await RegisterTemplate
+                    .query()
+                    .min('id')
+                    .first();
+
                 await RegisterTemplate.create({
-                    id: -1,
+                    id: min?.$extras.min - 1,
                     table_id: new_scheduler.id,
                     column_name: "entry_on",
                     display_name: "Entry On",

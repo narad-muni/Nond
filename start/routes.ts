@@ -463,6 +463,18 @@ Route.group(() => {
 .middleware('validate_license')
 .prefix('/api');
 
+Route.group(() => {
+
+    Route.get('/is_license_valid', ({ response }) => {
+        response.send({
+            "status": GlobalState.is_license_valid,
+            "message": GlobalState.license_message,
+        })
+    });
+
+})
+.prefix('/api/open/license');
+
 // Serve vite resources on dev mode
 if (isDevEnv) {
     Route.get('/src/*', async ({ request, response }) => {
