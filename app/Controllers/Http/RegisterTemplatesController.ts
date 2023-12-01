@@ -122,7 +122,7 @@ export default class RegisterTemplatesController {
                         const column_name_arr = ["Name", "Email", "GST", ""];
 
                         payload.display_name = column_name_arr[column_name_arr.length + parseInt(payload.client_column_id)];
-                        payload.column_name = string.snakeCase(payload.display_name);
+                        payload.column_name = string.snakeCase(payload.display_name || "");
                         payload.column_type = "Text";
                     } else {//dynamic client columns
                         const client_column = await MasterTemplate
@@ -145,7 +145,7 @@ export default class RegisterTemplatesController {
                     });
                 }
             } else {//dynamic column
-                payload.column_name = string.snakeCase(payload.display_name);
+                payload.column_name = string.snakeCase(payload.display_name || "");
 
                 const exist = await RegisterTemplate
                     .query()
@@ -224,7 +224,7 @@ export default class RegisterTemplatesController {
     public async update({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
-            payload.column_name = string.snakeCase(payload.display_name);
+            payload.column_name = string.snakeCase(payload.display_name || "");
 
             const exist = await RegisterTemplate
                 .query()

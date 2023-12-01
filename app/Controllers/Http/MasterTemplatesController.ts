@@ -112,7 +112,7 @@ export default class MasterTemplatesController {
     public async create({ request, response }: HttpContextContract) {
         try {
             const payload = request.all()
-            payload.column_name = string.snakeCase(payload.display_name);
+            payload.column_name = string.snakeCase(payload.display_name || "");
 
             if (["services", "_services", "logo", "signature"].includes(payload.column_name)) {
                 response.send({
@@ -186,7 +186,7 @@ export default class MasterTemplatesController {
     public async update({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
-            payload.column_name = string.snakeCase(payload.display_name);
+            payload.column_name = string.snakeCase(payload.display_name || "");
 
             if (["services", "_services", "logo", "signature"].includes(payload.column_name)) {
                 response.send({

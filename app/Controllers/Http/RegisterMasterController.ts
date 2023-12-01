@@ -106,11 +106,11 @@ export default class RegistersController {
         try {
             const payload = request.all();
 
-            payload.name = payload.name.replaceAll(".", "");
-            payload.name = payload.name.replaceAll(",", "");
+            payload.name = payload.name?.replaceAll(".", "");
+            payload.name = payload.name?.replaceAll(",", "");
 
-            payload.version = payload.name.replaceAll(".", "");
-            payload.version = payload.name.replaceAll(",", "");
+            payload.version = payload.name?.replaceAll(".", "");
+            payload.version = payload.name?.replaceAll(",", "");
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
