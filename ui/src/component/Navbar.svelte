@@ -14,7 +14,6 @@
 
     import utils from '../utils';
     import { user, active_registers, archived_registers } from '../global/stores.js';
-  import Automator from '../pages/Automator.svelte';
 
     let _active_registers, _archived_registers;
 
@@ -22,6 +21,15 @@
         (async () => {
             _active_registers = await utils.get('/api/register_master/options/active');
             _archived_registers = await utils.get('/api/register_master/options/archived');
+
+            console.log(_archived_registers);
+
+            _archived_registers = _archived_registers.reduce(function (a, b) {
+                a[b.name] = a[b.name] || [];
+                a[b.name].push(b);
+                return a;
+            }, Object.create(null));
+
         })();
     });
 
@@ -29,6 +37,14 @@
         (async () => {
             _active_registers = await utils.get('/api/register_master/options/active');
             _archived_registers = await utils.get('/api/register_master/options/archived');
+
+            console.log(_archived_registers);
+
+            _archived_registers = _archived_registers.reduce(function (a, b) {
+                a[b.name] = a[b.name] || [];
+                a[b.name].push(b);
+                return a;
+            }, Object.create(null));
         })();
     });
 
@@ -112,8 +128,13 @@
             {#if $user.role.read.employee}
                 <DropdownItem class="flex items-center justify-between"><Chevron placement="right">Registers</Chevron></DropdownItem>
                 <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
-                    {#each _archived_registers as register}
-                        <DropdownItem href="/#/archived_register/{register.value}">{register.name}</DropdownItem>
+                    {#each Object.keys(_archived_registers) as register_name}
+                        <DropdownItem class="flex items-center justify-between"><Chevron placement="right">{register_name}</Chevron></DropdownItem>
+                        <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
+                            {#each _archived_registers[register_name] as register}
+                                <DropdownItem href="/#/archived_register/{register.value}">{register.version}</DropdownItem>
+                            {/each}
+                        </Dropdown>
                     {/each}
                 </Dropdown>
             {/if}

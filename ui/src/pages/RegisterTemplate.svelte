@@ -41,13 +41,7 @@
         {name: 'Checkbox',value: 'Checkbox'},
         {name: 'Dropdown',value: 'Dropdown'},
     ];
-
-    const default_client_columns = [
-        {"name":"Name","value":"-4"},
-        {"name":"Email","value":"-3"},
-        {"name":"GST","value":"-2"},
-    ];
-
+    
     let register_id;
     
     location.subscribe(val => {
@@ -62,7 +56,7 @@
 
             table = table.data;
             client_columns = client_columns.data;
-            client_columns = [...client_columns,...default_client_columns];
+            client_columns = [...client_columns];
 
             if(data.status != 'success'){
                 error = data.message;

@@ -78,19 +78,7 @@ export default class RegistersController {
                 data = data.where('active', true);
             }
 
-            data = await data;
-
-            const serilizedData = data.map(e => e.serialize());
-
-            serilizedData.map(e => {
-                e.value = e.id;
-                e.name += " " + e.version;
-
-                delete e.id;
-                delete e.version;
-            });
-
-            response.send(serilizedData);
+            response.send(await data);
 
         } catch (e) {
             console.log(e);
@@ -109,8 +97,8 @@ export default class RegistersController {
             payload.name = payload.name?.replaceAll(".", "");
             payload.name = payload.name?.replaceAll(",", "");
 
-            payload.version = payload.name?.replaceAll(".", "");
-            payload.version = payload.name?.replaceAll(",", "");
+            payload.version = payload.version?.replaceAll(".", "");
+            payload.version = payload.version?.replaceAll(",", "");
 
             //set "null" to null
             Object.keys(payload).forEach(e => {
