@@ -118,22 +118,14 @@ export default class RegisterTemplatesController {
                     });
                 } else {
 
-                    if (payload.client_column_id < 0) {//default client columns
-                        const column_name_arr = ["Name", "Email", "GST", ""];
+                    const client_column = await MasterTemplate
+                        .query()
+                        .where('id', payload.client_column_id)
+                        .first();
 
-                        payload.display_name = column_name_arr[column_name_arr.length + parseInt(payload.client_column_id)];
-                        payload.column_name = string.snakeCase(payload.display_name || "");
-                        payload.column_type = "Text";
-                    } else {//dynamic client columns
-                        const client_column = await MasterTemplate
-                            .query()
-                            .where('id', payload.client_column_id)
-                            .first();
-
-                        payload.display_name = client_column?.display_name;
-                        payload.column_name = client_column?.column_name;
-                        payload.column_type = client_column?.column_type;
-                    }
+                    payload.display_name = client_column?.display_name;
+                    payload.column_name = client_column?.column_name;
+                    payload.column_type = client_column?.column_type;
 
                     const resp = await RegisterTemplate.create(payload);
 
