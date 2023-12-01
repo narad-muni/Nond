@@ -22,8 +22,6 @@
             _active_registers = await utils.get('/api/register_master/options/active');
             _archived_registers = await utils.get('/api/register_master/options/archived');
 
-            console.log(_archived_registers);
-
             _archived_registers = _archived_registers.reduce(function (a, b) {
                 a[b.name] = a[b.name] || [];
                 a[b.name].push(b);
@@ -37,8 +35,6 @@
         (async () => {
             _active_registers = await utils.get('/api/register_master/options/active');
             _archived_registers = await utils.get('/api/register_master/options/archived');
-
-            console.log(_archived_registers);
 
             _archived_registers = _archived_registers.reduce(function (a, b) {
                 a[b.name] = a[b.name] || [];

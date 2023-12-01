@@ -190,6 +190,8 @@ Route.group(() => {
 
             Route.put('/archive','RegisterMasterController.archive');
 
+            Route.put('/rotate','RegisterMasterController.rotate');
+
             Route.put('/','RegisterMasterController.update');
 
             Route.delete('/destroy','RegisterMasterController.destroy');

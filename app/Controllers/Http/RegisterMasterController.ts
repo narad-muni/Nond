@@ -5,6 +5,7 @@ import Scheduler from 'App/Models/Scheduler'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import RegisterTemplate from 'App/Models/RegisterTemplate'
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate'
+import SchedulerManager from 'App/Utils/SchedulerManager'
 
 export default class RegistersController {
     public async index({ response }: HttpContextContract) {
@@ -278,6 +279,30 @@ export default class RegistersController {
                 status: 'success'
             });
         } catch (e) {
+            console.log(e);
+
+            response.send({
+                status: "error",
+                message: "some error occured"
+            });
+        }
+    }
+
+    public async rotate({ request, response }: HttpContextContract) {
+
+        try{
+            const body = request.body();
+
+            const scheduler = await Scheduler
+                .query()
+                .whereIn('register_id', body?.id || [])
+
+            await SchedulerManager.RotateRegisters(scheduler);
+
+            response.send({
+                status: 'success'
+            });
+        }catch (e) {
             console.log(e);
 
             response.send({
