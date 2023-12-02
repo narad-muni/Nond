@@ -440,7 +440,8 @@ export default class SchedulerManager {
         let rollover_columns = await RegisterTemplate
             .query()
             .select('id', 'column_name', 'table_id', 'rollover')
-            .whereIn('table_id', register_ids);
+            .whereIn('table_id', register_ids)
+            .where('rollover', true);
 
         const rollover_columns_map = {};
 
@@ -473,8 +474,7 @@ export default class SchedulerManager {
                 rollover_columns_map[register.id] = rollover_columns_map[register.id] || [];
 
                 rollover_columns_map[register.id].forEach(col => {
-
-                    if(col.column_name != "client_id"){
+                    if(col.client_column_id == null){
                         DynamicRegister.$addColumn(col.column_name, {});
                     }
                 });
@@ -548,7 +548,6 @@ export default class SchedulerManager {
 
 
             Object.keys(column_data).forEach(col => {
-
                 if(col != "client_id"){
                     DynamicRegister.$addColumn(col, {});
                 }

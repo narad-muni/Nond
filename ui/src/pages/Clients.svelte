@@ -599,7 +599,7 @@
                 <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].next}/>
-                <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].end_date}/>
+                <SveltyPicker format="d M yyyy" bind:value={createdObject.services[service.value].end_date}/>
                 <Input min="1" required={createdObject.services[service.value].subscribed} type="number" bind:value={createdObject.services[service.value].count}/>
             {/each}
         </div>
@@ -689,7 +689,7 @@
             <Checkbox bind:checked={bulkServiceData[service.value].subscribed}>{service.name}</Checkbox>
             <Select {required} bind:value={bulkServiceData[service.value].frequency} items={frequency}/>
             <SveltyPicker format="d M yyyy" {required} bind:value={bulkServiceData[service.value].next}/>
-            <SveltyPicker format="d M yyyy" {required} bind:value={bulkServiceData[service.value].end_date}/>
+            <SveltyPicker format="d M yyyy" bind:value={bulkServiceData[service.value].end_date}/>
             <Input min="1" required={bulkServiceData[service.value].subscribed} type="number" bind:value={bulkServiceData[service.value].count}/>
         {/each}
 
@@ -790,7 +790,7 @@
                 <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
-                <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].end_date}/>
+                <SveltyPicker format="d M yyyy" bind:value={actionsObject.services[service.value].end_date}/>
                 <Input min="1" required={actionsObject.services[service.value].subscribed} type="number" bind:value={actionsObject.services[service.value].count}/>
             {/each}
         </div>
