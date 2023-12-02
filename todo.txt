@@ -2,10 +2,6 @@ pending stuff
 
 add changes to archived and deleted pages.
 
-create global session management
-in memory session, not possible with cookie session
-logout already logged in user and give alert.
-
 limit user creation based on license
 check license in main svelte page using api
 show upload and machine id if license expire

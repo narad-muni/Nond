@@ -5,7 +5,7 @@ export default class Auth {
         if (!session.has('user')) {
             response.send({
                 status: 'error',
-                message: 'User not logged In'
+                message: 'You are logged Out, Please refresh the page.'
             });
         } else {
             await next()
