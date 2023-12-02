@@ -166,7 +166,7 @@ export default class RegistersController {
 
                 await RegisterTemplate.create({
                     id: min?.$extras.min - 1,
-                    table_id: new_scheduler.id,
+                    table_id: data.id,
                     column_name: "entry_on",
                     display_name: "Entry On",
                     column_type: "Date",

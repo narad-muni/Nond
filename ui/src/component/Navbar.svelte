@@ -150,7 +150,7 @@
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#register">
             {#each _active_registers as register}
-                <DropdownItem href="/#/register/{register.id}">{register.name}</DropdownItem>
+                <DropdownItem href="/#/register/{register.id}">{register.name} {register.version}</DropdownItem>
             {/each}
         </Dropdown>
     
