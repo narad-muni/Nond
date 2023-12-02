@@ -2,6 +2,16 @@ import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class StringUtils {
 
+    static sanitizeTableName(table_name: String){
+        // Remove any characters that are not alphanumeric or underscores
+        const sanitizedString = table_name.replace(/[^a-zA-Z0-9_]/g, '_');
+        
+        // Ensure the string starts with a letter
+        let tableName = sanitizedString.replace(/^\d+/, ''); // Remove leading numbers
+        
+        return tableName;
+    }
+
     static shortName(str: String) {
 
         str = str.trim();

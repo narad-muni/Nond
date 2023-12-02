@@ -1,7 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database';
 import RegisterMaster from 'App/Models/RegisterMaster';
-import { string } from '@ioc:Adonis/Core/Helpers';
+import StringUtils from 'App/Utils/StringUtils';
 
 export default class ArchivedRegistersController {
     public async index({ request, response }: HttpContextContract) {
@@ -23,7 +23,7 @@ export default class ArchivedRegistersController {
             }
 
             const data = await Database
-                .rawQuery(`select * from "${string.escapeHTML("register__" + table?.name + table?.version)}"`);
+                .rawQuery(`select * from "${StringUtils.sanitizeTableName("register__" + table?.name + table?.version)}"`);
 
             data.rows.forEach((_, i) => {
                 Object.keys(data.rows[i]).forEach(element => {
@@ -66,7 +66,7 @@ export default class ArchivedRegistersController {
             }
 
             const data = await Database
-                .rawQuery(`select * from "${string.escapeHTML("register__" + table?.name + table?.version)}" where id = ${payload.id}`);
+                .rawQuery(`select * from "${StringUtils.sanitizeTableName("register__" + table?.name + table?.version)}" where id = ${payload.id}`);
 
             Object.keys(data.rows[0]).forEach(element => {
                 if (data.rows[0][element] instanceof Date) {

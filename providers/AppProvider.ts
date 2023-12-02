@@ -10,10 +10,15 @@ export default class AppProvider {
 
     public async boot () {
         // IoC container is ready
+        const { MemoryDriver } = await import('./SessionDriver');
+        const Session = this.app.container.use('Adonis/Addons/Session');
+
+        Session.extend('in-memory', () => {
+            return new MemoryDriver()
+        });
     }
 
     public async ready () {
-
         const {default: SchedulerManager} = await import('App/Utils/SchedulerManager');
         const {default: TableManager} = await import('App/Utils/TableManager');
         const {default: AutomatorDAO} = await import('App/Dao/AutomatorDAO');

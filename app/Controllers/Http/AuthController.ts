@@ -1,5 +1,6 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Employee from 'App/Models/Employee'
+import GlobalState from 'App/Utils/GlobalState';
 import AuthValidator from 'App/Validators/AuthValidator';
 import Crypto from 'crypto';
 
@@ -37,7 +38,13 @@ export default class AuthController {
                 }
 
                 if (user) {
+
+                    if(GlobalState.UserSession[user.id]){
+                        GlobalState.SESSIONS.delete(GlobalState.UserSession[user.id]);
+                    }
+
                     session.put('user', user);
+                    GlobalState.UserSession[user.id] = session.sessionId;
                 }
             }
 

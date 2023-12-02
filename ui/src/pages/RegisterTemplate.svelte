@@ -55,8 +55,7 @@
             data = await utils.get('/api/register_template/'+register_id);
 
             table = table.data;
-            client_columns = client_columns.data;
-            client_columns = [...client_columns];
+            client_columns = client_columns.data.filter(e => e.value != -3);
 
             if(data.status != 'success'){
                 error = data.message;

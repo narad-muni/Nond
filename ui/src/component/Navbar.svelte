@@ -128,7 +128,7 @@
                         <DropdownItem class="flex items-center justify-between"><Chevron placement="right">{register_name}</Chevron></DropdownItem>
                         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
                             {#each _archived_registers[register_name] as register}
-                                <DropdownItem href="/#/archived_register/{register.value}">{register.version}</DropdownItem>
+                                <DropdownItem href="/#/archived_register/{register.id}">{register.version}</DropdownItem>
                             {/each}
                         </Dropdown>
                     {/each}
@@ -150,7 +150,7 @@
     
         <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="bottom" triggeredBy="#register">
             {#each _active_registers as register}
-                <DropdownItem href="/#/register/{register.value}">{register.name}</DropdownItem>
+                <DropdownItem href="/#/register/{register.id}">{register.name}</DropdownItem>
             {/each}
         </Dropdown>
     
@@ -159,7 +159,7 @@
                 <DropdownItem id="register_template" class="flex items-center justify-between"><Chevron placement="right">Register Template</Chevron></DropdownItem>
                 <Dropdown trigger="hover" class="w-[90vw] md:w-44" placement="right">
                     {#each _active_registers as register}
-                        <DropdownItem href="/#/register_template/{register.value}">{register.name}</DropdownItem>
+                        <DropdownItem href="/#/register_template/{register.id}">{register.name}</DropdownItem>
                     {/each}
                 </Dropdown>
             {/if}

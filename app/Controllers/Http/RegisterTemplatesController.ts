@@ -5,6 +5,7 @@ import Database from '@ioc:Adonis/Lucid/Database';
 import RegisterMaster from 'App/Models/RegisterMaster';
 import MasterTemplate from 'App/Models/MasterTemplate';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
+import StringUtils from 'App/Utils/StringUtils'
 
 export default class RegisterTemplatesController {
     public async index({ request, response }: HttpContextContract) {
@@ -178,7 +179,7 @@ export default class RegisterTemplatesController {
                             .rawQuery(
                                 'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                                 [
-                                    string.escapeHTML("rollover__register__" + table.name + table.version),
+                                    StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version),
                                     payload.column_name
                                 ]
                             );
@@ -188,7 +189,7 @@ export default class RegisterTemplatesController {
                         .rawQuery(
                             'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                             [
-                                string.escapeHTML("register__" + table.name + table.version),
+                                StringUtils.sanitizeTableName("register__" + table.name + table.version),
                                 payload.column_name
                             ]
                         );
@@ -294,35 +295,35 @@ export default class RegisterTemplatesController {
                             .rawQuery(
                                 'alter table ?? add column ?? ' + string.escapeHTML(c_type),
                                 [
-                                    string.escapeHTML("rollover__register__" + table.name + table.version),
+                                    StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version),
                                     payload.column_name
                                 ]
                             );
                     } else {
                         await Database
-                            .rawQuery('alter table ?? drop column ??', [string.escapeHTML("rollover__register__" + table.name + table.version), payload.column_name]);
+                            .rawQuery('alter table ?? drop column ??', [StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version), payload.column_name]);
                     }
                 }
 
                 if (old.column_name !== payload.column_name) {
                     await Database
-                        .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("register__" + table.name + table.version), old.column_name, payload.column_name]);
+                        .rawQuery('alter table ?? rename column ?? to ??', [StringUtils.sanitizeTableName("register__" + table.name + table.version), old.column_name, payload.column_name]);
 
                     //update rollover table
                     if (payload.column_type != 'File' && payload.rollover) {
                         await Database
-                            .rawQuery('alter table ?? rename column ?? to ??', [string.escapeHTML("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
+                            .rawQuery('alter table ?? rename column ?? to ??', [StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version), old.column_name, payload.column_name]);
                     }
                 }
 
                 if (old.column_type !== payload.column_type) {
                     await Database
-                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("register__" + table.name + table.version), payload.column_name]);
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [StringUtils.sanitizeTableName("register__" + table.name + table.version), payload.column_name]);
 
                     //update rollover table
                     if (payload.column_type != 'File' && payload.rollover) {
                         await Database
-                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [string.escapeHTML("rollover__register__" + table.name + table.version), payload.column_name]);
+                        .rawQuery('alter table ?? alter column ?? type ' + string.escapeHTML(c_type) + ' using null', [StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version), payload.column_name]);
                     }
                 }
 
@@ -403,11 +404,11 @@ export default class RegisterTemplatesController {
 
                     if (column.rollover) {
                         await Database
-                            .rawQuery('alter table ?? drop column ??', [string.escapeHTML("rollover__register__" + table.name + table.version), column.column_name]);
+                            .rawQuery('alter table ?? drop column ??', [StringUtils.sanitizeTableName("rollover__register__" + table.name + table.version), column.column_name]);
                     }
 
                     await Database
-                        .rawQuery('alter table ?? drop column ??', [string.escapeHTML("register__" + table.name + table.version), column.column_name]);
+                        .rawQuery('alter table ?? drop column ??', [StringUtils.sanitizeTableName("register__" + table.name + table.version), column.column_name]);
                 }
 
                 for await (const column of columns) {

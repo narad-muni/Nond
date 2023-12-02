@@ -5,7 +5,6 @@ import Scheduler from 'App/Models/Scheduler';
 import Service from 'App/Models/Service';
 import Task from 'App/Models/Task';
 import TaskTemplate from 'App/Models/TaskTemplate';
-import { string } from '@ioc:Adonis/Core/Helpers';
 import Database from '@ioc:Adonis/Lucid/Database';
 import StringUtils from './StringUtils';
 import Invoice from 'App/Models/Invoice';
@@ -15,6 +14,7 @@ import RegisterTemplate from 'App/Models/RegisterTemplate';
 import ArchivedRegisterTemplate from 'App/Models/ArchivedRegisterTemplate';
 import { DateTime } from 'luxon';
 import Automator from 'App/Models/Automator';
+import { string } from '@ioc:Adonis/Core/Helpers'
 
 export default class SchedulerManager {
 
@@ -162,15 +162,15 @@ export default class SchedulerManager {
             //truncate old rollover table
             await Database.rawQuery(
                 "truncate table ?? restart identity",
-                [string.escapeHTML("rollover__register__" + old_register.name + old_register.version)]
+                [StringUtils.sanitizeTableName("rollover__register__" + old_register.name + old_register.version)]
             );
 
             //rename old rollover table
             await Database.rawQuery(
                 "alter table ?? rename to ??",
                 [
-                    string.escapeHTML("rollover__register__" + old_register.name + old_register.version),
-                    string.escapeHTML("rollover__register__" + old_register.name + new_version)
+                    StringUtils.sanitizeTableName("rollover__register__" + old_register.name + old_register.version),
+                    StringUtils.sanitizeTableName("rollover__register__" + old_register.name + new_version)
                 ]
             );
 
@@ -181,8 +181,8 @@ export default class SchedulerManager {
                 `insert into ??(id, client_id ${string.escapeHTML(select_rollover_column)})
                 select id, client_id ${string.escapeHTML(select_rollover_column)} from ??`,
                 [
-                    string.escapeHTML("rollover__register__" + old_register.name + new_version),
-                    string.escapeHTML("register__" + old_register.name + old_register.version)
+                    StringUtils.sanitizeTableName("rollover__register__" + old_register.name + new_version),
+                    StringUtils.sanitizeTableName("register__" + old_register.name + old_register.version)
                 ]
             )
 
@@ -202,8 +202,8 @@ export default class SchedulerManager {
                     .rawQuery(
                         `create table ?? (like ?? including all);`,
                         [
-                            string.escapeHTML("register__" + old_register.name + new_version),
-                            string.escapeHTML("register__" + old_register.name + old_register.version)
+                            StringUtils.sanitizeTableName("register__" + old_register.name + new_version),
+                            StringUtils.sanitizeTableName("register__" + old_register.name + old_register.version)
                         ]
                     );
 
@@ -251,11 +251,11 @@ export default class SchedulerManager {
                     client_columns = client_columns.slice(0, -1);
 
                     //add client link columns to register
-                    await Database.rawQuery(`alter table  "register__${string.escapeHTML(old_register.name + old_register.version)}" ${client_columns}`);
+                    await Database.rawQuery(`alter table  "register__${StringUtils.sanitizeTableName(old_register.name + old_register.version)}" ${client_columns}`);
 
                     //add data to old register
                     await Database.rawQuery(`
-                        update "register__${string.escapeHTML(old_register.name + old_register.version)}"
+                        update "register__${StringUtils.sanitizeTableName(old_register.name + old_register.version)}"
                         set ${update_query_columns}
                         from clients s
                         where s.id = client_id
@@ -267,14 +267,14 @@ export default class SchedulerManager {
                 //truncate old table
                 await Database.rawQuery(
                     "truncate table ?? restart identity",
-                    [string.escapeHTML("register__" + old_register.name + old_register.version)]
+                    [StringUtils.sanitizeTableName("register__" + old_register.name + old_register.version)]
                 );
 
                 //rename old table
                 await Database.rawQuery(
                     "alter table ?? rename to ??",
-                    [string.escapeHTML("register__" + old_register.name + old_register.version)
-                        , string.escapeHTML("register__" + old_register.name + new_version)]
+                    [StringUtils.sanitizeTableName("register__" + old_register.name + old_register.version)
+                        , StringUtils.sanitizeTableName("register__" + old_register.name + new_version)]
                 );
 
                 //update entry in register master
@@ -454,7 +454,7 @@ export default class SchedulerManager {
         });
 
         registers.forEach(register => {
-            RegisterEntries[string.escapeHTML("register__" + register?.name + register?.version)] = [];
+            RegisterEntries[StringUtils.sanitizeTableName("register__" + register?.name + register?.version)] = [];
         });
 
         for(const job of jobs){
@@ -465,7 +465,7 @@ export default class SchedulerManager {
             //add entries to register array
             for(const register of data_registers) {
 
-                const register_table_name = string.escapeHTML("register__" + register?.name + register?.version);
+                const register_table_name = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
                 const rollover_register_table_name = "rollover__" + register_table_name;
 
                 DynamicRegister.table = rollover_register_table_name;

@@ -2,7 +2,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import DynamicRegister from 'App/Models/DynamicRegister';
 import RegisterMaster from 'App/Models/RegisterMaster';
 import RegisterTemplate from 'App/Models/RegisterTemplate';
-import { string } from '@ioc:Adonis/Core/Helpers';
+import StringUtils from 'App/Utils/StringUtils'
 import { DateTime } from 'luxon';
 import Application from '@ioc:Adonis/Core/Application';
 import fs from 'fs';
@@ -69,11 +69,13 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    client_columns.push(header.column_name);
+                    if(header.id != -3){// Group column
+                        client_columns.push(header.column_name);
+                    }
                 }
             });
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             //add linked columns
@@ -144,11 +146,13 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    client_columns.push(header.column_name);
+                    if(header.id != -3){// Group column
+                        client_columns.push(header.column_name);
+                    }
                 }
             });
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             //add linked columns
@@ -196,7 +200,7 @@ export default class RegistersController {
                 }
             });
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             const data = await DynamicRegister
@@ -245,11 +249,13 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    client_columns.push(header.column_name);
+                    if(header.id != -3){// Group column
+                        client_columns.push(header.column_name);
+                    }
                 }
             });
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             //set "null" to null
@@ -324,11 +330,13 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    client_columns.push(header.column_name);
+                    if(header.id != -3){// Group column
+                        client_columns.push(header.column_name);
+                    }
                 }
             });
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             //set "null" to null
@@ -408,7 +416,7 @@ export default class RegistersController {
                 .where('id', payload.table_id)
                 .first();
 
-            DynamicRegister.table = string.escapeHTML("register__" + register?.name + register?.version);
+            DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
             //setup complete
 
             //delete files

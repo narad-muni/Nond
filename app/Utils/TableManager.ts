@@ -1,4 +1,4 @@
-import { string } from '@ioc:Adonis/Core/Helpers';
+import StringUtils from 'App/Utils/StringUtils'
 
 import { BaseModel, BelongsTo, belongsTo, column} from '@ioc:Adonis/Lucid/Orm';
 
@@ -118,9 +118,9 @@ export default class TableManager {
 
 
         if(mode == TableManager.MODE.TEMPLATE_ROLLOVER){
-            table_name = string.escapeHTML("rollover__register__" + name + version);
+            table_name = StringUtils.sanitizeTableName("rollover__register__" + name + version);
         }else{
-            table_name = string.escapeHTML("register__" + name + version);
+            table_name = StringUtils.sanitizeTableName("register__" + name + version);
         }
 
         class table extends BaseModel{

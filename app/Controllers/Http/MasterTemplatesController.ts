@@ -4,6 +4,7 @@ import MasterTemplate from 'App/Models/MasterTemplate'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import RegisterTemplate from 'App/Models/RegisterTemplate'
 import TableManager from 'App/Utils/TableManager'
+import StringUtils from 'App/Utils/StringUtils'
 
 export default class MasterTemplatesController {
     public async index({ response }: HttpContextContract) {
