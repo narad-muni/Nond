@@ -341,7 +341,7 @@
                                     {row.version || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.service.name || "-"}
+                                    {row?.service?.name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>    
                                     {row.active ? "Yes" : "No"}
