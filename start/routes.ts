@@ -23,7 +23,7 @@ import Route from '@ioc:Adonis/Core/Route';
 import Env from '@ioc:Adonis/Core/Env';
 import path from 'path';
 import loadAssets from 'App/Utils/loadAssets';
-import GlobalState from 'App/Utils/GlobalState';
+import LicenseValidator from 'App/Utils/LicenseValidator';
 
 const isDevEnv = Env.get('NODE_ENV') === 'development';
 
@@ -454,28 +454,27 @@ Route.group(() => {
     | Handle Invalid API Routes
     */
 
-    Route.any('*',({ response }) => {
-        response.send({
-            'status': 'error',
-            'message': 'Invalid API endpoint'
-        });
-    });
-
 })
 .middleware('validate_license')
 .prefix('/api');
 
 Route.group(() => {
 
-    Route.get('/is_license_valid', ({ response }) => {
-        response.send({
-            "status": GlobalState.is_license_valid,
-            "message": GlobalState.license_message,
-        })
-    });
+    Route.get('/is_license_valid', 'LicensesController.status');
+
+    Route.post('/update_license', 'LicensesController.update');
+
+    Route.get('/license', 'LicensesController.get');
 
 })
 .prefix('/api/open/license');
+
+Route.any('*',({ response }) => {
+    response.send({
+        'status': 'error',
+        'message': 'Invalid API endpoint'
+    });
+}).prefix('/api');
 
 // Serve vite resources on dev mode
 if (isDevEnv) {

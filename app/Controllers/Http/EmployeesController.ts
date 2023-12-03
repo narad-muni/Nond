@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database';
 import Employee from 'App/Models/Employee';
+import GlobalState from 'App/Utils/GlobalState';
 import Crypto from 'crypto';
 
 export default class EmployeesController {
@@ -132,6 +133,20 @@ export default class EmployeesController {
 
     public async create({ request, response }: HttpContextContract) {
         try {
+            const total_users = await Employee
+                .query()
+                .count('id')
+                .first();
+
+            if(total_users?.$extras.count >= (GlobalState.license_data?.users || 1)){
+                response.send({
+                    status: "error",
+                    message: `Max ${(GlobalState.license_data?.users || 1)} users are allowed by your license`
+                });
+                
+                return;
+            }
+
             const data = request.all();
 
             //set "null" to null

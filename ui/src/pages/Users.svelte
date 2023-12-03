@@ -214,6 +214,7 @@
             data.push(resp.data);
             handler.setRows(data);
             createModal = false;
+            createdObject = {};
         }else{
             error = resp.message || "";
         }

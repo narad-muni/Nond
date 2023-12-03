@@ -183,6 +183,9 @@
             <span class="block text-sm"> {$user.username.charAt(0).toUpperCase() + $user.username.slice(1)} </span>
             <span class="block truncate text-sm font-light"> {$user.role.name} </span>
         </DropdownHeader>
+        <DropdownHeader>
+            <a href="/#/license" class="block text-sm">License</a>
+        </DropdownHeader>
         <DropdownItem on:click={logout}>Sign out</DropdownItem>
     </Dropdown>
 </Navbar>

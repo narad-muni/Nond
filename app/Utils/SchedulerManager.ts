@@ -37,7 +37,7 @@ export default class SchedulerManager {
             const { default: GlobalState } = await import('./GlobalState');
             const { default: LicenseValidator } = await import('./LicenseValidator');
 
-            [GlobalState.is_license_valid, GlobalState.license_message] = await LicenseValidator.isLicenseValid();
+            [GlobalState.is_license_valid, GlobalState.license_message, GlobalState.license_data] = await LicenseValidator.isLicenseValid();
 
             const currentDate = new Date().toISOString().slice(0, 10);
 
