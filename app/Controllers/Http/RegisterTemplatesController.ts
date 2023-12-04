@@ -104,6 +104,8 @@ export default class RegisterTemplatesController {
 
             if (payload.client_column_id != null && payload.client_column_id != "") {//client column
 
+                payload.master = true;
+
                 const exist = await RegisterTemplate
                     .query()
                     .where('client_column_id', payload.client_column_id)

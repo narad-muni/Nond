@@ -1,5 +1,6 @@
 pending stuff
 
+cascade deletes 
 add changes to archived and deleted pages. - 6
 
 obfuscate code

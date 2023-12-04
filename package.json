@@ -5,12 +5,12 @@
   "scripts": {
     "setup": "npm ci --omit=dev",
     "setup-dev": "npm install && cd ui && npm install",
-    "dev": "node -e \"require('fs-extra').emptyDir('public/build');\" && concurrently \"cd ui && npx vite\" \"node ace serve --watch\"",
+    "dev": "node -e \"require('fs-extra').emptyDirSync('public/build');\" && concurrently \"cd ui && npx vite\" \"node ace serve --watch\"",
     "dev-be": "node ace serve --watch",
     "db": "node ace migration:run --force && node ace reseed",
     "db-dev": "node ace migration:refresh && node ace reseed",
-    "dev-fe": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite",
-    "build": "node -e \"require('fs-extra').emptyDir('public/build');\" && cd ui && npx vite build && cd .. && node ace build --production --ignore-ts-errors",
+    "dev-fe": "node -e \"require('fs-extra').emptyDirSync('public/build');\" && cd ui && npx vite",
+    "build": "node -e \"require('fs-extra').emptyDirSync('public/build');\" && cd ui && npx vite build && cd .. && node ace build --production --ignore-ts-errors",
     "start": "node server.js"
   },
   "devDependencies": {
