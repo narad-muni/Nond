@@ -36,7 +36,6 @@ export default class Reseed extends BaseCommand {
         const { default: TaskTemplate } = await import('App/Models/TaskTemplate');
         const { default: Scheduler } = await import('App/Models/Scheduler');
         const { default: MasterTemplate } = await import('App/Models/MasterTemplate');
-        const { default: RegisterTemplate } = await import('App/Models/RegisterTemplate');
 
         await Employee.create({
             id: 0,

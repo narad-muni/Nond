@@ -1,7 +1,7 @@
 pending stuff
-
-cascade deletes 
+    
 add changes to archived and deleted pages. - 6
+Mail invoice with body, allow variables to be passed in body
 
 obfuscate code
 -----------------------
@@ -13,7 +13,6 @@ client portal
 allow client to upload document
 backup option
 attendance management
-mail invoice based on paid status
 
 re write backend in rust
 use transactions for db

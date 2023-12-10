@@ -28,7 +28,7 @@ export default class RegistersController {
             const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
-            const client_columns: any[] = [];
+            const client_columns: any[] = ["group_id"];
 
             //setup dynamic register
             const register = await RegisterMaster
@@ -69,7 +69,7 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    if(header.id != -3){// Group column
+                    if(header.client_column_id != -3){// Group column
                         client_columns.push(header.column_name);
                     }
                 }
@@ -82,7 +82,11 @@ export default class RegistersController {
             const data = await DynamicRegister
                 .query()
                 .preload('__client', (query) => {
-                    query.select(...client_columns)
+                    query
+                        .select(...client_columns)
+                        .preload('group', (query) => {
+                            query.select('id', 'name')
+                        })
                 });
 
             response.send({
@@ -104,7 +108,7 @@ export default class RegistersController {
             const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
             const payload = request.params();
-            const client_columns: any[] = [];
+            const client_columns: any[] = ["group_id"];
 
             //setup dynamic register
             const register = await RegisterMaster
@@ -146,7 +150,7 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    if(header.id != -3){// Group column
+                    if(header.client_column_id != -3){// Group column
                         client_columns.push(header.column_name);
                     }
                 }
@@ -159,7 +163,11 @@ export default class RegistersController {
             const data = await DynamicRegister
                 .query()
                 .preload('__client', (query) => {
-                    query.select(...client_columns)
+                    query
+                        .select(...client_columns)
+                        .preload('group', (query) => {
+                            query.select('id', 'name')
+                        })
                 });
 
             response.send({
@@ -229,7 +237,7 @@ export default class RegistersController {
             const payload = request.params();
             const data = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];
-            const client_columns: any[] = [];
+            const client_columns: any[] = ["group_id"];
 
             //setup dynamic register
             const register = await RegisterMaster
@@ -249,7 +257,7 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    if(header.id != -3){// Group column
+                    if(header.client_column_id != -3){// Group column
                         client_columns.push(header.column_name);
                     }
                 }
@@ -286,6 +294,9 @@ export default class RegistersController {
             data.__client = await Client
                 .query()
                 .select(...client_columns)
+                .preload('group', (query) => {
+                    query.select('id', 'name')
+                })
                 .where('id', data.client_id)
                 .first();
 
@@ -310,7 +321,7 @@ export default class RegistersController {
             const payload = request.params();
             const data = request.all();
             const files = request.allFiles() as any as MultipartFileContract[];
-            const client_columns: any[] = [];
+            const client_columns: any[] = ["group_id"];
 
             //setup dynamic register
             const register = await RegisterMaster
@@ -330,7 +341,7 @@ export default class RegistersController {
                         DynamicRegister.$addColumn(header.column_name, {});
                     }
                 } else {
-                    if(header.id != -3){// Group column
+                    if(header.client_column_id != -3){// Group column
                         client_columns.push(header.column_name);
                     }
                 }
@@ -386,6 +397,9 @@ export default class RegistersController {
 
             data.__client = await Client
                 .query()
+                .preload('group', (query) => {
+                    query.select('id', 'name')
+                })
                 .select(...client_columns)
                 .where('id', data.client_id)
                 .first();

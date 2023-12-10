@@ -378,6 +378,10 @@
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
                                                     {row.__client?.[header.column_name] || "-"}
+                                                {:else if header.client_column_id == -3}
+                                                    {row.__client?.group?.name || "-"}
+                                                {:else if header.column_type == 'Dropdown'}
+                                                    {row.__client?.[header.column_name] || "-"}
                                                 {:else}
                                                     <Checkbox disabled checked={row.__client?.[header.column_name]=="true" || row.__client?.[header.column_name]}/>
                                                 {/if}
