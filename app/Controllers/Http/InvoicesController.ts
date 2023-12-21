@@ -1,6 +1,7 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Company from 'App/Models/Company';
 import Invoice from 'App/Models/Invoice'
+import Task from 'App/Models/Task';
 import StringUtils from 'App/Utils/StringUtils';
 
 import TableManager from 'App/Utils/TableManager';
@@ -152,12 +153,15 @@ export default class InvoicesController {
                 return;
             }
 
-            const old_id = payload.id;
+            const old_invoice = await Invoice
+                .query()
+                .where('id', payload.id)
+                .firstOrFail();
 
             const old_company = await Company
                     .query()
                     .select('name')
-                    .where('id', payload.company_id)
+                    .where('id', old_invoice.company_id)
                     .firstOrFail();
 
             if (old_company.name != payload.company.name) {
@@ -176,8 +180,13 @@ export default class InvoicesController {
 
             await Invoice
                 .query()
-                .where('id', old_id)
+                .where('id', old_invoice.id)
                 .update(payload);
+            
+            await Task
+                .query()
+                .where('invoice_id', old_invoice.id)
+                .update({'invoice_id': payload.id});
 
             payload.client = await Client
                 .query()
