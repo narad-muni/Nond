@@ -56,7 +56,7 @@
             error = data.message;
             data = null;
         }else{
-            data = data.data;
+            data = data.data.filter(i => i.id > 0);
 
             data.forEach((v) => {
                 v["_selected"] = false;

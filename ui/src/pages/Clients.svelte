@@ -167,7 +167,7 @@
 
             headers.data.forEach((column,i) => {
                 if(column.column_type == 'File') {
-                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value || null;
+                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value || column.display_name;
                     actionsObject[column.column_name] = actionsObject[column.column_name]?.path || null;
                 }
             });

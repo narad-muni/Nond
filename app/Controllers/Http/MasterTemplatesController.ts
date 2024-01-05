@@ -145,7 +145,9 @@ export default class MasterTemplatesController {
 
                 payload.order = (max.$extras.max || 0) + 1;
 
-                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
+                if(payload.column_type == 'File'){
+                    c_type = 'json'
+                }else if (payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
