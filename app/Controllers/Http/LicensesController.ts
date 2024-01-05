@@ -12,8 +12,19 @@ export default class LicensesController {
         })
     }
 
-    public async update({ request, response }: HttpContextContract){
+    public async update({ request, response, session }: HttpContextContract){
         try{
+            if(GlobalState.is_license_valid){
+                if(!session.get('user')?.is_admin){
+                    response.send({
+                        "status": "error",
+                        "message": "Only Admins have permission to replace existing license",
+                    });
+
+                    return;
+                }
+            }
+
             const license = request.file("license");
             await license?.move(Application.makePath("/"), {name:".lic",overwrite: true,});
 
