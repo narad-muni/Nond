@@ -1,5 +1,6 @@
 pending stuff
-    
+
+add text field when using file - done in client
 add changes to archived and deleted pages. - 6
 Mail invoice with body, allow variables to be passed in body
 

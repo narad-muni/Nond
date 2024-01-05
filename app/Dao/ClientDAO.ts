@@ -9,6 +9,11 @@ import TableManager from 'App/Utils/TableManager';
 // For type checking
 const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
 
+interface createClientFiles {
+    file: MultipartFileContract,
+    value: string
+}
+
 export default class ClientDAO {
 
     public static DateOptions = {
@@ -144,11 +149,14 @@ export default class ClientDAO {
         return await Client.createMany(clients);
     }
 
-    public static async addClientFiles(client: typeof Client, files: MultipartFileContract[]): Promise<typeof Client> {
+    public static async addClientFiles(client: typeof Client, files: createClientFiles[]): Promise<typeof Client> {
         // Get models
         const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
-        Object.values(files).forEach(file => {
+        files.forEach(data => {
+            const file = data.file;
+            const value = data.value;
+
             const path = `/file/client/${client.id}/`;
             const file_name = `${file.fieldName}.${file.extname}`;
 
@@ -157,7 +165,10 @@ export default class ClientDAO {
                 overwrite: true,
             });
 
-            client[file.fieldName] = path + file_name;
+            client[file.fieldName] = {
+                value: value,
+                path: path + file_name
+            };
         });
 
         return await client.save();
@@ -165,28 +176,14 @@ export default class ClientDAO {
 
     public static async removeDeletedClientFiles(columns: MasterTemplate[], updatedClient: typeof Client, oldClient: typeof Client | null) {
 
-        columns.push(
-            {
-                column_type: 'File',
-                column_name: 'logo'
-            } as MasterTemplate
-        )
-
-        columns.push(
-            {
-                column_type: 'File',
-                column_name: 'signature'
-            } as MasterTemplate
-        )
-
         for (const column of columns) {
             // Continue if column is not file
             if (column.column_type != 'File') continue;
             // Continue if file exists
-            if (updatedClient[column.column_name]) continue;
+            if (updatedClient[column.column_name]?.path) continue;
 
             // Get old file path
-            const path = oldClient?.[column.column_name];
+            const path = oldClient?.[column.column_name]?.path;
 
             // Delete old file
             try {

@@ -85,6 +85,8 @@
                 if(column.column_type == 'Dropdown'){
                     headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
                     headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                }else if(column.column_type == 'File') {
+                    createdObject["value__"+column.column_name] = column.display_name;
                 }
             });
 
@@ -163,6 +165,13 @@
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
 
+            headers.data.forEach((column,i) => {
+                if(column.column_type == 'File') {
+                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value || null;
+                    actionsObject[column.column_name] = actionsObject[column.column_name]?.path || null;
+                }
+            });
+
             const tempService = {}
 
             //set values in temp service object from services in received modal
@@ -217,7 +226,7 @@
     }
 
     async function updateData(){
-        actionsObject._services  = JSON.stringify(actionsObject.services);
+        actionsObject.services  = JSON.stringify(actionsObject.services);
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
@@ -379,7 +388,8 @@
     }
 
     async function createData(){
-        createdObject._services  = JSON.stringify(createdObject.services);
+        createdObject.services  = JSON.stringify(createdObject.services);
+
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
 
         if(resp.status == 'success'){
@@ -508,13 +518,13 @@
                                             {#if header.column_type == 'Text'}
                                                 {row[header.column_name] || "-"}
                                             {:else if header.column_type == 'File'}
-                                                {#if row[header.column_name]}
-                                                    <A target="_blank" href={row[header.column_name]}>
+                                                {#if row[header.column_name]?.path}
+                                                    <A target="_blank" href={row[header.column_name]?.path}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                                         </svg>
                                                         &nbsp;
-                                                        {header.display_name}
+                                                        {row[header.column_name]?.value || "-"}
                                                     </A>
                                                 {:else}
                                                     -
@@ -576,8 +586,19 @@
                             <span class="text-end">{header.display_name}</span>
                             <Select class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
-                            <p class="justify-self-end">{header.display_name}</p>
-                            <input type="file" accept="image/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} class="col-span-2 w-full border border-gray-300 rounded-lg cursor-pointer !m-0" />
+                            <p class="justify-self-end text-black">{header.display_name}</p>
+                            <div class="flex col-span-2">
+                                <Input disabled={createdObject[header.column_name]==null} class="!m-0 !me-1" type="text" bind:value={createdObject["value__"+header.column_name]}/>
+                                <div>
+                                    <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
+                                    <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+                                    </svg>
+                                    <svg on:click|preventDefault={()=>createdObject[header.column_name]=null} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-500 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </div>
+                            </div>
                         {/if}
                     </Label>
                 {/if}
@@ -731,26 +752,28 @@
                             <span class="text-end">{header.display_name}</span>
                             <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
-                            {#if typeof(actionsObject[header.column_name]) == 'string'}
-                                <span class="text-end">&nbsp;</span>
-                                <div class="flex justify-between col-span-2 !m-0">
-                                    <A target="_blank" href={actionsObject[header.column_name]}>
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                            {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
+                            <p class="justify-self-end {disabledText}">{header.display_name}</p>
+                            <div class="flex col-span-2 !m-0">
+                                <Input disabled={actionsObject[header.column_name]==null} class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
+                                <div>
+                                    {#if actionsObject[header.column_name]==null}
+                                        <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
+                                        <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                         </svg>
-                                        &nbsp;
-                                        {header.display_name}
-                                    </A>
-                                    <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                        </svg>                                  
-                                    </Button>
+                                    {:else}
+                                        <A target="_blank" href={actionsObject[header.column_name]}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                        </A>
+                                    {/if}
+                                    <svg on:click|preventDefault={()=>actionsObject[header.column_name]=null} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-red-500 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
                                 </div>
-                            {:else}
-                                <p class="justify-self-end">{header.display_name}</p>
-                                <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer col-span-2" />
-                            {/if}
+                            </div>
                         {/if}
                     </Label>
                 {/if}

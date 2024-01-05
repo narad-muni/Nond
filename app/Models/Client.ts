@@ -21,10 +21,10 @@ export default class Client extends BaseModel {
     public address: string
 
     @column()
-    public signature: string
+    public signature: object
 
     @column()
-    public logo: string
+    public logo: object
 
     @column()
     public group_id: number

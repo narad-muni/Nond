@@ -165,7 +165,7 @@ export default class ClientsController {
             // set data from validated body
             const files = body.files;
             const services = body.services;
-            const client = body.client;
+            let client = body.client;
             const oldClient = await ClientDAO.getClientById(client.id);
 
             // set client columns TODO : will be changed.... to only set once and when schema changes
@@ -188,7 +188,7 @@ export default class ClientsController {
             // Update client
             const updatedClient = await ClientDAO.updateClient(client);
             // Insert new files
-            await ClientDAO.addClientFiles(updatedClient, files);
+            client = await ClientDAO.addClientFiles(updatedClient, files);
 
             for(const scheduler of newSchedulers){
                 // Run one time scheduler

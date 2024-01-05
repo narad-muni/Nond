@@ -62,12 +62,21 @@ export default class ClientRequestsHandler {
 
     public static createClientHandler(request: RequestContract) {
         // Schema
+        interface createClientFiles {
+            file: MultipartFileContract,
+            value: string
+        }
+
         interface createClientSchema {
             client: typeof Client,
-            files: MultipartFileContract[],
+            files: createClientFiles[],
             services: object,
         }
-        const body = {} as createClientSchema;
+
+        const body = {
+            files:[] as createClientFiles[]
+        } as createClientSchema;
+        
         const client = {} as typeof Client;
 
         // Get Data
@@ -82,13 +91,23 @@ export default class ClientRequestsHandler {
         });
 
         // Set data
-        body.files = files;
-        body.services = JSON.parse(payload._services);
+        Object.keys(files).forEach(column => {
+            body.files.push({
+                value: payload["value__"+column] || column,
+                file: files[column]
+            })
 
-        delete payload._services;
+            delete payload["value__"+column];
+        });
+
+        body.services = JSON.parse(payload.services);
+
+        delete payload.services;
 
         // Set client columns
         for (const [field, value] of Object.entries(payload)) {
+            if(field.startsWith("value__")) continue;
+
             client[field] = value;
         }
 
@@ -105,12 +124,21 @@ export default class ClientRequestsHandler {
         const Client = TableManager.getTable('clients', TableManager.MODE.FULL);
         
         // Schema
+        interface updateClientFiles {
+            file: MultipartFileContract,
+            value: string
+        }
+
         interface updateClientSchema {
             client: typeof Client,
-            files: MultipartFileContract[],
+            files: updateClientFiles[],
             services: object,
         }
-        const body = {} as updateClientSchema;
+
+        const body = {
+            files:[] as updateClientFiles[]
+        } as updateClientSchema;
+
         const client = new Client();
 
         // Get Data
@@ -125,18 +153,44 @@ export default class ClientRequestsHandler {
         });
 
         // Set data
-        body.files = files;
-        body.services = JSON.parse(payload._services);
+        Object.keys(files).forEach(column => {
+            body.files.push({
+                value: payload["value__"+column] || column,
+                file: files[column]
+            });
+
+            payload[column] = {
+                value: payload["value__"+column] || column,
+                path: files[column]
+            };
+
+            delete payload["value__"+column];
+        });
+        body.services = JSON.parse(payload.services);
 
         delete payload.subsidiary;
-        delete payload._services;
         delete payload.services;
         delete payload.group;
 
         // Set client columns
+        for (let field of Object.keys(payload)) {
+            if(field.startsWith("value__")) {
+                field = field.substr(7);
+
+                client[field] = {
+                    value: payload["value__"+field] || field,
+                    path: files[field] || payload[field]
+                };
+
+                delete payload[field];
+                delete payload["value__"+field];
+            }
+        }
         for (const [field, value] of Object.entries(payload)) {
             client[field] = value;
         }
+
+        client.group_id = client.group_id || client.id;
 
         body.client = client;
 
