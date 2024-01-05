@@ -151,7 +151,7 @@ export default class Reseed extends BaseCommand {
                 order: 1,
                 column_type: "Text",
                 column_info: {},
-                is_master: true,
+                is_master: false,
             },{
                 id: -6,
                 table_name: "clients",
@@ -160,7 +160,7 @@ export default class Reseed extends BaseCommand {
                 order: 1,
                 column_type: "Text",
                 column_info: {},
-                is_master: true,
+                is_master: false,
             },{
                 id: -7,
                 table_name: "clients",
@@ -169,7 +169,7 @@ export default class Reseed extends BaseCommand {
                 order: 1,
                 column_type: "File",
                 column_info: {},
-                is_master: true,
+                is_master: false,
             },{
                 id: -8,
                 table_name: "clients",
@@ -178,7 +178,7 @@ export default class Reseed extends BaseCommand {
                 order: 1,
                 column_type: "File",
                 column_info: {},
-                is_master: true,
+                is_master: false,
             }
         ]);
 

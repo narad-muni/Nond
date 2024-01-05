@@ -411,9 +411,9 @@ export class PDFUtils {
                 ],
                 pageMargins: 10,
                 images: {
-                    companyLogo: Application.makePath(data.company.logo || emptyImagePath),
-                    companySignature: Application.makePath(data.company.signature || emptyImagePath),
-                    clientLogo: Application.makePath(data.client.logo || emptyImagePath),
+                    companyLogo: Application.makePath(data.company.logo?.path || emptyImagePath),
+                    companySignature: Application.makePath(data.company.signature?.path || emptyImagePath),
+                    clientLogo: Application.makePath(data.client.logo?.path || emptyImagePath),
                     emptyImage: Application.makePath(emptyImagePath)
                 },
             };
