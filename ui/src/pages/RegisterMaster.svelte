@@ -171,7 +171,7 @@
             active_registers.set(selectedRows);
 
             for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
+                if (selectedRows.has(parseInt(data[i].id))) {
                     data.splice(i, 1);
                     i--;
                 }
@@ -193,7 +193,7 @@
             archived_registers.set(selectedRows);
 
             for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(data[i].id)) {
+                if (selectedRows.has(parseInt(data[i].id))) {
                     data[i]._selected = false;
                     data[i].active = false;
                 }

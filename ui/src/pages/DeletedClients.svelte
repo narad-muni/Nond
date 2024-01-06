@@ -241,7 +241,7 @@
 
     async function deleteSelected(){
         for (let i = 0; i < data.length; i++) {
-            if (selectedRows.has(data[i].id)) {
+            if (selectedRows.has(parseInt(data[i].id))) {
                 data.splice(i, 1);
                 i--;
             }
@@ -256,7 +256,7 @@
 
     async function restoreData(){
         for (let i = 0; i < data.length; i++) {
-            if (selectedRows.has(data[i].id)) {
+            if (selectedRows.has(parseInt(data[i].id))) {
                 data.splice(i, 1);
                 i--;
             }
