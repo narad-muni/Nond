@@ -90,10 +90,11 @@ export default class ClientRequestsHandler {
             }
         });
 
-        // Set data
+        // Set files
         Object.keys(files).forEach(column => {
+            // Set each file with value
             body.files.push({
-                value: payload["value__"+column] || column,
+                value: payload["value__"+column],
                 file: files[column]
             })
 
@@ -104,10 +105,23 @@ export default class ClientRequestsHandler {
 
         delete payload.services;
 
-        // Set client columns
-        for (const [field, value] of Object.entries(payload)) {
-            if(field.startsWith("value__")) continue;
+        // Set empty file text
+        for (let field of Object.keys(payload)) {
+            if(field.startsWith("value__")) {
+                field = field.substr(7);
 
+                client[field] = {
+                    value: payload["value__"+field],
+                    path: null
+                };
+
+                delete payload[field];
+                delete payload["value__"+field];
+            }
+        }
+
+        // Set remaining client columns
+        for (const [field, value] of Object.entries(payload)) {
             client[field] = value;
         }
 
@@ -152,33 +166,29 @@ export default class ClientRequestsHandler {
             }
         });
 
-        // Set data
+        // Set new files, this will be added to client model by dao
         Object.keys(files).forEach(column => {
             body.files.push({
-                value: payload["value__"+column] || column,
+                value: payload["value__"+column],
                 file: files[column]
             });
 
-            payload[column] = {
-                value: payload["value__"+column] || column,
-                path: files[column]
-            };
-
             delete payload["value__"+column];
         });
+
         body.services = JSON.parse(payload.services);
 
         delete payload.subsidiary;
         delete payload.services;
         delete payload.group;
 
-        // Set client columns
+        // Set existing file fields
         for (let field of Object.keys(payload)) {
             if(field.startsWith("value__")) {
                 field = field.substr(7);
 
                 client[field] = {
-                    value: payload["value__"+field] || field,
+                    value: payload["value__"+field],
                     path: files[field] || payload[field]
                 };
 
@@ -186,6 +196,8 @@ export default class ClientRequestsHandler {
                 delete payload["value__"+field];
             }
         }
+
+        // Set remaining client columns
         for (const [field, value] of Object.entries(payload)) {
             client[field] = value;
         }

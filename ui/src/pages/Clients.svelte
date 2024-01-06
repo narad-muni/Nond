@@ -167,8 +167,8 @@
 
             headers.data.forEach((column,i) => {
                 if(column.column_type == 'File') {
-                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value || null;
-                    actionsObject[column.column_name] = actionsObject[column.column_name]?.path || null;
+                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value;
+                    actionsObject[column.column_name] = actionsObject[column.column_name]?.path;
                 }
             });
 
@@ -227,6 +227,17 @@
 
     async function updateData(){
         actionsObject.services  = JSON.stringify(actionsObject.services);
+
+        Object.keys(actionsObject).forEach(i => {
+            if(!i.startsWith("value__")) return;
+            let column_name = i.substr(7);
+
+            if(!actionsObject[i]  && actionsObject[column_name]){
+                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
+                actionsObject[i] = default_value;
+            }
+        });
+
         const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
         
         if(resp.status == 'success'){
@@ -390,6 +401,16 @@
     async function createData(){
         createdObject.services  = JSON.stringify(createdObject.services);
 
+        Object.keys(createdObject).forEach(i => {
+            if(!i.startsWith("value__")) return;
+            let column_name = i.substr(7);
+
+            if(!createdObject[i] && createdObject[column_name]){
+                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
+                createdObject[i] = default_value;
+            }
+        });
+
         const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
 
         if(resp.status == 'success'){
@@ -527,7 +548,7 @@
                                                         {row[header.column_name]?.value || "-"}
                                                     </A>
                                                 {:else}
-                                                    -
+                                                    {row[header.column_name]?.value || "-"}
                                                 {/if}
                                             {:else if header.column_type == 'Date'}
                                                 {row[header.column_name] || "-"}
@@ -587,15 +608,15 @@
                             <Select class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {@const disabledText = createdObject[header.column_name]!=null?"text-black":"text-gray-400"}
+                            {@const disabledIcon = createdObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
                             <p class="justify-self-end {disabledText}">{header.display_name}</p>
                             <div class="flex col-span-2">
-                                <Input disabled={createdObject[header.column_name]==null} class="!m-0 !me-1" type="text" bind:value={createdObject["value__"+header.column_name]}/>
+                                <Input class="!m-0 !me-1" type="text" bind:value={createdObject["value__"+header.column_name]}/>
                                 <div>
-                                    <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
                                     <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                     </svg>
-                                    <svg on:click|preventDefault={()=>{createdObject[header.column_name]=null;document.getElementById(header.column_name).value=null}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer text-red-500">
+                                    <svg on:click|preventDefault={()=>{createdObject[header.column_name]=null;document.getElementById(header.column_name).value=null}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer {disabledIcon}">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                     </svg>
                                 </div>
@@ -630,6 +651,13 @@
             <Button type="submit" class="w-full">Create</Button>
             <Button on:click={()=>{createModal=false;createdObject=emptyCreatedObject}} color="alternative" class="w-full">Cancel</Button>
         </div>
+
+        <!-- Move hidden fields to end, hidden fields block tabs to move -->
+        {#each headers.data as header}
+            {#if header.column_type=="File"}
+                <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
+            {/if}
+        {/each}
     </form>
 </Modal>
 
@@ -754,12 +782,12 @@
                             <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
+                            {@const disabledIcon = actionsObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
                             <p class="justify-self-end {disabledText}">{header.display_name}</p>
                             <div class="flex col-span-2 !m-0">
-                                <Input disabled={actionsObject[header.column_name]==null} class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
+                                <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
                                 <div>
                                     {#if actionsObject[header.column_name]==null}
-                                        <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
                                         <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                         </svg>
@@ -770,7 +798,7 @@
                                             </svg>
                                         </A>
                                     {/if}
-                                    <svg on:click|preventDefault={()=>{actionsObject[header.column_name]=null;document.getElementById(header.column_name).value=null}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer text-red-500">
+                                    <svg on:click|preventDefault={()=>{actionsObject[header.column_name]=null;document.getElementById(header.column_name).value=null}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer {disabledIcon}">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                     </svg>
                                 </div>
@@ -823,6 +851,13 @@
             <Button type="submit" disabled={actionsIndex < 0} class="w-full">Update</Button>
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
+
+        <!-- Move hidden fields to end, hidden fields block tabs to move -->
+        {#each headers.data as header}
+            {#if header.column_type=="File"}
+                <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
+            {/if}
+        {/each}
     </form>
 </Modal>
 
