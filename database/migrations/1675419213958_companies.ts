@@ -13,8 +13,8 @@ export default class extends BaseSchema {
             table.string('email');
             table.string('address');
             table.string('pan');
-            table.string('signature');
-            table.string('logo');
+            table.json('signature');
+            table.json('logo');
             table.integer('invoice_counter').defaultTo(0);
 
             table.string("account_holder_name");

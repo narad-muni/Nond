@@ -185,6 +185,7 @@ export default class CompaniesController {
     public async create({ request, response }: HttpContextContract) {
         try {
             const payload = request.all();
+            const file_value = {};
             const files = request.allFiles() as any as MultipartFileContract[];
 
             //set "null" to null
@@ -221,6 +222,26 @@ export default class CompaniesController {
                 }
             });
 
+            // Set empty file text
+            for (let field of Object.keys(payload)) {
+                if(field.startsWith("value__")) {
+                    field = field.substr(7);
+
+                    if(files[field]) {
+                        file_value[field] = payload["value__"+field];
+                        delete payload["value__"+field];
+                        continue;
+                    };
+
+                    payload[field] = {
+                        value: payload["value__"+field],
+                        path: null
+                    };
+
+                    delete payload["value__"+field];
+                }
+            }
+
             const inserted = await Company.create(payload);
 
             payload.id = inserted.id;
@@ -229,13 +250,12 @@ export default class CompaniesController {
                 const path = `/file/company/${inserted.id}/`;
                 const file_name = `${file.fieldName}.${file.extname}`
                 file.move(Application.makePath(path), { name: file_name });
-                payload[file.fieldName] = path + file_name;
-            });
+                payload[file.fieldName] = {
+                    value: file_value[file.fieldName],
+                    path: path + file_name
+                };
 
-            Object.keys(payload).forEach(key => {
-                if (payload[key] == 'null') {
-                    payload[key] = null;
-                }
+                delete payload["value__"+file.fieldName];
             });
 
             await Company
@@ -301,16 +321,22 @@ export default class CompaniesController {
                 .where('id', payload.id)
                 .first()
 
+            // Set new files, this will be added to client model by dao
             Object.values(files).forEach(file => {
                 const path = `/file/company/${payload.id}/`;
                 const file_name = `${file.fieldName}.${file.extname}`
 
                 try {
-                    fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
+                    fs.unlinkSync(Application.makePath(old?.[file.fieldName]?.path));
                 } catch (err) { }
 
                 file.move(Application.makePath(path), { name: file_name });
-                payload[file.fieldName] = path + file_name;
+                payload[file.fieldName] = {
+                    value: payload["value__"+file.fieldName],
+                    path: path + file_name
+                };
+
+                delete payload["value__"+file.fieldName];
             });
 
             Object.keys(payload).forEach(key => {
@@ -319,13 +345,27 @@ export default class CompaniesController {
                 }
             });
 
+            // Set existing file fields
+            for (let field of Object.keys(payload)) {
+                if(field.startsWith("value__")) {
+                    field = field.substr(7);
+
+                    payload[field] = {
+                        value: payload["value__"+field],
+                        path: files[field] || payload[field]
+                    };
+
+                    delete payload["value__"+field];
+                }
+            }
+
             headers.forEach(header => {
                 //Delete null files
                 if (header.column_type == 'File') {
-                    if (old?.[header.column_name]) {
-                        if (!payload[header.column_name]) {
+                    if (old?.[header.column_name]?.path) {
+                        if (!payload[header.column_name]?.path) {
                             try {
-                                fs.unlinkSync(Application.makePath(old[header.column_name]));
+                                fs.unlinkSync(Application.makePath(old[header.column_name]?.path));
                             } catch (err) { }
                         }
                     }

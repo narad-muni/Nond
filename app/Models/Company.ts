@@ -53,28 +53,16 @@ export default class Company extends BaseModel {
     public smtp_password: string
 
     @column()
-    public signature: string
+    public signature: object
 
     @column()
-    public logo: string
+    public logo: object
 
     @column()
     public integer: string
 
     @column()
     public deleted: boolean
-
-
-    @beforeSave()
-    public static async process(company: Company) {
-        if (company.$dirty.signature != null) {
-            company.signature = '/file/company/' + company.id + '/signature' + company.signature;
-        }
-
-        if (company.$dirty.logo != null) {
-            company.logo = '/file/company/' + company.id + '/logo' + company.logo;
-        }
-    }
 
     @beforeDelete()
     public static async cascadeDelete(company: Company) {
