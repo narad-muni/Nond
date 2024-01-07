@@ -163,7 +163,9 @@ export default class RegisterTemplatesController {
                         .where('id', payload.table_id)
                         .firstOrFail();
 
-                    if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
+                    if(payload.column_type == 'File'){
+                        c_type = 'json';
+                    }else if (payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                         c_type = 'varchar(255)'
                     } else if (payload.column_type == 'Checkbox') {
                         c_type = 'boolean'
@@ -173,7 +175,7 @@ export default class RegisterTemplatesController {
 
                     //add column in rollover
                     if (payload.column_type == 'File') {
-                        payload.rolled = false;
+                        payload.rollover = false;
                     } else if (payload.column_type != 'File' && payload.rollover) {
                         await Database
                             .rawQuery(
@@ -274,7 +276,9 @@ export default class RegisterTemplatesController {
                     }
                 }
 
-                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
+                if(payload.column_type == 'File'){
+                    c_type = 'json'
+                }else if (payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'

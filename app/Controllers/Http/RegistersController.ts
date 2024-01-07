@@ -236,6 +236,7 @@ export default class RegistersController {
 
             const payload = request.params();
             const data = request.all();
+            const file_value = {};
             const files = request.allFiles() as any as MultipartFileContract[];
             const client_columns: any[] = ["group_id"];
 
@@ -273,6 +274,26 @@ export default class RegistersController {
                 }
             });
 
+            // Set empty file text
+            for (let field of Object.keys(data)) {
+                if(field.startsWith("value__")) {
+                    field = field.substr(7);
+
+                    if(files[field]) {
+                        file_value[field] = data["value__"+field];
+                        delete data["value__"+field];
+                        continue;
+                    };
+
+                    data[field] = {
+                        value: data["value__"+field],
+                        path: null
+                    };
+
+                    delete data["value__"+field];
+                }
+            }
+
             const resp = await DynamicRegister
                 .create(data);
 
@@ -281,7 +302,13 @@ export default class RegistersController {
                 const path = `/file/register/${payload.table_id}/${resp.id}/`;
                 const file_name = `${file.fieldName}.${file.extname}`
                 file.move(Application.makePath(path), { name: file_name });
-                data[file.fieldName] = path + file_name;
+
+                data[file.fieldName] = {
+                    value: file_value[file.fieldName],
+                    path: path + file_name
+                };
+
+                delete data["value__"+file.fieldName];
             });
 
             data.id = resp.id;
@@ -369,21 +396,40 @@ export default class RegistersController {
                 const file_name = `${file.fieldName}.${file.extname}`
 
                 try {
-                    fs.unlinkSync(Application.makePath(old?.[file.fieldName]));
+                    fs.unlinkSync(Application.makePath(old?.[file.fieldName]?.path));
                 } catch (err) { }
 
                 file.move(Application.makePath(path), { name: file_name });
-                data[file.fieldName] = path + file_name;
+                data[file.fieldName] = {
+                    value: data["value__"+file.fieldName],
+                    path: path + file_name
+                };
+
+                delete data["value__"+file.fieldName];
             });
+
+            // Set existing file fields
+            for (let field of Object.keys(data)) {
+                if(field.startsWith("value__")) {
+                    field = field.substr(7);
+
+                    data[field] = {
+                        value: data["value__"+field],
+                        path: files[field] || data[field]
+                    };
+
+                    delete data["value__"+field];
+                }
+            }
 
             //delete nulled files
             headers.forEach(header => {
                 //Delete null files
                 if (header.column_type == 'File') {
-                    if (old?.[header.column_name]) {
-                        if (!data[header.column_name]) {
+                    if (old?.[header.column_name]?.path) {
+                        if (!data[header.column_name]?.path) {
                             try {
-                                fs.unlinkSync(Application.makePath(old[header.column_name]));
+                                fs.unlinkSync(Application.makePath(old[header.column_name]?.path));
                             } catch (err) { }
                         }
                     }
