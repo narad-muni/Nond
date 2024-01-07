@@ -1,11 +1,9 @@
 pending stuff
 
 Mail invoice with body, allow variables to be passed in body
-Move Company and registers to New structure
-
 add changes to archived and deleted pages. - 6
 
-obfuscate code
+Move Company and registers to New structure
 -----------------------
 
 rewrite whole app

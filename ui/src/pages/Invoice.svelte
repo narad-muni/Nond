@@ -496,7 +496,7 @@
     </div>
 </Modal>
 
-<Modal bind:open={sendMailModal} size="xs" autoclose>
+<Modal bind:open={sendMailModal} size="md" autoclose>
     <div class="text-center">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="mx-auto mb-4 w-14 h-14 text-gray-400 dark:text-gray-200">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
@@ -505,6 +505,17 @@
         <h3 class="mb-1 text-sm font-normal text-red-500">Please make sure that email and smtp are configured.</h3>
         <h3 class="mb-1 text-sm font-normal text-orange-500">Sending mail might take several minutes.</h3>
         <Select class="mb-5" required items={receivers} bind:value={send_to}></Select>
+        <p>You can edit body and use custom fields using curly braces e.g. &#123;client&#125;</p>
+        <p>Available fields are</p>
+        <p>client, group, total, tax, paid, gst, company, date, remarks</p>
+        <Input placeholder="Subject of mail" class="mb-2" value="Invoice from {'{'}company{'}'} for {'{'}client{'}'}"/>
+        <Textarea
+            value="Hello {'{'}client{'}'},
+            Your invoice of Rs {'{'}amount{'}'} for {'{'}date{'}'} is {'{'}paid{'}'}.
+            {'{'}remarks{'}'}
+            Kindly find invoice attached below."
+            rows="6"
+        />
         <Button color="green" on:click={sendMail} class="mr-2">Send</Button>
         <Button color='alternative'>No, cancel</Button>
     </div>
