@@ -1,9 +1,6 @@
 pending stuff
 
-Mail invoice with body, allow variables to be passed in body
 add changes to archived and deleted pages. - 6
-
-Move Company and registers to New structure
 -----------------------
 
 rewrite whole app
