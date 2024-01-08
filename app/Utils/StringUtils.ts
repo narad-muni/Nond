@@ -86,34 +86,26 @@ export default class StringUtils {
 
     // @ts-ignore
     static inWords(amount) {
-        const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-        const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+        var a = ['','one ','two ','three ','four ', 'five ','six ','seven ','eight ','nine ','ten ','eleven ','twelve ','thirteen ','fourteen ','fifteen ','sixteen ','seventeen ','eighteen ','nineteen '];
+        var b = ['', '', 'twenty','thirty','forty','fifty', 'sixty','seventy','eighty','ninety'];
 
-        function convertLessThanHundred(num) {
-            let word = '';
-            if (num < 20) {
-                word = ones[num];
-            } else {
-                word = tens[Math.floor(num / 10)] + ' ' + ones[num % 10];
-            }
-            return word.trim();
-        }
-
-        function convertToWordsRecursive(num) {
-            let word = '';
-            if (num < 100) {
-                word = convertLessThanHundred(num);
-            } else if (num < 1000) {
-                word = ones[Math.floor(num / 100)] + ' hundred ' + convertToWordsRecursive(num % 100);
-            }
-            return word.trim();
+        function inWords (num) {
+            if ((num = num.toString()).length > 9) return 'overflow';
+            let n = ('000000000' + num).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+            if (!n) return; var str = '';
+            str += (n[1] != 0) ? (a[Number(n[1])] || b[n[1][0]] + ' ' + a[n[1][1]]) + 'crore ' : '';
+            str += (n[2] != 0) ? (a[Number(n[2])] || b[n[2][0]] + ' ' + a[n[2][1]]) + 'lakh ' : '';
+            str += (n[3] != 0) ? (a[Number(n[3])] || b[n[3][0]] + ' ' + a[n[3][1]]) + 'thousand ' : '';
+            str += (n[4] != 0) ? (a[Number(n[4])] || b[n[4][0]] + ' ' + a[n[4][1]]) + 'hundred ' : '';
+            str += (n[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(n[5])] || b[n[5][0]] + ' ' + a[n[5][1]]) : '';
+            return str;
         }
 
         const rupees = Math.floor(amount);
         const paise = Math.round((amount - rupees) * 100);
 
-        const rupeesWords = convertToWordsRecursive(rupees);
-        const paiseWords = convertToWordsRecursive(paise);
+        const rupeesWords = inWords(rupees);
+        const paiseWords = inWords(paise);
 
         const rupeesText = rupeesWords ? rupeesWords + ' rupees ' : 'zero rupees ';
         const paiseText = paiseWords ? 'and ' + paiseWords + ' paise' : '';
