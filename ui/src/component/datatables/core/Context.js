@@ -41,7 +41,7 @@ export default class Context {
                     const scope = $globalSearch.scope ?? Object.keys(row);
                     return scope.some(key => {
                         if (row[key]) {
-                            return this.stringMatch(row[key], $globalSearch.value);
+                            return this.stringMatch(row[key] || "-", $globalSearch.value);
                         }
                         return '';
                     });
@@ -54,7 +54,7 @@ export default class Context {
                 $filters.forEach(localFilter => {
                     return $rawRows = $rawRows.filter(row => {
                         const entry = localFilter.filterBy(row);
-                        return this.stringMatch(entry, localFilter.value, localFilter.filterType);
+                        return this.stringMatch(entry || "-", localFilter.value, localFilter.filterType);
                     });
                 });
                 this.pageNumber.set(1);
@@ -307,10 +307,10 @@ export default class Context {
         }
         else if (typeof entry === 'object') {
             return Object.keys(entry).some(k => {
-                return this.stringMatch(entry[k], value);
+                return this.stringMatch(entry[k] || "-", value);
             });
         }
-        return this.stringMatch(String(entry), String(value), filterType);
+        return this.stringMatch(String(entry) || "-", String(value), filterType);
     }
     createIsAllSelected() {
         return derived([this.selected, this.rows, this.filteredRows, this.selectScope], ([$selected, $rows, $filteredRows, $selectScope]) => {
