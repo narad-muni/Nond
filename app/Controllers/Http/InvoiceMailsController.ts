@@ -8,13 +8,43 @@ import ClientDAO from 'App/Dao/ClientDAO';
 import CompanyDAO from 'App/Dao/CompanyDAO';
 import AutomatorDAO from 'App/Dao/AutomatorDAO';
 import Automator from 'App/Models/Automator';
+import { DateTime } from 'luxon';
 
 export default class InvoiceMailsController {
+
+    public static serialize (value) {
+        if (value instanceof Date) {
+            return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+        } else if(value instanceof DateTime){
+            return value.toFormat('d LLL yyyy');
+        } else {
+            return value
+        }
+    }
+
+    public static setTemplateData(message, client, company, invoice) {
+        
+        let generateData = message
+            .replace("{client}", client?.name)
+            .replace("{group}", client?.$preloaded.group.$attributes.name || client?.name)
+            .replace("{company}", company?.name)
+            .replace("{total}", invoice?.total)
+            .replace("{tax}", invoice?.tax)
+            .replace("{paid}", invoice?.paid ? "Paid" : "Not Paid")
+            .replace("{remarks}", invoice?.remarks || "")
+            .replace("{date}", InvoiceMailsController.serialize(invoice?.date))
+            .replace('\n', '<br/>');
+
+        return generateData;
+    }
+
     public async sendMail({ request, response, session }: HttpContextContract) {
         try {
             const payload = request.all();
             const ids = payload?.ids;
             const send_to = payload?.send_to || "Individual";
+            const subject = payload?.subject;
+            const body = payload?.body;
             const tempInvoicePath = Application.tmpPath("invoices" + session.get("user").id + Math.floor(Math.random() * 999) + 100);
 
             const invoices = await Invoice
@@ -103,9 +133,9 @@ export default class InvoiceMailsController {
                     smtp_email: company.smtp_email,
                     smtp_password: company.smtp_password,
                     to: to,
-                    subject: "Invoice",
+                    subject: InvoiceMailsController.setTemplateData(subject, self_, company, invoice),
                     attachments: [invoice.id + "_" + self_?.name],
-                    message: "Please find attached invoice.",
+                    message: InvoiceMailsController.setTemplateData(body, self_, company, invoice),
                     attachment_path: tempInvoicePath
                 })
             };

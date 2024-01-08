@@ -361,7 +361,7 @@ export class PDFUtils {
                     {
                         columns: [
                             {
-                                text: `Remarks : ${data.remarks}`,
+                                text: `Remarks : ${data.remarks || ""}`,
                                 bold: true
                             },
                             {

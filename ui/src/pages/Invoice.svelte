@@ -33,6 +33,11 @@
     ];
 
     let createModal, actionsModals, deleteModal, sendMailModal, filterStatus=3, send_to;
+    let mail_subject = "Invoice from {company} for {client}";
+    let mail_body = "Hello {client}, {group},\n"
+            +"   Your invoice of Rs {total} GST {tax}. for {date} is {paid}.\n"
+            +"   {remarks}\n"
+            +"   Kindly find invoice attached below.\n";
     let selectedRows = new Set();
 
     let data, emptyCreatedObject, createdObject={}, actionsIndex, actionsObject = {}, client_list, company_list;
@@ -315,7 +320,12 @@
     }
 
     async function sendMail(){
-        const resp = await utils.post_json('/api/invoice/send_mail/',{ids:Array.from(selectedRows), send_to: send_to});
+        const resp = await utils.post_json('/api/invoice/send_mail/',{
+            ids:Array.from(selectedRows),
+            subject: mail_subject,
+            body: mail_body,
+            send_to: send_to,
+        });
 
         if(resp.status == 'success'){
             success = resp.message;
@@ -505,15 +515,12 @@
         <h3 class="mb-1 text-sm font-normal text-red-500">Please make sure that email and smtp are configured.</h3>
         <h3 class="mb-1 text-sm font-normal text-orange-500">Sending mail might take several minutes.</h3>
         <Select class="mb-5" required items={receivers} bind:value={send_to}></Select>
-        <p>You can edit body and use custom fields using curly braces e.g. &#123;client&#125;</p>
-        <p>Available fields are</p>
-        <p>client, group, total, tax, paid, gst, company, date, remarks</p>
-        <Input placeholder="Subject of mail" class="mb-2" value="Invoice from {'{'}company{'}'} for {'{'}client{'}'}"/>
+        <p class="text-start">You can edit body and use custom fields using curly braces e.g. &#123;client&#125;</p>
+        <p class="text-start">Available fields are</p>
+        <p class="mb-2 text-start font-bold">client, group, total, tax, paid, company, date, remarks</p>
+        <Input class="mb-2" bind:value={mail_subject}/>
         <Textarea
-            value="Hello {'{'}client{'}'},
-            Your invoice of Rs {'{'}amount{'}'} for {'{'}date{'}'} is {'{'}paid{'}'}.
-            {'{'}remarks{'}'}
-            Kindly find invoice attached below."
+        bind:value={mail_body}
             rows="6"
         />
         <Button color="green" on:click={sendMail} class="mr-2">Send</Button>
