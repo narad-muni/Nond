@@ -123,6 +123,46 @@
 
     //Functions
 
+    function autoSelectService(field) {
+        let column = headers.data.find(i => i.column_name == field);
+
+        if(column?.service_id){
+            if(createdObject.services[column?.service_id].subscribed != undefined){
+                createdObject.services[column?.service_id].subscribed = true;
+            }
+            if(actionsObject.services[column?.service_id].subscribed != undefined) {
+                actionsObject.services[column?.service_id].subscribed = true;
+            }
+        }
+    }
+
+    // Clear data on uncheck to prevent auto select by mistake
+    function clearData(service_id, mode){
+        if(mode == "update" && actionsObject.services[service_id].subscribed == false) {
+            actionsObject.services[service_id] = {
+                id: actionsObject.services[service_id].id,
+                next: null,
+                frequency: "1 week",
+                service_id: service_id,
+                client_id: actionsObject?.id,
+                count: "",
+                end_date: null,
+                subscribed: false
+            }
+        } else if(createdObject.services[service_id].subscribed == false){
+            createdObject.services[service_id] = {
+                id: null,
+                next: null,
+                frequency: null,
+                service_id: service_id,
+                client_id: null,
+                count: "",
+                end_date: null,
+                subscribed: false
+            }
+        }
+    }
+
     function addSelection(e){
         
         let id = e.target.getAttribute('oid');// get object id, which is primary key in db
@@ -596,22 +636,22 @@
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
                             <span class="text-end">{header.display_name}</span>
-                            <Input class="col-span-2 !m-0" type="text" bind:value={createdObject[header.column_name]}/>
+                            <Input on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0" type="text" bind:value={createdObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
                             <span class="text-end">{header.display_name}</span>
-                            <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={createdObject[header.column_name]} />
+                            <SveltyPicker on:change={()=>autoSelectService(header.column_name)} inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={createdObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
                             <span class="text-end">{header.display_name}</span>
-                            <Toggle class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}></Toggle>
+                            <Toggle on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} bind:checked={createdObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
-                            <Select class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
+                            <Select on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0" bind:value={createdObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {@const disabledText = createdObject[header.column_name]!=null?"text-black":"text-gray-400"}
                             {@const disabledIcon = createdObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
                             <p class="justify-self-end {disabledText}">{header.display_name}</p>
                             <div class="flex col-span-2">
-                                <Input class="!m-0 !me-1" type="text" bind:value={createdObject["value__"+header.column_name]}/>
+                                <Input on:change={()=>autoSelectService(header.column_name)} class="!m-0 !me-1" type="text" bind:value={createdObject["value__"+header.column_name]}/>
                                 <div>
                                     <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
@@ -639,7 +679,7 @@
             {#each services as service}
                 {@const required = createdObject.services[service.value].subscribed && createdObject.services[service.value].frequency != null}
 
-                <Checkbox bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
+                <Checkbox on:change={()=>clearData(service.value,"create")} bind:checked={createdObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={createdObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={createdObject.services[service.value].next}/>
                 <SveltyPicker format="d M yyyy" bind:value={createdObject.services[service.value].end_date}/>
@@ -655,7 +695,7 @@
         <!-- Move hidden fields to end, hidden fields block tabs to move -->
         {#each headers.data as header}
             {#if header.column_type=="File"}
-                <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
+                <input on:change={()=>autoSelectService(header.column_name)} id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
             {/if}
         {/each}
     </form>
@@ -770,22 +810,22 @@
                     <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                         {#if header.column_type=="Text"}
                             <span class="text-end">{header.display_name}</span>
-                            <Input class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]}/>
+                            <Input on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]}/>
                         {:else if header.column_type=="Date"}
                             <span class="text-end">{header.display_name}</span>
-                            <SveltyPicker inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
+                            <SveltyPicker on:change={()=>autoSelectService(header.column_name)} inputClasses="col-span-2 !m-0" format="d M yyyy" bind:value={actionsObject[header.column_name]} />
                         {:else if header.column_type=="Checkbox"}
                             <span class="text-end">{header.display_name}</span>
-                            <Toggle class="col-span-2 !m-0"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}></Toggle>
+                            <Toggle on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0"  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}></Toggle>
                         {:else if header.column_type=="Dropdown"}
                             <span class="text-end">{header.display_name}</span>
-                            <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
+                            <Select on:change={()=>autoSelectService(header.column_name)} class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                         {:else}
                             {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
                             {@const disabledIcon = actionsObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
                             <p class="justify-self-end {disabledText}">{header.display_name}</p>
                             <div class="flex col-span-2 !m-0">
-                                <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
+                                <Input on:change={()=>autoSelectService(header.column_name)} class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
                                 <div>
                                     {#if actionsObject[header.column_name]==null}
                                         <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
@@ -839,7 +879,7 @@
             {#each services as service}
                 {@const required = actionsObject.services[service.value].subscribed && actionsObject.services[service.value].frequency != null}
 
-                <Checkbox bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
+                <Checkbox on:change={()=>clearData(service.value,"update")} bind:checked={actionsObject.services[service.value].subscribed}>{service.name}</Checkbox>
                 <Select {required} bind:value={actionsObject.services[service.value].frequency} items={frequency}/>
                 <SveltyPicker format="d M yyyy" {required} bind:value={actionsObject.services[service.value].next}/>
                 <SveltyPicker format="d M yyyy" bind:value={actionsObject.services[service.value].end_date}/>
@@ -855,7 +895,7 @@
         <!-- Move hidden fields to end, hidden fields block tabs to move -->
         {#each headers.data as header}
             {#if header.column_type=="File"}
-                <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
+                <input on:change={()=>autoSelectService(header.column_name)} id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
             {/if}
         {/each}
     </form>

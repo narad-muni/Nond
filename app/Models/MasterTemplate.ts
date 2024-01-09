@@ -1,4 +1,5 @@
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, BelongsTo, belongsTo } from '@ioc:Adonis/Lucid/Orm'
+import Service from './Service'
 
 export default class MasterTemplate extends BaseModel {
     @column({ isPrimary: true })
@@ -14,6 +15,9 @@ export default class MasterTemplate extends BaseModel {
     public display_name: string
 
     @column()
+    public service_id: number
+
+    @column()
     public order: number
 
     @column()
@@ -24,4 +28,9 @@ export default class MasterTemplate extends BaseModel {
 
     @column()
     public is_master: boolean
+
+    @belongsTo(() => Service, {
+        foreignKey: 'service_id'
+    })
+    public group: BelongsTo<typeof Service>
 }

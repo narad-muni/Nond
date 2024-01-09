@@ -6,7 +6,6 @@ reports
     service wise report
     task wise report
 
-auto select service on client input
 add due date in tasks
     to notify / show in report.
 client portal

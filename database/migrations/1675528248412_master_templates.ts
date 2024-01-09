@@ -11,6 +11,7 @@ export default class extends BaseSchema {
             table.string('display_name');
             table.string('column_type');
             table.integer('order');
+            table.integer('service_id');
             table.json('column_info');
             table.boolean('is_master');
             table.boolean('is_rollover');

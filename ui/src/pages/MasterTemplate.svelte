@@ -32,7 +32,7 @@
     let createModal, actionsModals, deleteModal, changeOrderRegisterModal, changeOrderModal;
     let selectedRows = new Set();
 
-    let data, createdObject={column_info:{options:[""]}}, actionsIndex, actionsObject, orderable_columns = [];
+    let data, services, createdObject={column_info:{options:[""]}}, actionsIndex, actionsObject, orderable_columns = [];
     let handler, rows;
 
     let error="", success="";
@@ -51,12 +51,15 @@
 
     (async ()=>{
         data = await utils.get('/api/master_template/');
+        services = await utils.get('/api/service/options/true');
 
         if(data.status != 'success'){
             error = data.message;
             data = null;
         }else{
             data = data.data.filter(i => i.id > 0);
+            services = [{name:"None",value:null},...services];
+            services = services.filter(i => i.name != "Others");
 
             data.forEach((v) => {
                 v["_selected"] = false;
@@ -367,6 +370,10 @@
             <span class="text-end">Column Type</span>
             <Select class="col-span-2 !m-0" required items={type_list} bind:value={createdObject.column_type} />
         </Label>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Auto Select Service</span>
+            <Select class="col-span-2 !m-0" bind:value={createdObject.service_id} items={services}/>
+        </Label>
 
         {#if createdObject.column_type == 'Dropdown'}
 
@@ -422,6 +429,10 @@
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
             <span class="text-end">Column Type</span>
             <Select class="col-span-2 !m-0" required items={type_list} bind:value={actionsObject.column_type} />
+        </Label>
+        <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+            <span class="text-end">Auto Select Service</span>
+            <Select class="col-span-2 !m-0" bind:value={actionsObject.service_id} items={services}/>
         </Label>
 
         {#if actionsObject.column_type == 'Dropdown'}
