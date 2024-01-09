@@ -1,5 +1,22 @@
 pending stuff
 
+reports
+    client wise report
+    employee wise report
+    service wise report
+    task wise report
+
+auto select service on client input
+add due date in tasks
+    to notify / show in report.
+client portal
+    allow clients to upload / view files / tasks.
+user logged in/logged out
+    show user log in log out status, daily active time.
+add markdown editor while sending mail
+notifications
+    upto 1 month old, remove old notifications by scheduler.
+
 add changes to archived and deleted pages. - 6
 -----------------------
 
