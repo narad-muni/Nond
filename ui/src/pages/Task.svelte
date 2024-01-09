@@ -664,6 +664,7 @@
                             <Th {handler} orderBy="client">Service</Th>
                             <Th {handler} orderBy="name">Assigned To</Th>
                             <Th {handler} orderBy="status">Status</Th>
+                            <Th {handler} orderBy="status">Due Date</Th>
                             <Th {handler} orderBy="status">Priority</Th>
                             <Th {handler} orderBy="created">Created At</Th>
                         </tr>
@@ -676,6 +677,7 @@
                             <ThSearch {handler} filterBy={(row => row.service.name)}/>
                             <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
+                            <ThSearch {handler} filterBy={(row => row.due_date)}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
                             <ThSearch {handler} filterBy={row => row.created || "-"}/>
                         </tr>
@@ -704,6 +706,9 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {task_status[row.status].name || "-"}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {row.due_date || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {priority[row.priority].name || "-"}
@@ -929,6 +934,10 @@
                 <Select class="col-span-2 !m-0" required items={task_status} bind:value={createdObject.status}/>
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Due Date</span>
+                <SveltyPicker bind:value={createdObject.due_date} />
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Priority</span>
                 <Select class="col-span-2 !m-0" required items={priority} bind:value={createdObject.priority}/>
             </Label>
@@ -1066,6 +1075,10 @@
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Status</span>
                 <Select class="col-span-2 !m-0" required items={task_status} bind:value={actionsObject.status}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Due Date</span>
+                <SveltyPicker bind:value={actionsObject.due_date} />
             </Label>
             <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
                 <span class="text-end">Priority</span>

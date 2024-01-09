@@ -19,6 +19,7 @@ export default class extends BaseSchema {
             table.integer('total_money');
             table.string('total_time');
             table.boolean('billed').defaultTo(false);
+            table.date('due_date');
             table.date('created');
         })
     }

@@ -62,6 +62,20 @@ export default class Task extends BaseModel {
     })
     public created: DateTime
 
+    @column.date({
+        autoCreate: true,
+        serialize: (value: DateTime) => {
+            if (value instanceof Date) {
+                return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
+            } else if(value instanceof DateTime){
+                return value.toFormat('d LLL yyyy');
+            } else {
+                return value
+            }
+        },
+    })
+    public due_date: DateTime
+
     @belongsTo(() => Service, {
         foreignKey: 'service_id'
     })
