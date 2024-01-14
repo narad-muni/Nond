@@ -259,7 +259,7 @@
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(parseInt(data[i].id))) {
+                if (selectedRows.has(data[i].id)) {
                     data.splice(i, 1);
                     i--;
                 }
