@@ -12,10 +12,10 @@ export default class Client extends BaseModel {
     public email: string
 
     @column()
-    public gst: string
+    public gst: object
 
     @column()
-    public pan: string
+    public pan: object
 
     @column()
     public address: string

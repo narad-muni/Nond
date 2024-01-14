@@ -14,7 +14,7 @@ export default class Company extends BaseModel {
     public invoice_prefix: string
 
     @column()
-    public gst: string
+    public gst: object
 
     @column()
     public upi: string
@@ -38,7 +38,7 @@ export default class Company extends BaseModel {
     public ifsc_branch: string
 
     @column()
-    public pan: string
+    public pan: object
 
     @column()
     public smtp_host: string

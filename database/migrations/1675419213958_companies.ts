@@ -8,11 +8,11 @@ export default class extends BaseSchema {
             table.increments('id');
             table.string('name');
             table.string('invoice_prefix');
-            table.string('gst');
+            table.json('gst');
             table.string('upi');
             table.string('email');
             table.string('address');
-            table.string('pan');
+            table.json('pan');
             table.json('signature');
             table.json('logo');
             table.integer('invoice_counter').defaultTo(0);

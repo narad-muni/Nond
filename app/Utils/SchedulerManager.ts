@@ -391,7 +391,7 @@ export default class SchedulerManager {
             archived_invoice.tax = invoice.tax;
             archived_invoice.date = invoice.date;
             archived_invoice.client = invoice.client.name;
-            archived_invoice.group = invoice.client.group.name;
+            archived_invoice.group = invoice.client?.group?.name || invoice.client.name;
             archived_invoice.company = invoice.company.name;
 
             archived_invoices.push(archived_invoice);
