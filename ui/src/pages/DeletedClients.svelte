@@ -14,7 +14,6 @@
         Input,
         Toggle,
         Alert,
-        Textarea,
         Select,
     } from "flowbite-svelte";
 
@@ -28,12 +27,11 @@
 
     // Intialization
 
-    let createModal, createTasksModal, actionsModals, deleteModal, bulkServiceModal, allColumns = false;
+    let actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, services, all_services, client_list, data, createdObject={services:{}}, createTasksObject={priority:1,status:0}, taskTemplates, actionsIndex, actionsObject, setServiceObject={};
+    let headers, services, all_services, client_list, data, createdObject={services:{}}, taskTemplates, actionsIndex, actionsObject;
     let emptyCreatedObject;
-    let bulkServiceData, removeOldServices;
     let handler, rows;
     const frequency = [
         {name: "Daily", value:"1 day"},
@@ -44,20 +42,6 @@
         {name: "Half Yearly", value:"6 months"},
         {name: "Yearly", value:"1 year"},
         {name: "One Time", value: null}
-    ];
-
-    const task_status = [
-        {name:'Pending',value:0},
-        {name:'In Process',value:1},
-        {name:'Waiting For Information',value:2},
-        {name:'Pending For Review',value:3},
-        {name:'Completed',value:4}
-    ];
-
-    const priority = [
-        {name:'Low',value:0},
-        {name:'Regular',value:1},
-        {name:'Urgent',value:2}
     ];
 
     let error="", users=[{name: "Unassigned", value:null}];
@@ -235,69 +219,6 @@
         }
     }
 
-    function openBulkSetService(){
-        bulkServiceData = {};
-        removeOldServices = false;
-
-        //set services in created object
-        services.forEach(service => {
-            bulkServiceData[service.value] = {service_id:service.value}
-        });
-
-        bulkServiceModal = true;
-    }
-
-    async function bulkSetService(){
-
-        const data = {
-            schedulers: bulkServiceData,
-            client_ids: Array.from(selectedRows),
-            remove_old: removeOldServices,
-        }
-        
-        const resp = await utils.put_json('/api/client/bulk_service_update/',data);
-
-        if(resp.status == 'success'){
-            bulkServiceModal = false;
-            setServiceObject = {};
-        }else{
-            error = resp.message || "";
-        }
-    }
-
-    async function updateData(){
-        actionsObject.services  = JSON.stringify(actionsObject.services);
-
-        Object.keys(actionsObject).forEach(i => {
-            if(!i.startsWith("value__")) return;
-            let column_name = i.substr(7);
-
-            if(!actionsObject[i]  && actionsObject[column_name]){
-                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
-                actionsObject[i] = default_value;
-            }
-        });
-
-        const resp = await utils.put_form('/api/client/',utils.getFormData(actionsObject));
-        
-        if(resp.status == 'success'){
-            client_list = await utils.get('/api/client/options');
-            client_list = client_list?.data || [];
-            client_list = [{name:"Self",value:null},...client_list];
-            
-            resp.data._selected = data[actionsIndex]._selected;
-
-            resp.data.group = client_list.find(e => e.value == resp.data.group_id);
-
-            data[actionsIndex] = resp.data;
-            handler.setRows(data);
-
-            actionsModals = false;
-        }else{
-            error = resp.message || "";
-        }
-    }
-
     async function reloadData(){
         if(allColumns){
             data = await utils.get('/api/client/true');
@@ -310,47 +231,6 @@
         selectedRows.clear();
         selectedRows = selectedRows;
         handler.setRows(data);
-    }
-
-    async function createTasks(){
-        const client_id = Array.from(selectedRows);
-        createTasksObject.client_id = client_id;
-
-        const resp = await utils.post_json('/api/task/',createTasksObject);
-
-        if(resp.status == 'success'){
-
-            //clear selection
-            for (let i = 0; i < data.length; i++) {
-                if (selectedRows.has(parseInt(data[i].id))) {
-                    data[i]._selected = false;
-                }
-            }
-
-            selectedRows.clear();
-            handler.setRows(data);
-
-            //reset object and modal            
-            createTasksObject = {priority:1,status:0};
-            createTasksModal = false;
-        }else{
-            error = resp.message || "";
-        }
-    }
-
-    async function loadTaskTemplate(e){
-        const template_id = e.target.value;
-        const template = await utils.get('/api/task_template/'+template_id);
-
-        if(template.status == 'success'){
-            delete template.data.name;
-            delete template.data.id;
-
-            createTasksObject = template.data;
-        }else{
-            error = template.message || "";
-        }
-
     }
 
     async function viewAllColumns(){
@@ -452,38 +332,6 @@
         selectedRows.clear();
         handler.setRows(data);
         selectedRows = selectedRows;
-    }
-
-    async function createData(){
-        createdObject.services  = JSON.stringify(createdObject.services);
-
-        Object.keys(createdObject).forEach(i => {
-            if(!i.startsWith("value__")) return;
-            let column_name = i.substr(7);
-
-            if(!createdObject[i] && createdObject[column_name]){
-                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
-                createdObject[i] = default_value;
-            }
-        });
-
-        const resp = await utils.post_form('/api/client',utils.getFormData(createdObject));
-
-        if(resp.status == 'success'){
-            resp.data._selected = false;
-            
-            client_list.push({name:resp.data.name,value:resp.data.id});
-            
-            resp.data.group = client_list.find(e => e.value == resp.data.group_id);
-
-            data.push(resp.data);
-            handler.setRows(data);
-            createModal = false;
-            createdObject = structuredClone(emptyCreatedObject);
-            
-        }else{
-            error = resp.message || "";
-        }
     }
 
 </script>

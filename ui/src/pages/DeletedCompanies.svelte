@@ -26,12 +26,7 @@
 
     // Intialization
 
-    const smtpType = [
-        {name: 'TLS',value: 'TLS'},
-        {name: 'SSL',value: 'SSL'}
-    ];
-
-    let createModal, actionsModals, deleteModal, allColumns = false;
+    let actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
     let headers, data, createdObject={}, emptyCreatedObject={}, actionsIndex, actionsObject, users;
@@ -147,30 +142,6 @@
         }
     }
 
-    async function updateData(){
-
-        Object.keys(actionsObject).forEach(i => {
-            if(!i.startsWith("value__")) return;
-            let column_name = i.substr(7);
-
-            if(!actionsObject[i]  && actionsObject[column_name]){
-                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
-                actionsObject[i] = default_value;
-            }
-        });
-
-        const resp = await utils.put_form('/api/company/',utils.getFormData(actionsObject));
-        
-        if(resp.status == 'success'){
-            resp.data._selected = data[actionsIndex]._selected;
-            data[actionsIndex] = resp.data;
-            handler.setRows(data);
-            actionsModals = false;
-        }else{
-            error = resp.message || "";
-        }
-    }
-
     async function reloadData(){
         if(allColumns){
             data = await utils.get('/api/company/true');
@@ -283,38 +254,6 @@
         selectedRows.clear();
         handler.setRows(data);
         selectedRows = selectedRows;
-    }
-
-    function updatePrefix(){
-        createdObject.invoice_prefix = utils.shortName(createdObject.name);
-    }
-
-    function capitalizePrefix(){
-        createdObject.invoice_invoice_prefix = createdObject.invoice_prefix.toUpperCase().trim();
-        createdObject.invoice_prefix = createdObject.invoice_prefix.split(/[^a-zA-Z0-9 ]/).join('');
-    }
-
-    async function createData(){
-        Object.keys(createdObject).forEach(i => {
-            if(!i.startsWith("value__")) return;
-            let column_name = i.substr(7);
-
-            if(!createdObject[i] && createdObject[column_name]){
-                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
-                createdObject[i] = default_value;
-            }
-        });
-        
-        const resp = await utils.post_form('/api/company',utils.getFormData(createdObject));
-        if(resp.status == 'success'){
-            resp.data._selected = false;
-            data.push(resp.data);
-            handler.setRows(data);
-            createModal = false;
-            createdObject = structuredClone(emptyCreatedObject);
-        }else{
-            error = resp.message || "";
-        }
     }
 
 </script>
@@ -448,7 +387,7 @@
 </Modal>
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
-    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
         
         <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
