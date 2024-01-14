@@ -308,9 +308,9 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="version">Version</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
+                            <Th {handler} orderBy={row => row.name || "-"}>Name</Th>
+                            <Th {handler} orderBy={row => row.version || "-"}>Version</Th>
                             <Th {handler} orderBy={row => row.service.name}>Service</Th>
                             <Th {handler} orderBy={row => row.active}>Active</Th>
                         </tr>

@@ -66,12 +66,12 @@
                 <Table id="table">
                     <thead>
                         <tr>
-                            <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy="pan">Pan</Th>
-                            <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
+                            <Th {handler} orderBy={row => row.name || "-"}>Name</Th>
+                            <Th {handler} orderBy={row => row.email || "-"}>Email</Th>
+                            <Th {handler} orderBy={row => row.gst || "-"}>GST</Th>
+                            <Th {handler} orderBy={row => row.pan || "-"}>Pan</Th>
+                            <Th {handler} orderBy={(row => row.group?.name || "-")}>Group</Th>
                             <Th {handler}>Actions</Th>
                         </tr>
                         <tr>

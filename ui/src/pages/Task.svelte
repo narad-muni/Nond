@@ -657,16 +657,16 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="Title">Title</Th>
-                            <Th {handler} orderBy="client">Client</Th>
-                            <Th {handler} orderBy="client">Group</Th>
-                            <Th {handler} orderBy="client">Service</Th>
-                            <Th {handler} orderBy="name">Assigned To</Th>
-                            <Th {handler} orderBy="status">Status</Th>
-                            <Th {handler} orderBy="status">Due Date</Th>
-                            <Th {handler} orderBy="status">Priority</Th>
-                            <Th {handler} orderBy="created">Created At</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>id</Th>
+                            <Th {handler} orderBy={row => row.title || "-"}>Title</Th>
+                            <Th {handler} orderBy={row => row.client?.name || "-"}>Client</Th>
+                            <Th {handler} orderBy={row => row.client?.group?.name || "-"}>Group</Th>
+                            <Th {handler} orderBy={(row => row.service.name || "-")}>Service</Th>
+                            <Th {handler} orderBy={(row => row.assigned_user?.name || "Unassigned")}>Assigned To</Th>
+                            <Th {handler} orderBy={(row => task_status[row.status].name || "-")}>Status</Th>
+                            <Th {handler} orderBy={(row => row.due_date || "-")}>Due Date</Th>
+                            <Th {handler} orderBy={(row => priority[row.priority].name || "-")}>Priority</Th>
+                            <Th {handler} orderBy={row => row.created || "-"}>Created At</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -674,11 +674,11 @@
                             <ThSearch {handler} filterBy={row => row.title || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client?.name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.client?.group?.name || "-"}/>
-                            <ThSearch {handler} filterBy={(row => row.service.name)}/>
+                            <ThSearch {handler} filterBy={(row => row.service.name || "-")}/>
                             <ThSearch {handler} filterBy={(row => row.assigned_user?.name || "Unassigned")}/>
-                            <ThSearch {handler} filterBy={(row => task_status[row.status].name)}/>
-                            <ThSearch {handler} filterBy={(row => row.due_date)}/>
-                            <ThSearch {handler} filterBy={(row => priority[row.priority].name)}/>
+                            <ThSearch {handler} filterBy={(row => task_status[row.status].name || "-")}/>
+                            <ThSearch {handler} filterBy={(row => row.due_date || "-")}/>
+                            <ThSearch {handler} filterBy={(row => priority[row.priority].name || "-")}/>
                             <ThSearch {handler} filterBy={row => row.created || "-"}/>
                         </tr>
                     </thead>

@@ -1,7 +1,6 @@
 pending stuff
 
-Check sorting/searching in all pages
-add changes to archived and deleted pages. - 6
+add changes to archived pages. - 3
 
 reports
     client wise report

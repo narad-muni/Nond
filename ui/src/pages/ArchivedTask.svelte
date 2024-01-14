@@ -232,13 +232,13 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="Title">Title</Th>
-                            <Th {handler} orderBy="client">Client</Th>
-                            <Th {handler} orderBy="client">Group</Th>
-                            <Th {handler} orderBy="client">Service</Th>
-                            <Th {handler} orderBy="name">Assigned To</Th>
-                            <Th {handler} orderBy="created">Created At</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>id</Th>
+                            <Th {handler} orderBy={row => row.title || "-"}>Title</Th>
+                            <Th {handler} orderBy={row => row.client || "-"}>Client</Th>
+                            <Th {handler} orderBy={row => row.group || "-"}>Group</Th>
+                            <Th {handler} orderBy={row => row.service || "-"}>Service</Th>
+                            <Th {handler} orderBy={(row => row.assigned_to || "Unassigned")}>Assigned To</Th>
+                            <Th {handler} orderBy={row => row.created || "-"}>Created At</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>

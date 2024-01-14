@@ -543,7 +543,7 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
                             {#each headers.data as header}
                                 {#if header.column_name == 'group'}
                                     <Th {handler} orderBy={(row => row.group?.name)}>Group</Th>

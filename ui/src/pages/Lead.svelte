@@ -264,11 +264,11 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="client">Client</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>id</Th>
+                            <Th {handler} orderBy={row => row.client || "-"}>Client</Th>
                             <Th {handler} orderBy={row => row.assigned_user.username}>Assigned To</Th>
-                            <Th {handler} orderBy="status">Status</Th>
-                            <Th {handler} orderBy="started">Started</Th>
+                            <Th {handler} orderBy={row => row.status || "-"}>Status</Th>
+                            <Th {handler} orderBy={row => row.started || "-"}>Started</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>

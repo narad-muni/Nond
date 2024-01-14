@@ -237,7 +237,7 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
                             <Th {handler} orderBy={row => row.username}>Username</Th>
                             <Th {handler} orderBy={row => row.role?.name}>Role</Th>
                             <Th {handler} orderBy={row => row.username}>Admin</Th>

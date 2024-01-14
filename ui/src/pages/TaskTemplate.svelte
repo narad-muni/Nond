@@ -213,9 +213,9 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="title">Title</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>id</Th>
+                            <Th {handler} orderBy={row => row.name || "-"}>Name</Th>
+                            <Th {handler} orderBy={row => row.title || "-"}>Title</Th>
                             <Th {handler} orderBy={(row => row.service?.name)}>Service</Th>
                             <Th {handler} orderBy={(row => task_status[row.status].name)}>Status</Th>
                             <Th {handler} orderBy={(row => priority[row.priority].name)}>Priority</Th>

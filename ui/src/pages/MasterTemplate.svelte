@@ -290,12 +290,12 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="table_name">Table</Th>
-                            <Th {handler} orderBy="display_name">Column Name</Th>
-                            <Th {handler} orderBy="column_type">Type</Th>
-                            <Th {handler} orderBy="order">Order</Th>
-                            <Th {handler} orderBy="is_master">Is Master</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>id</Th>
+                            <Th {handler} orderBy={row => row.table_name || "-"}>Table</Th>
+                            <Th {handler} orderBy={row => row.display_name || "-"}>Column Name</Th>
+                            <Th {handler} orderBy={row => row.column_type || "-"}>Type</Th>
+                            <Th {handler} orderBy={row => row.order || "-"}>Order</Th>
+                            <Th {handler} orderBy={row => row.is_master ? "Yes" : "No"}>Is Master</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -304,7 +304,7 @@
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
                             <ThSearch {handler} filterBy={row => row.order || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.is_master || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.is_master ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>

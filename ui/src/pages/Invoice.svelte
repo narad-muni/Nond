@@ -427,15 +427,15 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
                             <Th {handler} orderBy={row => row.client?.name}>Client</Th>
                             <Th {handler} orderBy={row => row.client?.group?.name}>Group</Th>
-                            <Th {handler} orderBy="total">Total</Th>
-                            <Th {handler} orderBy="tax">Tax</Th>
-                            <Th {handler} orderBy="paid">Paid</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
+                            <Th {handler} orderBy={row => row.total + (row.tax || 0) || "-"}>Total</Th>
+                            <Th {handler} orderBy={row => row.tax || "-"}>Tax</Th>
+                            <Th {handler} orderBy={row => row.paid ? "Yes" : "No"}>Paid</Th>
+                            <Th {handler} orderBy={row => row.gst ? "Yes" : "No"}>GST</Th>
                             <Th {handler} orderBy={row => row.company?.name}>Company</Th>
-                            <Th {handler} orderBy="date">Date</Th>
+                            <Th {handler} orderBy={row => row.date || "-"}>Date</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>

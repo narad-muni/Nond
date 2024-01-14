@@ -292,14 +292,14 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
                             <Th {handler} >Register</Th>
-                            <Th {handler} orderBy="display_name">Column Name</Th>
-                            <Th {handler} orderBy="column_type">Type</Th>
-                            <Th {handler} orderBy={e => e.client_column_id}>Client Column</Th>
-                            <Th {handler} orderBy="order">Order</Th>
-                            <Th {handler} orderBy="master">Is Master</Th>
-                            <Th {handler} orderBy="rollover">Rollover</Th>
+                            <Th {handler} orderBy={row => row.display_name || "-"}>Column Name</Th>
+                            <Th {handler} orderBy={row => row.column_type || "-"}>Type</Th>
+                            <Th {handler} orderBy={row => row.client_column_id != null ? "Yes" : "No"}>Client Column</Th>
+                            <Th {handler} orderBy={row => row.order || "-"}>Order</Th>
+                            <Th {handler} orderBy={row => row.master ? "Yes" : "No"}>Is Master</Th>
+                            <Th {handler} orderBy={row => row.rollover ? "Yes" : "No"}>Rollover</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
@@ -307,10 +307,10 @@
                             <ThSearch {handler} />
                             <ThSearch {handler} filterBy={row => row.display_name || "-"}/>
                             <ThSearch {handler} filterBy={row => row.column_type || "-"}/>
-                            <ThSearch {handler} filterBy={(e) => e.client_column_id != null ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.client_column_id != null ? "Yes" : "No"}/>
                             <ThSearch {handler} filterBy={row => row.order || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.master || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.rollover || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.master ? "Yes" : "No"}/>
+                            <ThSearch {handler} filterBy={row => row.rollover ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>

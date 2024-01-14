@@ -219,11 +219,11 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="hsn">HSN/SAC</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy={row => row.template?.name}>Template</Th>
+                            <Th {handler} orderBy={row => row.id || "-"}>ID</Th>
+                            <Th {handler} orderBy={row => row.name || "-"}>Name</Th>
+                            <Th {handler} orderBy={row => row.hsn || "-"}>HSN/SAC</Th>
+                            <Th {handler} orderBy={row => row.gst || "-"}>GST</Th>
+                            <Th {handler} orderBy={row => row.template?.name || "-"}>Template</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}/>
