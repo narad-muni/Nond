@@ -1,5 +1,8 @@
 pending stuff
 
+Check sorting/searching in all pages
+add changes to archived and deleted pages. - 6
+
 reports
     client wise report
     employee wise report
@@ -7,13 +10,8 @@ reports
     task wise report
 add due date in tasks
     to notify / show in report.
-user logged in/logged out
-    show user log in log out status, daily active time.
 notifications
     upto 1 month old, remove old notifications by scheduler.
-
-Check sorting/searching in all pages
-add changes to archived and deleted pages. - 6
 -----------------------
 
 rewrite whole app
