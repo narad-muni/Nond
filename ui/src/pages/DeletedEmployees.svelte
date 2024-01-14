@@ -24,20 +24,18 @@
 
     // Intialization
 
-    let actionsModals, deleteModal;
+    let createModal, actionsModals, deleteModal;
     let selectedRows = new Set();
 
-    let data, actionsIndex, actionsObject, role_options;
+    let data, createdObject={}, actionsIndex, actionsObject, role_options;
     let handler, rows;
-    
-    let error="";
+    let error="", success="";
 
     // fetch data
 
     (async ()=>{
         data = await utils.get('/api/employee/true');
         role_options = await utils.get('/api/role/options');
-
         if(data.status != 'success'){
             error = data.message;
             data = null;
@@ -162,14 +160,14 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'DeletedEmployee.csv';
+        link.download = 'Employee.csv';
         
         // Programmatically click on the link to initiate the download
         link.click();
     }
 
     async function deleteSelected(){
-        const resp = await utils._delete('/api/employee/destroy/',{id:Array.from(selectedRows)});
+        const resp = await utils._delete('/api/employee/',{id:Array.from(selectedRows)});
 
         if(resp.status == 'success'){
             for (let i = 0; i < data.length; i++) {
@@ -239,17 +237,17 @@
                             <th>
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
-                            <Th {handler} orderBy="id">id</Th>
-                            <Th {handler} orderBy="username">username</Th>
-                            <Th {handler} orderBy={row => row.role?.name}>role</Th>
-                            <Th {handler} orderBy="is_admin">admin</Th>
+                            <Th {handler} orderBy="id">ID</Th>
+                            <Th {handler} orderBy={row => row.username}>Username</Th>
+                            <Th {handler} orderBy={row => row.role?.name}>Role</Th>
+                            <Th {handler} orderBy={row => row.username}>Admin</Th>
                         </tr>
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.username || "-"}/>
                             <ThSearch {handler} filterBy={row => row.role?.name || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.is_admin || "-"}/>
+                            <ThSearch {handler} filterBy={row => row.username ? "Yes" : "No"}/>
                         </tr>
                     </thead>
                     <TableBody>
@@ -293,26 +291,30 @@
 <Modal bind:open={actionsModals} placement="top-center" size="lg">
     <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Entry</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input value={actionsObject.id} readonly/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Username</span>
-            <Input required bind:value={actionsObject.username}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Password</span>
-            <Input type="password" bind:value={actionsObject.password}/>
-        </Label>
-        <Label class="space-y-2">
-            <span>Role</span>
-            <Select required items={role_options} bind:value={actionsObject.role_id}></Select>
-        </Label>
-        <Label class="space-y-2">
-            <span>&nbsp</span>
-            <Toggle bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} >Admin</Toggle>
-        </Label>
+        
+        <div class="grid grid-cols-2 col-span-3 gap-x-3 gap-y-6">
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">ID</span>
+                <Input class="col-span-2 !m-0" value={actionsObject.id} readonly/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Username</span>
+                <Input class="col-span-2 !m-0" required bind:value={actionsObject.username}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Password</span>
+                <Input class="col-span-2 !m-0" type="password" bind:value={actionsObject.password}/>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Role</span>
+                <Select class="col-span-2 !m-0" required items={role_options} bind:value={actionsObject.role_id}></Select>
+            </Label>
+            <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                <span class="text-end">Admin</span>
+                <Toggle class="col-span-2 !m-0" bind:value={actionsObject.is_admin} bind:checked={actionsObject.is_admin} ></Toggle>
+            </Label>
+        </div>
+
         <div class="col-span-2 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
@@ -327,6 +329,16 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
+        </Alert>
+    </div>
+{/if}
+
+{#if success.length > 0}
+    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
+        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
+            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            </span>
+            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}

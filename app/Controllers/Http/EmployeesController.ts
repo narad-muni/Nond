@@ -35,7 +35,6 @@ export default class EmployeesController {
         try {
             const data = await Employee
                 .query()
-                .where('deleted', false)
                 .where('id', request.param('id'))
                 .first()
 
