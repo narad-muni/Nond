@@ -300,9 +300,9 @@
 
     async function reloadData(){
         if(allColumns){
-            data = await utils.get('/api/client/false');
+            data = await utils.get('/api/client/true');
         }else{
-            data = await utils.get('/api/client/master/false');
+            data = await utils.get('/api/client/master/true');
         }
 
         data = data.data;
@@ -357,9 +357,9 @@
         allColumns = !allColumns;
 
         if(allColumns){
-            data = await utils.get('/api/client/master/false');
+            data = await utils.get('/api/client/master/true');
         }else{
-            data = await utils.get('/api/client/false');
+            data = await utils.get('/api/client/true');
         }
         
 

@@ -13,7 +13,8 @@
         Label,
         Input,
         Toggle,
-        Alert
+        Alert,
+        Select
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
@@ -25,23 +26,42 @@
 
     // Intialization
 
-    let actionsModals, deleteModal, allColumns = false;
+    const smtpType = [
+        {name: 'TLS',value: 'TLS'},
+        {name: 'SSL',value: 'SSL'}
+    ];
+
+    let createModal, actionsModals, deleteModal, allColumns = false;
     let selectedRows = new Set();
 
-    let headers, data, actionsIndex, actionsObject;
+    let headers, data, createdObject={}, emptyCreatedObject={}, actionsIndex, actionsObject, users;
     let handler, rows;
-    let error="";
+    let error="", success="";
 
     // fetch data
 
     (async ()=>{
         headers = await utils.get('/api/master_template/options/companies');
+        users = await utils.get('/api/employee/options');
         data = await utils.get('/api/company/master/true');
 
         if(data.status != 'success'){
             error = data.message;
             data = null;
         }else{
+            headers.data.forEach((column,i) => {
+                if(column.column_type == 'Dropdown'){
+                    headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
+                    headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
+                }else if(column.column_type == 'File') {
+                    createdObject["value__"+column.column_name] = null;
+                }
+            });
+
+            emptyCreatedObject = structuredClone(createdObject);
+
+            headers.data.sort((a,b) => a.order > b.order ? 1 : -1);
+
             data = data.data;
             data.forEach((v) => {
                 v["_selected"] = false;
@@ -113,9 +133,41 @@
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
+
+            headers.data.forEach((column,i) => {
+                if(column.column_type == 'File') {
+                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value;
+                    actionsObject[column.column_name] = actionsObject[column.column_name]?.path;
+                }
+            });
+
             actionsModals = true;
         }else{
             error = actionsObject.message || "";
+        }
+    }
+
+    async function updateData(){
+
+        Object.keys(actionsObject).forEach(i => {
+            if(!i.startsWith("value__")) return;
+            let column_name = i.substr(7);
+
+            if(!actionsObject[i]  && actionsObject[column_name]){
+                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
+                actionsObject[i] = default_value;
+            }
+        });
+
+        const resp = await utils.put_form('/api/company/',utils.getFormData(actionsObject));
+        
+        if(resp.status == 'success'){
+            resp.data._selected = data[actionsIndex]._selected;
+            data[actionsIndex] = resp.data;
+            handler.setRows(data);
+            actionsModals = false;
+        }else{
+            error = resp.message || "";
         }
     }
 
@@ -125,6 +177,8 @@
         }else{
             data = await utils.get('/api/company/master/true');
         }
+
+        data = data.data;
 
         selectedRows.clear();
         selectedRows = selectedRows;
@@ -139,6 +193,8 @@
         }else{
             data = await utils.get('/api/company/master/true');
         }
+
+        data = data.data;
 
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
@@ -192,7 +248,7 @@
         // Create a link to download the CSV file
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
-        link.download = 'DeletedCompanies.csv';
+        link.download = 'Companies.csv';
         
         // Programmatically click on the link to initiate the download
         link.click();
@@ -213,6 +269,7 @@
         selectedRows = selectedRows;
     }
 
+
     async function restoreData(){
         for (let i = 0; i < data.length; i++) {
             if (selectedRows.has(parseInt(data[i].id))) {
@@ -226,6 +283,38 @@
         selectedRows.clear();
         handler.setRows(data);
         selectedRows = selectedRows;
+    }
+
+    function updatePrefix(){
+        createdObject.invoice_prefix = utils.shortName(createdObject.name);
+    }
+
+    function capitalizePrefix(){
+        createdObject.invoice_invoice_prefix = createdObject.invoice_prefix.toUpperCase().trim();
+        createdObject.invoice_prefix = createdObject.invoice_prefix.split(/[^a-zA-Z0-9 ]/).join('');
+    }
+
+    async function createData(){
+        Object.keys(createdObject).forEach(i => {
+            if(!i.startsWith("value__")) return;
+            let column_name = i.substr(7);
+
+            if(!createdObject[i] && createdObject[column_name]){
+                let default_value = headers.data.find(i => i.column_name == column_name)?.display_name;
+                createdObject[i] = default_value;
+            }
+        });
+        
+        const resp = await utils.post_form('/api/company',utils.getFormData(createdObject));
+        if(resp.status == 'success'){
+            resp.data._selected = false;
+            data.push(resp.data);
+            handler.setRows(data);
+            createModal = false;
+            createdObject = structuredClone(emptyCreatedObject);
+        }else{
+            error = resp.message || "";
+        }
     }
 
 </script>
@@ -286,11 +375,6 @@
                                 <Checkbox on:change={addSelection} {checked} {indeterminate}/>
                             </th>
                             <Th {handler} orderBy="id">ID</Th>
-                            <Th {handler} orderBy="name">Name</Th>
-                            <Th {handler} orderBy="email">Email</Th>
-                            <Th {handler} orderBy="email">Pan</Th>
-                            <Th {handler} orderBy="gst">GST</Th>
-                            <Th {handler} orderBy="singature">Signature</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
@@ -300,11 +384,6 @@
                         <tr>
                             <ThSearch {handler} filterBy={row => row._selected ? "Yes" : "No"}></ThSearch>
                             <ThSearch {handler} filterBy={row => row.id || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.name || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.email || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.pan || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.gst || "-"}/>
-                            <ThSearch {handler} filterBy={row => row.signature || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.is_master}
                                     <ThSearch {handler} filterBy={row => row[header.column_name]}/>
@@ -319,44 +398,29 @@
                                     <Checkbox oid={row.id} on:change={addSelection} bind:checked={row._selected}/>
                                 </TableBodyCell>
                                 <TableBodyCell class="cursor-pointer bg-gray-100 hover:bg-gray-200" on:click={openActionsModal} >{row.id}</TableBodyCell>
-                                <TableBodyCell>{row.name || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.email || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.pan || "-"}</TableBodyCell>
-                                <TableBodyCell>{row.gst || "-"}</TableBodyCell>
-                                <TableBodyCell>
-                                    {#if row.signature}
-                                        <A target="_blank" href={row.signature}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                            </svg>
-                                            &nbsp;
-                                            Signature
-                                        </A>
-                                    {:else}
-                                        -
-                                    {/if}
-                                </TableBodyCell>
                                 {#each headers.data as header}
                                     {#if allColumns || header.is_master}
                                         <TableBodyCell>
                                             {#if header.column_type == 'Text'}
                                                 {row[header.column_name] || "-"}
                                             {:else if header.column_type == 'File'}
-                                                {#if row[header.column_name]}
-                                                    <A target="_blank" href={row[header.column_name]}>
+                                                {#if row[header.column_name]?.path}
+                                                    <A target="_blank" href={row[header.column_name]?.path}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                                             <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                                         </svg>
                                                         &nbsp;
-                                                        {header.display_name}
+                                                        {row[header.column_name]?.value || "-"}
                                                     </A>
                                                 {:else}
-                                                    -
+                                                    {row[header.column_name]?.value || "-"}
                                                 {/if}
                                             {:else if header.column_type == 'Date'}
                                                 {row[header.column_name] || "-"}
+                                            {:else if header.column_type == 'Dropdown'}
+                                                {row[header.column_name] || "-"}
                                             {:else}
-                                                <Checkbox disabled checked={row[header.column_name]=="true" || row[header.column_name]}/>
+                                                <Checkbox disabled value={row[header.column_name]=="true" || row[header.column_name]} checked={row[header.column_name]=="true" || row[header.column_name]}/>
                                             {/if}
                                         </TableBodyCell>
                                     {/if}
@@ -383,121 +447,73 @@
     </div>
 </Modal>
 
-<Modal bind:open={actionsModals} placement="top-center" size="lg">
-    <form class="grid gap-6 mb-6 md:grid-cols-2" on:submit|preventDefault>
+<Modal bind:open={actionsModals} placement="top-center" size="xl">
+    <form class="grid gap-6 mb-6 md:grid-cols-3" on:submit|preventDefault={updateData}>
         <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-2">View/Update Company</h3>
-        <Label class="space-y-2">
-            <span>ID</span>
-            <Input readonly type="text" bind:value={actionsObject.id} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Name</span>
-            <Input type="text" bind:value={actionsObject.name} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Email</span>
-            <Input type="email" bind:value={actionsObject.email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Address</span>
-            <Input type="text" bind:value={actionsObject.address} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>Pan</span>
-            <Input type="text" bind:value={actionsObject.pan} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>GST</span>
-            <Input type="text" bind:value={actionsObject.gst} />
-        </Label>
-
-        <Label class="space-y-2">
-            {#if actionsObject.signature}
-                <span>Signature</span>
-                <div class="flex justify-between">
-                    <A target="_blank" href={actionsObject.signature}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                        </svg>
-                        &nbsp;
-                        Signature
-                    </A>
-                    <Button on:click={() => {actionsObject.signature = null}} gradient color="red">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                        </svg>                                  
-                    </Button>
-                </div>
-            {:else}
-                <p>Signature</p>
-                <input required type="file" on:input={event => actionsObject["signature"]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-            {/if}
-        </Label>
-
-        {#each headers.data as header}
-            {#if header!="id"}
-                <Label class="space-y-2">
-                    {#if header.column_type=="Text"}
-                        <span>{header.display_name}</span>
-                        <Input bind:value={actionsObject[header.column_name]}/>
-                    {:else if header.column_type=="Date"}
-                        <span>{header.display_name}</span>
-                        <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
-                    {:else if header.column_type=="Checkbox"}
-                        <span>&nbsp;</span>
-                        <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
-                    {:else}
-                        {#if typeof(actionsObject[header.column_name]) == 'string'}
-                            <span class="text-end">&nbsp;</span>
-                            <div class="flex justify-between col-span-2 !m-0">
-                                <A target="_blank" href={actionsObject[header.column_name]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
-                                    </svg>
-                                    &nbsp;
-                                    {header.display_name}
-                                </A>
-                                <Button on:click={() => {actionsObject[header.column_name] = null}} gradient color="red">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>                                  
-                                </Button>
-                            </div>
-                        {:else}
-                            <p>{header.display_name}</p>
-                            <input type="file" accept="image/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} class="w-full border border-gray-300 rounded-lg cursor-pointer" />
-                        {/if}
-                    {/if}
-                </Label>
-            {/if}
-        {/each}
-
-        <Label class="space-y-2">
-            <span>SMTP Host</span>
-            <Input type="text" bind:value={actionsObject.smtp_host} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Port</span>
-            <Input type="text" bind:value={actionsObject.smtp_port} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Email</span>
-            <Input type="text" bind:value={actionsObject.smtp_email} />
-        </Label>
-
-        <Label class="space-y-2">
-            <span>SMTP Password</span>
-            <Input type="text" bind:value={actionsObject.smtp_password} />
-        </Label>
         
-        <div class="col-span-2 grid gap-6 grid-cols-1">
+        <div class="grid grid-cols-3 col-span-3 gap-x-3 gap-y-6">
+            {#each headers.data as header}
+                {#if header.column_name == 'name'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="text-end">Name</span>
+                        <Input class="col-span-2 !m-0" type="text" bind:value={actionsObject.name} />
+                    </Label>
+                {:else if header.column_name == 'invoice_prefix'}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        <span class="text-end">Invoice Prefix</span>
+                        <Input class="col-span-2 !m-0" type="text" readonly value={actionsObject.invoice_prefix} />
+                    </Label>
+                {:else}
+                    <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
+                        {#if header.column_type=="Text"}
+                            <span class="text-end">{header.display_name}</span>
+                            <Input class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]}/>
+                        {:else if header.column_type=="Date"}
+                            <span class="text-end">{header.display_name}</span>
+                            <SveltyPicker format="d M yyyy" bind:value={actionsObject[header.column_name]} />
+                        {:else if header.column_type=="Checkbox"}
+                            <span class="text-end">{header.display_name}</span>
+                            <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}></Toggle>
+                        {:else if header.column_type=="Dropdown"}
+                            <span class="text-end">{header.display_name}</span>
+                            <Select bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
+                        {:else}
+                            {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
+                            {@const disabledIcon = actionsObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
+                            <p class="justify-self-end {disabledText}">{header.display_name}</p>
+                            <div class="flex col-span-2 !m-0">
+                                <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
+                                <div>
+                                    {#if actionsObject[header.column_name]==null}
+                                        <svg on:click={()=>document.getElementById(header.column_name).click()} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
+                                        </svg>
+                                    {:else}
+                                        <A target="_blank" href={actionsObject[header.column_name]}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                            </svg>
+                                        </A>
+                                    {/if}
+                                    <svg on:click|preventDefault={()=>{actionsObject[header.column_name]=null;document.getElementById(header.column_name).value=null}} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer {disabledIcon}">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                    </svg>
+                                </div>
+                            </div>
+                        {/if}
+                    </Label>
+                {/if}
+            {/each}
+
+            <!-- Move hidden fields to end, hidden fields block tabs to move -->
+            {#each headers.data as header}
+                {#if header.column_type=="File"}
+                    <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
+                {/if}
+            {/each}
+        </div>
+        
+        <div class="col-span-3 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>
     </form>
@@ -511,6 +527,16 @@
             <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
             </span>
             <span class="font-medium">Error!</span> {error}
+        </Alert>
+    </div>
+{/if}
+
+{#if success.length > 0}
+    <div class="flex fixed left-0 right-0 z-50 bg-black/50 w-full h-full backdrop-opacity-25">
+        <Alert class="mx-auto mt-4 h-fit" color="green" dismissable on:close={()=>success=""}>
+            <span slot="icon"><svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            </span>
+            <span class="font-medium">success!</span> {success}
         </Alert>
     </div>
 {/if}

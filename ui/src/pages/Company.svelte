@@ -178,6 +178,8 @@
             data = await utils.get('/api/company/master/');
         }
 
+        data = data.data;
+
         selectedRows.clear();
         selectedRows = selectedRows;
         handler.setRows(data);
@@ -191,6 +193,8 @@
         }else{
             data = await utils.get('/api/company/master/');
         }
+
+        data = data.data;
 
         data.forEach((v) => {
             if(selectedRows.has(v["id"])){
