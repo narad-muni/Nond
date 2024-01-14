@@ -406,7 +406,7 @@
                                                             {row.__client?.[header.column_name]?.value || "-"}
                                                         </A>
                                                     {:else}
-                                                        -
+                                                        {row.__client?.[header.column_name]?.value || "-"}
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
                                                     {row.__client?.[header.column_name] || "-"}

@@ -14,6 +14,7 @@
         Input,
         Toggle,
         Alert,
+        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
@@ -83,6 +84,16 @@
 
         if(actionsObject.status == 'success'){
             actionsObject = actionsObject.data;
+
+            headers.data.forEach((column,i) => {
+                if(column.column_type == 'File' && column.client_column_id == null) {
+                    actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value;
+                    actionsObject[column.column_name] = actionsObject[column.column_name]?.path;
+                }else if(column.column_type == 'File' && column.client_column_id != null) {
+                    actionsObject["value__client__"+column.column_name] = actionsObject["client__"+column.column_name]?.value;
+                    actionsObject["client__"+column.column_name] = actionsObject["client__"+column.column_name]?.path;
+                }
+            });
 
             actionsModals = true;
         }else{
@@ -192,16 +203,16 @@
                                                 {#if header.column_type == 'Text'}
                                                     {row[header.column_name] || "-"}
                                                 {:else if header.column_type == 'File'}
-                                                    {#if row[header.column_name]}
-                                                        <A target="_blank" href={row[header.column_name]}>
+                                                    {#if row[header.column_name]?.path}
+                                                        <A target="_blank" href={row[header.column_name]?.path}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                                             </svg>
                                                             &nbsp;
-                                                            {header.display_name}
+                                                            {row[header.column_name]?.value || "-"}
                                                         </A>
                                                     {:else}
-                                                        -
+                                                        {row[header.column_name]?.value || "-"}
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
                                                     {row[header.column_name] || "-"}
@@ -214,16 +225,16 @@
                                                 {#if header.column_type == 'Text'}
                                                     {row["client__"+header.column_name] || "-"}
                                                 {:else if header.column_type == 'File'}
-                                                    {#if row["client__"+header.column_name]}
-                                                        <A target="_blank" href={row["client__"+header.column_name]}>
+                                                    {#if row["client__"+header.column_name]?.path}
+                                                        <A target="_blank" href={row["client__"+header.column_name]?.path}>
                                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
                                                             </svg>
                                                             &nbsp;
-                                                            {header.display_name}
+                                                            {row["client__"+header.column_name]?.value || "-"}
                                                         </A>
                                                     {:else}
-                                                        -
+                                                        {row["client__"+header.column_name]?.value || "-"}
                                                     {/if}
                                                 {:else if header.column_type == 'Date'}
                                                     {row["client__"+header.column_name] || "-"}
@@ -249,7 +260,7 @@
 
 <Modal bind:open={actionsModals} placement="top-center" size="xl">
     <form class="grid gap-6 mb-6 md:grid-cols-3">
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View/Update Client</h3>
+        <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0 md:col-span-3">View Client</h3>
         <Label class="space-y-2">
             <span>ID</span>
             <Input readonly type="text" bind:value={actionsObject.id} />
@@ -272,22 +283,32 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle  bind:value={actionsObject[header.column_name]} bind:checked={actionsObject[header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span class="text-end">{header.display_name}</span>
+                        <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
-                        {#if typeof(actionsObject[header.column_name]) == 'string'}
-                            <span class="text-end">&nbsp;</span>
-                            <div class="flex justify-between col-span-2 !m-0">
-                                <A target="_blank" href={actionsObject[header.column_name]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
+                        {@const disabledIcon = actionsObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
+                        <p class="justify-self-end {disabledText}">{header.display_name}</p>
+                        <div class="flex col-span-2 !m-0">
+                            <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
+                            <div>
+                                {#if actionsObject[header.column_name]==null}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                     </svg>
-                                    &nbsp;
-                                    {header.display_name}
-                                </A>
+                                {:else}
+                                    <A target="_blank" href={actionsObject[header.column_name]}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                        </svg>
+                                    </A>
+                                {/if}
+                                <svg on:click|preventDefault xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer {disabledIcon}">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
                             </div>
-                        {:else}
-                            <p>{header.display_name}</p>
-                            <p>No File</p>
-                        {/if}
+                        </div>
                     {/if}
                 </Label>
             {:else if header.client_column_id != null}
@@ -301,22 +322,32 @@
                     {:else if header.column_type=="Checkbox"}
                         <span>&nbsp;</span>
                         <Toggle bind:value={actionsObject["client__"+header.column_name]} bind:checked={actionsObject["client__"+header.column_name]}>{header.display_name}</Toggle>
+                    {:else if header.column_type=="Dropdown"}
+                        <span class="text-end">{header.display_name}</span>
+                        <Select class="col-span-2 !m-0" bind:value={actionsObject[header.column_name]} items={header.column_info.options}/>
                     {:else}
-                        {#if typeof(actionsObject["client__"+header.column_name]) == 'string'}
-                            <span>{header.display_name}</span>
-                            <div class="flex justify-between">
-                                <A target="_blank" href={actionsObject["client__"+header.column_name]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        {@const disabledText = actionsObject["client__"+header.column_name]!=null?"text-black":"text-gray-400"}
+                        {@const disabledIcon = actionsObject["client__"+header.column_name]!=null?"text-red-500":"text-gray-400"}
+                        <p class="justify-self-end {disabledText}">{header.display_name}</p>
+                        <div class="flex col-span-2 !m-0">
+                            <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__client__"+header.column_name]}/>
+                            <div>
+                                {#if actionsObject["client__"+header.column_name]==null}
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 text-blue-500 cursor-pointer">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
                                     </svg>
-                                    &nbsp;
-                                    {header.display_name}
-                                </A>
+                                {:else}
+                                    <A target="_blank" href={actionsObject["client__"+header.column_name]}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                                        </svg>
+                                    </A>
+                                {/if}
+                                <svg on:click|preventDefault xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 cursor-pointer {disabledIcon}">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                </svg>
                             </div>
-                        {:else}
-                            <p>{header.display_name}</p>
-                            <p>No File</p>
-                        {/if}
+                        </div>
                     {/if}
                 </Label>
             {/if}

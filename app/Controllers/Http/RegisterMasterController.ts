@@ -234,7 +234,11 @@ export default class RegistersController {
                 const table_id_temp = register_template.table_id;
 
                 if (register_template.client_column_id != null) {
-                    client_columns[table_id_temp] += "add column client__" + register_template.column_name + " varchar,";
+                    if(register_template.column_type == "File"){
+                        client_columns[table_id_temp] += "add column client__" + register_template.column_name + " json,";
+                    }else{
+                        client_columns[table_id_temp] += "add column client__" + register_template.column_name + " varchar,";
+                    }
                     update_query_columns[table_id_temp] += "client__" + register_template.column_name + " = s." + register_template.column_name + ",";
                 }
 

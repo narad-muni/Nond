@@ -217,7 +217,11 @@ export default class SchedulerManager {
                 register_template.forEach(column => {
 
                     if (column.client_column_id != null) {
-                        client_columns += "add column client__" + column.column_name + " varchar,";
+                        if(column.column_type == "File"){
+                            client_columns += "add column client__" + column.column_name + " json,";
+                        }else{
+                            client_columns += "add column client__" + column.column_name + " varchar,";
+                        }
                         update_query_columns += "client__" + column.column_name + " = s." + column.column_name + ",";
                     }
 
