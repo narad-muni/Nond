@@ -64,7 +64,7 @@
                     if(column.column_type == 'Dropdown'){
                         headers.data[i].column_info.options = headers.data[i].column_info.options.map(i => {return {value:i, name:i}});
                         headers.data[i].column_info.options = [{name: "-", value: null}, ...headers.data[i].column_info.options];
-                    }else if(column.column_type == 'File') {
+                    }else if(column.column_type == 'File' && column.client_column_id == null) {
                         createdObject["value__"+column.column_name] = null;
                     }
                 });
@@ -141,7 +141,7 @@
             actionsObject = actionsObject.data;
 
             headers.data.forEach((column,i) => {
-                if(column.column_type == 'File') {
+                if(column.column_type == 'File' && column.client_column_id == null) {
                     actionsObject["value__"+column.column_name] = actionsObject[column.column_name]?.value;
                     actionsObject[column.column_name] = actionsObject[column.column_name]?.path;
                 }
@@ -496,7 +496,7 @@
 
         <!-- Move hidden fields to end, hidden fields block tabs to move -->
         {#each headers.data as header}
-            {#if header.column_type=="File"}
+            {#if header.column_type=="File" && header.client_column_id == null}
                 <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => createdObject[header.column_name]=event.target.files[0]} />
             {/if}
         {/each}
@@ -569,7 +569,7 @@
 
         <!-- Move hidden fields to end, hidden fields block tabs to move -->
         {#each headers.data as header}
-            {#if header.column_type=="File"}
+            {#if header.column_type=="File" && header.client_column_id == null}
                 <input id={header.column_name} hidden type="file" accept="*/*" on:input={event => actionsObject[header.column_name]=event.target.files[0]} />
             {/if}
         {/each}
