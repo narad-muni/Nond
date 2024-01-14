@@ -140,7 +140,7 @@ export default class Reseed extends BaseCommand {
                 column_name: "gst",
                 display_name: "GST",
                 order: 1,
-                column_type: "Text",
+                column_type: "File",
                 column_info: {},
                 is_master: true,
             },{
@@ -149,7 +149,7 @@ export default class Reseed extends BaseCommand {
                 column_name: "pan",
                 display_name: "Pan",
                 order: 1,
-                column_type: "Text",
+                column_type: "File",
                 column_info: {},
                 is_master: false,
             },{
@@ -225,7 +225,7 @@ export default class Reseed extends BaseCommand {
                 column_name: "pan",
                 display_name: "Pan",
                 order: 1,
-                column_type: "Text",
+                column_type: "File",
                 column_info: {},
                 is_master: true,
             },{
@@ -234,7 +234,7 @@ export default class Reseed extends BaseCommand {
                 column_name: "gst",
                 display_name: "GST",
                 order: 1,
-                column_type: "Text",
+                column_type: "File",
                 column_info: {},
                 is_master: true,
             },{
