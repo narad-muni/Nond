@@ -343,7 +343,11 @@
                             <Th {handler} orderBy={row => row.client_id || "-"}>Client Id</Th>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
-                                    <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
+                                    {#if header.client_column_id == null}
+                                        <Th {handler} orderBy={row => row[header.column_name]}>{header.display_name}</Th>
+                                    {:else}
+                                        <Th {handler} orderBy={row => row.__client?.[header.column_name]}>{header.display_name}</Th>
+                                    {/if}
                                 {/if}
                             {/each}
                         </tr>
@@ -353,7 +357,11 @@
                             <ThSearch {handler} filterBy={row => row.client_id || "-"}/>
                             {#each headers.data as header}
                                 {#if allColumns || header.master}
-                                    <ThSearch {handler} filterBy={row => row[header.column_name]}/>
+                                    {#if header.client_column_id == null}
+                                        <ThSearch {handler} filterBy={row => row[header.column_name]}/>
+                                    {:else}
+                                        <ThSearch {handler} filterBy={row => row.__client?.[header.column_name]}/>
+                                    {/if}
                                 {/if}
                             {/each}
                         </tr>
