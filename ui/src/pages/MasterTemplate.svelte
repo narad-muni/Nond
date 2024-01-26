@@ -57,7 +57,7 @@
             error = data.message;
             data = null;
         }else{
-            data = data.data.filter(i => i.id > 0);
+            data = data.data;
             services = [{name:"None",value:null},...services];
             services = services.filter(i => i.name != "Others");
 
@@ -99,6 +99,7 @@
             if(e.target.checked){
 
                 $rows.forEach((r) => {
+                    if(parseInt(r.id) <= 0) return;
                     r._selected = true;
                     selectedRows.add(parseInt(r.id));
                 });
@@ -372,7 +373,7 @@
         </Label>
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
             <span class="text-end">Auto Select Service</span>
-            <Select class="col-span-2 !m-0" bind:value={createdObject.service_id} items={services}/>
+            <Select required class="col-span-2 !m-0" bind:value={createdObject.service_id} items={services}/>
         </Label>
 
         {#if createdObject.column_type == 'Dropdown'}
@@ -432,7 +433,7 @@
         </Label>
         <Label class="space-y-2 grid grid-cols-3 gap-x-3 col-span-1 items-center">
             <span class="text-end">Auto Select Service</span>
-            <Select class="col-span-2 !m-0" bind:value={actionsObject.service_id} items={services}/>
+            <Select required class="col-span-2 !m-0" bind:value={actionsObject.service_id} items={services}/>
         </Label>
 
         {#if actionsObject.column_type == 'Dropdown'}
