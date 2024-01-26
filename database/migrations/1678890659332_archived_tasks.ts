@@ -8,6 +8,14 @@ export default class extends BaseSchema {
             table.integer('id').primary();
             table.string('assigned_to');
             table.string('client');
+            table.integer('status');
+            table.integer('priority');
+            table.json('money');
+            table.json('time');
+            table.string('total_time');
+            table.integer('total_money');
+            table.boolean('billed');
+            table.string('invoice_id');
             table.string('group');
             table.string('title');
             table.string('description');

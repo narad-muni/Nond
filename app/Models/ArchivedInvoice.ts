@@ -21,6 +21,12 @@ export default class ArchivedInvoice extends BaseModel {
     public remarks: string
 
     @column()
+    public note: string
+
+    @column()
+    public paid: boolean
+
+    @column()
     public gst: boolean
 
     @column()

@@ -325,6 +325,7 @@ export default class SchedulerManager {
     static async ArchiveData() {
         //archive 1 year old invoices
         //archive 1 year old tasks
+        const start_date = new Date(2025,1,1);
 
         const archived_tasks: ArchivedTask[] = [];
         const archived_invoices: ArchivedInvoice[] = [];
@@ -332,7 +333,7 @@ export default class SchedulerManager {
         //get all completed tasks older than current financial year
         const old_tasks = await Task
             .query()
-            .where('created', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('created', '<', StringUtils.getCurrentFinancialYearStart(start_date))
             .where('status', 4)
             .where('billed', true)
             .preload('assigned_user', query => {
@@ -352,7 +353,7 @@ export default class SchedulerManager {
         //get all paid invoices older than current financial year
         const old_invoices = await Invoice
             .query()
-            .where('date', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('date', '<', StringUtils.getCurrentFinancialYearStart(start_date))
             .where('paid', true)
             .preload('client', query => {
                 query
@@ -378,7 +379,15 @@ export default class SchedulerManager {
             archived_task.service = task.service.name;
             archived_task.created = task.created;
             archived_task.client = task.client.name;
-            archived_task.group = task.client.group.name;
+            archived_task.group = task.client.group?.name || task.client.name;
+            archived_task.status = task.status;
+            archived_task.priority = task.priority;
+            archived_task.money = task.money;
+            archived_task.time = task.time;
+            archived_task.total_time = task.total_time;
+            archived_task.total_money = task.total_money;
+            archived_task.billed = task.billed;
+            archived_task.invoice_id = task.invoice_id;
 
             archived_tasks.push(archived_task);
 
@@ -397,6 +406,8 @@ export default class SchedulerManager {
             archived_invoice.client = invoice.client.name;
             archived_invoice.group = invoice.client?.group?.name || invoice.client.name;
             archived_invoice.company = invoice.company.name;
+            archived_invoice.paid = invoice.paid;
+            archived_invoice.note = invoice.note;
 
             archived_invoices.push(archived_invoice);
 
@@ -409,14 +420,14 @@ export default class SchedulerManager {
         //remove tasks from active table
         await Task
             .query()
-            .where('created', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('created', '<', StringUtils.getCurrentFinancialYearStart(start_date))
             .where('status', 4)
             .delete();
 
         //remove invoices from active table
         await Invoice
             .query()
-            .where('date', '<', StringUtils.getCurrentFinancialYearStart())
+            .where('date', '<', StringUtils.getCurrentFinancialYearStart(start_date))
             .where('paid', true)
             .delete();
     }

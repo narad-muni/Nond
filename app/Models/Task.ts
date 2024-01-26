@@ -63,7 +63,6 @@ export default class Task extends BaseModel {
     public created: DateTime
 
     @column.date({
-        autoCreate: true,
         serialize: (value: DateTime) => {
             if (value instanceof Date) {
                 return DateTime.fromJSDate(value).toFormat('d LLL yyyy');
