@@ -10,8 +10,8 @@ export default class extends BaseSchema {
             table.string('client');
             table.integer('status');
             table.integer('priority');
-            table.json('money');
-            table.json('time');
+            table.specificType('money', 'json[]');
+            table.specificType('time', 'json[]');
             table.string('total_time');
             table.integer('total_money');
             table.boolean('billed');

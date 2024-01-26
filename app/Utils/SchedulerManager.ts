@@ -325,7 +325,7 @@ export default class SchedulerManager {
     static async ArchiveData() {
         //archive 1 year old invoices
         //archive 1 year old tasks
-        const start_date = new Date(2025,1,1);
+        const start_date = new Date();
 
         const archived_tasks: ArchivedTask[] = [];
         const archived_invoices: ArchivedInvoice[] = [];
@@ -373,10 +373,10 @@ export default class SchedulerManager {
             const archived_task = new ArchivedTask();
 
             archived_task.id = task.id;
-            archived_task.assigned_to = task.assigned_user.username;
+            archived_task.assigned_to = task.assigned_user?.username;
             archived_task.title = task.title;
             archived_task.description = task.description;
-            archived_task.service = task.service.name;
+            archived_task.service = task.service?.name;
             archived_task.created = task.created;
             archived_task.client = task.client.name;
             archived_task.group = task.client.group?.name || task.client.name;

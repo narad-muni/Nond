@@ -13,12 +13,14 @@
         Input,
         Alert,
         Textarea,
+        Select,
     } from "flowbite-svelte";
 
     import { DataHandler } from '../component/datatables';
     import Th from "../component/Th.svelte";
     import ThSearch from "../component/ThSearch.svelte";
     import DataTable from "../component/DataTable.svelte";
+    import SveltyPicker from '../component/svelty-picker';
     import utils from '../utils';
 
     // Intialization
@@ -26,7 +28,7 @@
     let actionsModals;
     let selectedRows = new Set();
 
-    let data, actionsIndex, actionsObject;
+    let data, actionsIndex, actionsObject, userList;
     let handler, rows, selfTasks = true;
 
     let error="";
@@ -35,12 +37,14 @@
 
     (async ()=>{
         data = await utils.get('/api/task/archived/'+selfTasks);
+        userList = await utils.get('/api/employee/options');
 
         if(data.status != 'success'){
             error = data.message;
             data = null;
         }else{
             data = data.data;
+            userList = [{name: "Unassigned", value: null}, ...userList];
 
             data.forEach((v) => {
                 v["_selected"] = false;
@@ -274,7 +278,7 @@
                                     {row.assigned_to || "Unassigned"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.create || "-"}
+                                    {row.created || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}
@@ -316,6 +320,59 @@
             <span>Description</span>
             <Textarea placeholder="Description" rows="4" bind:value={actionsObject.description}/>
         </Label>
+
+        <div class="grid gap-2 col-span-3 grid-cols-7">
+            <Label class="space-y-2 text-center col-span-2">
+                <span>User</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-3">
+                <span>Description</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-1">
+                <span>Time (Hrs)</span>
+            </Label>
+
+            {#each actionsObject.time as particular,index}
+
+                <Select readonly items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
+
+                <Input readonly required class="col-span-3" bind:value={particular.description} />
+                <SveltyPicker format="hh:ii" bind:value={particular.time} />
+            {/each}
+
+            <span class="col-span-4"></span>
+            <span>Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={actionsObject.total_time}/>
+            </Label>
+        </div>
+
+        <div class="grid gap-2 col-span-3 grid-cols-7">
+            <Label class="space-y-2 text-center col-span-2">
+                <span>User</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-3">
+                <span>Description</span>
+            </Label>
+            <Label class="space-y-2 text-center col-span-1">
+                <span>Amount</span>
+            </Label>
+
+            {#each actionsObject.money as particular,index}
+
+                <Select readonly items={userList} class="col-span-2 !m-0" bind:value={particular.user} />
+                
+                <Input readonly required class="col-span-3" bind:value={particular.description} />
+                <Input readonly required bind:value={particular.amount} type="number" />
+            {/each}
+
+            <span class="col-span-4"></span>
+            <span>Total</span>
+            <Label class="space-y-2 text-center font-bold">
+                <Input readonly value={actionsObject.total_money}/>
+            </Label>
+        </div>
+
         <div class="col-span-3 grid gap-6 grid-cols-1">
             <Button on:click={()=>actionsModals=false} color="alternative" class="w-full">Close</Button>
         </div>

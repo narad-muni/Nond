@@ -1,8 +1,5 @@
 pending stuff
 
-add changes to archived pages. - 3
-Check auto archival not working
-
 reports
     client wise report
     employee wise report

@@ -714,7 +714,7 @@
                                     {priority[row.priority].name || "-"}
                                 </TableBodyCell>
                                 <TableBodyCell>
-                                    {row.create || "-"}
+                                    {row.created || "-"}
                                 </TableBodyCell>
                             </TableBodyRow>
                         {/each}

@@ -324,6 +324,11 @@
             <Textarea bind:value={actionsObject.remarks}/>
         </Label>
 
+        <Label class="space-y-2">
+            <span>Note for self</span>
+            <Textarea bind:value={actionsObject.note}/>
+        </Label>
+
         {#if actionsObject.gst}
             <div class="grid gap-2 col-span-3 grid-cols-10">
                 <Label class="space-y-2 text-center col-span-2">
