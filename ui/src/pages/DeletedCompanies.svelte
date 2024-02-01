@@ -419,7 +419,7 @@
                         {:else}
                             {@const disabledText = actionsObject[header.column_name]!=null?"text-black":"text-gray-400"}
                             {@const disabledIcon = actionsObject[header.column_name]!=null?"text-red-500":"text-gray-400"}
-                            <p class="justify-self-end {disabledText}">{header.display_name}</p>
+                            <p class="justify-self-end {disabledText} text-right">{header.display_name}</p>
                             <div class="flex col-span-2 !m-0">
                                 <Input class="!m-0 !me-1" type="text" bind:value={actionsObject["value__"+header.column_name]}/>
                                 <div>
