@@ -153,11 +153,27 @@ export default class SchedulerManager {
             let update_query_columns = "";
             const serialized_columns: any = { table_id: old_register.id, columns: [] };
 
-            const random = Math.random().toString(36).substr(2, 3);
+            let random = Math.random().toString(36).substr(2, 3);
             const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
             //added random to avoid collision
-            const new_version = `${today} - ${next} ${random}`
+            let new_version = `${today} - ${next}`;
+
+            while(true){
+                const new_verision_collides = await Database.rawQuery(
+                    `SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE  table_schema = 'public'
+                    AND    table_name   = '${StringUtils.sanitizeTableName("register__" + old_register.name + new_version)}'
+                    )
+                    limit 1;`
+                );
+
+                if(new_verision_collides?.rows?.[0]?.exists == false) break;
+
+                random = Math.random().toString(36).substr(2, 3);
+                new_version = `${today} - ${next} ${random}`
+            }
 
             //truncate old rollover table
             await Database.rawQuery(
