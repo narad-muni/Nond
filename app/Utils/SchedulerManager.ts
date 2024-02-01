@@ -156,9 +156,9 @@ export default class SchedulerManager {
             let random = Math.random().toString(36).substr(2, 3);
             const today = DateTime.now().toLocaleString(DateTime.DATE_MED);
             const next = scheduler.next.toLocaleString(DateTime.DATE_MED);
-            //added random to avoid collision
             let new_version = `${today} - ${next}`;
 
+            // Check if random is needed
             while(true){
                 const new_verision_collides = await Database.rawQuery(
                     `SELECT EXISTS (

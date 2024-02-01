@@ -26,6 +26,7 @@
     import IdSelect from "../component/IdSelect.svelte";
     import SveltyPicker from '../component/svelty-picker';
     import { user } from '../global/stores.js'
+  import Invoice from "./Invoice.svelte";
 
     // Intialization
 
@@ -666,6 +667,7 @@
                             <Th {handler} orderBy={(row => task_status[row.status].name || "-")}>Status</Th>
                             <Th {handler} orderBy={(row => row.due_date || "-")}>Due Date</Th>
                             <Th {handler} orderBy={(row => priority[row.priority].name || "-")}>Priority</Th>
+                            <Th {handler} orderBy={row => row.invoice_id || "-"}>Invoice</Th>
                             <Th {handler} orderBy={row => row.created || "-"}>Created At</Th>
                         </tr>
                         <tr>
@@ -679,6 +681,7 @@
                             <ThSearch {handler} filterBy={(row => task_status[row.status].name || "-")}/>
                             <ThSearch {handler} filterBy={(row => row.due_date || "-")}/>
                             <ThSearch {handler} filterBy={(row => priority[row.priority].name || "-")}/>
+                            <ThSearch {handler} filterBy={row => row.invoice_id || "-"}/>
                             <ThSearch {handler} filterBy={row => row.created || "-"}/>
                         </tr>
                     </thead>
@@ -712,6 +715,15 @@
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {priority[row.priority].name || "-"}
+                                </TableBodyCell>
+                                <TableBodyCell>
+                                    {#if row.invoice_id != null}
+                                        <a class="text-end text-blue-500 cursor-pointer" on:click={() => openInvoiceActionsModal(row.invoice_id)}>
+                                            {row.invoice_id}
+                                        </a>
+                                    {:else}
+                                        {"-"}
+                                    {/if}
                                 </TableBodyCell>
                                 <TableBodyCell>
                                     {row.created || "-"}
