@@ -4,7 +4,6 @@ import MasterTemplate from 'App/Models/MasterTemplate'
 import { string } from '@ioc:Adonis/Core/Helpers'
 import RegisterTemplate from 'App/Models/RegisterTemplate'
 import TableManager from 'App/Utils/TableManager'
-import StringUtils from 'App/Utils/StringUtils'
 
 export default class MasterTemplatesController {
     public async index({ response }: HttpContextContract) {
@@ -213,8 +212,10 @@ export default class MasterTemplatesController {
             } else {
 
                 let c_type: string;
-
-                if (payload.column_type == 'File' || payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
+                
+                if(payload.column_type == 'File'){
+                    c_type = 'json';
+                }else if (payload.column_type == 'Dropdown' || payload.column_type == 'Text') {
                     c_type = 'varchar(255)'
                 } else if (payload.column_type == 'Checkbox') {
                     c_type = 'boolean'
