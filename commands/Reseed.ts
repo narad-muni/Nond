@@ -1,5 +1,7 @@
-import { BaseCommand } from '@adonisjs/core/build/standalone'
-import { DateTime } from 'luxon'
+import { BaseCommand } from '@adonisjs/core/build/standalone';
+import Database from '@ioc:Adonis/Lucid/Database';
+import { DateTime } from 'luxon';
+import fs from "fs/promises";
 
 export default class Reseed extends BaseCommand {
     /**
@@ -341,7 +343,18 @@ export default class Reseed extends BaseCommand {
 
     }
 
+    public async initialize_using_file() {
+
+        const sql_file = await fs.readFile("./seed.sql");
+
+        await Database.rawQuery(sql_file.toString());
+        console.log("DB Built");
+    }
+
     public async de_initialize() {
+        await Database.rawQuery("drop schema if exists public cascade;create schema public");
+        console.log("DB Cleaned");
+        return;
 
         const { default: Employee } = await import('App/Models/Employee');
         const { default: Role } = await import('App/Models/Role');
@@ -362,7 +375,11 @@ export default class Reseed extends BaseCommand {
     }
 
     public async run() {
-        await this.de_initialize();
-        await this.initialize();
+        try{
+            await this.de_initialize();
+            await this.initialize_using_file();
+        }catch(e){
+            console.log(e);
+        }
     }
 }
