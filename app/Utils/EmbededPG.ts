@@ -17,11 +17,11 @@ export default class PG {
             try{
                 await pg.initialise();
             }catch{}
+
+            this.__instance = pg;
         
             // Start the server
             await pg.start();
-
-            this.__instance = pg;
         }catch(e){
             console.log(e);
         }
