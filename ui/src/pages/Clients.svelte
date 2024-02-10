@@ -671,7 +671,7 @@
         <div class="col-span-3 grid grid-cols-5 text-center gap-x-3 gap-y-5">
             <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
-            <h2>Next Date</h2>
+            <h2>Start Date</h2>
             <h2>End Date</h2>
             <h2>Count</h2>
         </div>
@@ -768,7 +768,7 @@
         <div class="col-span-4 grid grid-cols-4 text-center gap-x-3 gap-y-5">
             <h2 class="text-left">Services</h2>
             <h2>Frequency</h2>
-            <h2>Next Date</h2>
+            <h2>Start Date</h2>
             <h2>End Date</h2>
             <h2>Count</h2>
         </div>

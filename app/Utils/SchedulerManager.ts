@@ -556,6 +556,7 @@ export default class SchedulerManager {
                     
                     let data = {
                         client_id: job.client_id,
+                        frequency: job.frequency || 'One Time'
                     };
 
                     data = Object.assign({}, data, rollover_add);

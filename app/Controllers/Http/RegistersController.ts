@@ -265,6 +265,7 @@ export default class RegistersController {
             });
 
             DynamicRegister.table = StringUtils.sanitizeTableName("register__" + register?.name + register?.version);
+            data["frequency"] = "Manual Entry";
             //setup complete
 
             //set "null" to null

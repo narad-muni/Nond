@@ -25,6 +25,8 @@ export default class DynamicRegister extends BaseModel {
     })
     public entry_on: DateTime
 
+    public frequence: '1 day' | '1 week' | '2 weeks' | '1 month' | '3 months' | '6 months' | '1 year' | 'One Time' | 'Manual Entry'
+
     @belongsTo(() => Client, {
         foreignKey: 'client_id'
     })
