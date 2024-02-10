@@ -39,6 +39,10 @@
       "reloadServer": false
     },
     {
+        "pattern": "seed.sql",
+        "reloadServer": false
+    },
+    {
       "pattern": "nond.sh",
       "reloadServer": false
     },
